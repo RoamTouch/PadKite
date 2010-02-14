@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="red">0xFFFF0000</integer>
+    <integer name="green">0xFF00FF00</integer>
+</resources>

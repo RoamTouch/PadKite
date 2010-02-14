@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    	android:layout_width="fill_parent"
+    	android:layout_height="fill_parent">
+	
+		
+	 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	 		android:id="@+id/topbar"
+		 	android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="top">
+			
+		
+			<EditText android:id="@+id/url"
+				android:layout_width="wrap_content"
+	 			android:layout_height="wrap_content"
+	 			android:hint="http://"
+	 			android:lines="1"
+	 			android:layout_weight="1.0"/>
+	 			
+	 		<Button android:id="@+id/pointer"
+				android:layout_width="wrap_content"
+	 			android:layout_height="wrap_content"
+	 			android:text="@string/go_button"/>
+	 			
+	 	</LinearLayout>
+		
+		<WebView android:id="@+id/webview"
+	 		android:layout_width="fill_parent"
+	 		android:layout_height="fill_parent"
+	 		android:layout_below="@id/topbar"/>
+	 		
+	 </RelativeLayout>
+	 
+	 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	 	android:layout_width="fill_parent" 
+		android:layout_height="fill_parent"
+		android:orientation="vertical">
+		
+	 <com.roamtouch.view.pointer.SlidingPointerView xmlns:android="http://schemas.android.com/apk/res/android"
+	  	android:id="@+id/transparentview"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"/>
+
+	</LinearLayout>
+</FrameLayout>
