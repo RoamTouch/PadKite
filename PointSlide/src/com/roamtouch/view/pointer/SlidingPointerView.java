@@ -6,8 +6,10 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -27,6 +29,12 @@ import com.roamtouch.domain.slide.strategy.TraslationSlidingStrategy;
  * @author jorgebo
  */
 public class SlidingPointerView extends LinearLayout {
+
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		Log.i("FUCKING KEY",String.valueOf(event.getKeyCode()));
+		return true;
+	}
 
 	private TextView url;
 	
@@ -59,7 +67,6 @@ public class SlidingPointerView extends LinearLayout {
 	 * @return the RectF draw
 	 */
 	private RectF drawTransparentRect(Canvas canvas) {
-		
 		final RectF transparentRect = new RectF();
 		transparentRect.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
 		canvas.drawRoundRect(transparentRect, 5, 5, transparentPaint);
@@ -100,7 +107,7 @@ public class SlidingPointerView extends LinearLayout {
 	@Override
     public boolean onTouchEvent(MotionEvent event) {
 
-		Log.i("event.getX()",event.toString());
+		Log.i("event",String.valueOf(event.getAction()));
 
 		final Coordinates currentFingerCoordinates = captureClickCoordinates(event);
 		
@@ -126,7 +133,6 @@ public class SlidingPointerView extends LinearLayout {
 		return true;
 	}
 
-	
 	@Override
 	protected void dispatchDraw(Canvas canvas) {
 
