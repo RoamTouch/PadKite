@@ -1,6 +1,14 @@
 package com.roamtouch.activity;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
+import android.gesture.Gesture;
+import android.gesture.GestureLibraries;
+import android.gesture.GestureLibrary;
+import android.gesture.GestureOverlayView;
+import android.gesture.Prediction;
+import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -13,6 +21,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.roamtouch.domain.slide.pointer.SlidingPointer;
 import com.roamtouch.domain.slide.pointer.SlidingPointerImpl;
@@ -20,8 +29,13 @@ import com.roamtouch.domain.slide.position.Coordinates;
 import com.roamtouch.domain.slide.strategy.AbsoluteSlidingStrategy;
 import com.roamtouch.view.pointer.SlidingPointerView;
 
-public class SlidingPointerActivity extends Activity {
+public class SlidingPointerActivity extends Activity implements OnGesturePerformedListener  {
 	
+
+	private GestureLibrary mLibrary;
+    private GestureOverlayView gestures;
+    private SlidingPointerView slidingPointerView;
+    
 	private void openURL(WebView webView,EditText url) {
 		webView.loadUrl(url.getText().toString());
 		webView.requestFocus();
@@ -53,10 +67,27 @@ public class SlidingPointerActivity extends Activity {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
+				Log.i("Event",event.toString());
+				Log.i("Event",String.valueOf(event.getAction()));
 				Log.i("getHitTestResult().getType()",String.valueOf(((WebView) v).getHitTestResult().getType()));
 				Log.i("getHitTestResult().getExtra()",String.valueOf(((WebView) v).getHitTestResult().getExtra()));
+				
 				return false;
 			}});
+		
+		webView.setOnKeyListener(new OnKeyListener() {
+			public boolean onKey(View view, int keyCode, KeyEvent event) {
+				Log.i("KEY ON LISTENER",String.valueOf(keyCode));
+				Log.i("ENABLED",String.valueOf(slidingPointerView.isShowPointer()));
+				if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER && slidingPointerView.isShowPointer()) {
+						slidingPointerView.setShowPointer(false);
+						gestures.setEnabled(true);
+						return true;
+				} else {
+					return false;
+				}
+			}
+		});
 		
 		//Configure edittext
 		final EditText url = (EditText) findViewById(R.id.url);
@@ -74,7 +105,7 @@ public class SlidingPointerActivity extends Activity {
 		
 		final SlidingPointer slidingPointer = new SlidingPointerImpl(Coordinates.make(100,100));
 		
-		final SlidingPointerView slidingPointerView = (SlidingPointerView) findViewById(R.id.transparentview);
+		slidingPointerView = (SlidingPointerView) findViewById(R.id.transparentview);
 		slidingPointerView.setSlidingPointer(slidingPointer);
 		
 		//Configure button
@@ -82,16 +113,39 @@ public class SlidingPointerActivity extends Activity {
 		go.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				slidingPointerView.setShowPointer(!slidingPointerView.isShowPointer());
 				slidingPointerView.getSlidingPointer().setSlideStrategy(new AbsoluteSlidingStrategy());
-				slidingPointerView.setShowPointer(!slidingPointerView.isShowPointer());;
 			}
 		});
 
-		
 		//Configure transparentView
 		slidingPointerView.setWebView(webView);
 		slidingPointerView.setUrl(url);
 		slidingPointerView.setGo(go);
-	
+		
+		  mLibrary = GestureLibraries.fromRawResource(this, R.raw.gestures);
+	        if (!mLibrary.load()) {
+	        	finish();
+	        }
+
+	        gestures = (GestureOverlayView) findViewById(R.id.gestures);
+	        gestures.addOnGesturePerformedListener(this);
+	        gestures.setEnabled(false);
+	}
+
+	@Override
+	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
+		ArrayList<Prediction> predictions = mLibrary.recognize(gesture);
+		if (predictions.size() > 0) {
+			if (predictions.get(0).score > 1.0) {
+				String action = predictions.get(0).name;
+				Log.i("GESTURE",action);
+				if ("S".equals(action)) {
+					Toast.makeText(this, "S gesture done", Toast.LENGTH_SHORT).show();
+					gestures.setEnabled(false);
+					slidingPointerView.setShowPointer(true);
+				}
+			}
+		}		
 	}
 }
