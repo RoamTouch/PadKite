@@ -1,6 +1,15 @@
 package com.roamingkeyboards.activity;
 
+import java.util.ArrayList;
+
+
 import android.app.Activity;
+import android.gesture.Gesture;
+import android.gesture.GestureLibraries;
+import android.gesture.GestureLibrary;
+import android.gesture.GestureOverlayView;
+import android.gesture.Prediction;
+import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -21,7 +30,11 @@ import com.roamingkeyboards.domain.slide.strategy.AbsoluteSlideStrategyImpl;
 import com.roamingkeyboards.domain.slide.strategy.TraslationSlideStrategyImpl;
 import com.roamingkeyboards.view.pointer.SlidePointerView;
 
-public class SlidePointerActivity extends Activity {
+public class SlidePointerActivity extends Activity implements OnGesturePerformedListener {
+	
+	private GestureLibrary mLibrary;
+	private GestureOverlayView gestures;
+//	private SlidingPointerView slidingPointerView;
 	
 	private WebView webView;
 	private EditText urlField;
@@ -77,8 +90,13 @@ public class SlidePointerActivity extends Activity {
 					}
 					
 					if (event.getAction() == MotionEvent.ACTION_UP) {
-		                Toast.makeText(SlidePointerActivity.this, "SlidePointer: " + (slidePointerDelta > 10?"moved":"clicked"), Toast.LENGTH_SHORT).show();
-					}
+		                //Toast.makeText(SlidePointerActivity.this, "SlidePointer: " + (slidePointerDelta > 10?"moved":"clicked"), Toast.LENGTH_SHORT).show();
+		        		if (slidePointerDelta <= 10)
+		        		{
+		        			Toast.makeText(SlidePointerActivity.this, "Please draw a gesture now for: <selection>", Toast.LENGTH_SHORT).show();    	
+		        			gestures.setEnabled(true);
+		        		}
+		        	}
 					
 					if (event.getAction() == MotionEvent.ACTION_MOVE) {
 						webView.removeView(slidePointerView);
@@ -122,5 +140,29 @@ public class SlidePointerActivity extends Activity {
 				}
 			}
 		});
+		
+		mLibrary = GestureLibraries.fromRawResource(this, R.raw.gestures);
+		if (!mLibrary.load()) {
+			finish();
+		}
+		
+		gestures = (GestureOverlayView) findViewById(R.id.gestures);
+		gestures.addOnGesturePerformedListener(this);
+		gestures.setEnabled(false);
 	}
+	
+       public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
+               ArrayList<Prediction> predictions = mLibrary.recognize(gesture);
+               if (predictions.size() > 0) {
+                       if (predictions.get(0).score > 1.0) {
+                               String action = predictions.get(0).name;
+                               if ("S".equals(action)) {
+                                       Toast.makeText(this, "S gesture done", Toast.LENGTH_SHORT).show();
+                                       gestures.setEnabled(false);
+                                       showSlidePointer = true;
+                               }
+                       }
+               }
+	        }
+
 }
