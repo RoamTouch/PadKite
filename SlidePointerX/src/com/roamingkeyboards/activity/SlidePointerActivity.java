@@ -11,12 +11,17 @@ import android.gesture.GestureOverlayView;
 import android.gesture.Prediction;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
+import android.webkit.JsResult;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -31,6 +36,8 @@ import com.roamingkeyboards.domain.slide.strategy.TraslationSlideStrategyImpl;
 import com.roamingkeyboards.view.pointer.SlidePointerView;
 
 public class SlidePointerActivity extends Activity implements OnGesturePerformedListener {
+	
+	private Handler mHandler = new Handler();
 	
 	private GestureLibrary mLibrary;
 	private GestureOverlayView gestures;
@@ -52,7 +59,55 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 		webView.requestFocus();
 	}
 
+    private class GestureWebChromeClient extends WebChromeClient {
+        @Override
+        public boolean onJsAlert(WebView view, String url, String message,
+                        JsResult result) {
+                Log.i("Alert", message);
+                Toast.makeText(SlidePointerActivity.this, message, Toast.LENGTH_SHORT);
+                result.confirm();
+                return true;
+        }
+    }
+
+
 	private class GestureWebViewClient extends WebViewClient {
+ 
+		@Override
+        public void onPageFinished(WebView view, String url) {
+
+                final String snippet = "javascript:"
+                                + "function whereInWorld(x,y) {"
+                                	+ "var obj = { \"type\": null, \"content\": null };"
+                                	+ ""
+                                	+ "var elem = document.elementFromPoint(x,y);"
+                                	+ ""
+                                	+ "if (elem.tagName == \"IMG\")"
+                                		+ "obj = {\"type\": \"image\", \"content\": elem.src };"
+                                	+ "else if (elem.tagName == \"INPUT\")"
+                                		+ "obj = {\"type\": \"input\", \"content\": elem.value };"
+                                	+ "else if (elem.tagName == \"P\" || elem.tagName == \"DIV\")"
+                                	+ "{"
+                                		+ "var html = elem.innerHTML;"
+                                		+ "var newh = \"<span>\" + html.replace(/[ \\n]/g,\"</span> <span>\") + \"</span>\";"
+                                		+ "elem.innerHTML=newh;"
+                                		+ "var newElem = document.elementFromPoint(x,y);"
+                                		+ "obj.type=\"text\";" 
+                                		+ "obj.content = newElem.firstChild.wholeText;"
+                                		+ "elem.innerHTML=html;" 
+                                	+ "}"
+                                	+ "else"
+                                	+ "{"
+                                		+ "obj.type = elem.tagName;"
+                                		+ "obj.content = elem.firstChild.wholeText;"
+                                	+ "}"
+                                	+ "if (obj.content == undefined )"
+                                		+ "obj.content = \"Unrecognized contents\";"
+                               		+ "pBridge.type(obj.type, obj.content);"
+                                + "}";
+
+                view.loadUrl(snippet);
+        }
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -60,6 +115,17 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 			return true;
 		}
 	}
+	
+    public class ProxyBridge {
+
+        public void type(final String type, final String content) {
+        		
+        		final String prefix = "Please draw a 'S' gesture now for: ";
+                Toast.makeText(SlidePointerActivity.this, prefix + type + ":" + content,
+                                Toast.LENGTH_SHORT).show();
+                selection=content;
+        }
+    }
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -67,17 +133,25 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
+  	    ProxyBridge pBridge = new ProxyBridge();
+		
 		webView = (WebView) findViewById(R.id.webview);
+		
+		WebSettings wSet = webView.getSettings();
+        wSet.setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(pBridge, "pBridge");
+		
 		urlField = (EditText) findViewById(R.id.url);
 		goButton = (Button) findViewById(R.id.go_button);
 
 		webView.setWebViewClient(new GestureWebViewClient());
+        webView.setWebChromeClient(new GestureWebChromeClient());
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.loadUrl("http://www.google.com.ar");
 
 		webView.setOnTouchListener(new OnTouchListener(){
 
-			public boolean onTouch(View v, MotionEvent event) {
+			public boolean onTouch(final View v, final MotionEvent event) {
 								
 				if (showSlidePointer) {
 					final WebView webView = (WebView) v;
@@ -93,7 +167,13 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 		                //Toast.makeText(SlidePointerActivity.this, "SlidePointer: " + (slidePointerDelta > 10?"moved":"clicked"), Toast.LENGTH_SHORT).show();
 		        		if (slidePointerDelta <= 10)
 		        		{
-		        			Toast.makeText(SlidePointerActivity.this, "Please draw a 'S' gesture now for: <selection>", Toast.LENGTH_SHORT).show();    	
+		        			 mHandler.post(new Runnable() {
+                                 public void run() {
+                                    ((WebView)v).loadUrl("javascript:whereInWorld("+event.getX()+","+event.getY()+")");
+                                    //((WebView)v).loadUrl("javascript:pBridge.type(\"x\",\"y\");");
+                                 }
+		        			});
+		        			//Toast.makeText(SlidePointerActivity.this, "Please draw a 'S' gesture now for: <selection>", Toast.LENGTH_SHORT).show();    	
 		        			gestures.setEnabled(true);
 							webView.removeView(slidePointerView);
 							showSlidePointer = false;
