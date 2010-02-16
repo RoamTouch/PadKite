@@ -50,13 +50,34 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 	private SlidePointer slidePointer;
 	private Coordinates initialFingerCoordinates;
 	private boolean showSlidePointer = false;
+	private boolean showSlidePointer_lock = false;
+	private String selection = null;
 	private int slidePointerDelta = 0;
 	private Coordinates oldFingerCoordinates;
 	
+	private void updateMe()
+	{
+		if (showSlidePointer_lock)
+			goButton.setText("Draw S!");
+		else if (showSlidePointer)
+			goButton.setText("Hide Me!");
+		else
+			goButton.setText("Pick Me!");
+	}
+
+	private void updateGo()
+	{
+		if (urlField.getText().length() <= 6)
+			updateMe();
+		else
+			goButton.setText("Go!");
+	}
 	
 	private void openURL() {
 		webView.loadUrl(urlField.getText().toString());
 		webView.requestFocus();
+		urlField.setText("");
+		updateMe();
 	}
 
     private class GestureWebChromeClient extends WebChromeClient {
@@ -147,7 +168,8 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 		webView.setWebViewClient(new GestureWebViewClient());
         webView.setWebChromeClient(new GestureWebChromeClient());
 		webView.getSettings().setJavaScriptEnabled(true);
-		webView.loadUrl("http://www.google.com.ar");
+		webView.loadUrl("http://www.lionsad.de/Jose/");
+		updateMe();
 
 		webView.setOnTouchListener(new OnTouchListener(){
 
@@ -177,6 +199,8 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 		        			gestures.setEnabled(true);
 							webView.removeView(slidePointerView);
 							showSlidePointer = false;
+							showSlidePointer_lock = true;
+							updateGo();
 		        		}
 		        	}
 					
@@ -188,8 +212,12 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 						slidePointerDelta += Math.abs(deltaCoordinates.getX()) + Math.abs(deltaCoordinates.getY());
 						oldFingerCoordinates = Coordinates.make(event.getX(),event.getY());
 					}
+					return true;
 				}
-				return true;
+				if (showSlidePointer_lock)
+					return true;
+				
+				return false;
 			}
 
 		});
@@ -199,6 +227,15 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 		goButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View view) {
+
+				if (urlField.getText().toString().length() >= 6)
+				{	
+					openURL();
+				}
+				updateGo();
+				
+				if (showSlidePointer_lock)
+					return;
 				
 				if (!showSlidePointer) {
 					initialFingerCoordinates = Coordinates.make(webView.getMeasuredWidth()/2,webView.getMeasuredHeight()/2);
@@ -209,11 +246,15 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 					webView.removeView(slidePointerView);
 				}
 				showSlidePointer = !showSlidePointer;
+				updateGo();
 			}
 		});
 
 		urlField.setOnKeyListener(new OnKeyListener() {
 			public boolean onKey(View view, int keyCode, KeyEvent event) {
+
+				updateGo();
+				
 				if (keyCode == KeyEvent.KEYCODE_ENTER) {
 					openURL();
 					return true;
@@ -246,9 +287,17 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
                    					   slidePointer.setSlideStrategy(new AbsoluteSlideStrategyImpl());
                    					   slidePointerView = new SlidePointerView(getParent(),slidePointer,initialFingerCoordinates);
                    					   webView.addView(slidePointerView);
+                   					   showSlidePointer_lock = false;
+                   					   urlField.setText("http://www.google.com/?q=" + selection);
+                   					   updateGo();
                                }
+                               else                                                                          
+                            	   Toast.makeText(this, "Unrecognized gesture. Please draw a 'S'.", Toast.LENGTH_SHORT);
                        }
+                       else                                                                          
+                    	   Toast.makeText(this, "Unrecognized gesture. Please draw a 'S'.", Toast.LENGTH_SHORT);
                }
-	        }
-
+               else                                                                          
+            	   Toast.makeText(this, "Unrecognized gesture. Please draw a 'S'.", Toast.LENGTH_SHORT);
+       }
 }
