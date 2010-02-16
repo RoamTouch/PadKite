@@ -93,8 +93,10 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 		                //Toast.makeText(SlidePointerActivity.this, "SlidePointer: " + (slidePointerDelta > 10?"moved":"clicked"), Toast.LENGTH_SHORT).show();
 		        		if (slidePointerDelta <= 10)
 		        		{
-		        			Toast.makeText(SlidePointerActivity.this, "Please draw a gesture now for: <selection>", Toast.LENGTH_SHORT).show();    	
+		        			Toast.makeText(SlidePointerActivity.this, "Please draw a 'S' gesture now for: <selection>", Toast.LENGTH_SHORT).show();    	
 		        			gestures.setEnabled(true);
+							webView.removeView(slidePointerView);
+							showSlidePointer = false;
 		        		}
 		        	}
 					
@@ -160,6 +162,10 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
                                        Toast.makeText(this, "S gesture done", Toast.LENGTH_SHORT).show();
                                        gestures.setEnabled(false);
                                        showSlidePointer = true;
+                                       initialFingerCoordinates = Coordinates.make(webView.getMeasuredWidth()/2,webView.getMeasuredHeight()/2);
+                   					   slidePointer.setSlideStrategy(new AbsoluteSlideStrategyImpl());
+                   					   slidePointerView = new SlidePointerView(getParent(),slidePointer,initialFingerCoordinates);
+                   					   webView.addView(slidePointerView);
                                }
                        }
                }
