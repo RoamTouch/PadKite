@@ -30,12 +30,6 @@ import com.roamtouch.domain.slide.strategy.TraslationSlidingStrategy;
  */
 public class SlidingPointerView extends LinearLayout {
 
-	@Override
-	public boolean dispatchKeyEvent(KeyEvent event) {
-		Log.i("FUCKING KEY",String.valueOf(event.getKeyCode()));
-		return true;
-	}
-
 	private TextView url;
 	
 	private Button go;
@@ -139,8 +133,12 @@ public class SlidingPointerView extends LinearLayout {
 		
 		drawTransparentRect(canvas);
 		
+		float left = slidingPointer.getXCoordinate();
+		float top = slidingPointer.getYCoordinate();
+		float right = slidingPointer.getXCoordinate()+10;
+		float bottom = slidingPointer.getYCoordinate()+10;
 		if (showPointer) {
-			canvas.drawPoint(slidingPointer.getXCoordinate(),slidingPointer.getYCoordinate(), pointerPaint);
+			canvas.drawRect(left, top, right, bottom, pointerPaint);
 		}
 		
 		super.dispatchDraw(canvas);
