@@ -218,8 +218,6 @@ public class SlidingPointerActivity extends Activity implements
 				String action = predictions.get(0).name;
 				Log.i("GESTURE", action);
 				if ("S".equals(action)) {
-					Toast.makeText(this, "S gesture done", Toast.LENGTH_SHORT)
-							.show();
 					gestures.setEnabled(false);
 					slidingPointerView.setShowPointer(true);
 				}
