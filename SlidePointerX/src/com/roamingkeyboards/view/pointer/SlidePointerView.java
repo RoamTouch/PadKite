@@ -45,7 +45,11 @@ public class SlidePointerView extends View {
 		super.onDraw(canvas);
 
 		slidePointer.updateCoordinates(fingerCoordinates);
-		canvas.drawCircle(slidePointer.getXCoordinate(), slidePointer.getYCoordinate(), 10, mBorderPaint);
-		canvas.drawCircle(slidePointer.getXCoordinate(), slidePointer.getYCoordinate(), 10, mInnerPaint);
+
+		float left = slidePointer.getXCoordinate();
+		float top = slidePointer.getYCoordinate();
+		float right = slidePointer.getXCoordinate()+10;
+		float bottom = slidePointer.getYCoordinate()+10;
+		canvas.drawRect(left, top, right, bottom, mInnerPaint);
 	}
 }
