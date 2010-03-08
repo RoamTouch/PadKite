@@ -27,7 +27,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.roamingkeyboards.domain.slide.pointer.SlidePointer;
@@ -178,39 +177,7 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 		webView.setOnKeyListener(new OnKeyListener() {
 			public boolean onKey(View view, int keyCode, KeyEvent event) {
 
-				if (keyCode == KeyEvent.KEYCODE_MENU && showSlidePointer == true) {
-				/*	if (event.getAction() == KeyEvent.ACTION_DOWN && selectionState == false) {
-						selectionState = !selectionState;
-						// Add shift key
-						webView.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
-						Toast.makeText(SlidePointerActivity.this, "Please select a text.", Toast.LENGTH_SHORT).show();    	
-					}
-					else if (event.getAction() == KeyEvent.ACTION_UP)
-					{
-						selectionState = false;
-						webView.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
-						Toast.makeText(SlidePointerActivity.this, "Thank you.", Toast.LENGTH_SHORT).show();    							
-					}*/
-					
-					// For emulator use press + release, press+release to toggle modes
-					if (event.getAction() == KeyEvent.ACTION_DOWN)
-						selectionState = !selectionState;
-				
-					if (selectionState) {
-						// Add shift key
-						webView.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
-						Toast.makeText(SlidePointerActivity.this, "Please select a text.", Toast.LENGTH_SHORT).show();    	
-					}
-					else
-					{
-						webView.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
-						Toast.makeText(SlidePointerActivity.this, "Thank you.", Toast.LENGTH_SHORT).show();    							
-					}
-					return true;
-				} else {
-					//Toast.makeText(SlidePointerActivity.this, "Key down", Toast.LENGTH_SHORT).show();    	
-					return false;
-				}
+				return false;
 			}
 		});
 		
@@ -286,16 +253,25 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 					else if (event.getAction() == MotionEvent.ACTION_UP) {
 						selectionState = false;
 						webView.onTouchEvent(event);
-                        selection = (String) ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).getText();
+						
+	        			mHandler.post(new Runnable() {
+                             public void run() {
+                            	 try {
+									Thread.sleep(50);
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+                                 selection = (String) ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).getText();
+                                 Toast.makeText(SlidePointerActivity.this, "Please draw a 'S' gesture now for: " + selection, Toast.LENGTH_SHORT).show();    	
+                             }
+	        			});
                         
-                        if (selection != "" && selection != null) {
-                        	Toast.makeText(SlidePointerActivity.this, "Please draw a 'S' gesture now for: " + selection, Toast.LENGTH_SHORT).show();    	
-                        	gestures.setEnabled(true);
-                        	webView.removeView(slidePointerView);
-                        	showSlidePointer = false;
-                        	showSlidePointer_lock = true;
-                        	updateMe();
-                        }
+                        gestures.setEnabled(true);
+                        webView.removeView(slidePointerView);
+                        showSlidePointer = false;
+                        showSlidePointer_lock = true;
+                        updateMe();
 						return true;
 					}
 					return false;
@@ -338,6 +314,39 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 		urlField.setOnKeyListener(new OnKeyListener() {
 			public boolean onKey(View view, int keyCode, KeyEvent event) {
 
+				if (keyCode == KeyEvent.KEYCODE_MENU && showSlidePointer == true) {
+					/*	if (event.getAction() == KeyEvent.ACTION_DOWN && selectionState == false) {
+							selectionState = !selectionState;
+							// Add shift key
+							webView.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
+							Toast.makeText(SlidePointerActivity.this, "Please select a text.", Toast.LENGTH_SHORT).show();    	
+						}
+						else if (event.getAction() == KeyEvent.ACTION_UP)
+						{
+							selectionState = false;
+							webView.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
+							Toast.makeText(SlidePointerActivity.this, "Thank you.", Toast.LENGTH_SHORT).show();    							
+						}*/
+						
+						// For emulator use press + release, press+release to toggle modes
+						if (event.getAction() == KeyEvent.ACTION_DOWN)
+							selectionState = !selectionState;
+					
+						if (selectionState) {
+							// Add shift key
+							webView.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
+							Toast.makeText(SlidePointerActivity.this, "Please select a text.", Toast.LENGTH_SHORT).show();    	
+						}
+						else
+						{
+							webView.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
+							Toast.makeText(SlidePointerActivity.this, "Thank you.", Toast.LENGTH_SHORT).show();    							
+						}
+						return true;
+					} else {
+						//Toast.makeText(SlidePointerActivity.this, "Key down", Toast.LENGTH_SHORT).show();    	
+				}
+				
 				updateGo();
 				
 				if (keyCode == KeyEvent.KEYCODE_ENTER) {
