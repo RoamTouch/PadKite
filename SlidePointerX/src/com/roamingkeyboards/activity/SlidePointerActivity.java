@@ -264,14 +264,14 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 								}
                                  selection = (String) ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).getText();
                                  Toast.makeText(SlidePointerActivity.this, "Please draw a 'S' gesture now for: " + selection, Toast.LENGTH_SHORT).show();    	
+                                 gestures.setEnabled(true);
+                                 webView.removeView(slidePointerView);
+                                 showSlidePointer = false;
+                                 showSlidePointer_lock = true;
+                                 updateMe();
                              }
 	        			});
-                        
-                        gestures.setEnabled(true);
-                        webView.removeView(slidePointerView);
-                        showSlidePointer = false;
-                        showSlidePointer_lock = true;
-                        updateMe();
+
 						return true;
 					}
 					return false;
