@@ -55,6 +55,9 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 	private String selection = null;
 	private int slidePointerDelta = 0;
 	private boolean selectionState = false;
+	private boolean slidePointerIsDown = false;
+	private boolean slidePointerDoDown = false;
+	private boolean slidePointerDoUp = false;
 	
 	private Coordinates oldFingerCoordinates;
 	
@@ -193,9 +196,11 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 						slidePointer.setSlideStrategy(new TraslationSlideStrategyImpl(currentFingerCoordinates));
 						slidePointerDelta = 0;
 						oldFingerCoordinates = Coordinates.make(event.getX(),event.getY());
+						slidePointerIsDown = true;
 					}
 					
 					if (event.getAction() == MotionEvent.ACTION_UP) {
+						slidePointerIsDown = false;
 		                //Toast.makeText(SlidePointerActivity.this, "SlidePointer: " + (slidePointerDelta > 10?"moved":"clicked"), Toast.LENGTH_SHORT).show();
 		        		if (slidePointerDelta <= 10 && selectionState == false)
 		        		{
@@ -234,6 +239,18 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 				if (selectionState)
 				{
 					final Coordinates currentFingerCoordinates = Coordinates.make(event.getX(),event.getY());
+				
+					if (slidePointerDoDown == true) {
+                        Toast.makeText(SlidePointerActivity.this, "Emulating down event: ", Toast.LENGTH_SHORT).show();    	
+						event.setAction(MotionEvent.ACTION_DOWN);
+						slidePointerDoDown = false;
+					}
+					
+					if (slidePointerDoUp == true) {
+                        Toast.makeText(SlidePointerActivity.this, "Emulating up event: ", Toast.LENGTH_SHORT).show();    	
+						event.setAction(MotionEvent.ACTION_UP);
+						slidePointerDoUp = false;
+					}
 					
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
 						slidePointer.setSlideStrategy(new TraslationSlideStrategyImpl(currentFingerCoordinates));
@@ -345,6 +362,25 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 						return true;
 					} else {
 						//Toast.makeText(SlidePointerActivity.this, "Key down", Toast.LENGTH_SHORT).show();    	
+				}
+				if (keyCode == KeyEvent.KEYCODE_SPACE) {
+					if (event.getAction() == KeyEvent.ACTION_DOWN  && showSlidePointer == true && selectionState == false) {
+						// Add shift key
+						selectionState = true;
+						webView.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
+						Toast.makeText(SlidePointerActivity.this, "Please select a text (2).", Toast.LENGTH_SHORT).show();    	
+						if (slidePointerIsDown == true)
+							slidePointerDoDown = true;
+					}
+					else if (event.getAction() == KeyEvent.ACTION_UP  && showSlidePointer == true && selectionState == true)
+					{
+						//selectionState = false;
+						webView.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
+						Toast.makeText(SlidePointerActivity.this, "Thank you.", Toast.LENGTH_SHORT).show();    							
+						if (slidePointerIsDown == true)
+							slidePointerDoUp = true;
+					}
+					return true;
 				}
 				
 				updateGo();
