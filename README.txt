@@ -9,3 +9,6 @@ Jorge's overlay work with "S" gesture.
 
 HitTestDemo
 Changes the cursor image according to content.
+
+JorgeFC
+Floating cursor overlay layer, implemented like GestureOverlayView. See Readme Note inside.
