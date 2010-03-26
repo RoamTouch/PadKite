@@ -1,0 +1,7 @@
+Features
+
+25/03/2010
+
++FloatingCursorOverlay.java implemented taken into account GestureOverlayView.java
++Cursor changes its image when floating over different elements
+
