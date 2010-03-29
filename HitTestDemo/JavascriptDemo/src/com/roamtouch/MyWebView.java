@@ -15,6 +15,8 @@ public class MyWebView extends WebView {
 	private Paint pointerPaint;
 
 	public float cx = 10.0f, cy = 10.0f;
+	public float fx = 10.0f, fy = 10.0f;  // f for finger
+	public float oldFx = 10.0f, oldFy = 10.0f;  // F for finger
 
 	private int mHitTestResult;
 
@@ -76,10 +78,10 @@ public class MyWebView extends WebView {
 
 		mHitTestResult = getHitTestResult().getType();
 
-		Log.i("hitTestResult", String.valueOf(mHitTestResult));
-
-		cx = event.getX();
-		cy = event.getY();
+//		Log.i("hitTestResult", String.valueOf(mHitTestResult));
+//
+//		cx = event.getX();
+//		cy = event.getY();
 		if (event.getAction() == MotionEvent.ACTION_MOVE) {
 			event.setAction(MotionEvent.ACTION_DOWN);
 			invalidate();
@@ -92,5 +94,36 @@ public class MyWebView extends WebView {
 		super(context, attrs);
 		makePaints();
 	}
+	
+	public void updateCoordinates(MotionEvent event, float fx, float fy){	
+
+		float deltaFy = (fy - oldFy);
+		float deltaFx = (fx - oldFx);
+		
+		Log.i("Delta", "("+ deltaFx +","+ deltaFy +")");
+		
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+            	//we need to set oldF to this location, and ignore the change
+        		Log.i("Event", "Down");    
+                invalidate();        		
+                break;
+            case MotionEvent.ACTION_MOVE:
+    			cy = cy + deltaFy;
+    			cx = cx + deltaFx;		
+    			event.setLocation(cx, cy);			
+    			invalidate();
+        		Log.i("Event", "Move");           	
+                break;
+            case MotionEvent.ACTION_UP:
+                invalidate();
+        		Log.i("Event", "Up");	                
+                break;
+        }		
+        
+    	oldFx = fx;
+    	oldFy = fy;
+        	
+	}	
 
 }

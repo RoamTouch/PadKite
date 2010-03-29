@@ -81,19 +81,21 @@ public class JSWebView extends Activity {
 			@Override
 			public boolean onTouch(final View v, final MotionEvent event) {
 				
-				((MyWebView)v).cx = event.getX();
-				((MyWebView)v).cy = event.getY();
-				if (event.getAction() == MotionEvent.ACTION_MOVE) {
-					event.setAction(MotionEvent.ACTION_DOWN);
-					Log.i("ONTOUCH",String.valueOf(((MyWebView)v).getHitTestResult().getType()));
-					Log.i("ONTOUCH",String.valueOf(((MyWebView)v).getHitTestResult().getExtra()));
+				((MyWebView)v).updateCoordinates(event, event.getX(), event.getY());
+				
+//				((MyWebView)v).cx = event.getX();
+//				((MyWebView)v).cy = event.getY();
+//				if (event.getAction() == MotionEvent.ACTION_MOVE) {
+//					event.setAction(MotionEvent.ACTION_DOWN);
+//					Log.i("ONTOUCH",String.valueOf(((MyWebView)v).getHitTestResult().getType()));
+//					Log.i("ONTOUCH",String.valueOf(((MyWebView)v).getHitTestResult().getExtra()));
 //					 mHandler.post(new Runnable() {
 //			                public void run() {
 //								((WebView)v).loadUrl("javascript:whereInWorld("+event.getX()+","+event.getY()+")");
 //			                }
 //			            });
-					v.invalidate();
-				}
+//					v.invalidate();
+//				}
 				
 				return false;
 			}});
