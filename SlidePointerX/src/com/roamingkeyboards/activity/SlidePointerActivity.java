@@ -4,12 +4,14 @@ import java.util.ArrayList;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.gesture.Gesture;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.gesture.GestureOverlayView;
 import android.gesture.Prediction;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.ClipboardManager;
@@ -147,7 +149,7 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 
         public void type(final String type, final String content) {
         		
-        		final String prefix = "Please draw a 'S' gesture now for: ";
+        		final String prefix = "Please draw 'S' or 'e' gesture now for: ";
                 Toast.makeText(SlidePointerActivity.this, prefix + type + ":" + content,
                                 Toast.LENGTH_SHORT).show();
                 selection=content;
@@ -280,7 +282,7 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 									e.printStackTrace();
 								}
                                  selection = (String) ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).getText();
-                                 Toast.makeText(SlidePointerActivity.this, "Please draw a 'S' gesture now for: " + selection, Toast.LENGTH_SHORT).show();    	
+                                 Toast.makeText(SlidePointerActivity.this, "Please draw 'S' or 'e' gesture now for: " + selection, Toast.LENGTH_SHORT).show();    	
                                  gestures.setEnabled(true);
                                  webView.removeView(slidePointerView);
                                  showSlidePointer = false;
@@ -421,14 +423,36 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
                    					   urlField.setText("http://www.google.com/?q=" + selection);
                    					   selection=null;
                    					   updateGo();
-                               }
-                               else                                                                          
-                            	   Toast.makeText(this, "Unrecognized gesture. Please draw a 'S'.", Toast.LENGTH_SHORT);
+                               } else if ("e".equals(action)) {
+                                   Toast.makeText(this, "e gesture done", Toast.LENGTH_SHORT).show();
+                                   gestures.setEnabled(false);
+                                   showSlidePointer = true;
+                                   initialFingerCoordinates = Coordinates.make(webView.getMeasuredWidth()/2,webView.getMeasuredHeight()/2);
+               					   slidePointer.setSlideStrategy(new AbsoluteSlideStrategyImpl());
+               					   slidePointerView = new SlidePointerView(getParent(),slidePointer,initialFingerCoordinates);
+               					   webView.addView(slidePointerView);
+               					   showSlidePointer_lock = false;
+               					   
+               					   // Here we need to fire the intent to write an email with the content just pasted
+               					   
+               					   //  This will not work in the emulator, because the emulator does not have gmail. 
+	               				   Intent intent = new Intent(Intent.ACTION_SENDTO);
+	               	               intent.setData(Uri.parse("mailto:"));
+	               	               intent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+	               	               intent.putExtra(Intent.EXTRA_TEXT, selection);
+	               	               intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	               	               startActivity(intent); 
+               	                
+//               					   urlField.setText("http://www.google.com/?q=" + selection);
+//               					   selection=null;
+//               					   updateGo();
+                               } else                                                                          
+                            	   Toast.makeText(this, "Unrecognized gesture. Please draw 'S' or 'e'.", Toast.LENGTH_SHORT);
                        }
                        else                                                                          
-                    	   Toast.makeText(this, "Unrecognized gesture. Please draw a 'S'.", Toast.LENGTH_SHORT);
+                    	   Toast.makeText(this, "Unrecognized gesture. Please draw 'S' or 'e'.", Toast.LENGTH_SHORT);
                }
                else                                                                          
-            	   Toast.makeText(this, "Unrecognized gesture. Please draw a 'S'.", Toast.LENGTH_SHORT);
+            	   Toast.makeText(this, "Unrecognized gesture. Please draw a 'S' or 'e'.", Toast.LENGTH_SHORT);
        }
 }
