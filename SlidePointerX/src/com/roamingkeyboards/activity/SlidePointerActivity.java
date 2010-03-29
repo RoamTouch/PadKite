@@ -420,9 +420,10 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
                    					   slidePointerView = new SlidePointerView(getParent(),slidePointer,initialFingerCoordinates);
                    					   webView.addView(slidePointerView);
                    					   showSlidePointer_lock = false;
-                   					   urlField.setText("http://www.google.com/?q=" + selection);
+                   					   urlField.setText("http://www.google.com/?q=" + selection);                   					   
                    					   selection=null;
                    					   updateGo();
+                   					   openURL();
                                } else if ("e".equals(action)) {
                                    Toast.makeText(this, "e gesture done", Toast.LENGTH_SHORT).show();
                                    gestures.setEnabled(false);
@@ -444,8 +445,8 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 	               	               startActivity(intent); 
                	                
 //               					   urlField.setText("http://www.google.com/?q=" + selection);
-//               					   selection=null;
-//               					   updateGo();
+               					   selection=null;
+               					   updateGo();
                                } else                                                                          
                             	   Toast.makeText(this, "Unrecognized gesture. Please draw 'S' or 'e'.", Toast.LENGTH_SHORT);
                        }
