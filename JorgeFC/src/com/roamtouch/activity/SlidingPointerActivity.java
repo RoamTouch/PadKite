@@ -76,15 +76,6 @@ public class SlidingPointerActivity extends Activity {
 			}
 		});
 		
-		cursor.setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(final View v, final MotionEvent event) {
-				Log.i("IMAGE", "IMAGE");
-				return false;
-			}
-		});
-		
 		drawing = (FloatingCursorOverlayView) findViewById(R.id.drawing);
 		webView.setDrawing(drawing);
 		url.setDrawing(drawing);

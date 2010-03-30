@@ -25,7 +25,7 @@ public class UrlView extends EditText {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		drawing.setCursorImage(R.drawable.icon);
+		drawing.setCursorImage(R.drawable.address_bar_cursor);
 		return super.onTouchEvent(event);
 	}
 }
