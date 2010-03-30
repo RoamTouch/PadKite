@@ -5,3 +5,10 @@ Features
 +FloatingCursorOverlay.java implemented taken into account GestureOverlayView.java
 +Cursor changes its image when floating over different elements
 
+29/03/2010
++Added address bar link custom cursor
++Added CarouslActivity.java and ImageAdapter.java
++Missing integration with app, however it is easy, just configure the AndroidManifiest.xml
+to run CarouselActivy.java and uncomment main.xml
+TODO: add an intent to run this activity us part of the demo
+ 
