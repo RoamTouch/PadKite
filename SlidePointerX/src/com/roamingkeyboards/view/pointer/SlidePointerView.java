@@ -46,10 +46,10 @@ public class SlidePointerView extends View {
 
 		slidePointer.updateCoordinates(fingerCoordinates);
 
-		float left = slidePointer.getXCoordinate();
-		float top = slidePointer.getYCoordinate();
-		float right = slidePointer.getXCoordinate()+10;
-		float bottom = slidePointer.getYCoordinate()+10;
-		canvas.drawRect(left, top, right, bottom, mInnerPaint);
+//		float left = slidePointer.getXCoordinate();
+//		float top = slidePointer.getYCoordinate();
+//		float right = slidePointer.getXCoordinate()+10;
+//		float bottom = slidePointer.getYCoordinate()+10;
+//		canvas.drawRect(left, top, right, bottom, mInnerPaint);
 	}
 }

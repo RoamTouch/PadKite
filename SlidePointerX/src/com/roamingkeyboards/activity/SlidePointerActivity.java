@@ -37,6 +37,7 @@ import com.roamingkeyboards.domain.slide.position.Coordinates;
 import com.roamingkeyboards.domain.slide.strategy.AbsoluteSlideStrategyImpl;
 import com.roamingkeyboards.domain.slide.strategy.TraslationSlideStrategyImpl;
 import com.roamingkeyboards.view.pointer.SlidePointerView;
+import com.roamingkeyboards.view.pointer.PointerWebView;
 
 public class SlidePointerActivity extends Activity implements OnGesturePerformedListener {
 	
@@ -46,7 +47,7 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 	private GestureOverlayView gestures;
 //	private SlidingPointerView slidingPointerView;
 	
-	private WebView webView;
+	private PointerWebView webView;
 	private EditText urlField;
 	private Button goButton;
 	private SlidePointerView slidePointerView;
@@ -164,7 +165,7 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 		
   	    ProxyBridge pBridge = new ProxyBridge();
 		
-		webView = (WebView) findViewById(R.id.webview);
+		webView = (PointerWebView) findViewById(R.id.webview);
 		
 		WebSettings wSet = webView.getSettings();
         wSet.setJavaScriptEnabled(true);
@@ -176,7 +177,8 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 		webView.setWebViewClient(new GestureWebViewClient());
         webView.setWebChromeClient(new GestureWebChromeClient());
 		webView.getSettings().setJavaScriptEnabled(true);
-		webView.loadUrl("http://www.lionsad.de/Jose/");
+//		webView.loadUrl("http://www.lionsad.de/Jose/");
+		webView.loadUrl("http://news.google.com");		
 		updateMe();
 
 		webView.setOnKeyListener(new OnKeyListener() {
@@ -191,7 +193,7 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 			public boolean onTouch(final View v, final MotionEvent event) {
 								
 				if (showSlidePointer && selectionState == false) {
-					final WebView webView = (WebView) v;
+					final PointerWebView webView = (PointerWebView) v;
 					final Coordinates currentFingerCoordinates = Coordinates.make(event.getX(),event.getY());
 	
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -230,6 +232,10 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 						final Coordinates deltaCoordinates = oldFingerCoordinates.sub(currentFingerCoordinates);
 						slidePointerDelta += Math.abs(deltaCoordinates.getX()) + Math.abs(deltaCoordinates.getY());
 						oldFingerCoordinates = Coordinates.make(event.getX(),event.getY());
+						
+						webView.updateCoordinates(event, slidePointer.getXCoordinate(), slidePointer.getYCoordinate());
+						
+						return false;
 					}
 					return true;
 				}
@@ -241,13 +247,13 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 				if (selectionState)
 				{
 					final Coordinates currentFingerCoordinates = Coordinates.make(event.getX(),event.getY());
-				
+					
 					if (slidePointerDoDown == true) {
                         Toast.makeText(SlidePointerActivity.this, "Emulating down event: ", Toast.LENGTH_SHORT).show();    	
 						event.setAction(MotionEvent.ACTION_DOWN);
 						slidePointerDoDown = false;
 					}
-					
+					 
 					if (slidePointerDoUp == true) {
                         Toast.makeText(SlidePointerActivity.this, "Emulating up event: ", Toast.LENGTH_SHORT).show();    	
 						event.setAction(MotionEvent.ACTION_UP);
@@ -258,6 +264,8 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 						slidePointer.setSlideStrategy(new TraslationSlideStrategyImpl(currentFingerCoordinates));
 						slidePointerDelta = 0;
 						oldFingerCoordinates = Coordinates.make(event.getX(),event.getY());
+
+						webView.updateCoordinates(event, slidePointer.getXCoordinate(), slidePointer.getYCoordinate());
 						
 						event.setLocation(slidePointer.getXCoordinate(), slidePointer.getYCoordinate());
 					}
@@ -268,6 +276,8 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 						webView.addView(slidePointerView);
 						
 						event.setLocation(slidePointer.getXCoordinate(), slidePointer.getYCoordinate());
+						webView.updateCoordinates(event, slidePointer.getXCoordinate(), slidePointer.getYCoordinate());
+					
 					}
 					else if (event.getAction() == MotionEvent.ACTION_UP) {
 						selectionState = false;
@@ -291,6 +301,9 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
                              }
 	        			});
 
+	        			webView.toggleSelectingText();
+						webView.toggleCursorVisibility();
+	        			
 						return true;
 					}
 					return false;
@@ -321,9 +334,14 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 					initialFingerCoordinates = Coordinates.make(webView.getMeasuredWidth()/2,webView.getMeasuredHeight()/2);
 					slidePointer.setSlideStrategy(new AbsoluteSlideStrategyImpl());
 					slidePointerView = new SlidePointerView(getParent(),slidePointer,initialFingerCoordinates);
-					webView.addView(slidePointerView);
+					
+					//Activating floating cursor					
+					//webView.addView(slidePointerView);	
+					webView.toggleCursorVisibility();
 				} else {
-					webView.removeView(slidePointerView);
+					//De-activating floating cursor					
+					//webView.removeView(slidePointerView);
+					webView.toggleCursorVisibility();
 				}
 				showSlidePointer = !showSlidePointer;
 				updateGo();
@@ -349,7 +367,10 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 						
 						// For emulator use press + release, press+release to toggle modes
 						if (event.getAction() == KeyEvent.ACTION_DOWN)
+						{
 							selectionState = !selectionState;
+							webView.toggleSelectingText();							
+						}
 					
 						if (selectionState) {
 							// Add shift key
@@ -369,6 +390,7 @@ public class SlidePointerActivity extends Activity implements OnGesturePerformed
 					if (event.getAction() == KeyEvent.ACTION_DOWN  && showSlidePointer == true && selectionState == false) {
 						// Add shift key
 						selectionState = true;
+						webView.toggleSelectingText();
 						webView.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
 						Toast.makeText(SlidePointerActivity.this, "Please select a text (2).", Toast.LENGTH_SHORT).show();    	
 						if (slidePointerIsDown == true)
