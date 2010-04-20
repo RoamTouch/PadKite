@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Slide Pointer</string>
-    <string name="app_name">SlidePointer</string>
+    <string name="hello">Swiftee Browser</string>
+    <string name="app_name">Swiftee Browser</string>
 <string name="go_button">Go!</string>
 </resources>

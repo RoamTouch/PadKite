@@ -78,7 +78,6 @@ public class JSWebView extends Activity {
 		wView.loadUrl("http://www.google.com.ar");
 		wView.setOnTouchListener(new OnTouchListener(){
 
-			@Override
 			public boolean onTouch(final View v, final MotionEvent event) {
 				
 				((MyWebView)v).updateCoordinates(event, event.getX(), event.getY());
