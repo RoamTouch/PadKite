@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.FloatMath;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
@@ -18,6 +19,7 @@ public class FloatingCursorOverlayView extends FrameLayout {
 	 * Cursor paint
 	 */
 	private Paint pointerPaint;
+	private Paint circlePaint;
 	
 	/**
 	 * Initial cursor coordinates
@@ -34,6 +36,10 @@ public class FloatingCursorOverlayView extends FrameLayout {
 	 */
 	private boolean cursorEnabled;
 	
+	final static int radius = 30;
+	final static int radiusSquare = radius * radius;  //radius square
+	
+	
 	/**
 	 * Initialize the cursor paint
 	 */
@@ -42,6 +48,13 @@ public class FloatingCursorOverlayView extends FrameLayout {
 		pointerPaint.setARGB(255, 75, 75, 75);
 		pointerPaint.setAntiAlias(true);
 		pointerPaint.setStrokeWidth(2.0f);
+
+		circlePaint = new Paint();
+		circlePaint.setARGB(150, 75, 75, 75);
+		circlePaint.setAntiAlias(true);
+		circlePaint.setStrokeWidth(2.0f);
+
+		
 	}
 
 	public FloatingCursorOverlayView(Context context) {
@@ -71,13 +84,16 @@ public class FloatingCursorOverlayView extends FrameLayout {
 		
 		if (isCursorEnabled()) {
 			
-			invalidate();
-			
-			if (isActionMove) {
-				updateFloatingCursorCoordinates(event);
-				fakeActionDown(event);
+			if (spacing(event)<=radiusSquare){
+				
+				invalidate();
+				
+				if (isActionMove) {
+					updateFloatingCursorCoordinates(event);
+					fakeActionDown(event);
+				}
+				
 			}
-
 			return isActionMove ? dontScrollView : super.dispatchTouchEvent(event);
 		}
 
@@ -115,6 +131,7 @@ public class FloatingCursorOverlayView extends FrameLayout {
 		
 		if (isCursorEnabled()) {
 			final Bitmap mBitmap = BitmapFactory.decodeResource(getContext().getResources(), cursorImage);
+			canvas.drawCircle(cursorx, cursory, radius, circlePaint);
 			canvas.drawBitmap(mBitmap, cursorx, cursory, pointerPaint);
 		}
 	}
@@ -148,6 +165,10 @@ public class FloatingCursorOverlayView extends FrameLayout {
 		this.cursorImage = cursorImage;
 	}
 	
-	
+	private int spacing(MotionEvent event) {
+		   int x = (int) (event.getX() - cursorx);
+		   int y = (int) (event.getY() - cursory);
+		   return (x * x + y * y);
+	}
 
 }

@@ -37,39 +37,40 @@ public class MyWebView extends WebView {
 			Log.i("hitTestResult", String.valueOf(mHitTestResult));
 			Log.i("MyWebView - MotionEvent(event,x,y)","("+String.valueOf(event.getAction())+","+String.valueOf(event.getX()) +","+ String.valueOf(event.getY())+")");
 
-		switch (mHitTestResult) {
-
-			case HitTestResult.ANCHOR_TYPE: {
-				noTargetCursor = R.drawable.link_cursor;
-				Log.i("hitTestResult", "ANCHOR_TYPE");
-				break;
-			}
-			
-			case HitTestResult.SRC_ANCHOR_TYPE: {
-				noTargetCursor = R.drawable.link_cursor;
-				Log.i("hitTestResult", "SRC_ANCHOR_TYPE");
-				break;
-			}
+			switch (mHitTestResult) {
 	
-			case HitTestResult.IMAGE_ANCHOR_TYPE: {
-				noTargetCursor = R.drawable.image_cursor;
-				Log.i("hitTestResult", "IMAGE_ANCHOR_TYPE");
-				break;
-			}
-	
-			case HitTestResult.IMAGE_TYPE: {
-				noTargetCursor = R.drawable.image_cursor;
-				Log.i("hitTestResult", "IMAGE_TYPE");
-				break;
-			}
-			default: {
-				Log.i("DESCONOCIDO",String.valueOf(mHitTestResult));
-				noTargetCursor = R.drawable.no_target_cursor;
-				break;
+				case HitTestResult.ANCHOR_TYPE: {
+					noTargetCursor = R.drawable.link_cursor;
+					Log.i("hitTestResult", "ANCHOR_TYPE");
+					break;
+				}
+				
+				case HitTestResult.SRC_ANCHOR_TYPE: {
+					noTargetCursor = R.drawable.link_cursor;
+					Log.i("hitTestResult", "SRC_ANCHOR_TYPE");
+					break;
+				}
+		
+				case HitTestResult.IMAGE_ANCHOR_TYPE: {
+					noTargetCursor = R.drawable.image_cursor;
+					Log.i("hitTestResult", "IMAGE_ANCHOR_TYPE");
+					break;
+				}
+		
+				case HitTestResult.IMAGE_TYPE: {
+					noTargetCursor = R.drawable.image_cursor;
+					Log.i("hitTestResult", "IMAGE_TYPE");
+					break;
+				}
+				default: {
+					Log.i("DESCONOCIDO",String.valueOf(mHitTestResult));
+					noTargetCursor = R.drawable.no_target_cursor;
+					break;
+				}
 			}
 		}
-		}
-			drawing.setCursorImage(noTargetCursor);
-			return super.onTouchEvent(event);
+		
+		drawing.setCursorImage(noTargetCursor);
+		return super.onTouchEvent(event);
 	}
 }
