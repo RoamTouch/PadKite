@@ -50,7 +50,7 @@ public class FloatingCursorOverlayView extends FrameLayout {
 		pointerPaint.setStrokeWidth(2.0f);
 
 		circlePaint = new Paint();
-		circlePaint.setARGB(150, 75, 75, 75);
+		circlePaint.setARGB(100, 75, 75, 75);
 		circlePaint.setAntiAlias(true);
 		circlePaint.setStrokeWidth(2.0f);
 
@@ -132,7 +132,11 @@ public class FloatingCursorOverlayView extends FrameLayout {
 		if (isCursorEnabled()) {
 			final Bitmap mBitmap = BitmapFactory.decodeResource(getContext().getResources(), cursorImage);
 			canvas.drawCircle(cursorx, cursory, radius, circlePaint);
-			canvas.drawBitmap(mBitmap, cursorx, cursory, pointerPaint);
+			
+			//We need the calc the coordinates to center the cursor.
+			final int cCursorx = (int)cursorx - (mBitmap.getHeight()/2); 
+			final int cCursory = (int)cursory - (mBitmap.getWidth()/2);
+			canvas.drawBitmap(mBitmap, cCursorx, cCursory, pointerPaint);
 		}
 	}
 
