@@ -37,8 +37,10 @@ public class FloatingCursorOverlayView extends FrameLayout {
 	private boolean cursorEnabled;
 	private boolean isTouching = false;
 	
-	final static int radius = 30;
-	final static int radiusSquare = radius * radius;  //radius square
+	private final float RADIUS_DIP = 96; // 96dip=15mm, 192dip=30mm expressed in DIP
+	final float scale = getContext().getResources().getDisplayMetrics().density;
+	final int RADIUS = (int) (RADIUS_DIP * scale + 0.5f); //Converting to Pixel
+	final int RADIUS_SQUARE = RADIUS * RADIUS;  //radius square
 	
 	
 	/**
@@ -87,8 +89,7 @@ public class FloatingCursorOverlayView extends FrameLayout {
 		
 		final int eventType = event.getAction();
 		
-		if (isCursorEnabled()) {
-			
+		if (isCursorEnabled()) {			
 			
 			Log.i("MotionEvent(event,x,y)","("+String.valueOf(event.getAction())+","+String.valueOf(cursorx) +","+ String.valueOf(cursory)+")");					
 			
@@ -100,7 +101,7 @@ public class FloatingCursorOverlayView extends FrameLayout {
 			//  What kind of touch event do we have:			
 			switch (eventType) {
 				case MotionEvent.ACTION_DOWN: {					
-					if (!isTouching && spacing(event)<=radiusSquare){										
+					if (!isTouching && spacing(event)<=RADIUS_SQUARE){										
 						isTouching = true;
 					}
 					break;
@@ -156,7 +157,7 @@ public class FloatingCursorOverlayView extends FrameLayout {
 		
 		if (isCursorEnabled()) {
 			final Bitmap mBitmap = BitmapFactory.decodeResource(getContext().getResources(), cursorImage);
-			canvas.drawCircle(cursorx, cursory, radius, circlePaint);
+			canvas.drawCircle(cursorx, cursory, RADIUS, circlePaint);
 			
 			//We need the calc. the coordinates to center the cursor.
 			final int cCursorx = (int)cursorx - (mBitmap.getHeight()/2); 
