@@ -35,6 +35,7 @@ public class FloatingCursorOverlayView extends FrameLayout {
 	 * Flag that indicates whether the cursor should be draw on the canvas
 	 */
 	private boolean cursorEnabled;
+	private boolean isTouching = false;
 	
 	final static int radius = 30;
 	final static int radiusSquare = radius * radius;  //radius square
@@ -78,23 +79,47 @@ public class FloatingCursorOverlayView extends FrameLayout {
 	public boolean dispatchTouchEvent(MotionEvent event) {
 
 		final boolean dontScrollView = true;
-		final boolean isActionMove = event.getAction() == MotionEvent.ACTION_MOVE;
 		
-		Log.i("MotionEvent(event,x,y)","("+String.valueOf(event.getAction())+","+String.valueOf(cursorx) +","+ String.valueOf(cursory)+")");
+		// This needs to be more robust
+		//    right now only ACTION_MOVE is taken into account
+		
+		//final boolean isActionMove = event.getAction() == MotionEvent.ACTION_MOVE;
+		
+		final int eventType = event.getAction();
 		
 		if (isCursorEnabled()) {
 			
-			if (spacing(event)<=radiusSquare){
-				
+			
+			Log.i("MotionEvent(event,x,y)","("+String.valueOf(event.getAction())+","+String.valueOf(cursorx) +","+ String.valueOf(cursory)+")");					
+			
+			if (isTouching){
+				updateFloatingCursorCoordinates(event);
 				invalidate();
-				
-				if (isActionMove) {
-					updateFloatingCursorCoordinates(event);
-					fakeActionDown(event);
-				}
-				
 			}
-			return isActionMove ? dontScrollView : super.dispatchTouchEvent(event);
+			
+			//  What kind of touch event do we have:			
+			switch (eventType) {
+				case MotionEvent.ACTION_DOWN: {					
+					if (!isTouching && spacing(event)<=radiusSquare){										
+						isTouching = true;
+					}
+					break;
+				}
+				case MotionEvent.ACTION_MOVE: {
+					if (isTouching){
+						fakeActionDown(event);						
+					}
+					break;
+				}
+				case MotionEvent.ACTION_UP: {
+					if (isTouching){
+						isTouching = false;	
+					}
+					break;
+				}			
+			}			
+																
+			return isTouching ? dontScrollView : super.dispatchTouchEvent(event);
 		}
 
 		return super.dispatchTouchEvent(event);
@@ -133,9 +158,11 @@ public class FloatingCursorOverlayView extends FrameLayout {
 			final Bitmap mBitmap = BitmapFactory.decodeResource(getContext().getResources(), cursorImage);
 			canvas.drawCircle(cursorx, cursory, radius, circlePaint);
 			
-			//We need the calc the coordinates to center the cursor.
+			//We need the calc. the coordinates to center the cursor.
 			final int cCursorx = (int)cursorx - (mBitmap.getHeight()/2); 
 			final int cCursory = (int)cursory - (mBitmap.getWidth()/2);
+			
+			//lets draw the cursor
 			canvas.drawBitmap(mBitmap, cCursorx, cCursory, pointerPaint);
 		}
 	}
