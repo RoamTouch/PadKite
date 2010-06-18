@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+<android.gesture.GestureOverlayView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/gestures"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gestureStrokeType="multiple"
+    android:eventsInterceptionEnabled="true"
+    android:orientation="vertical">
+    
+<com.roamtouch.swiftee.SwifteeOverlayView
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/overlay"
+    	android:layout_width="fill_parent"
+    	android:layout_height="fill_parent">
+   		 			
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		 	android:layout_width="fill_parent" 
+			android:layout_height="fill_parent"
+			android:orientation="vertical">
+		
+			<WebView android:id="@+id/webview"
+		 		android:layout_width="fill_parent"
+		 		android:layout_height="fill_parent"/>
+		 		
+	</LinearLayout>
+
+	<com.roamtouch.floatingcursor.FloatingCursor xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/floatingCursor"
+    	android:layout_width="fill_parent"
+    	android:layout_height="fill_parent">
+
+	</com.roamtouch.floatingcursor.FloatingCursor>
+
+</com.roamtouch.swiftee.SwifteeOverlayView>
+
+</android.gesture.GestureOverlayView>
+
+<LinearLayout  android:layout_width="fill_parent" android:layout_height="fill_parent" android:gravity="center_horizontal" android:orientation="vertical">
+	
+	<com.roamtouch.swiftee.TopBarArea android:id="@+id/topbararea"  android:layout_width="wrap_content" 
+    			android:layout_height="wrap_content" android:paddingTop="10dip" android:background="#808080" android:visibility="gone">
+    		<!--  	<Button android:id="@+id/refreshButton"  android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    			<EditText  android:id="@+id/searchBox"  android:layout_width="250dip" android:layout_height="40dip"/>
+    			<Button android:id="@+id/goButton"  android:text="Go" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+  -->  </com.roamtouch.swiftee.TopBarArea>
+	<com.roamtouch.menu.CircularLayout 
+				android:id="@+id/circleMenu"
+    			android:layout_width="fill_parent" android:layout_height="280dip" android:layout_weight="1"
+    			android:layout_gravity="center" android:visibility="invisible">
+    			     	            
+
+				<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/settings"
+		    		android:tag="find_text"  
+	        		android:layout_width="wrap_content"
+	       		 	android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/settings_btn" />    	         	            
+
+				<com.roamtouch.menu.MenuButton  
+		  		    android:id="@+id/refresh"
+		   			android:tag="forward"  
+	       		 	android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/refresh_btn" />    	
+ 
+				<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/stop"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/stop_btn" />    	
+ 	
+		
+				<com.roamtouch.menu.MenuButton 
+		  		    android:id="@+id/zoom"
+		    		android:tag="settings"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/zoom_btn" />    	
+
+				<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/findtext"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/find_text_btn" />    	
+ 	
+				<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/windows"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/windows_btn" />    	
+	        		
+	            <ImageView  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/cone" />    
+	        		
+	        	<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/close"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/refresh_btn" /> 	
+		
+    	</com.roamtouch.menu.CircularLayout >
+    	
+    	<com.roamtouch.menu.CircularLayout 
+				android:id="@+id/settingsMenu"
+    			android:layout_width="fill_parent" android:layout_height="280dip" android:layout_weight="1"
+    			android:layout_gravity="center" android:visibility="gone">
+    			
+				<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/browsersettings"
+		    		android:tag="find_text"  
+	        		android:layout_width="wrap_content"
+	       		 	android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/icon" />    	         	            
+
+				<com.roamtouch.menu.MenuButton  
+		  		    android:id="@+id/setHome"
+		   			android:tag="forward"  
+	       		 	android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/refresh_btn" />    	
+ 
+				<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/resizeHit"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/stop_btn" />    	
+ 	
+		
+				<com.roamtouch.menu.MenuButton 
+		  		    android:id="@+id/gestureEditor"
+		    		android:tag="settings"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/zoom_btn" />    	
+
+				<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/misc"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/bookmark_btn" />    	
+ 	
+				<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/onlineHelp"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/windows_btn" />    	
+	        		
+	        	 <ImageView  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/cone" />    
+	        		
+	        	<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/close"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/refresh_btn" /> 		
+		
+    	</com.roamtouch.menu.CircularLayout >
+	<HorizontalScrollView android:id="@+id/gestureScrollView" android:layout_width="wrap_content" android:layout_height="wrap_content" 
+					   android:scrollbars="none" android:visibility="visible">	  
+ 			<com.roamtouch.swiftee.TutorArea android:layout_width="wrap_content" android:layout_height="wrap_content" >
+ 			</com.roamtouch.swiftee.TutorArea>
+    </HorizontalScrollView>    
+   
+    <com.roamtouch.swiftee.EventViewerArea android:id="@+id/eventViewer" android:layout_width="fill_parent" android:layout_height="wrap_content" android:background="#000000">
+    </com.roamtouch.swiftee.EventViewerArea>
+    
+</LinearLayout>
+</FrameLayout>
