@@ -22,7 +22,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.net.ParseException;
 import android.net.WebAddress;
-import android.net.http.SslCertificate;
+import roamtouch.net.http.SslCertificate;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -562,7 +562,7 @@ class BrowserFrame extends Handler {
             // nativeError will remove the request from its DocLoader's request
             // list. But the set up is not done until this method is returned.
             loadListener.error(
-                    android.net.http.EventHandler.ERROR, mContext.getString(
+                    roamtouch.net.http.EventHandler.ERROR, mContext.getString(
                             com.android.internal.R.string.httpErrorTooManyRequests));
             return loadListener;
         }

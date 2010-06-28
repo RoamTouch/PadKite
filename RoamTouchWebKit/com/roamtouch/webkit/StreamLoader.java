@@ -16,8 +16,8 @@
 
 package roamtouch.webkit;
 
-import android.net.http.EventHandler;
-import android.net.http.Headers;
+import roamtouch.net.http.EventHandler;
+import roamtouch.net.http.Headers;
 import android.os.Handler;
 import android.os.Message;
 

@@ -20,8 +20,8 @@ import com.android.internal.R;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.net.http.EventHandler;
-import android.net.http.Headers;
+import roamtouch.net.http.EventHandler;
+import roamtouch.net.http.Headers;
 import android.os.Environment;
 
 import java.io.File;

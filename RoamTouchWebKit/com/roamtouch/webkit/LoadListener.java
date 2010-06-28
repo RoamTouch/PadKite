@@ -19,12 +19,12 @@ package roamtouch.webkit;
 import android.content.Context;
 import android.net.WebAddress;
 import android.net.ParseException;
-import android.net.http.EventHandler;
-import android.net.http.Headers;
-import android.net.http.HttpAuthHeader;
-import android.net.http.RequestHandle;
-import android.net.http.SslCertificate;
-import android.net.http.SslError;
+import roamtouch.net.http.EventHandler;
+import roamtouch.net.http.Headers;
+import roamtouch.net.http.HttpAuthHeader;
+import roamtouch.net.http.RequestHandle;
+import roamtouch.net.http.SslCertificate;
+import roamtouch.net.http.SslError;
 
 import android.os.Handler;
 import android.os.Message;

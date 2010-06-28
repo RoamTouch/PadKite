@@ -31,7 +31,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.graphics.drawable.Drawable;
-import android.net.http.SslCertificate;
+import roamtouch.net.http.SslCertificate;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;

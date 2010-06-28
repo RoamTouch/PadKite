@@ -16,8 +16,8 @@
 
 package roamtouch.webkit;
 
-import android.net.http.EventHandler;
-import android.net.http.RequestHandle;
+import roamtouch.net.http.EventHandler;
+import roamtouch.net.http.RequestHandle;
 import android.util.Log;
 import roamtouch.webkit.CacheManager.CacheResult;
 

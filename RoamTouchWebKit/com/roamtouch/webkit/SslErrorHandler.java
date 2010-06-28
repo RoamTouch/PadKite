@@ -18,7 +18,7 @@ package roamtouch.webkit;
 
 import junit.framework.Assert;
 
-import android.net.http.SslError;
+import roamtouch.net.http.SslError;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;

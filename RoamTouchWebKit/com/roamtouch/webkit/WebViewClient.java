@@ -17,7 +17,7 @@
 package roamtouch.webkit;
 
 import android.graphics.Bitmap;
-import android.net.http.SslError;
+import roamtouch.net.http.SslError;
 import android.os.Message;
 import android.view.KeyEvent;
 

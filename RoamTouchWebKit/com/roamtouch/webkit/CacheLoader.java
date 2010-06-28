@@ -16,7 +16,7 @@
 
 package roamtouch.webkit;
 
-import android.net.http.Headers;
+import roamtouch.net.http.Headers;
 import android.text.TextUtils;
 
 /**
