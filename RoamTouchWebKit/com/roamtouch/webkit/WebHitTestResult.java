@@ -77,21 +77,15 @@ public class WebHitTestResult {
 		mType = UNKNOWN_TYPE;
 	}
 
-	WebHitTestResult(int type, String extra, Rect rect) {
-		mType = type;
-		mExtra = extra ;
-		mRect = rect ;
-	}
-
-	private void setType(int type) {
+	public void setType(int type) {
 		mType = type;
 	}
 
-	private void setExtra(String extra) {
+	public void setExtra(String extra) {
 		mExtra = extra;
 	}
 
-	private void setRect(Rect rect) {
+	public void setRect(Rect rect) {
 		mRect = rect;
 	}
 

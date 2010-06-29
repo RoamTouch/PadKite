@@ -1710,6 +1710,40 @@ public class WebView extends AbsoluteLayout
         }
         return result;
     }
+	
+	//ROAMTOUCH CHANGE >>
+	/**
+	   * Return a HitTestResult on position x, y. The co-ordinate should be given with
+	   * respect to WebView relative coordinate and WebView will internally calculate the location
+	   * on content view based on zoom factor and scroll offset. If a HTML::a tag 
+	   * is found and the anchor has a non-javascript url, the HitTestResult type
+	   * is set to SRC_ANCHOR_TYPE and the url is set in the "extra" field. If the
+	   * anchor does not have a url or if it is a javascript url, the type will
+	   * be UNKNOWN_TYPE and the url has to be retrieved through
+	   * {@link #requestFocusNodeHref} asynchronously. If a HTML::img tag is
+	   * found, the HitTestResult type is set to IMAGE_TYPE and the url is set in
+	   * the "extra" field. A type of
+	   * SRC_IMAGE_ANCHOR_TYPE indicates an anchor with a url that has an image as
+	   * a child node. If a phone number is found, the HitTestResult type is set
+	   * to PHONE_TYPE and the phone number is set in the "extra" field of
+	   * HitTestResult. If a map address is found, the HitTestResult type is set
+	   * to GEO_TYPE and the address is set in the "extra" field of HitTestResult.
+	   * If an email address is found, the HitTestResult type is set to EMAIL_TYPE
+	   * and the email is set in the "extra" field of HitTestResult. Otherwise,
+	   * HitTestResult type is set to UNKNOWN_TYPE.
+	   */
+	public WebHitTestResult getHitTestResultAt(int x, int y) {
+
+	  int contentX = viewToContentX(x + mScrollX);
+	  int contentY = viewToContentY(y + mScrollY);
+
+	  WebHitTestResult result = nativeGetHitTestResultAtPoint(contentX, contentY, mNavSlop) ;
+	  Rect resultRect = contentToViewRect(result.getRect());
+	  result.setRect(resultRect);
+
+	  return result;
+	}
+	//ROAMTOUCH CHANGE <<
 
     /**
      * Request the href of an anchor element due to getFocusNodePath returning
@@ -4965,7 +4999,7 @@ public class WebView extends AbsoluteLayout
         if (nativeHasCursorNode() && !nativeCursorIsTextInput()) {
             playSoundEffect(SoundEffectConstants.CLICK);
         }
-    }
+	}
 
     // Rule for double tap:
     // 1. if the current scale is not same as the text wrap scale and layout
@@ -6094,4 +6128,7 @@ public class WebView extends AbsoluteLayout
     // return NO_LEFTEDGE means failure.
     private static final int NO_LEFTEDGE = -1;
     private native int      nativeGetBlockLeftEdge(int x, int y, float scale);
+	//ROAMTOUCH CHANGE >>
+    private native WebHitTestResult  nativeGetHitTestResultAtPoint(int x, int y, int slop);
+	//ROAMTOUCH CHANGE <<
 }

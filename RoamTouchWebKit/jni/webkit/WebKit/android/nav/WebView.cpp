@@ -94,6 +94,23 @@ enum FrameCachePermission {
     AllowNewest
 };
 
+//ROAMTOUCH CHANGE >>
+enum WebHitTestResultType {
+        HIT_TEST_UNKNOWN_TYPE = 0,
+        HIT_TEST_ANCHOR_TYPE,
+        HIT_TEST_PHONE_TYPE,
+        HIT_TEST_GEO_TYPE,
+        HIT_TEST_EMAIL_TYPE,
+        HIT_TEST_IMAGE_TYPE,
+        HIT_TEST_IMAGE_ANCHOR_TYPE,
+        HIT_TEST_SRC_ANCHOR_TYPE,
+        HIT_TEST_SRC_IMAGE_ANCHOR_TYPE,
+        HIT_TEST_EDIT_TEXT_TYPE,
+        HIT_TEST_VIDEO_TYPE,
+        HIT_TEST_TYPE_END,
+};
+//ROAMTOUCH CHANGE <<
+
 struct JavaGlue {
     jobject     m_obj;
     jmethodID   m_clearTextEntry;
@@ -1003,6 +1020,29 @@ bool motionUp(int x, int y, int slop)
     return pageScrolled;
 }
 
+//ROAMTOUCH CHANGE >>
+const CachedNode* findCachedNodeAt(int x, int y, int slop)
+{
+    bool pageScrolled = false;
+    m_followedLink = false;
+    const CachedFrame* frame;
+    WebCore::IntRect rect = WebCore::IntRect(x - slop, y - slop, slop * 2, slop * 2);
+    int rx, ry;
+    CachedRoot* root = getFrameCache(AllowNewer);
+    if (!root)
+        return 0;
+    const CachedNode* result = findAt(root, rect, &frame, &rx, &ry);
+    if (!result) {
+        DBG_NAV_LOGD("No cached node found root=%p", root);
+        return 0;
+    }
+    DBG_NAV_LOGD("CachedNode:%p (%d) x=%d y=%d rx=%d ry=%d", result,
+        result->index(), x, y, rx, ry);
+    
+    return result;
+}
+//ROAMTOUCH CHANGE <<
+
 int getBlockLeftEdge(int x, int y, float scale)
 {
     CachedRoot* root = getFrameCache(AllowNewer);
@@ -1796,6 +1836,80 @@ static bool nativeMotionUp(JNIEnv *env, jobject obj,
     return view->motionUp(x, y, slop);
 }
 
+//ROAMTOUCH CHANGE >>
+static jobject nativeGetHitTestResultAtPoint(JNIEnv *env, jobject obj,
+    int x, int y, int slop)
+{
+    WebView* view = GET_NATIVE_VIEW(env, obj);
+    LOG_ASSERT(view, "view not set in %s", __FUNCTION__);
+    const CachedNode *result = view->findCachedNodeAt(x, y, slop);
+
+    WebCore::String extraString ;
+    WebCore::IntRect bounds;
+    int type = WebView::HIT_TEST_UNKNOWN_TYPE;
+    if (result) {
+        if (result->isTextField() || result->isTextArea()) {
+            type = WebView::HIT_TEST_EDIT_TEXT_TYPE;
+        } else {
+            String text = result->getExport();
+            if (!text.isEmpty()) {
+                if (text.startsWith("tel:")) {
+                    type = WebView::HIT_TEST_UNKNOWN_TYPE;
+                    extraString = text.substring(4);
+                } else if (text.startsWith("mailto:")) {
+                    type = WebView::HIT_TEST_EMAIL_TYPE;
+                    extraString = text.substring(7);
+                } else if (text.startsWith("geo:0,0?q=")) {
+                    type = WebView::HIT_TEST_GEO_TYPE;
+                    extraString = text.substring(10);
+                } else if (result->isAnchor()) {
+                    type = WebView::HIT_TEST_SRC_ANCHOR_TYPE;
+                    extraString = text;
+                }
+            }
+        }
+        bounds = result->getBounds();
+
+        if (type == WebView::HIT_TEST_UNKNOWN_TYPE 
+            || type == WebView::HIT_TEST_SRC_ANCHOR_TYPE) {
+            // Now check to see if it is an image.
+            String text = view->imageURI(x, y);
+            if (!text.isEmpty()) {
+                type = (type == WebView::HIT_TEST_UNKNOWN_TYPE) ?
+                        WebView::HIT_TEST_IMAGE_TYPE : WebView::HIT_TEST_SRC_IMAGE_ANCHOR_TYPE;
+                extraString = text;
+            }
+        }
+
+    }
+
+    jstring extra = env->NewString(extraString.characters(), extraString.length());
+
+    jclass rectClass = env->FindClass("android/graphics/Rect");
+    jmethodID initRect = env->GetMethodID(rectClass, "<init>", "(IIII)V");
+    jobject rect = env->NewObject(rectClass, initRect, bounds.x(),
+        bounds.y(), bounds.right(), bounds.bottom());
+
+    jclass hitTestResultClass = env->FindClass("roamtouch/webkit/WebHitTestResult");
+    LOG_ASSERT(hitTestResultClass, "Could not find WebHitTestResult class!");
+
+    jmethodID constructor = env->GetMethodID(hitTestResultClass, "<init>", "()V");
+    jobject hitTestResult = env->NewObject(hitTestResultClass, constructor);
+    
+    jmethodID setType = env->GetMethodID(hitTestResultClass, "setType", "(I)V");
+    env->CallVoidMethod(hitTestResult, setType, (jint)type) ;
+    
+    jmethodID setExtra = env->GetMethodID(hitTestResultClass, "setExtra", "(Ljava/lang/String;)V");
+    env->CallVoidMethod(hitTestResult, setExtra, extra) ;
+    
+    jmethodID setRect = env->GetMethodID(hitTestResultClass, "setRect", "(Landroid/graphics/Rect;)V");
+    env->CallVoidMethod(hitTestResult, setRect, rect) ;
+
+    return hitTestResult;
+    
+}
+//ROAMTOUCH CHANGE <<
+
 static bool nativeHasCursorNode(JNIEnv *env, jobject obj)
 {
     return GET_NATIVE_VIEW(env, obj)->hasCursorNode();
@@ -2180,6 +2294,10 @@ static JNINativeMethod gJavaWebViewMethods[] = {
         (void*) nativeGetBlockLeftEdge },
     { "nativeUpdatePluginReceivesEvents", "()V",
         (void*) nativeUpdatePluginReceivesEvents }
+    //ROAMTOUCH CHANGE >>    
+    ,{ "nativeGetHitTestResultAtPoint", "(III)Lroamtouch/webkit/WebHitTestResult;",
+        (void*) nativeGetHitTestResultAtPoint }
+    //ROAMTOUCH CHANGE <<    
 };
 
 int register_webview(JNIEnv* env)
