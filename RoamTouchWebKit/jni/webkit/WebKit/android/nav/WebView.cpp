@@ -107,6 +107,7 @@ enum WebHitTestResultType {
         HIT_TEST_SRC_IMAGE_ANCHOR_TYPE,
         HIT_TEST_EDIT_TEXT_TYPE,
         HIT_TEST_VIDEO_TYPE,
+        HIT_TEST_TEXT_TYPE,
         HIT_TEST_TYPE_END,
 };
 //ROAMTOUCH CHANGE <<
@@ -1850,6 +1851,9 @@ static jobject nativeGetHitTestResultAtPoint(JNIEnv *env, jobject obj,
     if (result) {
         if (result->isTextField() || result->isTextArea()) {
             type = WebView::HIT_TEST_EDIT_TEXT_TYPE;
+        } else if (result->isText()) {
+            type = WebView::HIT_TEST_TEXT_TYPE;
+            //extraString = text;
         } else {
             String text = result->getExport();
             if (!text.isEmpty()) {

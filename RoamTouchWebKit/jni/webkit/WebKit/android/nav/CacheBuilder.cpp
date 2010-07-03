@@ -1056,13 +1056,21 @@ void CacheBuilder::BuildFrame(Frame* root, Frame* frame,
                 clip.mBounds.move(oRect.x(), oRect.y());
             }
         }
-        if (node->isTextNode() && mAllowableTypes != NORMAL_CACHEDNODETYPE) {
+        if (node->isTextNode() /*&& mAllowableTypes != NORMAL_CACHEDNODETYPE - ROAMTOUCH CHANGE*/) {
             if (last->mSomeParentTakesFocus) // don't look at text inside focusable node
                 continue;
             CachedNodeType checkType;
+            bool bFocusableText = true ;
             if (isFocusableText(&walk, more, node, &checkType, 
-                    &exported) == false)
-                continue;
+                    &exported) == false) {
+                //ROAMTOUCH CHANGE >>
+                //continue;
+                checkType = NORMAL_CACHEDNODETYPE ;
+                bFocusableText = false ;
+                isFocus = false ;
+                hasCursorRing = false ;
+                //ROAMTOUCH CHANGE <<
+            }
         #if DUMP_NAV_CACHE
             { 
                 char buffer[DEBUG_BUFFER_SIZE];
@@ -1078,10 +1086,34 @@ void CacheBuilder::BuildFrame(Frame* root, Frame* frame,
             const ClipColumnTracker& clipTrack = clipTracker.last();
             const IntRect& clip = clipTrack.mHasClip ? clipTrack.mBounds :
                 IntRect(0, 0, INT_MAX, INT_MAX);
-            if (ConstructTextRects((WebCore::Text*) node, walk.mStart, 
-                    (WebCore::Text*) walk.mFinalNode, walk.mEnd, globalOffsetX,
-                    globalOffsetY, &bounds, clip, &cachedNode.cursorRings()) == false)
-                continue;
+            if (bFocusableText) {
+                if (ConstructTextRects((WebCore::Text*) node, walk.mStart, 
+                        (WebCore::Text*) walk.mFinalNode, walk.mEnd, globalOffsetX,
+                        globalOffsetY, &bounds, clip, &cachedNode.cursorRings()) == false)
+                    continue;
+            } else {
+                //ROAMTOUCH CHANGE >>
+                WebCore::RenderObject* renderer = node->renderer();
+                if (renderer == NULL)
+                    continue;                
+                WebCore::RenderText* renderText = (WebCore::RenderText*) renderer;
+                WebCore::InlineTextBox *textBox = renderText->firstTextBox();
+                if (textBox == NULL)
+                    continue;
+                bool hasClip = renderer->hasOverflowClip();
+                size_t clipIndex = clipTracker.size();
+                IntRect clipBounds = IntRect(0, 0, INT_MAX, INT_MAX);
+                if (hasClip || --clipIndex > 0) {
+                    clipBounds = hasClip ? renderer->absoluteBoundingBoxRect() :
+                        clipTracker.at(clipIndex).mBounds; // x, y fixup done by ConstructTextRect
+                }
+                if (ConstructTextRect((WebCore::Text*) node, textBox, 0, INT_MAX, 
+                        0, 0, &bounds, clipBounds, &cachedNode.cursorRings()) == false) {
+                    continue;
+                }                
+                cachedNode.setIsText(true);
+                //ROAMTOUCH CHANGE <<
+            }
             absBounds = bounds;
             cachedNode.setBounds(bounds);
             if (bounds.width() < MINIMUM_FOCUSABLE_WIDTH)

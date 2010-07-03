@@ -123,6 +123,8 @@ public:
     bool isRtlText() const { return mIsRtlText; }
     bool isTextArea() const { return mIsTextArea; }
     bool isTextField() const { return mIsTextField; }
+    //ROAMTOUCH CHANGE
+    bool isText() const { return mIsText; }
     bool isTransparent() const { return mIsTransparent; }
     bool isUnclipped() const { return mIsUnclipped; }
     int maxLength() const { return mMaxLength; };
@@ -155,6 +157,8 @@ public:
     void setIsRtlText(bool isRtlText) { mIsRtlText = isRtlText; }
     void setIsTextArea(bool isTextArea) { mIsTextArea = isTextArea; }
     void setIsTextField(bool isTextField) { mIsTextField = isTextField; }
+    //ROAMTOUCH CHANGE
+    void setIsText(bool isTextField) { mIsText = isTextField; }
     void setIsTransparent(bool isTransparent) { mIsTransparent = isTransparent; }
     void setIsUnclipped(bool unclipped) { mIsUnclipped = unclipped; }
     void setLast() { mLast = true; }
@@ -207,6 +211,8 @@ private:
     bool mIsRtlText : 1;
     bool mIsTextArea : 1;
     bool mIsTextField : 1;
+    //ROAMTOUCH CHANGE
+    bool mIsText : 1;
     bool mIsTransparent : 1;
     bool mIsUnclipped : 1;
     bool mLast : 1;             // true if this is the last node in a group

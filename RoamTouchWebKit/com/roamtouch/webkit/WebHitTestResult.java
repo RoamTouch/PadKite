@@ -65,9 +65,15 @@ public class WebHitTestResult {
 	 */
 	public static final int EDIT_TEXT_TYPE = 9;
 	/**
-	 * HitTestResult for hitting an edit text area
+	 * HitTestResult for hitting an HTML5 video tag
 	 */
 	public static final int VIDEO_TYPE = 10;
+	/**
+	 * HitTestResult for hitting text a text node
+	 */
+	public static final int TEXT_TYPE = 11;
+
+	
 	
 	private int mType;
 	private String mExtra;
