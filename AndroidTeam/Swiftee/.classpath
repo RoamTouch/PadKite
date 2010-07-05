@@ -3,6 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="lib" path="/media/Data/Android Work/Workspace/Swiftee/libs/RoamTouchWebKit.jar"/>
+	<classpathentry kind="lib" path="libs/RoamTouchWebKit.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
