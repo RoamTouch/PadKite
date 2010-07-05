@@ -35,5 +35,11 @@ public class MenuButton extends Button{
 	public int getCenterY() {
 		return centerY;
 	}
+	
+	public boolean shouldDraw() {
+		if(angle < -90 || angle > 270)
+			return false;
+		return true;
+	}
 
 }

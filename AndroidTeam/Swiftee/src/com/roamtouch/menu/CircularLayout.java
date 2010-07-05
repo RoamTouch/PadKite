@@ -1,11 +1,13 @@
 package com.roamtouch.menu;
 
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -21,30 +23,39 @@ import android.widget.ImageView;
  * 
  */
 public class CircularLayout extends ViewGroup implements OnTouchListener{
+	
+	/**
+	 * Calculate the radius for menu buttons and inner radius 
+	 */
+		private final float scale = getContext().getResources().getDisplayMetrics().density;
+		private final float INNER_RADIUS_DIP = 110; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
+		private final int INNER_RADIUS = (int) (INNER_RADIUS_DIP * scale + 0.5f); //Converting to Pixel
+		private final float BUTTON_RADIUS_DIP = 40; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
+		private final int BUTTON_RADIUS = (int) (BUTTON_RADIUS_DIP * scale + 0.5f); //Converting to Pixel
 
-	   private boolean mIsBeingDragged = false;
-	   private float mLastMotionY,mLastMotionX;
-	   private int mTouchSlop;
-	   private int mMinimumVelocity;
-	   private int mMaximumVelocity;
+		private boolean mIsBeingDragged = false;
+		private float mLastMotionY,mLastMotionX, mLastMotionAngle=-999;
+		private int mTouchSlop;
+		private int mMinimumVelocity;
+		private int mMaximumVelocity;
 	   
-	   private ImageView mImage; 
+		private ImageView mImage; 
 	    private Bitmap buffer = null;
 		private Canvas bufferCanvas = new Canvas();
 	   
-	   private VelocityTracker mVelocityTracker;
-	   //Centre of the circular menu
-	   private int a,b;
+		private VelocityTracker mVelocityTracker;
+		//Centre of the circular menu
+		private int a,b;
 	   
     
-	   //radius
-	   private int outR;
+		//radius
+		private int outR;
 	   
-	   private int inR=110;
+		private int inR=INNER_RADIUS;
 	   
-	   private float mAngleChange;
+		private float mAngleChange;
 	   
-	   public CircularLayout(Context context, AttributeSet attrs) {
+		public CircularLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setOnTouchListener(this);
 		 final ViewConfiguration configuration = ViewConfiguration.get(context);
@@ -55,8 +66,8 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 	       // addImageBuffer();
 	   }
 
-	   @Override
-	   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
+		@Override
+		protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
 		   final int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
 		   final int widthSpecSize =  MeasureSpec.getSize(widthMeasureSpec);
         
@@ -89,7 +100,9 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 		   double t = 0;
 		   int x = 0, y = 0;
 
-		   t = (360 / (count-1));
+		   //t = (360 / (count-1));
+		   //t = 360 / 7;
+		   t=55;
         
 		   
 /*		   MenuButton child = (MenuButton)getChildAt(0);
@@ -102,7 +115,7 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 			   if (child.getVisibility() != GONE) {            
             	// Calc coordinates around the circle at the center of cart. system
             	double angle = i*t;
-            	angle=angle-40;
+            	angle=angle-90 + 46;
             	child.setAngle(angle);
             	child.calculateCenter(a,b,inR,angle);
             	
@@ -114,12 +127,14 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 
             	Log.i("Circle x,y" , "("+ x +","+ y +")");
  
-                final int childLeft = child.getCenterX() - 40;
-                final int childTop = child.getCenterY() - 40;
-                final int lb = child.getCenterX() + 40;
-                final int rb = child.getCenterY() + 40;
+                final int childLeft = child.getCenterX() - BUTTON_RADIUS;
+                final int childTop = child.getCenterY() - BUTTON_RADIUS;
+                final int lb = child.getCenterX() + BUTTON_RADIUS;
+                final int rb = child.getCenterY() + BUTTON_RADIUS;
                
-                child.layout(childLeft, childTop, lb, rb);
+                if(child.shouldDraw()) {
+                    child.layout(childLeft, childTop, lb, rb);                	
+                }
 
             }
         }	
@@ -133,7 +148,7 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 		   
 		   MenuButton child = (MenuButton)getChildAt(count-1);
 		   if (child.getVisibility() != GONE) {           
-			   child.layout(a-40, b-40, a+40, b+40);
+			   child.layout(a-BUTTON_RADIUS, b-BUTTON_RADIUS, a+BUTTON_RADIUS, b+BUTTON_RADIUS);
 		   }
 	}
 
@@ -157,6 +172,18 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 		super.dispatchDraw(canvas);
 	}
 
+	public boolean canScroll(float angleDiff,int childCount) {
+		MenuButton first = (MenuButton)getChildAt(0);
+		MenuButton last = (MenuButton)getChildAt(childCount-3);
+		
+		if((first.getAngle()+angleDiff)>4)
+			return false;
+		else if(last.getAngle()+angleDiff < 174)
+			return false;
+		return true;
+	}
+	
+	
 	public boolean onTouch(View v, MotionEvent event) {
 		
 		 final int action = event.getAction();
@@ -187,47 +214,91 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 		}
 		case MotionEvent.ACTION_MOVE:{
 			
-			final int yDiff = (int) Math.abs(y - mLastMotionY);
-            final int xDiff = (int) Math.abs(x - mLastMotionX);
+//			final int yDiff = (int) Math.abs(y - mLastMotionY);
+//            final int xDiff = (int) Math.abs(x - mLastMotionX);
             
-           if (yDiff > 3 || xDiff > 3) {
+            float currentAngle, angleDiff;
+            
+            if(mLastMotionAngle == -999) {
+            	mLastMotionAngle = (float)computeAngle1(a, b, x, y);
+    			mLastMotionX = x;
+                mLastMotionY = y;
+                
+                currentAngle = mLastMotionAngle;
+            }
+            currentAngle = (float)computeAngle1(a, b, x, y);
+            angleDiff = currentAngle-mLastMotionAngle;
+           //if (yDiff > 3 || xDiff > 3) {
+            if(Math.abs(angleDiff) > 2) {
             
             mVelocityTracker.addMovement(event);
-     	   // checkForMotionDir(x,y);
-            computeAngle(x,y);
+     	    //checkForMotionDir(x,y);
+            //computeAngle(x,y);
+            mAngleChange = angleDiff;
 			int count=getChildCount();
-        	
+            if(!canScroll(angleDiff, count))
+            	return true;
+            //if(mLastMotionAngle>270 && currentAngle<90)
+            //	mAngleChange = currentAngle;
+            
+                  
+    	
         	//Log.i("x,y" , "("+ x +","+ y +")");
 			for (int i = 0; i < count-2; i++) {
 	            MenuButton child = (MenuButton)getChildAt(i);
-	            if (child.getVisibility() != GONE) {            
-	            	// Calc coordinates around the circle at the center of cart. system
-	            	//child.setClickable(false);
 	            
+	            if (child.getVisibility() != GONE) {            
+	            	//child.setClickable(false);
 	            	double angle=child.getAngle();
 	            	angle+=mAngleChange;
-	            	
 	            	child.setAngle(angle);
-	            	
 	            	child.calculateCenter(a,b,inR,angle);
 	          
-	                final int childLeft = child.getCenterX() - 40;
-	                final int childTop = child.getCenterY() - 40;
-	                final int lb = child.getCenterX() + 40;
-	                final int rb = child.getCenterY() + 40;
+	                final int childLeft = child.getCenterX() - BUTTON_RADIUS;
+	                final int childTop = child.getCenterY() - BUTTON_RADIUS;
+	                final int lb = child.getCenterX() + BUTTON_RADIUS;
+	                final int rb = child.getCenterY() + BUTTON_RADIUS;
 	               
-	                child.layout(childLeft, childTop, lb, rb);
-
-	                
+	                if(child.shouldDraw()) {
+	                	child.setVisibility(View.VISIBLE);
+	                	child.layout(childLeft, childTop, lb, rb);
+	                }
+	                else
+	                	child.setVisibility(View.INVISIBLE);
 	            }
-	        }	
-			}
+	        }
+			mLastMotionAngle = currentAngle;
 			mLastMotionX = x;
             mLastMotionY = y;
+            Log.d("x,y,angle: ", x+","+y+","+mLastMotionAngle);
+			}
+            break;
 		}
 		case MotionEvent.ACTION_UP:
+			int countC = getChildCount();
+			MenuButton first = (MenuButton)getChildAt(0);
+			MenuButton last = (MenuButton)getChildAt(countC-3);
+			
+			if(first.getAngle()>-44) {
+				float angleD = (float)(-44) - (float)first.getAngle();
+				BounceBackAnimation bounceBack = new BounceBackAnimation(angleD,countC);
+				bounceBack.start();
+				// Animate back the buttons
+				//return false;
+			}
+			else if(last.getAngle() < 224) {
+				float angleD = (float)(224) - (float)last.getAngle();
+				BounceBackAnimation bounceBack = new BounceBackAnimation(angleD,countC);
+				bounceBack.start();
+				// Animate back the buttons
+				//return false;
+			}
+			//return true;
 //		    Log.i("inside onTouchEvent ACTION_UP mLastMotionX,mLastMotionY" , "("+ mLastMotionX +","+ mLastMotionY +")");
 		    mIsBeingDragged=false;
+		    mLastMotionAngle = -999;
+		    mLastMotionX =0;
+		    mLastMotionY =0;
 		}
 		
 		
@@ -327,22 +398,57 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 	        		
 	   }
 */	   
+	   
+	   public double computeAngle1(float centerX, float centerY, float currentX, float currentY) {
+		   double angle;
+		   double radius;
+		   
+		   radius = Math.sqrt(Math.pow((centerX-currentX), 2)+Math.pow((centerY-currentY), 2));
+		   double d1 = (currentX - centerX)/radius;
+		   
+		   angle = Math.acos(d1); 
+		   if(currentY<centerY)
+		   	angle = 180 + 180 - Math.toDegrees(angle);
+		   else
+		   		angle = Math.toDegrees(angle);
+		   return angle;
+	   }
+	   
+	   
 	   public void computeAngle(float x,float y){
 		   
+		   double prevRadius, currentRadius;
+		   prevRadius = Math.sqrt((mLastMotionX - a)*(mLastMotionX - a) + (mLastMotionY - b)*(mLastMotionY - b));
+		   currentRadius = Math.sqrt((x-a)*(x-a)+(y-b)+(y-b));
+		   
+		   Log.d("prev rad, curr radius", prevRadius+","+currentRadius);
+		   
+		   //prevRadius = currentRadius = inR;
 		  // float r=distanceFromCenter(x, y);
-		   double d1=(mLastMotionX-a)/inR;
-		   double d2=(x-a)/inR;
+		   double d1=(mLastMotionX-a)/prevRadius;
+		   double d2=(x-a)/currentRadius;
 		   
 		   if(d1>1 || d1<-1 || d2>1 || d2<-1)
 			   return;
 		   
 		   float lastAngle=(float) Math.toDegrees(Math.acos(d1));
 		   float currAngle=(float) Math.toDegrees(Math.acos(d2));
-		   Log.d("CurrentAngle,LastAngle", currAngle+","+lastAngle);
-		   if(y>160)
+		   Log.d("Before:: CurrentAngle,LastAngle  :: x, y:", currAngle+","+lastAngle+"("+x+","+y+")");
+		/*   if(y>160)
 			   mAngleChange=currAngle-lastAngle;
 		   else
 			   mAngleChange=lastAngle-currAngle;
+			   */
+		   
+		   if(y<b) {
+			   currAngle = 180 + (180 - currAngle);
+		   }
+		   if(mLastMotionY < b) {
+			   lastAngle = 180 + (180 - lastAngle);
+		   }
+		   Log.d("After:: CurrentAngle,LastAngle", currAngle+","+lastAngle);
+		   mAngleChange = currAngle - lastAngle;
+		   Log.d("Difference:: (a,b) ", ""+mAngleChange+"("+a+","+b+")");
 		   //Log.d("ComputeAngle", ""+mAngleChange);
 	   }
 	
@@ -351,4 +457,72 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 			float d=(float) Math.sqrt( Math.pow((a-x), 2) +Math.pow((b-y),2));
 			return d;
 		}
+	   
+	   
+	   public class BounceBackAnimation{
+			Handler handler;
+			Runnable runnable;
+			int count=0,i=5;
+			float angleD, angleChange;
+			public BounceBackAnimation(final float angleDiff,int childCount){
+				handler=new Handler();
+				angleD=angleDiff;
+				count = childCount;
+				runnable=new Runnable(){
+					public void run() {
+						while(Math.abs(angleD) > 2) {
+							Log.d("Here in animation", "AngleDiff: "+angleD);
+							
+						if(Math.abs(angleD) > 5) 
+							angleChange=angleD/i;
+						else {
+							if(angleD < 0)
+								angleChange = -1;
+							else
+								angleChange = 1;
+						}
+						i++;
+						angleChange = angleD;		// *** THIS IS SET FOR NO ANIMATION!!
+						angleD = angleD-angleChange;
+						//selectedAlphabets.get(highlightedIndex).setY(yPos-30);
+						for (int i = 0; i < count-2; i++) {
+				            MenuButton child = (MenuButton)getChildAt(i);
+				            
+				            if (child.getVisibility() != GONE) {            
+				            	//child.setClickable(false);
+				            	double angle=child.getAngle();
+				            	angle+=angleChange;
+				            	child.setAngle(angle);
+				            	child.calculateCenter(a,b,inR,angle);
+				          
+				                final int childLeft = child.getCenterX() - BUTTON_RADIUS;
+				                final int childTop = child.getCenterY() - BUTTON_RADIUS;
+				                final int lb = child.getCenterX() + BUTTON_RADIUS;
+				                final int rb = child.getCenterY() + BUTTON_RADIUS;
+				               
+				                if(child.shouldDraw()) {
+				                	child.setVisibility(View.VISIBLE);
+				                	child.layout(childLeft, childTop, lb, rb);
+				                }
+				                else
+				                	child.setVisibility(View.INVISIBLE);
+				            }
+				        }
+						try{
+							Thread.sleep(100);
+						}catch(InterruptedException ie){}
+						}
+					}
+				};
+			}
+			public void start(){
+				try{
+					handler.postDelayed(runnable,25);
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+		}
+	   
 }

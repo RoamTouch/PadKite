@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, MainActivity!</string>
     <string name="app_name">Swiftee</string>
+    
+    <!-- Miscellaneous Activity Preferences -->
+    	
+    	<string name="translate">Translate</string>
+    	<string name="Miscellaneous">Miscellaneous</string>
+    	<string name="About">About</string>
+    	<string name="version">Software Version</string>
+    	<string name="version_code">1.0.1</string>
+    	<string name="dialog_title_language_preference">Choose Language</string>
+    	
 </resources>
