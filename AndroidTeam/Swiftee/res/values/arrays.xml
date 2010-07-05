@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+  
+    <!-- Languages preferences -->
+    <string-array name="language_preference">
+        <item>English</item>
+        <item>Hindi</item>
+        <item>Spanish</item>  
+        <item>French</item>
+        <item>German</item>
+        <item>Russian</item>  
+    </string-array>
+    
+</resources>
