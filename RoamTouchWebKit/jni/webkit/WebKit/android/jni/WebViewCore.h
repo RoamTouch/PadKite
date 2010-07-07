@@ -369,6 +369,13 @@ namespace android {
         // notify the plugin of an update in state
         void updatePluginState(Frame* frame, Node* node, PluginState state);
 
+		//ROAMTOUCH CHANGE >>
+		// Execute the selection command
+		void executeSelectionCommand(int x, int y, int cmd);
+
+		void copySelectedContentToClipboard();
+		//ROAMTOUCH CHANGE <<
+
         // Notify the Java side whether it needs to pass down the touch events
         void needTouchEvents(bool);
 

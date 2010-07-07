@@ -1710,40 +1710,68 @@ public class WebView extends AbsoluteLayout
         }
         return result;
     }
-	
-	//ROAMTOUCH CHANGE >>
-	/**
-	   * Return a HitTestResult on position x, y. The co-ordinate should be given with
-	   * respect to WebView relative coordinate and WebView will internally calculate the location
-	   * on content view based on zoom factor and scroll offset. If a HTML::a tag 
-	   * is found and the anchor has a non-javascript url, the HitTestResult type
-	   * is set to SRC_ANCHOR_TYPE and the url is set in the "extra" field. If the
-	   * anchor does not have a url or if it is a javascript url, the type will
-	   * be UNKNOWN_TYPE and the url has to be retrieved through
-	   * {@link #requestFocusNodeHref} asynchronously. If a HTML::img tag is
-	   * found, the HitTestResult type is set to IMAGE_TYPE and the url is set in
-	   * the "extra" field. A type of
-	   * SRC_IMAGE_ANCHOR_TYPE indicates an anchor with a url that has an image as
-	   * a child node. If a phone number is found, the HitTestResult type is set
-	   * to PHONE_TYPE and the phone number is set in the "extra" field of
-	   * HitTestResult. If a map address is found, the HitTestResult type is set
-	   * to GEO_TYPE and the address is set in the "extra" field of HitTestResult.
-	   * If an email address is found, the HitTestResult type is set to EMAIL_TYPE
-	   * and the email is set in the "extra" field of HitTestResult. Otherwise,
-	   * HitTestResult type is set to UNKNOWN_TYPE.
-	   */
-	public WebHitTestResult getHitTestResultAt(int x, int y) {
 
-	  int contentX = viewToContentX(x + mScrollX);
-	  int contentY = viewToContentY(y + mScrollY);
+    //ROAMTOUCH CHANGE >>
+    /**
+       * Return a HitTestResult on position x, y. The co-ordinate should be given with
+       * respect to WebView relative coordinate and WebView will internally calculate the location
+       * on content view based on zoom factor and scroll offset. If a HTML::a tag 
+       * is found and the anchor has a non-javascript url, the HitTestResult type
+       * is set to SRC_ANCHOR_TYPE and the url is set in the "extra" field. If the
+       * anchor does not have a url or if it is a javascript url, the type will
+       * be UNKNOWN_TYPE and the url has to be retrieved through
+       * {@link #requestFocusNodeHref} asynchronously. If a HTML::img tag is
+       * found, the HitTestResult type is set to IMAGE_TYPE and the url is set in
+       * the "extra" field. A type of
+       * SRC_IMAGE_ANCHOR_TYPE indicates an anchor with a url that has an image as
+       * a child node. If a phone number is found, the HitTestResult type is set
+       * to PHONE_TYPE and the phone number is set in the "extra" field of
+       * HitTestResult. If a map address is found, the HitTestResult type is set
+       * to GEO_TYPE and the address is set in the "extra" field of HitTestResult.
+       * If an email address is found, the HitTestResult type is set to EMAIL_TYPE
+       * and the email is set in the "extra" field of HitTestResult. Otherwise,
+       * HitTestResult type is set to UNKNOWN_TYPE.
+       */
+    public WebHitTestResult getHitTestResultAt(int x, int y) {
 
-	  WebHitTestResult result = nativeGetHitTestResultAtPoint(contentX, contentY, mNavSlop) ;
-	  Rect resultRect = contentToViewRect(result.getRect());
-	  result.setRect(resultRect);
+      int contentX = viewToContentX(x + mScrollX);
+      int contentY = viewToContentY(y + mScrollY);
 
-	  return result;
-	}
-	//ROAMTOUCH CHANGE <<
+      WebHitTestResult result = nativeGetHitTestResultAtPoint(contentX, contentY, mNavSlop) ;
+      Rect resultRect = contentToViewRect(result.getRect());
+      result.setRect(resultRect);
+
+      return result;
+    }
+
+
+    /* Select single word or link */
+    public static final int SELECT_WORD_OR_LINK    = 1;
+    /* Select single line */
+    public static final int SELECT_LINE            = 2;
+    /* Select single sentence */
+    public static final int SELECT_SENTENCE        = 3;
+    /* Select paragraph */
+    public static final int SELECT_PARAGRAPH       = 4;
+    /* Copy the selected content to clipboard */
+    public static final int COPY_TO_CLIPBOARD      = 5;
+    /* Clear the selected contents on the page */
+    public static final int CLEAR_SELECTION        = 6;
+
+    /**
+       * Executes the selection command on the given point. The x,y co-ordinates are
+       * irrelevant incase of COPY_TO_CLIPBOARD command.
+       */
+    public void executeSelectionCommand(int x, int y, int command) {
+
+        int contentX = viewToContentX(x + mScrollX);
+        int contentY = viewToContentY(y + mScrollY);
+
+        Point pt = new Point(contentX, contentY) ;
+        mWebViewCore.sendMessage(EventHub.EXECUTE_SELECTION_COMMAND,
+                                    command, 0, pt);
+    }
+    //ROAMTOUCH CHANGE <<
 
     /**
      * Request the href of an anchor element due to getFocusNodePath returning
@@ -5000,12 +5028,15 @@ public class WebView extends AbsoluteLayout
             playSoundEffect(SoundEffectConstants.CLICK);
         }
 
-		//ROAMTOUCH TEST CODE
-		//WebHitTestResult result = nativeGetHitTestResultAtPoint(contentX, contentY, mNavSlop) ;
-		//result.dump() ;
-		
-			
-	}
+        //ROAMTOUCH TEST CODE
+        //WebHitTestResult result = nativeGetHitTestResultAtPoint(contentX, contentY, mNavSlop) ;
+        //result.dump() ;
+        //executeSelectionCommand((int)mLastTouchX, (int)mLastTouchY, SELECT_LINE) ;
+        //executeSelectionCommand((int)mLastTouchX, (int)mLastTouchY, COPY_TO_CLIPBORAD) ;
+        //result.dump() ;
+
+
+    }
 
     // Rule for double tap:
     // 1. if the current scale is not same as the text wrap scale and layout
@@ -6134,7 +6165,7 @@ public class WebView extends AbsoluteLayout
     // return NO_LEFTEDGE means failure.
     private static final int NO_LEFTEDGE = -1;
     private native int      nativeGetBlockLeftEdge(int x, int y, float scale);
-	//ROAMTOUCH CHANGE >>
+    //ROAMTOUCH CHANGE >>
     private native WebHitTestResult  nativeGetHitTestResultAtPoint(int x, int y, int slop);
-	//ROAMTOUCH CHANGE <<
+    //ROAMTOUCH CHANGE <<
 }
