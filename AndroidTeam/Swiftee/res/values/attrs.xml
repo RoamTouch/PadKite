@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   
+    <declare-styleable name="CircularLayout">
+        <!-- boolean mentioning whether add tab button is used. It is required for window tabs menu -->
+        <attr name="addtabButton" format="boolean" />
+    </declare-styleable>
+    
+</resources>

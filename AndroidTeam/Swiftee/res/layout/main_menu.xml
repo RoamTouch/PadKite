@@ -1,0 +1,78 @@
+	<merge xmlns:android="http://schemas.android.com/apk/res/android"
+				android:id="@+id/circleMenu"
+    			android:layout_width="fill_parent" android:layout_height="280dip" android:layout_weight="1"
+    			android:layout_gravity="center" android:visibility="invisible" 
+    			>
+    			     	            
+				<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/settings"
+		    		android:tag="find_text"  
+	        		android:layout_width="wrap_content"
+	       		 	android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/settings_btn" />    	         	            
+
+				<com.roamtouch.menu.MenuButton  
+		  		    android:id="@+id/refresh"
+		   			android:tag="forward"  
+	       		 	android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/refresh_btn" />    	
+ 
+				<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/stop"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/stop_btn" />    	
+ 	
+		
+				<com.roamtouch.menu.MenuButton 
+		  		    android:id="@+id/zoom"
+		    		android:tag="settings"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/zoom_btn" />    	
+
+				<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/findtext"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/find_text_btn" />    	
+ 	
+				<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/windows"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/windows_btn" />    	
+	        		
+	        	<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/findtext"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/find_text_btn" />    	
+ 	
+				<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/windows"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/windows_btn" />    	
+	            <ImageView  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/cone" />    
+		
+    	</merge >
+    	
