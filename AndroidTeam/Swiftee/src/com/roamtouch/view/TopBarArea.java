@@ -18,7 +18,8 @@ public class TopBarArea extends LinearLayout implements OnClickListener{
 	final float scale = getContext().getResources().getDisplayMetrics().density;
 	final int buttonPX = (int) (BUTTON_DIP * scale + 0.5f); //Converting to Pixel
 	final int etextPX = (int) (ETEXT_DIP * scale + 0.5f); //Converting to Pixel
-
+	private int count = -1;
+	
 	private Button refreshOrBackButton,goOrNextButton;
 		
 	private EditText mEditText;
@@ -58,6 +59,7 @@ public class TopBarArea extends LinearLayout implements OnClickListener{
 		addView(mEditText);
 		addView(goOrNextButton);
 		
+		setMode(TopBarArea.ADDR_BAR_MODE);
 	}
 
 	   public void setMode(int m){
@@ -86,10 +88,13 @@ public class TopBarArea extends LinearLayout implements OnClickListener{
 		switch(id){
 			case 0:{
 				 if(mode==ADDR_BAR_MODE){
-						mWebView.reload();						
+						mWebView.reload();	
+						mWebView.findAll("");
 				 }
 				 else{
-					
+					 if(count != -1){
+						 mWebView.findNext(false);
+					 }
 				 }
 			     break;
 			}
@@ -100,8 +105,11 @@ public class TopBarArea extends LinearLayout implements OnClickListener{
 					 mWebView.loadUrl(str);
 				 }
 				 else{
-					 mWebView.findAll(str);
-					 mWebView.findNext(true);
+					 if(count == -1)
+						 count = mWebView.findAll(str);
+					 else{
+						 mWebView.findNext(true);
+					 }
 				 }
 				 break;
 			}

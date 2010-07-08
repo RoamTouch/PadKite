@@ -2,11 +2,9 @@ package com.roamtouch.menu;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -30,20 +28,18 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 		private final float scale = getContext().getResources().getDisplayMetrics().density;
 		private final float INNER_RADIUS_DIP = 110; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
 		private final int INNER_RADIUS = (int) (INNER_RADIUS_DIP * scale + 0.5f); //Converting to Pixel
-		private final float BUTTON_RADIUS_DIP = 40; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
-		private final int BUTTON_RADIUS = (int) (BUTTON_RADIUS_DIP * scale + 0.5f); //Converting to Pixel
 
+		private int mfcRadius ;
+		private int BUTTON_RADIUS;
+		
 		private boolean mIsBeingDragged = false;
 		private float mLastMotionY,mLastMotionX, mLastMotionAngle=-999;
 		private int mTouchSlop;
 		private int mMinimumVelocity;
 		private int mMaximumVelocity;
-	   
-		private ImageView mImage; 
-	    private Bitmap buffer = null;
-		private Canvas bufferCanvas = new Canvas();
-	   
+	  
 		private VelocityTracker mVelocityTracker;
+		
 		//Centre of the circular menu
 		private int a,b;
 	   
@@ -55,6 +51,17 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 	   
 		private float mAngleChange;
 	   
+		public CircularLayout(Context context) {
+			super(context);
+			setOnTouchListener(this);
+			 final ViewConfiguration configuration = ViewConfiguration.get(context);
+		        mTouchSlop = 10;
+		        mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
+		        mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
+		        Log.d("MinVelocity,MaxVelocity",mMinimumVelocity +","+mMaximumVelocity);
+		       // addImageBuffer();
+		   }
+		
 		public CircularLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setOnTouchListener(this);
@@ -73,8 +80,6 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
         
 		   a = widthSpecSize /2;
         
-		   getChildAt(0).getWidth();
-
 		   Log.i("widthSpecSize:", ""+widthSpecSize);        
 
 		   final int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
@@ -110,7 +115,7 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 			   child.layout(a-40, b-40, a+40, b+40);
 		   }
 */		   
-		   for (int i = 0; i < count-2; i++) {
+		   for (int i = 0; i < count-1; i++) {
 			   MenuButton child = (MenuButton)getChildAt(i);
 			   if (child.getVisibility() != GONE) {            
             	// Calc coordinates around the circle at the center of cart. system
@@ -140,18 +145,14 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
         }	
 		   
 
-		   ImageView cone = (ImageView)getChildAt(count-2);
+		   ImageView cone = (ImageView)getChildAt(count-1);
 		   if (cone.getVisibility() != GONE) {         
-			   cone.layout(0, b-outR, 2*a, b+outR);
+			   cone.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
 			   cone.setClickable(false);
 		   }
 		   
-		   MenuButton child = (MenuButton)getChildAt(count-1);
-		   if (child.getVisibility() != GONE) {           
-			   child.layout(a-BUTTON_RADIUS, b-BUTTON_RADIUS, a+BUTTON_RADIUS, b+BUTTON_RADIUS);
-		   }
 	}
-
+/*
 	   protected void addImageBuffer()
 		{
 		   	mImage=new ImageView(getContext());
@@ -161,12 +162,13 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 			mImage.setImageBitmap(buffer);
 			this.addView(mImage);
 		}
+		*/
 	@Override
 	protected void dispatchDraw(Canvas canvas) {
 
 		Paint p=new Paint();
 		p.setColor(Color.GRAY);
-		canvas.drawCircle(a, b, outR, p);
+//		canvas.drawCircle(a, b, outR, p);
 
 		//canvas.drawArc(new RectF(0,b-outR,2*a,b+outR), -120, 60, true, new Paint());
 		super.dispatchDraw(canvas);
@@ -183,7 +185,21 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 		return true;
 	}
 	
-	
+	 public void setfcRadius(int mfcRadius) {
+			this.mfcRadius = mfcRadius;
+			BUTTON_RADIUS = mfcRadius / 4;
+			inR = mfcRadius-BUTTON_RADIUS-5 ;
+			outR = 2*mfcRadius;
+		}
+
+	 public int getfcRadius() {
+			return mfcRadius;
+		}
+
+	public void setPosition(int a, int b){
+			this.a = a;
+			this.b = b;
+		}
 	public boolean onTouch(View v, MotionEvent event) {
 		
 		 final int action = event.getAction();
@@ -244,7 +260,7 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
                   
     	
         	//Log.i("x,y" , "("+ x +","+ y +")");
-			for (int i = 0; i < count-2; i++) {
+			for (int i = 0; i < count-1; i++) {
 	            MenuButton child = (MenuButton)getChildAt(i);
 	            
 	            if (child.getVisibility() != GONE) {            
@@ -459,7 +475,9 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 		}
 	   
 	   
-	   public class BounceBackAnimation{
+	  
+
+	public class BounceBackAnimation{
 			Handler handler;
 			Runnable runnable;
 			int count=0,i=5;

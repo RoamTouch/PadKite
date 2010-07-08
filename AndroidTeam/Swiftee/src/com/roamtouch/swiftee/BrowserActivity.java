@@ -2,9 +2,6 @@ package com.roamtouch.swiftee;
 
 import java.util.ArrayList;
 import com.roamtouch.floatingcursor.FloatingCursor;
-import com.roamtouch.menu.CircularLayout;
-import com.roamtouch.menu.MenuButton;
-import com.roamtouch.settings.SettingsTouchEvents;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SwifteeOverlayView;
@@ -26,25 +23,21 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 import roamtouch.webkit.WebView;
 import android.widget.HorizontalScrollView;
 import android.widget.Toast;
 
 
-public class BrowserActivity extends Activity implements OnGesturePerformedListener,OnClickListener {
+public class BrowserActivity extends Activity implements OnGesturePerformedListener {
 	
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 	
 	private WebView webView;
 	private SwifteeOverlayView overlay;
 	private FloatingCursor floatingCursor;
-	private CircularLayout circularMenu;
-	private CircularLayout settingsMenu;
 	private EventViewerArea eventViewer;
 	private GestureLibrary mLibrary;
 	private TopBarArea mTopBarArea;
-	//private LinearLayout menuLayout;
 	
 	private GestureOverlayView mGestures;
 	private HorizontalScrollView mTutor;
@@ -54,7 +47,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	 public boolean onKeyDown(int keyCode, android.view.KeyEvent event){
 	        
 	    	if (keyCode == KeyEvent.KEYCODE_MENU) { 
-	    		toggleMenuVisibility();
+	    		floatingCursor.toggleMenuVisibility();
 	    	}
 	    	else if(keyCode == KeyEvent.KEYCODE_BACK){
 	    		if(webView.canGoBack())
@@ -114,18 +107,6 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 		mTutor.setVisibility(View.INVISIBLE);
 		
-		circularMenu=(CircularLayout)this.findViewById(R.id.circleMenu);
-		int count=circularMenu.getChildCount();
-		for(int i=0;i<count;i++){
-			circularMenu.getChildAt(i).setOnClickListener(this);
-		}
-		
-		settingsMenu=(CircularLayout)this.findViewById(R.id.settingsMenu);
-		SettingsTouchEvents.addTouchEvents(this,settingsMenu);	
-		int c=settingsMenu.getChildCount();
-		
-		MenuButton sc=(MenuButton)settingsMenu.getChildAt(c-1);
-		sc.setOnClickListener(this);
 		
 		mTopBarArea=(TopBarArea)this.findViewById(R.id.topbararea);
 		mTopBarArea.setWebView(webView);
@@ -219,59 +200,16 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
       	   Toast.makeText(this, "Unrecognized gesture. Please draw a 'S',  'e' or 'c'.", Toast.LENGTH_SHORT);
 	}
 	
-	public void toggleMenuVisibility(){
-		if(circularMenu.getVisibility()==View.GONE){
-			circularMenu.setVisibility(View.INVISIBLE);
-			mTopBarArea.setVisibility(View.GONE);
-			settingsMenu.setVisibility(View.GONE);
-		}
-		else{
-			circularMenu.setVisibility(View.VISIBLE);
-			mTopBarArea.setVisibility(View.VISIBLE);
-			mTutor.setVisibility(View.GONE);
-			mTopBarArea.setMode(TopBarArea.ADDR_BAR_MODE);
-		}
-	}
+	public void setTopBarVisibility(int visibility){
+			mTopBarArea.setVisibility(visibility);
 	
-	public void onClick(View v) {
-		int id=v.getId();
-		switch(id){
-
-			case R.id.close:{
-				circularMenu.setVisibility(View.INVISIBLE);
-				mTopBarArea.setVisibility(View.GONE);
-				settingsMenu.setVisibility(View.GONE);
-				break;
-			}
-			case R.id.settingsClose:{
-				circularMenu.setVisibility(View.INVISIBLE);
-				mTopBarArea.setVisibility(View.GONE);
-				settingsMenu.setVisibility(View.GONE);
-				break;
-			}
-			case R.id.settings:{
-				circularMenu.setVisibility(View.GONE);
-				settingsMenu.setVisibility(View.VISIBLE);
-				break;
-			}
-			case R.id.findtext:{
-				mTopBarArea.setMode(TopBarArea.SEARCH_BAR_MODE);
-				circularMenu.setVisibility(View.INVISIBLE);
-				break;
-			}
-			case R.id.refresh:{
-				circularMenu.setVisibility(View.INVISIBLE);
-				mTopBarArea.setVisibility(View.GONE);
-				settingsMenu.setVisibility(View.GONE);
-				webView.reload();
-				break;
-			}
-			case R.id.stop:break;
-			case R.id.zoom:break;
-			case R.id.resizeHit:break;
-			case R.id.windows:break;
-			
-		}
-		
 	}
+	public void setTopBarMode(int mode){
+		mTopBarArea.setMode(mode);
+
+	}
+	public void refreshWebView(){
+		webView.reload();
+	}
+
 }

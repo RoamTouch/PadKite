@@ -20,6 +20,10 @@ import android.widget.ImageView;
 import android.widget.Scroller;
 import android.widget.Toast;
 import com.roamtouch.view.EventViewerArea;
+import com.roamtouch.view.TopBarArea;
+import com.roamtouch.menu.CircularLayout;
+import com.roamtouch.menu.CircularMenu;
+import com.roamtouch.menu.SettingsMenu;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 
@@ -34,10 +38,10 @@ public class FloatingCursor extends FrameLayout {
 	/**
 	 * Calculate the touching radius for FP 
 	 */
-		private final float RADIUS_DIP = 80; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
+		private final float RADIUS_DIP = 120; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
 		private final float scale = getContext().getResources().getDisplayMetrics().density;
 		private final int RADIUS = (int) (RADIUS_DIP * scale + 0.5f); //Converting to Pixel
-
+		
 		
 	/**
 	 * Logical inner touch circle coordinates and radius
@@ -51,12 +55,24 @@ public class FloatingCursor extends FrameLayout {
 		private FloatingCursorView fcView,  fcPointerView = null;
 		private CircularProgressBar fcProgressBar;
 		private ImageView pointer;
-	
-	
+		private CircularMenu fcMainMenu;
+		private SettingsMenu fcSettingsMenu;
+
+		
+	/**
+	 *  indicating whether link executes
+	 */
+		private boolean shouldLinkExec = false; 
+		
+		private int touchCount,prevCount;
+		
+	/**
+	 *  integer showing which menu among main,settings and tabs is currently displayed 
+	 */
+		private CircularLayout currentMenu;
+		
 		private boolean mIsDisabled = false;
-	
-		// FIXME: Put to other class
-	
+		
 		private WebView mWebView = null;
 	
 	/**
@@ -307,12 +323,23 @@ public class FloatingCursor extends FrameLayout {
 		
 			fcProgressBar=new CircularProgressBar(getContext(),(int)(RADIUS*0.3f)+20);
 
+			fcMainMenu = new CircularMenu(context);
+			fcMainMenu.setfcRadius(RADIUS);
+			fcMainMenu.setVisibility(INVISIBLE);
+			fcMainMenu.setFloatingCursor(this);
+			currentMenu = fcMainMenu;
+			
+			fcSettingsMenu =  new SettingsMenu(context);
+			fcSettingsMenu.setfcRadius(RADIUS);
+			fcSettingsMenu.setVisibility(INVISIBLE);
+			fcSettingsMenu.setFloatingCursor(this);
+			
 			addView(fcView);
 			addView(fcProgressBar);
-			//addView(fcTouchView);
 			addView(fcPointerView);
 			addView(pointer);
-		
+			addView(fcMainMenu);
+			addView(fcSettingsMenu);
 		}
 
 
@@ -338,8 +365,7 @@ public class FloatingCursor extends FrameLayout {
 		public void setWebView(WebView wv) {
 			mWebView = wv;
 			mWebView.setWebChromeClient(new WebClient());
-			mWebView.setWebViewClient(new GestureWebViewClient());
-			
+			mWebView.setWebViewClient(new GestureWebViewClient());	
 		}
 		
 		public void setEventViewerArea(EventViewerArea eventViewer) {
@@ -348,7 +374,43 @@ public class FloatingCursor extends FrameLayout {
 
 		public void setParent(BrowserActivity p){
 			mParent = p;
+			fcMainMenu.setParent(mParent);
+			fcSettingsMenu.setParent(mParent);
 		}
+		
+		/**
+		 * 
+		 * @param index is menu index currently displayed such as 
+		 * 0 for main menu,1 for settings menu,2 for window tabs
+		 */
+		public void setCurrentMenu(int index){
+			
+			switch(index){
+			case 0: currentMenu = fcMainMenu;
+					fcMainMenu.setVisibility(VISIBLE);
+					fcSettingsMenu.setVisibility(INVISIBLE);
+					//fcWindowTabs.setVisibility(INVISIBLE);
+					break;
+			case 1: currentMenu = fcSettingsMenu;
+					fcSettingsMenu.setVisibility(VISIBLE);
+					fcMainMenu.setVisibility(INVISIBLE);
+					break;
+			case 2: break;
+			}
+			
+		}
+		public void toggleMenuVisibility(){
+			if(currentMenu.getVisibility() == INVISIBLE){
+				currentMenu.setVisibility(VISIBLE);
+				mParent.setTopBarVisibility(VISIBLE);
+				mParent.setTopBarMode(TopBarArea.ADDR_BAR_MODE);
+			}
+			else if(currentMenu.getVisibility() == VISIBLE){
+				currentMenu.setVisibility(INVISIBLE);
+				mParent.setTopBarVisibility(INVISIBLE);
+			}
+		}
+		
 		@Override 
 		protected void onSizeChanged(int w, int h, int oldw, int oldh) { 
 			super.onSizeChanged(w, h, oldw, oldh); 
@@ -357,6 +419,7 @@ public class FloatingCursor extends FrameLayout {
 			fcView.setPosition(w/2,h/2);
 			fcPointerView.setPosition(w/2,h/2);
 			fcProgressBar.setPosition(w/2, h/2);
+			fcMainMenu.setPosition(w/2, h/2);
 			this.w=w;
 			this.h=h;
 			Log.d("OnSizeChanged:(w,h)","("+w+","+h+")" );
@@ -429,6 +492,10 @@ public class FloatingCursor extends FrameLayout {
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
 					eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,extra);
+					if(shouldLinkExec){
+						mWebView.loadUrl(extra);
+						shouldLinkExec = false;
+					}
 					break;
 				}
 
@@ -443,7 +510,10 @@ public class FloatingCursor extends FrameLayout {
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
 					eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,extra);
-					sendEvent(MotionEvent.ACTION_DOWN, X, Y);
+					if(shouldLinkExec){
+						mWebView.loadUrl(extra);
+						shouldLinkExec = false;
+					}
 					break;
 				}
 	
@@ -582,6 +652,8 @@ public class FloatingCursor extends FrameLayout {
 	
 		public boolean dispatchTouchEventFC(MotionEvent event) {
 				
+		
+			
 			boolean status;
 		
 			int X,Y;
@@ -596,9 +668,11 @@ public class FloatingCursor extends FrameLayout {
 		
 			int fcX = -(int)pointer.getScrollX() + -(int)getScrollX() + w/2;
 			int fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;
-			if(event.getPointerCount()>1){
-				fcX = (int) event.getX(1);
-				fcY = (int) event.getY(1);
+			touchCount = event.getPointerCount();
+			if(touchCount>1){
+				//fcX = (int) event.getX(1);
+				//fcY = (int) event.getY(1);		
+				prevCount = touchCount;
 			}
 			
 			//		Log.d("X,Y and fcX,fcY",X+","+Y+" and "+fcX+","+fcY);
@@ -619,10 +693,12 @@ public class FloatingCursor extends FrameLayout {
 					
 				if(X > innerCircleX-innerCirRad && X < innerCircleX+innerCirRad && Y > innerCircleY-innerCirRad && Y < innerCircleY+innerCirRad){
 					//Toast.makeText(mContext, "Circular Menu", 100).show();
-					mParent.toggleMenuVisibility();
+					toggleMenuVisibility();
+					currentMenu = fcMainMenu;
 					return true;
 				}
-				
+				if(currentMenu.getVisibility() == VISIBLE)
+					return false;
 
 				if ((X < CircleX-r || X > CircleX+r || Y < CircleY-r || Y > CircleY+r) && mScroller.isFinished())
 				{	
@@ -675,6 +751,7 @@ public class FloatingCursor extends FrameLayout {
 				
 					stopHitTest(fcX, fcY, false);
 					startSelection(fcX, fcY);
+					mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD_OR_LINK);
 					//Toast.makeText(mContext, "XY:" + X + "," + Y + " - CXY: " + 
 					//	innerCircleX + "," + innerCircleY + "R: " + ir, Toast.LENGTH_LONG).show();
 				}
@@ -698,7 +775,11 @@ public class FloatingCursor extends FrameLayout {
 				return false;
 	
 			if (event.getAction() == MotionEvent.ACTION_MOVE)
-			{
+			{	
+				if(event.getPointerCount()>1){
+					shouldLinkExec = true;
+				}
+					
 				moveSelection(fcX, fcY);
 				moveHitTest(fcX, fcY);
 				if(fcX>BrowserActivity.DEVICE_WIDTH && fcX<mContentWidth)

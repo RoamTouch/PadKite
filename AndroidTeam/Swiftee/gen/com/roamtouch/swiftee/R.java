@@ -14,6 +14,15 @@ public final class R {
         public static final int language_preference=0x7f050000;
     }
     public static final class attr {
+        /**  boolean mentioning whether add tab button is used. It is required for window tabs menu 
+         <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int addtabButton=0x7f010000;
     }
     public static final class drawable {
         public static final int address_bar_cursor=0x7f020000;
@@ -88,44 +97,44 @@ public final class R {
         public static final int zoom_selected=0x7f020045;
     }
     public static final class id {
-        public static final int aboutList=0x7f07001c;
-        public static final int browsersettings=0x7f07000f;
-        public static final int checkbox=0x7f070019;
-        public static final int circleMenu=0x7f070006;
-        public static final int close=0x7f07000d;
-        public static final int eventViewer=0x7f070017;
-        public static final int findtext=0x7f07000b;
+        public static final int aboutList=0x7f070013;
+        public static final int browsersettings=0x7f070015;
+        public static final int checkbox=0x7f070010;
+        public static final int circleMenu=0x7f070008;
+        public static final int eventViewer=0x7f070007;
+        public static final int findtext=0x7f07000d;
         public static final int floatingCursor=0x7f070004;
-        public static final int gestureEditor=0x7f070012;
-        public static final int gestureScrollView=0x7f070016;
+        public static final int gestureEditor=0x7f070018;
+        public static final int gestureScrollView=0x7f070006;
         public static final int gestures=0x7f070000;
-        public static final int misc=0x7f070013;
-        public static final int miscList=0x7f07001b;
-        public static final int onlineHelp=0x7f070014;
+        public static final int misc=0x7f070019;
+        public static final int miscList=0x7f070012;
+        public static final int onlineHelp=0x7f07001a;
         public static final int overlay=0x7f070001;
-        public static final int refresh=0x7f070008;
-        public static final int resizeHit=0x7f070011;
-        public static final int setHome=0x7f070010;
-        public static final int settings=0x7f070007;
-        public static final int settingsClose=0x7f070015;
-        public static final int settingsMenu=0x7f07000e;
-        public static final int stop=0x7f070009;
+        public static final int refresh=0x7f07000a;
+        public static final int resizeHit=0x7f070017;
+        public static final int setHome=0x7f070016;
+        public static final int settings=0x7f070009;
+        public static final int settingsMenu=0x7f070014;
+        public static final int stop=0x7f07000b;
         public static final int topbararea=0x7f070005;
-        public static final int translateList=0x7f07001a;
-        public static final int tv1=0x7f070018;
-        public static final int tv2=0x7f07001d;
+        public static final int translateList=0x7f070011;
+        public static final int tv1=0x7f07000f;
+        public static final int tv2=0x7f07001b;
         public static final int webview=0x7f070003;
         public static final int webviewLayout=0x7f070002;
-        public static final int windows=0x7f07000c;
-        public static final int zoom=0x7f07000a;
+        public static final int windows=0x7f07000e;
+        public static final int zoom=0x7f07000c;
     }
     public static final class layout {
         public static final int about_text=0x7f030000;
         public static final int languages_dialog=0x7f030001;
         public static final int main=0x7f030002;
-        public static final int misc_adapter=0x7f030003;
-        public static final int misc_list=0x7f030004;
-        public static final int translate_adapter=0x7f030005;
+        public static final int main_menu=0x7f030003;
+        public static final int misc_adapter=0x7f030004;
+        public static final int misc_list=0x7f030005;
+        public static final int settings_menu=0x7f030006;
+        public static final int translate_adapter=0x7f030007;
     }
     public static final class raw {
         public static final int gestures=0x7f040000;
@@ -141,4 +150,35 @@ public final class R {
         public static final int version=0x7f060004;
         public static final int version_code=0x7f060005;
     }
+    public static final class styleable {
+        /** Attributes that can be used with a CircularLayout.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #CircularLayout_addtabButton com.roamtouch.swiftee:addtabButton}</code></td><td> boolean mentioning whether add tab button is used.</td></tr>
+           </table>
+           @see #CircularLayout_addtabButton
+         */
+        public static final int[] CircularLayout = {
+            0x7f010000
+        };
+        /**
+          <p>
+          @attr description
+           boolean mentioning whether add tab button is used. It is required for window tabs menu 
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          <p>This is a private symbol.
+          @attr name android:addtabButton
+        */
+        public static final int CircularLayout_addtabButton = 0;
+    };
 }
