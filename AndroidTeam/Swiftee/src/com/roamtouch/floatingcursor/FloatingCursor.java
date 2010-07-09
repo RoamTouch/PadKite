@@ -42,13 +42,7 @@ public class FloatingCursor extends FrameLayout {
 		private final float scale = getContext().getResources().getDisplayMetrics().density;
 		private final int RADIUS = (int) (RADIUS_DIP * scale + 0.5f); //Converting to Pixel
 		
-		
-	/**
-	 * Logical inner touch circle coordinates and radius
-	 */
-		private float mTouchCircleX,mTouchCircleY,mTouchCircleradius=RADIUS*0.3f;
-	
-		
+			
 	/**
 	 * 	FloatingCursor child views
 	 */
@@ -63,9 +57,7 @@ public class FloatingCursor extends FrameLayout {
 	 *  indicating whether link executes
 	 */
 		private boolean shouldLinkExec = false; 
-		
-		private int touchCount,prevCount;
-		
+				
 	/**
 	 *  integer showing which menu among main,settings and tabs is currently displayed 
 	 */
@@ -147,10 +139,17 @@ public class FloatingCursor extends FrameLayout {
 				return true;
 			}
 
-			final float y = ev.getY();
-			final float x = ev.getX();
-
-			switch (action) {
+	        float y = ev.getY();
+			float x = ev.getX();
+	        
+	        if (mActivePointerId != INVALID_POINTER_ID)
+	        {
+		        final int pointerIndex = ev.findPointerIndex(mActivePointerId);
+	        	y = ev.getY(pointerIndex);
+	        	x = ev.getX(pointerIndex);
+	        }
+	     
+	        switch (action) {
             	case MotionEvent.ACTION_MOVE:
                 /*
                  * mIsBeingDragged == false, otherwise the shortcut would have caught it. Check
@@ -211,9 +210,16 @@ public class FloatingCursor extends FrameLayout {
 			mVelocityTracker.addMovement(ev);
 
 			final int action = ev.getAction();
-			final float y = ev.getY();
-			final float x = ev.getX();
-        
+			
+			float y = ev.getY();
+			float x = ev.getX();
+		        
+		    if (mActivePointerId != INVALID_POINTER_ID)
+		    {
+		    	final int pointerIndex = ev.findPointerIndex(mActivePointerId);
+		      	y = ev.getY(pointerIndex);
+		       	x = ev.getX(pointerIndex);
+		    }
        
 			//if (action != MotionEvent.ACTION_MOVE)
     		//Toast.makeText(getContext(), "New touch event OV" + action + "," + x + "," + y , Toast.LENGTH_SHORT ).show();
@@ -276,9 +282,16 @@ public class FloatingCursor extends FrameLayout {
 			removeTouchPoint();
 			pointer.setImageResource(R.drawable.no_target_cursor);
 			cancelSelection();
+			
+			// FIXME: Change so that Size of WebView is adjusted instead of being overlayed
+			int hd_1 = 40;
+			int hd_2 = 0;
+			if (currentMenu.getVisibility() == VISIBLE)
+				hd_2 = -80;
+
 			// FIXME
 			/* ****************** CHANGED CODE END *******************/
-			mScroller.fling(getScrollX(), getScrollY(), velocityX, velocityY, -w/2, w/2, -h/2, h/2);
+			mScroller.fling(getScrollX(), getScrollY(), velocityX, velocityY, -w/2, w/2, -h/2 + hd_1, h/2 + hd_2);
 			invalidate();
 		}
     
@@ -413,9 +426,7 @@ public class FloatingCursor extends FrameLayout {
 		
 		@Override 
 		protected void onSizeChanged(int w, int h, int oldw, int oldh) { 
-			super.onSizeChanged(w, h, oldw, oldh); 
-			mTouchCircleX=w/2;
-			mTouchCircleY=h/2;
+			super.onSizeChanged(w, h, oldw, oldh);
 			fcView.setPosition(w/2,h/2);
 			fcPointerView.setPosition(w/2,h/2);
 			fcProgressBar.setPosition(w/2, h/2);
@@ -492,10 +503,10 @@ public class FloatingCursor extends FrameLayout {
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
 					eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,extra);
-					if(shouldLinkExec){
+	/*				if(shouldLinkExec){
 						mWebView.loadUrl(extra);
-						shouldLinkExec = false;
-					}
+						shouldLinkExec = false; 
+					}  */
 					break;
 				}
 
@@ -510,10 +521,10 @@ public class FloatingCursor extends FrameLayout {
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
 					eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,extra);
-					if(shouldLinkExec){
+	/*				if(shouldLinkExec){
 						mWebView.loadUrl(extra);
-						shouldLinkExec = false;
-					}
+						shouldLinkExec = false; 
+					} */
 					break;
 				}
 	
@@ -576,24 +587,25 @@ public class FloatingCursor extends FrameLayout {
 	
 		protected void clickSelection(int X, int Y)
 		{
-			if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE)
+			//Toast.makeText(mContext, "Clicking sel ..." + mWebHitTestResult.getType(), Toast.LENGTH_LONG).show();
+
+			if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
+				//Toast.makeText(mContext, "Clicking link ...", Toast.LENGTH_LONG).show();
+
 				sendEvent(MotionEvent.ACTION_DOWN, X, Y);
 				pointer.setImageResource(R.drawable.address_bar_cursor);
-				removeTouchPoint();
 				sendEvent(MotionEvent.ACTION_UP, X, Y);
 			}
 			else if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE)
 			{
 				Toast.makeText(mContext, "Downloading image ...", Toast.LENGTH_LONG).show();
 				pointer.setImageResource(R.drawable.address_bar_cursor);
-				removeTouchPoint();
 			// FIXME: Add Downloading of image
 			}
-			else
-			{
-				removeTouchPoint();
-			}
+			
+			// else if (...)			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD_OR_LINK);
+
 		}
 	
 		protected void cancelSelection()
@@ -605,17 +617,28 @@ public class FloatingCursor extends FrameLayout {
 		{
 			if (mSelectionMode)
 			{
-				sendEvent(MotionEvent.ACTION_UP, X, Y);
-				pointer.setImageResource(R.drawable.no_target_cursor);
 				mSelectionMode = false;
 			
-				if (X == selX && Y == selY)
+				if (!mSelectionStarted)
 					clickSelection(X,Y);
 				else
 				{
-					removeTouchPoint();
-					mParent.startGesture();
-			
+					sendEvent(MotionEvent.ACTION_UP, X, Y);
+					pointer.setImageResource(R.drawable.no_target_cursor);
+					mParent.startGesture();			
+				}
+				removeTouchPoint();
+			}
+		}
+		
+		protected void checkClickSelection(int X, int Y)
+		{
+			if (mSelectionMode)
+			{
+				if (!mSelectionStarted)
+				{
+					clickSelection(X,Y);
+					mSelectionMode = false;
 				}
 			}
 		}
@@ -626,14 +649,22 @@ public class FloatingCursor extends FrameLayout {
 			{
 				if (!mSelectionStarted)
 				{
-					pointer.setImageResource(R.drawable.text_cursor);
-					mWebView.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
-					sendEvent(MotionEvent.ACTION_DOWN, X, Y);
-					mSelectionStarted = true;
-					selX = selY = -1;
+	                final int yDiff = (int) Math.abs(Y - selY);
+	                final int xDiff = (int) Math.abs(X - selX);
+
+					if (yDiff > mTouchSlop || xDiff > mTouchSlop)
+					{
+						// FIXME: Change to Velu's selection API
+						pointer.setImageResource(R.drawable.text_cursor);
+						mWebView.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
+						sendEvent(MotionEvent.ACTION_DOWN, X, Y);
+						mSelectionStarted = true;
+						// 					mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD_OR_LINK);
+
+					}
 				}
-			
-				sendEvent(MotionEvent.ACTION_MOVE, X, Y);
+				else		
+					sendEvent(MotionEvent.ACTION_MOVE, X, Y);
 			}
 		}
 
@@ -650,91 +681,100 @@ public class FloatingCursor extends FrameLayout {
 	
 		private boolean mTouchPointValid = false;
 	
+		private static final int INVALID_POINTER_ID = -1;
+		
+		private int mActivePointerId = INVALID_POINTER_ID;
+		
 		public boolean dispatchTouchEventFC(MotionEvent event) {
 				
-		
-			
+
 			boolean status;
 		
-			int X,Y;
-		
-			X=(int)event.getX();
-			Y=(int)event.getY();
-		
-			
-		
+			int X,Y;		
+
+	        if (mActivePointerId != INVALID_POINTER_ID)
+	        {
+		        final int pointerIndex = event.findPointerIndex(mActivePointerId);
+		        
+	        	X=(int)event.getX(pointerIndex);
+	        	Y=(int)event.getY(pointerIndex);
+	        }
+	        else
+	        {
+	        	X=(int)event.getX();
+	        	Y=(int)event.getY();
+	        }
+				
 			if (mIsDisabled)
 				return true;  
-		
+			
 			int fcX = -(int)pointer.getScrollX() + -(int)getScrollX() + w/2;
 			int fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;
-			touchCount = event.getPointerCount();
-			if(touchCount>1){
-				//fcX = (int) event.getX(1);
-				//fcY = (int) event.getY(1);		
-				prevCount = touchCount;
-			}
+			int touchCount = event.getPointerCount(); // touchCount == 2 means ACTION!			
 			
-			//		Log.d("X,Y and fcX,fcY",X+","+Y+" and "+fcX+","+fcY);
-		
 			if (event.getAction() == MotionEvent.ACTION_DOWN)
-			{			
+			{		
+				mActivePointerId = event.getPointerId(0);
+				
+				//Toast.makeText(mContext, "mActivePointerId: " + mActivePointerId, 100).show();
+
 				final int CircleX = -(int)getScrollX() + w/2;
 				final int CircleY = -(int)getScrollY() + h/2;
 			
 				final int r = fcView.getRadius();
 			
-				/** Check for inner circle click and show Circular menu*/
+				// Check for inner circle click and show Circular menu
 				final int innerCirRad = fcPointerView.getRadius();
+				
+				// We need to factor the inner circle relocation so
+				// it does not get out of the outer circle
+				final float radFact = (float)(2*innerCirRad) / (float)r;
+				
+				//Toast.makeText(mContext, "radFact: " + radFact, 100).show();
 				
 				final int innerCircleX = -(int)fcPointerView.getScrollX() + CircleX;
 				final int innerCircleY = -(int)fcPointerView.getScrollY() + CircleY;
-				
 					
 				if(X > innerCircleX-innerCirRad && X < innerCircleX+innerCirRad && Y > innerCircleY-innerCirRad && Y < innerCircleY+innerCirRad){
 					//Toast.makeText(mContext, "Circular Menu", 100).show();
 					toggleMenuVisibility();
 					currentMenu = fcMainMenu;
-					return true;
+					mHandleTouch = true; // Let user drag and fling menu
+					//return true;
 				}
-				if(currentMenu.getVisibility() == VISIBLE)
-					return false;
-
-				if ((X < CircleX-r || X > CircleX+r || Y < CircleY-r || Y > CircleY+r) && mScroller.isFinished())
+				else if ((X < CircleX-r || X > CircleX+r || Y < CircleY-r || Y > CircleY+r) && mScroller.isFinished())
 				{	
 					fcView.setVisibility(View.INVISIBLE);
 					removeTouchPoint();
 					
 					mHandleTouch = false;
-				
-					return false;
+					//return false;
 				}
-			
-				fcView.setVisibility(View.VISIBLE);
-				//fcTouchView.setVisibility(View.VISIBLE);
+				else if(currentMenu.getVisibility() == VISIBLE)
+				{
+					mHandleTouch = false; // Don't let user drag at this stage
+				}
+				else
+				{			
+					fcView.setVisibility(View.VISIBLE);
+					//fcTouchView.setVisibility(View.VISIBLE);
 
-				mHandleTouch = true;
-			
-				// TODO: Paint touch point
-			
-				final int touchCircleX = -(int)mTouchCircleX + CircleX;
-				final int touchCircleY = -(int)mTouchCircleY + CircleY;
-			
-				final int ir = (int)mTouchCircleradius;
-
-				if ((X < touchCircleX-ir || X > touchCircleX+ir || Y < touchCircleY-ir || Y > touchCircleY+ir) || !mTouchPointValid)
-				{	
-			
+					mHandleTouch = true;
+				
 					// Save coordinates
 					//				mLastTouchX = X;
 					//				mLastTouchY = Y;
 					mTouchPointValid = true;
 			
-					pointer.scrollTo(X - CircleX, Y - CircleY);
-					fcPointerView.scrollTo(X - CircleX, Y - CircleY);
+					int scrollX = X - CircleX;
+					int scrollY = Y - CircleY;
+					
+					scrollX *= radFact;
+					scrollY *= radFact;
+					
+					pointer.scrollTo(scrollX, scrollY);
+					fcPointerView.scrollTo(scrollX, scrollY);
 			
-					mTouchCircleX=CircleX - X;
-					mTouchCircleY=CircleY - Y;	
 					//fcTouchView.scrollTo(CircleX - X, CircleY - Y);
 					//fcTouchView.setVisibility(View.VISIBLE);
 				
@@ -742,10 +782,9 @@ public class FloatingCursor extends FrameLayout {
 					fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;
 				
 					stopSelection(fcX, fcY);
-					startHitTest(fcX, fcY);
-	
+					startHitTest(fcX, fcY);	
 				}
-				else
+/*				else
 				{
 					//Toast.makeText(mContext, "Selection or menu would start now", Toast.LENGTH_LONG).show();
 				
@@ -755,37 +794,69 @@ public class FloatingCursor extends FrameLayout {
 					//Toast.makeText(mContext, "XY:" + X + "," + Y + " - CXY: " + 
 					//	innerCircleX + "," + innerCircleY + "R: " + ir, Toast.LENGTH_LONG).show();
 				}
+				}*/
 			}
+			
+			if (event.getAction() == MotionEvent.ACTION_CANCEL)
+			{
+				mActivePointerId = INVALID_POINTER_ID;
+			}
+
 				
 			if (event.getAction() == MotionEvent.ACTION_UP)
 			{
+				mActivePointerId = INVALID_POINTER_ID;
+
 				fcView.setVisibility(View.VISIBLE);
 			
 				stopSelection(fcX, fcY);
-				stopHitTest(fcX, fcY,false);
-			
+				stopHitTest(fcX, fcY,true);
+
+				removeTouchPoint();
+
 				//fcTouchView.setVisibility(View.INVISIBLE);
 
 				if (mHandleTouch == false)
 					return false;
 			
 				mHandleTouch = false;
-			}
+			}		
 			else if (!mHandleTouch)
 				return false;
 	
 			if (event.getAction() == MotionEvent.ACTION_MOVE)
 			{	
-				if(event.getPointerCount()>1){
+				/*if(event.getPointerCount()>1){
 					shouldLinkExec = true;
+				}*/
+				if (touchCount >= 2)
+				{
+					stopHitTest(fcX,fcY,false);
+					startSelection(fcX, fcY);
 				}
+				else
+					checkClickSelection(fcX, fcY);
 					
 				moveSelection(fcX, fcY);
 				moveHitTest(fcX, fcY);
-				if(fcX>BrowserActivity.DEVICE_WIDTH && fcX<mContentWidth)
-					scrollWebView(10, 0);
+				
+				// FF: This will not work ...
+				
+				//if(fcX>BrowserActivity.DEVICE_WIDTH && fcX<mContentWidth)
+				//	scrollWebView(10, 0);
 			}
-		
+			
+			/* FC: Drag + Fling Support */
+			
+			/* If there is a second finger press, ignore */
+			//if (touchCount == 2)
+				//return false;
+
+			/*if (touchCount == 2)
+			{
+				Toast.makeText(mContext, "0: " + event.getX(0) + "," + event.getY(0) + "- 1: " +  event.getX(1) + "," + event.getY(1), Toast.LENGTH_SHORT).show();
+			}*/
+			
 			status = onInterceptTouchEventFC(event);
 		
 			if (status == false)
