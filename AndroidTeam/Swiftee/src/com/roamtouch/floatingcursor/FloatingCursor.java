@@ -2,7 +2,9 @@ package com.roamtouch.floatingcursor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.os.SystemClock;
+import android.text.ClipboardManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -19,6 +21,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Scroller;
 import android.widget.Toast;
+
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.TopBarArea;
 import com.roamtouch.menu.CircularLayout;
@@ -412,6 +415,12 @@ public class FloatingCursor extends FrameLayout {
 			}
 			
 		}
+		
+		public boolean isMenuVisible()
+		{
+			return (currentMenu.getVisibility() == VISIBLE);
+		}
+		
 		public void toggleMenuVisibility(){
 			if(currentMenu.getVisibility() == INVISIBLE){
 				currentMenu.setVisibility(VISIBLE);
@@ -591,7 +600,7 @@ public class FloatingCursor extends FrameLayout {
 
 			if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
-				//Toast.makeText(mContext, "Clicking link ...", Toast.LENGTH_LONG).show();
+//				Toast.makeText(mContext, "Clicking link ...", Toast.LENGTH_LONG).show();
 
 				sendEvent(MotionEvent.ACTION_DOWN, X, Y);
 				pointer.setImageResource(R.drawable.address_bar_cursor);
@@ -601,11 +610,38 @@ public class FloatingCursor extends FrameLayout {
 			{
 				Toast.makeText(mContext, "Downloading image ...", Toast.LENGTH_LONG).show();
 				pointer.setImageResource(R.drawable.address_bar_cursor);
+				removeTouchPoint();
+
 			// FIXME: Add Downloading of image
 			}
-			
-			// else if (...)			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD_OR_LINK);
+			else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE)
+			{	
+				Toast.makeText(mContext, "Selecting word ...", Toast.LENGTH_LONG).show();
+				// FIXME: Hack to prevent first time wrong selection
+				mWebView.executeSelectionCommand(X, Y, WebView.SELECT_WORD_OR_LINK);
+				mWebView.executeSelectionCommand(X, Y, WebView.COPY_TO_CLIPBOARD);	
+				mWebView.executeSelectionCommand(X, Y, WebView.SELECT_WORD_OR_LINK);
+				pointer.setImageResource(R.drawable.no_target_cursor);
+				removeTouchPoint();
 
+				final int fX = X;
+				final int fY = Y;
+				
+				final Handler mHandler = new Handler();
+				
+				mHandler.post(new Runnable() {
+                    public void run() {
+                   	 try {
+							Thread.sleep(50);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						mWebView.executeSelectionCommand(fX, fY, WebView.COPY_TO_CLIPBOARD);	
+						mParent.startGesture();	
+                    }
+				});
+			}
 		}
 	
 		protected void cancelSelection()
@@ -897,6 +933,7 @@ public class FloatingCursor extends FrameLayout {
 
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				mParent.setTopBarURL(url);
 				view.loadUrl(url);
 				return true;
 			}

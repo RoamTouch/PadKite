@@ -120,5 +120,9 @@ public class TopBarArea extends LinearLayout implements OnClickListener{
 	public void setWebView(WebView mWebView) {
 		this.mWebView = mWebView;
 	}
-
+	
+	public void setURL(String url)
+	{
+		mEditText.setText(url);	
+	}
 }

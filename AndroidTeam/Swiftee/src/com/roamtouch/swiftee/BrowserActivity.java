@@ -50,7 +50,11 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	    		floatingCursor.toggleMenuVisibility();
 	    	}
 	    	else if(keyCode == KeyEvent.KEYCODE_BACK){
-	    		if(webView.canGoBack())
+	    		if (floatingCursor.isMenuVisible())
+	    		{
+		    		floatingCursor.toggleMenuVisibility();
+	    		}
+	    		else if(webView.canGoBack())
 	    			webView.goBack();
 	    		else
 	    			System.exit(1);
@@ -155,7 +159,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	{
     		case GESTURE_s:
                 Toast.makeText(this, "S (search) gesture done, searching for: " + mSelection, Toast.LENGTH_SHORT).show();
-				webView.loadUrl("http://www.google.com/?q=" + mSelection);   
+				webView.loadUrl("http://www.google.com/search?q=" + mSelection);
+				//setTopBarURL("http://www.google.com/search?q=" + mSelection);
 				break;
     		case GESTURE_e:
                 Toast.makeText(this, "e (email) gesture done", Toast.LENGTH_SHORT).show();
@@ -202,12 +207,17 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	public void setTopBarVisibility(int visibility){
 			mTopBarArea.setVisibility(visibility);
-	
 	}
+	
 	public void setTopBarMode(int mode){
 		mTopBarArea.setMode(mode);
-
 	}
+	
+	public void setTopBarURL(String url)
+	{
+		mTopBarArea.setURL(url);
+	}
+	
 	public void refreshWebView(){
 		webView.reload();
 	}
