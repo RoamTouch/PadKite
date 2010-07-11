@@ -25,12 +25,13 @@ import android.view.Window;
 import android.view.WindowManager;
 import roamtouch.webkit.WebView;
 import android.widget.HorizontalScrollView;
-import android.widget.Toast;
 
 
 public class BrowserActivity extends Activity implements OnGesturePerformedListener {
 	
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
+
+	public static String version = "Version Alpha-v1.01 build #$Rev$";
 	
 	private WebView webView;
 	private SwifteeOverlayView overlay;
@@ -43,7 +44,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	private HorizontalScrollView mTutor;
 	
 	private final Handler mHandler = new Handler();
-	
+		
 	 public boolean onKeyDown(int keyCode, android.view.KeyEvent event){
 	        
 	    	if (keyCode == KeyEvent.KEYCODE_MENU) { 
@@ -83,6 +84,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		//webLayout.addView(webView);
 
 		eventViewer= (EventViewerArea) findViewById(R.id.eventViewer);
+	
 		//webView.findAll("image");
 		
 		overlay = (SwifteeOverlayView) findViewById(R.id.overlay);
@@ -93,6 +95,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		floatingCursor.setParent(this);
 		//floatingCursor.setHandler(handler);
 
+		
+		
 		overlay.setFloatingCursor(floatingCursor);
 		
 		mLibrary = GestureLibraries.fromRawResource(this, R.raw.gestures);
@@ -135,7 +139,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 				mGestures.setEnabled(true);
 				mTutor.setVisibility(View.VISIBLE);
 
-		        Toast.makeText(BrowserActivity.this, "Please now make S or e gesture for: " + mSelection, Toast.LENGTH_SHORT).show();
+				eventViewer.setText("Please now make S or e gesture for: " + mSelection);
             }
 		});
     }
@@ -158,12 +162,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	switch (gestureID)
     	{
     		case GESTURE_s:
-                Toast.makeText(this, "S (search) gesture done, searching for: " + mSelection, Toast.LENGTH_SHORT).show();
+				eventViewer.setText("S (search) gesture done, searching for: " + mSelection);
 				webView.loadUrl("http://www.google.com/search?q=" + mSelection);
-				//setTopBarURL("http://www.google.com/search?q=" + mSelection);
+				setTopBarURL("http://www.google.com/search?q=" + mSelection);
 				break;
     		case GESTURE_e:
-                Toast.makeText(this, "e (email) gesture done", Toast.LENGTH_SHORT).show();
+				eventViewer.setText("e (email) gesture done");
 				   
 				// Here we need to fire the intent to write an email with the content just pasted
 				   
@@ -176,7 +180,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	            startActivity(intent);
 	            break;
     		case GESTURE_c:
-                Toast.makeText(this, "c (copy or cancel) gesture done", Toast.LENGTH_SHORT).show();
+				eventViewer.setText("c (copy or cancel) gesture done");
                 break;
     			// cancel
     	}
@@ -195,14 +199,14 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
                          	gestureDone(GESTURE_e);
                          } else if ("Cancel".equals(action)) {
                          	gestureDone(GESTURE_c);
-         	            } else                                                                          
-                      	   Toast.makeText(this, "Unrecognized gesture. Please draw 'S', 'e' or 'c'.", Toast.LENGTH_SHORT);
+         	            } else                
+         				   eventViewer.setText("Unrecognized gesture. Please draw 'S', 'e' or 'c'.");
                  }
-                 else                                                                          
-              	   Toast.makeText(this, "Unrecognized gesture. Please draw 'S', 'e' or 'c'.", Toast.LENGTH_SHORT);
+                 else                
+   				   eventViewer.setText("Unrecognized gesture. Please draw 'S', 'e' or 'c'.");
          }
          else                                                                          
-      	   Toast.makeText(this, "Unrecognized gesture. Please draw a 'S',  'e' or 'c'.", Toast.LENGTH_SHORT);
+        	 eventViewer.setText("Unrecognized gesture. Please draw 'S', 'e' or 'c'.");
 	}
 	
 	public void setTopBarVisibility(int visibility){

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.text.ClipboardManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -20,7 +19,6 @@ import roamtouch.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Scroller;
-import android.widget.Toast;
 
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.TopBarArea;
@@ -608,7 +606,7 @@ public class FloatingCursor extends FrameLayout {
 			}
 			else if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE)
 			{
-				Toast.makeText(mContext, "Downloading image ...", Toast.LENGTH_LONG).show();
+				eventViewer.setText("Downloading image ...");
 				pointer.setImageResource(R.drawable.address_bar_cursor);
 				removeTouchPoint();
 
@@ -616,7 +614,7 @@ public class FloatingCursor extends FrameLayout {
 			}
 			else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE)
 			{	
-				Toast.makeText(mContext, "Selecting word ...", Toast.LENGTH_LONG).show();
+				eventViewer.setText("Selecting word ...");
 				// FIXME: Hack to prevent first time wrong selection
 				mWebView.executeSelectionCommand(X, Y, WebView.SELECT_WORD_OR_LINK);
 				mWebView.executeSelectionCommand(X, Y, WebView.COPY_TO_CLIPBOARD);	
