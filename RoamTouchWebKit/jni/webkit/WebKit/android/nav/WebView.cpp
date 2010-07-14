@@ -1912,6 +1912,17 @@ static jobject nativeGetHitTestResultAtPoint(JNIEnv *env, jobject obj,
     return hitTestResult;
     
 }
+
+static void nativeSetCursorAtPoint(JNIEnv *env, jobject obj,
+    int x, int y, int slop)
+{
+    WebView* view = GET_NATIVE_VIEW(env, obj);
+    LOG_ASSERT(view, "view not set in %s", __FUNCTION__);
+
+    WebCore::IntRect rect = WebCore::IntRect(x - slop, y - slop, slop * 2, slop * 2);
+
+    view->selectBestAt(rect) ;
+}
 //ROAMTOUCH CHANGE <<
 
 static bool nativeHasCursorNode(JNIEnv *env, jobject obj)
@@ -2301,6 +2312,8 @@ static JNINativeMethod gJavaWebViewMethods[] = {
     //ROAMTOUCH CHANGE >>    
     ,{ "nativeGetHitTestResultAtPoint", "(III)Lroamtouch/webkit/WebHitTestResult;",
         (void*) nativeGetHitTestResultAtPoint }
+    ,{ "nativeSetCursorAtPoint", "(III)V",
+        (void*) nativeSetCursorAtPoint }
     //ROAMTOUCH CHANGE <<    
 };
 

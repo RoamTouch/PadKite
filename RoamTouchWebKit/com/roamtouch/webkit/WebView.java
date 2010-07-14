@@ -1771,6 +1771,22 @@ public class WebView extends AbsoluteLayout
         mWebViewCore.sendMessage(EventHub.EXECUTE_SELECTION_COMMAND,
                                     command, 0, pt);
     }
+
+    /**
+      * Focuses a focusable node at position x, y. The co-ordinate should be given with
+      * respect to WebView relative coordinate and WebView will internally calculate the location
+      * on content view based on zoom factor and scroll offset.
+      *
+      * @param x X coordinate with respect to webview relative coordinate
+      * @param y Y coordinate with respect to webview relative coordinate
+      *       
+      */
+	public void focusNodeAt(int x, int y) {
+		int contentX = viewToContentX(x + mScrollX);
+		int contentY = viewToContentY(y + mScrollY);
+		
+		nativeSetCursorAtPoint(contentX, contentY, mNavSlop) ;
+	}
     //ROAMTOUCH CHANGE <<
 
     /**
@@ -5033,7 +5049,7 @@ public class WebView extends AbsoluteLayout
         //result.dump() ;
         //executeSelectionCommand((int)mLastTouchX, (int)mLastTouchY, SELECT_LINE) ;
         //executeSelectionCommand((int)mLastTouchX, (int)mLastTouchY, COPY_TO_CLIPBORAD) ;
-        //result.dump() ;
+        //focusNodeAt((int)mLastTouchX, (int)mLastTouchY);
 
 
     }
@@ -6167,5 +6183,6 @@ public class WebView extends AbsoluteLayout
     private native int      nativeGetBlockLeftEdge(int x, int y, float scale);
     //ROAMTOUCH CHANGE >>
     private native WebHitTestResult  nativeGetHitTestResultAtPoint(int x, int y, int slop);
+    private native void  	nativeSetCursorAtPoint(int x, int y, int slop);
     //ROAMTOUCH CHANGE <<
 }
