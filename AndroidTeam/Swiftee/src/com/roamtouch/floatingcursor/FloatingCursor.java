@@ -53,11 +53,6 @@ public class FloatingCursor extends FrameLayout {
 		private CircularMenu fcMainMenu;
 		private SettingsMenu fcSettingsMenu;
 
-		
-	/**
-	 *  indicating whether link executes
-	 */
-		private boolean shouldLinkExec = false; 
 				
 	/**
 	 *  integer showing which menu among main,settings and tabs is currently displayed 
@@ -454,7 +449,8 @@ public class FloatingCursor extends FrameLayout {
 		private int selX = -1, selY = -1;
 	
 		private WebHitTestResult mWebHitTestResult ;
-	
+		private int mWebHitTestResultType = -1 ;
+		
 		protected void sendEvent(int action, int X, int Y)
 		{
 			long downTime = SystemClock.uptimeMillis();
@@ -495,7 +491,7 @@ public class FloatingCursor extends FrameLayout {
 			
 				int cursorImage = 0;
 			
-				switch (resultType) {
+			switch (resultType) {
 				
 				case WebHitTestResult.TEXT_TYPE: {
 					cursorImage = R.drawable.text_cursor;
@@ -563,6 +559,16 @@ public class FloatingCursor extends FrameLayout {
 				mEditTextCancel = false;*/
 
 				pointer.setImageResource(cursorImage);
+				
+				if (resultType == WebHitTestResult.ANCHOR_TYPE)
+					mWebView.focusNodeAt(X,Y);
+				else if (mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE)
+					sendEvent(MotionEvent.ACTION_CANCEL, X, Y); // FIXME: Use proper API for that
+				
+				mWebHitTestResultType = resultType;
+
+	//			else
+//					focusNodeAt(-1,-1);					
 			}
 		}
 
@@ -582,6 +588,7 @@ public class FloatingCursor extends FrameLayout {
 			{
 				pointer.scrollTo(0,0);
 				fcPointerView.scrollTo(0,0);
+				fcProgressBar.scrollTo(0,0);
 			}
 
 			mTouchPointValid = false;
@@ -602,7 +609,7 @@ public class FloatingCursor extends FrameLayout {
 
 				sendEvent(MotionEvent.ACTION_DOWN, X, Y);
 				pointer.setImageResource(R.drawable.address_bar_cursor);
-				sendEvent(MotionEvent.ACTION_UP, X, Y);
+				sendEvent(MotionEvent.ACTION_UP, X, Y);		
 			}
 			else if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE)
 			{
@@ -808,6 +815,7 @@ public class FloatingCursor extends FrameLayout {
 					
 					pointer.scrollTo(scrollX, scrollY);
 					fcPointerView.scrollTo(scrollX, scrollY);
+					fcProgressBar.scrollTo(scrollX, scrollY);
 			
 					//fcTouchView.scrollTo(CircleX - X, CircleY - Y);
 					//fcTouchView.setVisibility(View.VISIBLE);
