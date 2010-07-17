@@ -137,8 +137,9 @@ public class FloatingCursor extends FrameLayout {
 
 	        float y = ev.getY();
 			float x = ev.getX();
+			int touchCount = ev.getPointerCount(); // touchCount == 2 means ACTION!			
 	        
-	        if (mActivePointerId != INVALID_POINTER_ID)
+	        if (mActivePointerId != INVALID_POINTER_ID  && touchCount >= 2)
 	        {
 		        final int pointerIndex = ev.findPointerIndex(mActivePointerId);
 	        	y = ev.getY(pointerIndex);
@@ -209,8 +210,9 @@ public class FloatingCursor extends FrameLayout {
 			
 			float y = ev.getY();
 			float x = ev.getX();
+			int touchCount = ev.getPointerCount(); // touchCount == 2 means ACTION!			
 		        
-		    if (mActivePointerId != INVALID_POINTER_ID)
+		    if (mActivePointerId != INVALID_POINTER_ID && touchCount >= 2)
 		    {
 		    	final int pointerIndex = ev.findPointerIndex(mActivePointerId);
 		      	y = ev.getY(pointerIndex);
@@ -732,8 +734,9 @@ public class FloatingCursor extends FrameLayout {
 			boolean status;
 		
 			int X,Y;		
+			int touchCount = event.getPointerCount(); // touchCount == 2 means ACTION!			
 
-	        if (mActivePointerId != INVALID_POINTER_ID)
+	        if (mActivePointerId != INVALID_POINTER_ID && touchCount >= 2)
 	        {
 		        final int pointerIndex = event.findPointerIndex(mActivePointerId);
 		        
@@ -751,7 +754,6 @@ public class FloatingCursor extends FrameLayout {
 			
 			int fcX = -(int)pointer.getScrollX() + -(int)getScrollX() + w/2;
 			int fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;
-			int touchCount = event.getPointerCount(); // touchCount == 2 means ACTION!			
 			
 			if (event.getAction() == MotionEvent.ACTION_DOWN)
 			{		
