@@ -5570,6 +5570,8 @@ public class WebView extends AbsoluteLayout
                         IClipboard clip = IClipboard.Stub.asInterface(
                                 ServiceManager.getService("clipboard"));
                                 clip.setClipboardText(str);
+                        //RoamTouch Change        
+                        mCallbackProxy.onClipBoardUpdate("text/plain");
                     } catch (android.os.RemoteException e) {
                         Log.e(LOGTAG, "Clipboard failed", e);
                     }

@@ -264,6 +264,16 @@ public class WebChromeClient {
      */
     public void onConsoleMessage(String message, int lineNumber, String sourceID) {}
 
+    //Roamtouch Change - begin
+    /**
+     * Report a Clipboard updated message to the host application. The ChromeClient
+     * should override this to get notification about the clipboard update.
+     * @param type Content type of the clipboard content.
+     */
+    public void onClipBoardUpdate(String type) {}
+
+    //Roamtouch Change - end
+
     /**
      * When not playing, video elements are represented by a 'poster' image. The
      * image to use can be specified by the poster attribute of the video tag in
