@@ -449,11 +449,12 @@ public class FloatingCursor extends FrameLayout {
 	
 		private boolean mSelectionStarted = false;
 		private int selX = -1, selY = -1;
+		private boolean mGesturesEnabled = false;
+
 	
 		private WebHitTestResult mWebHitTestResult ;
 		private int mWebHitTestResultType = -1 ;
-
-		private boolean mGesturesEnabled = false;
+		private int mWebHitTestResultIdentifer = -1;
 		
 		protected void sendEvent(int action, int X, int Y)
 		{
@@ -490,6 +491,7 @@ public class FloatingCursor extends FrameLayout {
 				mWebHitTestResult = mWebView.getHitTestResultAt(X,Y);
 				int resultType = mWebHitTestResult.getType();
 				String extra = mWebHitTestResult.getExtra();
+				int identifier = mWebHitTestResult.getIdentifier();
 				
 				Log.i(TAG, "Extra:"  + extra);
 			
@@ -564,12 +566,17 @@ public class FloatingCursor extends FrameLayout {
 
 				pointer.setImageResource(cursorImage);
 				
-				if (resultType == WebHitTestResult.ANCHOR_TYPE)
-					mWebView.focusNodeAt(X,Y);
-				else if (mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE)
-					sendEvent(MotionEvent.ACTION_CANCEL, X, Y); // FIXME: Use proper API for that
+				// Was there a node change?
+
+				if (identifier != mWebHitTestResultIdentifer) {
+					if (resultType == WebHitTestResult.ANCHOR_TYPE)
+						mWebView.focusNodeAt(X,Y);
+					else if (mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE)
+						sendEvent(MotionEvent.ACTION_CANCEL, X, Y); // FIXME: Use proper API for that
+				}
 				
 				mWebHitTestResultType = resultType;
+				mWebHitTestResultIdentifer = identifier;
 
 	//			else
 //					focusNodeAt(-1,-1);					
