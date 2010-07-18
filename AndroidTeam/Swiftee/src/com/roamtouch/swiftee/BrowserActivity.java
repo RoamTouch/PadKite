@@ -31,7 +31,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 
-	public static String version = "Version Alpha-v1.05 build #$Rev$ (6cd992.../199cb5...)";
+	public static String version = "Version Alpha-v1.06 build #eacd86/4d284d";
 	
 	private WebView webView;
 	private SwifteeOverlayView overlay;
