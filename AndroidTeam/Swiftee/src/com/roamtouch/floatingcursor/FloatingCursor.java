@@ -452,6 +452,8 @@ public class FloatingCursor extends FrameLayout {
 	
 		private WebHitTestResult mWebHitTestResult ;
 		private int mWebHitTestResultType = -1 ;
+
+		private boolean mGesturesEnabled = false;
 		
 		protected void sendEvent(int action, int X, int Y)
 		{
@@ -624,30 +626,16 @@ public class FloatingCursor extends FrameLayout {
 			else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE)
 			{	
 				eventViewer.setText("Selecting word ...");
-				// FIXME: Hack to prevent first time wrong selection
+
+				mGesturesEnabled = true;
 				mWebView.executeSelectionCommand(X, Y, WebView.SELECT_WORD_OR_LINK);
 				mWebView.executeSelectionCommand(X, Y, WebView.COPY_TO_CLIPBOARD);	
-				mWebView.executeSelectionCommand(X, Y, WebView.SELECT_WORD_OR_LINK);
+
 				pointer.setImageResource(R.drawable.no_target_cursor);
 				removeTouchPoint();
 
-				final int fX = X;
-				final int fY = Y;
-				
-				final Handler mHandler = new Handler();
-				
-				mHandler.post(new Runnable() {
-                    public void run() {
-                   	 try {
-							Thread.sleep(50);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						mWebView.executeSelectionCommand(fX, fY, WebView.COPY_TO_CLIPBOARD);	
-						mParent.startGesture();	
-                    }
-				});
+				// This is called by onClipBoardUpdate changed if mGesturesEnabled is true
+				// mParent.startGesture();	
 			}
 		}
 	
@@ -932,10 +920,18 @@ public class FloatingCursor extends FrameLayout {
 	
 		public class WebClient extends WebChromeClient
 		{
-			public void  onProgressChanged  (WebView  view, int newProgress){
-			fcProgressBar.setProgress(newProgress);
+			public void onProgressChanged  (WebView  view, int newProgress) {
+				fcProgressBar.setProgress(newProgress);
+			}
+			
+			// @Override
+			public void onClipBoardUpdate (String type) {
+				if (mGesturesEnabled) {
+					mParent.startGesture();
+					mGesturesEnabled=false;
+				}
+			}
 		}
-	}
 		
 		private class GestureWebViewClient extends WebViewClient {
 
