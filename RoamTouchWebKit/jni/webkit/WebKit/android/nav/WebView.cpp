@@ -1909,6 +1909,9 @@ static jobject nativeGetHitTestResultAtPoint(JNIEnv *env, jobject obj,
     jmethodID setRect = env->GetMethodID(hitTestResultClass, "setRect", "(Landroid/graphics/Rect;)V");
     env->CallVoidMethod(hitTestResult, setRect, rect) ;
 
+    jmethodID setIdentifier = env->GetMethodID(hitTestResultClass, "setIdentifier", "(I)V");
+    env->CallVoidMethod(hitTestResult, setIdentifier, (int)result) ;
+
     return hitTestResult;
     
 }

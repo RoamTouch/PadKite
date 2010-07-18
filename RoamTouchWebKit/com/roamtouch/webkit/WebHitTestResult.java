@@ -78,9 +78,11 @@ public class WebHitTestResult {
 	private int mType;
 	private String mExtra;
 	private Rect mRect;
+	private int mIdentifier;
 
 	WebHitTestResult() {
 		mType = UNKNOWN_TYPE;
+		mIdentifier = 0;
 	}
 
 	public void setType(int type) {
@@ -95,6 +97,10 @@ public class WebHitTestResult {
 		mRect = rect;
 	}
 
+	public void setIdentifier(int identifier) {
+		mIdentifier = identifier;
+	}
+
 	public int getType() {
 		return mType;
 	}
@@ -107,10 +113,15 @@ public class WebHitTestResult {
 		return mRect;
 	}
 
+	public int getIdentifier() {
+		return mIdentifier;
+	}
+
 	public void dump() {
-		Log.v(LOGTAG, "WebHitTestResult type=" + mType
-				+ ", extra=" + mExtra
-				+ ", rect=" + mRect.toString()) ;
+		Log.v(LOGTAG, "WebHitTestResult mType=" + mType
+				+ ", mExtra=" + mExtra
+				+ ", mIdentifier=" + mIdentifier
+				+ ", mRect=" + mRect.toString()) ;
 		
 	}
 		
