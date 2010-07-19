@@ -1,5 +1,7 @@
 package com.roamtouch.view;
 
+import com.roamtouch.swiftee.R;
+
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -13,12 +15,14 @@ import android.widget.LinearLayout;
 
 public class TopBarArea extends LinearLayout implements OnClickListener{
 	
-	private final float BUTTON_DIP = 50; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
+	private final float BUTTON_DIP = 40; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
 	private final float ETEXT_DIP = 220; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
 	final float scale = getContext().getResources().getDisplayMetrics().density;
 	final int buttonPX = (int) (BUTTON_DIP * scale + 0.5f); //Converting to Pixel
 	final int etextPX = (int) (ETEXT_DIP * scale + 0.5f); //Converting to Pixel
 	private int count = -1;
+	
+	private String prevStr;
 	
 	private Button refreshOrBackButton,goOrNextButton;
 		
@@ -38,22 +42,27 @@ public class TopBarArea extends LinearLayout implements OnClickListener{
 		super(c, attrs);
 		
 		LayoutParams buttonParams = new LayoutParams(buttonPX,buttonPX);
+		//buttonParams.set
 		LayoutParams etextParams = new LayoutParams(etextPX,buttonPX);
 		
 		refreshOrBackButton=new Button(c);
 		refreshOrBackButton.setId(0);
 		refreshOrBackButton.setLayoutParams(buttonParams);
 		refreshOrBackButton.setOnClickListener(this);
+		refreshOrBackButton.setVisibility(GONE);
+		refreshOrBackButton.setBackgroundResource(R.drawable.topbar_btn_active);
 		
 		mEditText=new EditText(c);
 		mEditText.setLayoutParams(etextParams);
 		mEditText.setLines(1);
+		mEditText.setHint("");
+		mEditText.setBackgroundResource(R.drawable.square_bg2);
 		
 		goOrNextButton=new Button(c);
 		goOrNextButton.setId(1);
 		goOrNextButton.setLayoutParams(buttonParams);
 		goOrNextButton.setOnClickListener(this);
-
+		goOrNextButton.setBackgroundResource(R.drawable.topbar_btn_active);
 		
 		addView(refreshOrBackButton);
 		addView(mEditText);
@@ -67,9 +76,10 @@ public class TopBarArea extends LinearLayout implements OnClickListener{
 		   if(mode==TopBarArea.SEARCH_BAR_MODE){
 			   refreshOrBackButton.setText("<");
 			   goOrNextButton.setText(">");
+			   refreshOrBackButton.setVisibility(VISIBLE);
 		   }
 		   else if(mode==TopBarArea.ADDR_BAR_MODE){
-			   refreshOrBackButton.setText("R");
+			   refreshOrBackButton.setVisibility(GONE);
 			   goOrNextButton.setText("Go");
 		   }
 	   }
@@ -84,7 +94,9 @@ public class TopBarArea extends LinearLayout implements OnClickListener{
 		
 		int id = v.getId();
 		String str=mEditText.getText().toString();
-		
+		if(!str.equals(prevStr))
+			count = -1;
+		prevStr = str;
 		switch(id){
 			case 0:{
 				 if(mode==ADDR_BAR_MODE){

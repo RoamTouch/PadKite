@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -11,6 +12,9 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import roamtouch.webkit.WebChromeClient;
 import roamtouch.webkit.WebHitTestResult;
 import roamtouch.webkit.WebView;
@@ -25,6 +29,7 @@ import com.roamtouch.view.TopBarArea;
 import com.roamtouch.menu.CircularLayout;
 import com.roamtouch.menu.CircularMenu;
 import com.roamtouch.menu.SettingsMenu;
+import com.roamtouch.menu.WindowTabs;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 
@@ -52,7 +57,7 @@ public class FloatingCursor extends FrameLayout {
 		private ImageView pointer;
 		private CircularMenu fcMainMenu;
 		private SettingsMenu fcSettingsMenu;
-
+		private WindowTabs fcWindowTabs;
 				
 	/**
 	 *  integer showing which menu among main,settings and tabs is currently displayed 
@@ -107,6 +112,11 @@ public class FloatingCursor extends FrameLayout {
 		private int mMinimumVelocity;
 		private int mMaximumVelocity;
     
+	/**
+	 * Vibrator for device vibration	
+	 */
+		private Vibrator vibrator;
+		
 		private void initScrollView() {
 			mScroller = new Scroller(mContext);
 			setFocusable(true);
@@ -345,12 +355,20 @@ public class FloatingCursor extends FrameLayout {
 			fcSettingsMenu.setVisibility(INVISIBLE);
 			fcSettingsMenu.setFloatingCursor(this);
 			
+			fcWindowTabs = new WindowTabs(context);
+			fcWindowTabs.setfcRadius(RADIUS);
+			fcWindowTabs.setVisibility(INVISIBLE);
+			fcWindowTabs.setFloatingCursor(this);
+			
 			addView(fcView);
 			addView(fcProgressBar);
 			addView(fcPointerView);
 			addView(pointer);
 			addView(fcMainMenu);
 			addView(fcSettingsMenu);
+			addView(fcWindowTabs);
+
+			vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
 		}
 
 
@@ -387,6 +405,7 @@ public class FloatingCursor extends FrameLayout {
 			mParent = p;
 			fcMainMenu.setParent(mParent);
 			fcSettingsMenu.setParent(mParent);
+			fcWindowTabs.setParent(mParent);
 		}
 		
 		/**
@@ -400,13 +419,18 @@ public class FloatingCursor extends FrameLayout {
 			case 0: currentMenu = fcMainMenu;
 					fcMainMenu.setVisibility(VISIBLE);
 					fcSettingsMenu.setVisibility(INVISIBLE);
-					//fcWindowTabs.setVisibility(INVISIBLE);
+					fcWindowTabs.setVisibility(INVISIBLE);
 					break;
 			case 1: currentMenu = fcSettingsMenu;
 					fcSettingsMenu.setVisibility(VISIBLE);
 					fcMainMenu.setVisibility(INVISIBLE);
+					fcWindowTabs.setVisibility(INVISIBLE);
 					break;
-			case 2: break;
+			case 2: currentMenu = fcWindowTabs;
+					fcWindowTabs.setVisibility(VISIBLE);
+					fcSettingsMenu.setVisibility(INVISIBLE);
+					fcMainMenu.setVisibility(INVISIBLE);
+					break;
 			}
 			
 		}
@@ -417,15 +441,44 @@ public class FloatingCursor extends FrameLayout {
 		}
 		
 		public void toggleMenuVisibility(){
+			AlphaAnimation menuAnimation;
+
 			if(currentMenu.getVisibility() == INVISIBLE){
-				currentMenu.setVisibility(VISIBLE);
+				menuAnimation = new AlphaAnimation(0.0f, 1.0f);
+				menuAnimation.setDuration(1000);
+				menuAnimation.setAnimationListener(new AnimationListener(){
+
+					public void onAnimationEnd(Animation animation) {
+						currentMenu.setVisibility(VISIBLE);
+					}
+					public void onAnimationRepeat(Animation animation) {}
+
+					public void onAnimationStart(Animation animation) {}
+					
+				});
+				currentMenu.startAnimation(menuAnimation);
+				vibrator.vibrate(25);
 				mParent.setTopBarVisibility(VISIBLE);
 				mParent.setTopBarMode(TopBarArea.ADDR_BAR_MODE);
 			}
 			else if(currentMenu.getVisibility() == VISIBLE){
-				currentMenu.setVisibility(INVISIBLE);
+				menuAnimation = new AlphaAnimation(1.0f, 0.0f);
+				menuAnimation.setDuration(1000);
+				menuAnimation.setAnimationListener(new AnimationListener(){
+
+					public void onAnimationEnd(Animation animation) {
+						currentMenu.setVisibility(INVISIBLE);
+						currentMenu = fcMainMenu;
+					}
+					public void onAnimationRepeat(Animation animation) {}
+
+					public void onAnimationStart(Animation animation) {}
+					
+				});
+				currentMenu.startAnimation(menuAnimation);
+				vibrator.vibrate(25);
 				mParent.setTopBarVisibility(INVISIBLE);
-			}
+			}		
 		}
 		
 		@Override 
@@ -776,7 +829,6 @@ public class FloatingCursor extends FrameLayout {
 				if(X > innerCircleX-innerCirRad && X < innerCircleX+innerCirRad && Y > innerCircleY-innerCirRad && Y < innerCircleY+innerCirRad){
 					//Toast.makeText(mContext, "Circular Menu", 100).show();
 					toggleMenuVisibility();
-					currentMenu = fcMainMenu;
 					mHandleTouch = true; // Let user drag and fling menu
 					//return true;
 				}

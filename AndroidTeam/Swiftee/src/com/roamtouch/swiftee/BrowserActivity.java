@@ -1,6 +1,8 @@
 package com.roamtouch.swiftee;
 
 import java.util.ArrayList;
+
+import com.roamtouch.database.DBConnector;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.view.EventViewerArea;
@@ -32,7 +34,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 
 	public static String version = "Version Alpha-v1.06 build #eacd86/4d284d";
-	
+
 	private WebView webView;
 	private SwifteeOverlayView overlay;
 	private FloatingCursor floatingCursor;
@@ -45,6 +47,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	private final Handler mHandler = new Handler();
 		
+	private int currentGestureLibrary;
+	public static final int CURSOR_GESTURES = 0; 
+	public static final int BOOKMARK_GESTURES = 1; 
+	
 	 public boolean onKeyDown(int keyCode, android.view.KeyEvent event){
 	        
 	    	if (keyCode == KeyEvent.KEYCODE_MENU) { 
@@ -76,6 +82,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	
         setContentView(R.layout.main);
         
+        DBConnector dbConnector = new DBConnector(this);
+        dbConnector.open();
+        
        // LinearLayout webLayout = (LinearLayout) findViewById(R.id.webviewLayout);
         
         webView = (WebView)findViewById(R.id.webview);
@@ -99,27 +108,40 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 		overlay.setFloatingCursor(floatingCursor);
 		
-		mLibrary = GestureLibraries.fromRawResource(this, R.raw.gestures);
-		if (!mLibrary.load()) {
-			finish();
-		}
-	
 		mGestures = (GestureOverlayView) findViewById(R.id.gestures);
 		mGestures.addOnGesturePerformedListener(this);
 		mGestures.setEnabled(false);
 		
 		mTutor = (HorizontalScrollView) findViewById(R.id.gestureScrollView);
-		TutorArea tArea=(TutorArea)mTutor.getChildAt(0);
-		tArea.setGestureLibrary(mLibrary);
-		tArea.setParent(this);
+		initGestureLibrary(CURSOR_GESTURES);
 		
 		mTutor.setVisibility(View.INVISIBLE);
-		
-		
+				
 		mTopBarArea=(TopBarArea)this.findViewById(R.id.topbararea);
 		mTopBarArea.setWebView(webView);
     }
     private String mSelection;
+    
+    public void initGestureLibrary(int id){
+    	currentGestureLibrary = id;
+    	switch(id){
+    		case 0:mLibrary = GestureLibraries.fromRawResource(this, R.raw.gestures);
+    				if (!mLibrary.load()) {
+    					finish();
+    				}
+    				break;
+    		case 1:
+    				mLibrary = GestureLibraries.fromRawResource(this, R.raw.bookmarks);
+    				if (!mLibrary.load()) {
+    					finish();
+    				}
+    				break;
+    		case 2:break;
+    	}
+    	TutorArea tArea=(TutorArea)mTutor.getChildAt(0);
+		tArea.setGestureLibrary(mLibrary);
+		tArea.setParent(this);
+    }
     
     public void startGesture()
     {
@@ -182,6 +204,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     		case GESTURE_c:
 				eventViewer.setText("c (copy or cancel) gesture done");
                 break;
+    		
     			// cancel
     	}
 		stopGesture();
@@ -193,14 +216,17 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
          if (predictions.size() > 0) {
                  if (predictions.get(0).score > 1.5) {
                          String action = predictions.get(0).name;
-                         if ("Search".equals(action)) {
-                         	gestureDone(GESTURE_s);
-                         } else if ("Email".equals(action)) {
-                         	gestureDone(GESTURE_e);
-                         } else if ("Cancel".equals(action)) {
+                         
+                         if ("Cancel".equals(action)) 
                          	gestureDone(GESTURE_c);
-         	            } else                
-         				   eventViewer.setText("Unrecognized gesture. Please draw 'S', 'e' or 'c'.");
+                         
+                         if(currentGestureLibrary == CURSOR_GESTURES){
+                        	 cursorGestures(action);
+                         }
+                         else if(currentGestureLibrary == BOOKMARK_GESTURES){
+                        	 bookmarkGestures(action);
+                         }
+                        
                  }
                  else                
    				   eventViewer.setText("Unrecognized gesture. Please draw 'S', 'e' or 'c'.");
@@ -208,7 +234,27 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
          else                                                                          
         	 eventViewer.setText("Unrecognized gesture. Please draw 'S', 'e' or 'c'.");
 	}
-	
+	private void cursorGestures(String action){
+		if ("Search".equals(action)) 
+         	gestureDone(GESTURE_s);
+        else if ("Email".equals(action))
+         	gestureDone(GESTURE_e);
+        else                
+			eventViewer.setText("Unrecognized gesture. Please draw 'S', 'e' or 'c'.");
+	}
+	private void bookmarkGestures(String action){
+		if ("Google".equals(action))
+			webView.loadUrl("http://www.google.com");
+        else if ("Yahoo".equals(action))
+        	webView.loadUrl("http://www.yahoo.com");
+        else if ("Wikipedia".equals(action))
+        	webView.loadUrl("http://www.wikipedia.com");
+        else if ("Picasa".equals(action))
+        	webView.loadUrl("http://www.picasa.google.com");
+        else                
+			eventViewer.setText("Unrecognized gesture. Please draw 'g', 'y' 'p' or 'c'.");
+		stopGesture();
+	}
 	public void setTopBarVisibility(int visibility){
 			mTopBarArea.setVisibility(visibility);
 	}

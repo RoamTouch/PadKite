@@ -54,12 +54,12 @@
 	        		android:background="@drawable/windows_btn" />    	
 	        		
 	        	<com.roamtouch.menu.MenuButton 
-		    		android:id="@+id/findtext"
+		    		android:id="@+id/bookmark"
 		    		android:tag="random_gesture"  
 	        		android:layout_width="fill_parent"
 	        		android:layout_height="wrap_content"
             		android:gravity="center"
-	        		android:background="@drawable/find_text_btn" />    	
+	        		android:background="@drawable/bookmark_btn" />    	
  	
 				<com.roamtouch.menu.MenuButton 
 		    		android:id="@+id/windows"
@@ -68,11 +68,5 @@
 	        		android:layout_height="wrap_content"
             		android:gravity="center"
 	        		android:background="@drawable/windows_btn" />    	
-	            <ImageView  
-	        		android:layout_width="fill_parent"
-	        		android:layout_height="wrap_content"
-            		android:gravity="center"
-	        		android:background="@drawable/cone" />    
-		
     	</merge >
     	

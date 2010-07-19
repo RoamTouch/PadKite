@@ -33,6 +33,7 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 		initView();
 	}
 	private void initView(){
+		this.removeAllViews();
 		Set<String> s=mLibrary.getGestureEntries();
 		Object str[] = s.toArray();
 		gestureCount = str.length;

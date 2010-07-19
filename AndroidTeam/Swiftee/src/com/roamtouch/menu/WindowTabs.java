@@ -10,23 +10,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-public class SettingsMenu extends CircularLayout implements OnClickListener{
+public class WindowTabs extends CircularLayout implements OnClickListener{
 
 	private FloatingCursor mFloatingCursor;
 	private BrowserActivity mParent;
+	private Context mContext;
+	private TabControl tabControl;
 	
-	public SettingsMenu(Context context) {
+	public WindowTabs(Context context) {
 		super(context);
-
-		LayoutInflater.from(context).inflate(R.layout.settings_menu, this);
+		mContext = context;
+		LayoutInflater.from(context).inflate(R.layout.window_tabs, this);
 		
-		setMode(CircularLayout.STATIC_MODE);
-		
+		setMode(CircularLayout.DYNAMIC_MODE);
 		int count = getChildCount();
-		for(int i=0;i<count-1;i++ ){
+		for(int i=0;i<count;i++ ){
 			View v = getChildAt(i);
 			v.setOnClickListener(this);
 		}
+		
 	}
 
 
@@ -35,29 +37,19 @@ public class SettingsMenu extends CircularLayout implements OnClickListener{
 	}
 	public void setParent(BrowserActivity parent){
 		mParent = parent;
+		tabControl = new TabControl(mParent);
+		tabControl.setWindowTabsView(this);
 	}
 	public void onClick(View v) {
 		int id=v.getId();
+		int count = getChildCount();
+		if(v == getChildAt(count-1)){
+			MenuButton but = new MenuButton(mContext);
+			but.setBackgroundResource(R.drawable.settings_btn);
+			addView(but,0);
+		}
+		
 		switch(id){
-
-			case R.id.misc:{
-				Intent i = new Intent(mParent,MiscListActivity.class);
-				mParent.startActivity(i);
-				break;
-			}
-			case R.id.findtext:{
-				
-				break;
-			}
-			case R.id.refresh:{
-				
-				
-				break;
-			}
-			case R.id.stop:break;
-			case R.id.zoom:break;
-			case R.id.resizeHit:break;
-			case R.id.windows:break;
 			
 		}
 		

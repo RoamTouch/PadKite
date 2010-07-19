@@ -1,10 +1,7 @@
 package com.roamtouch.menu;
 
-
+import com.roamtouch.swiftee.R;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -13,15 +10,29 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.view.View.OnTouchListener;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Scroller;
+import android.widget.Toast;
 
 /**
  * Circular layout containing menu items and performing circular wheel animation
  * 
  */
-public class CircularLayout extends ViewGroup implements OnTouchListener{
+public class CircularLayout extends ViewGroup {
 	
+	/**
+	 *   CircularLayout Mode dynamic or static 
+	 *   Dynamic mode enables add menu button on separator and assigns first child from xml to it
+	 *   Static mode can not add buttons dynamically
+	 */
+	   public static final int STATIC_MODE = 0;
+	   public static final int DYNAMIC_MODE = 1;
+	   
+	   private int currentMode = STATIC_MODE;
+	
+	
+	   
 	/**
 	 * Calculate the radius for menu buttons and inner radius 
 	 */
@@ -38,11 +49,15 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 		private int mMinimumVelocity;
 		private int mMaximumVelocity;
 	  
+
+		private Scroller mScroller;
+		
 		private VelocityTracker mVelocityTracker;
 		
 		//Centre of the circular menu
 		private int a,b;
 	   
+		private Context context;
     
 		//radius
 		private int outR;
@@ -51,27 +66,33 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 	   
 		private float mAngleChange;
 	   
+		private int childStartPoint;
+		
 		public CircularLayout(Context context) {
 			super(context);
-			setOnTouchListener(this);
-			 final ViewConfiguration configuration = ViewConfiguration.get(context);
-		        mTouchSlop = 10;
-		        mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
-		        mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
-		        Log.d("MinVelocity,MaxVelocity",mMinimumVelocity +","+mMaximumVelocity);
-		       // addImageBuffer();
+			//setOnTouchListener(this);
+			mScroller = new Scroller(context);
+			setFocusable(true);
+			setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
+			setWillNotDraw(false);
+			final ViewConfiguration configuration = ViewConfiguration.get(context);
+			mTouchSlop = configuration.getScaledTouchSlop();
+			mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
+			mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
+			this.context = context;			
 		   }
 		
 		public CircularLayout(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		setOnTouchListener(this);
-		 final ViewConfiguration configuration = ViewConfiguration.get(context);
-	        mTouchSlop = 10;
-	        mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
-	        mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
-	        Log.d("MinVelocity,MaxVelocity",mMinimumVelocity +","+mMaximumVelocity);
-	       // addImageBuffer();
-	   }
+			super(context, attrs);
+			mScroller = new Scroller(context);
+			setFocusable(true);
+			setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
+			setWillNotDraw(false);
+			final ViewConfiguration configuration = ViewConfiguration.get(context);
+			mTouchSlop = configuration.getScaledTouchSlop();
+			mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
+			mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
+		}
 
 		@Override
 		protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
@@ -97,10 +118,12 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 		   }
         
 		   setMeasuredDimension(widthSpecSize, heightSpecSize);
+		   Toast.makeText(context, ""+currentMode, 100).show();
 	   }
 	   @Override
 	   protected void onLayout(boolean changed, int left, int top, int right, int bot) {
 
+//		   Toast.makeText(context, ""+currentMode, 100).show();
 		   final int count = getChildCount();
 		   double t = 0;
 		   int x = 0, y = 0;
@@ -109,13 +132,24 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 		   //t = 360 / 7;
 		   t=55;
         
-		   
-/*		   MenuButton child = (MenuButton)getChildAt(0);
-		   if (child.getVisibility() != GONE) {         
-			   child.layout(a-40, b-40, a+40, b+40);
+		   if(currentMode == CircularLayout.DYNAMIC_MODE){
+			   childStartPoint = 2;
+			   Button but = (Button)getChildAt(count-1);
+			   int diff = BUTTON_RADIUS/2;
+			   but.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
+			
 		   }
-*/		   
-		   for (int i = 0; i < count-1; i++) {
+		   else
+			   childStartPoint = 1;
+
+		   ImageView cone = (ImageView)getChildAt(count-childStartPoint);
+		   
+		   if (cone.getVisibility() != GONE) {         
+			   cone.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
+			   cone.setClickable(false);
+		   }
+		   
+		   for (int i = 0; i < count-childStartPoint; i++) {
 			   MenuButton child = (MenuButton)getChildAt(i);
 			   if (child.getVisibility() != GONE) {            
             	// Calc coordinates around the circle at the center of cart. system
@@ -124,13 +158,9 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
             	child.setAngle(angle);
             	child.calculateCenter(a,b,inR,angle);
             	
-            	Log.i("Circle before if angle,x,y" , "("+ x +","+ y +")angle"+angle);
+            	//Log.i("Circle before if angle,x,y" , "("+ x +","+ y +")angle"+angle);
             
-            	
-            	//  final int measuredW = child.getMeasuredWidth();
-            	//  final int measuredH = child.getMeasuredHeight();
-
-            	Log.i("Circle x,y" , "("+ x +","+ y +")");
+            	//Log.i("Circle x,y" , "("+ x +","+ y +")");
  
                 final int childLeft = child.getCenterX() - BUTTON_RADIUS;
                 final int childTop = child.getCenterY() - BUTTON_RADIUS;
@@ -140,40 +170,34 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
                 if(child.shouldDraw()) {
                     child.layout(childLeft, childTop, lb, rb);                	
                 }
-
             }
         }	
 		   
-
-		   ImageView cone = (ImageView)getChildAt(count-1);
-		   if (cone.getVisibility() != GONE) {         
-			   cone.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
-			   cone.setClickable(false);
-		   }
 		   
 	}
-/*
-	   protected void addImageBuffer()
-		{
-		   	mImage=new ImageView(getContext());
-			buffer=Bitmap.createBitmap(2*a, 2*b,Bitmap.Config.ARGB_8888);
-			bufferCanvas.setBitmap(buffer);
-			bufferCanvas.drawArc(new RectF(0,b-outR,2*a,b+outR), -120, 60, true, new Paint());	        
-			mImage.setImageBitmap(buffer);
-			this.addView(mImage);
+	public void setMode(int mode){
+
+		ImageView coneSeparator = new ImageView(context);
+		coneSeparator.setBackgroundResource(R.drawable.cone);
+		addView(coneSeparator);
+		
+		currentMode = mode;
+		if(currentMode == CircularLayout.DYNAMIC_MODE){
+			Button but = new Button(context);
+			but.setBackgroundResource(R.drawable.add_tab);
+			addView(but);
 		}
-		*/
+	}   
+/*
 	@Override
 	protected void dispatchDraw(Canvas canvas) {
 
 		Paint p=new Paint();
 		p.setColor(Color.GRAY);
-//		canvas.drawCircle(a, b, outR, p);
 
-		//canvas.drawArc(new RectF(0,b-outR,2*a,b+outR), -120, 60, true, new Paint());
 		super.dispatchDraw(canvas);
 	}
-
+*/
 	public boolean canScroll(float angleDiff,int childCount) {
 		MenuButton first = (MenuButton)getChildAt(0);
 		MenuButton last = (MenuButton)getChildAt(childCount-3);
@@ -200,7 +224,8 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 			this.a = a;
 			this.b = b;
 		}
-	public boolean onTouch(View v, MotionEvent event) {
+	 @Override
+	public boolean onTouchEvent(MotionEvent event) {
 		
 		 final int action = event.getAction();
 	     final float x = event.getX();
@@ -233,6 +258,8 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 //			final int yDiff = (int) Math.abs(y - mLastMotionY);
 //            final int xDiff = (int) Math.abs(x - mLastMotionX);
             
+			 mVelocityTracker.addMovement(event);
+			 
             float currentAngle, angleDiff;
             
             if(mLastMotionAngle == -999) {
@@ -247,7 +274,7 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
            //if (yDiff > 3 || xDiff > 3) {
             if(Math.abs(angleDiff) > 2) {
             
-            mVelocityTracker.addMovement(event);
+           
      	    //checkForMotionDir(x,y);
             //computeAngle(x,y);
             mAngleChange = angleDiff;
@@ -260,7 +287,8 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
                   
     	
         	//Log.i("x,y" , "("+ x +","+ y +")");
-			for (int i = 0; i < count-1; i++) {
+			for (int i = 0; i < count-childStartPoint; i++) {
+				
 	            MenuButton child = (MenuButton)getChildAt(i);
 	            
 	            if (child.getVisibility() != GONE) {            
@@ -291,26 +319,22 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
             break;
 		}
 		case MotionEvent.ACTION_UP:
-			int countC = getChildCount();
-			MenuButton first = (MenuButton)getChildAt(0);
-			MenuButton last = (MenuButton)getChildAt(countC-3);
-			
-			if(first.getAngle()>-44) {
-				float angleD = (float)(-44) - (float)first.getAngle();
-				BounceBackAnimation bounceBack = new BounceBackAnimation(angleD,countC);
-				bounceBack.start();
-				// Animate back the buttons
-				//return false;
-			}
-			else if(last.getAngle() < 224) {
-				float angleD = (float)(224) - (float)last.getAngle();
-				BounceBackAnimation bounceBack = new BounceBackAnimation(angleD,countC);
-				bounceBack.start();
-				// Animate back the buttons
-				//return false;
-			}
-			//return true;
-//		    Log.i("inside onTouchEvent ACTION_UP mLastMotionX,mLastMotionY" , "("+ mLastMotionX +","+ mLastMotionY +")");
+			final VelocityTracker velocityTracker = mVelocityTracker;
+            velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
+            int initialVelocityY = (int) velocityTracker.getYVelocity();
+            int initialVelocityX = (int) velocityTracker.getXVelocity();
+        	//Toast.makeText(mContext, "fling: " + 
+        		//	getScrollX() + "," + getScrollY() + "-" + initialVelocityX + "," + initialVelocityY + "-" + 
+        			//getWidth() + "," + getHeight(), Toast.LENGTH_SHORT).show();
+
+            if ((Math.abs(initialVelocityY) > mMinimumVelocity) || (Math.abs(initialVelocityX) > mMinimumVelocity)) {
+            	fling(-initialVelocityX, -initialVelocityY);
+            }
+
+            if (mVelocityTracker != null) {
+                mVelocityTracker.recycle();
+                mVelocityTracker = null;
+            }
 		    mIsBeingDragged=false;
 		    mLastMotionAngle = -999;
 		    mLastMotionX =0;
@@ -320,6 +344,28 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 		
 		return true;
 	}
+	
+	public void fling(int velocityX, int velocityY) 
+	{
+		Log.d("Scroll X,Y",getScrollX()+","+getScrollY());
+		mScroller.fling(getScrollX(), getScrollY(), velocityX, velocityY, 0,320, 0, 320);
+		invalidate();
+	}
+
+	@Override
+	public void computeScroll() {
+	//	if (mScroller.computeScrollOffset()) {
+	//		Toast.makeText(context, "scrollTo:" + mScroller.getCurrX() +
+	//			 "," + mScroller.getCurrY(), Toast.LENGTH_SHORT).show();
+			scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
+        
+			// FIXME: Update cursor image
+
+			// Keep on drawing until the animation has finished.
+			postInvalidate();
+	//	}
+	}
+	
 	   @Override
 	    public boolean onInterceptTouchEvent(MotionEvent ev) {
 	      
@@ -474,9 +520,7 @@ public class CircularLayout extends ViewGroup implements OnTouchListener{
 			return d;
 		}
 	   
-	   
-	  
-
+	
 	public class BounceBackAnimation{
 			Handler handler;
 			Runnable runnable;

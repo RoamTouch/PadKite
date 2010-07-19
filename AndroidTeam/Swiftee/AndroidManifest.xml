@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       android:versionCode="1"
-      android:versionName="1.06"
-      package="com.roamtouch.swiftee">
+      android:versionName="1.06" package="com.roamtouch.swiftee">
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true">
         <activity android:name=".BrowserActivity"
                   android:label="@string/app_name">
@@ -20,9 +19,14 @@
             </intent-filter>
         </activity>
        
+       <activity android:name="com.roamtouch.settings.RegisterActivity"
+                  android:label="@string/app_name"
+                  android:launchMode="singleTop" />
+         
     </application>
 
 
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 <uses-sdk android:targetSdkVersion="4" android:minSdkVersion="4"></uses-sdk>
+<uses-permission android:name="android.permission.VIBRATE"></uses-permission>
 </manifest> 

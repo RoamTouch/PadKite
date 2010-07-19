@@ -10,9 +10,11 @@ public class MenuButton extends Button{
 	private int centerX,centerY;
 	
 	public MenuButton(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		
-		
+		super(context, attrs);		
+	}
+
+	public MenuButton(Context context) {
+		super(context);
 	}
 
 	public void setAngle(double angle) {
