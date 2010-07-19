@@ -23,107 +23,114 @@ import android.util.Log;
 public class WebHitTestResult {
 
     static final String LOGTAG = "webview";
-	
-	/**
-	 * Default HitTestResult, where the target is unknown
-	 */
-	public static final int UNKNOWN_TYPE = 0;
-	/**
-	 * HitTestResult for hitting a HTML::a tag
-	 */
-	public static final int ANCHOR_TYPE = 1;
-	/**
-	 * HitTestResult for hitting a phone number
-	 */
-	public static final int PHONE_TYPE = 2;
-	/**
-	 * HitTestResult for hitting a map address
-	 */
-	public static final int GEO_TYPE = 3;
-	/**
-	 * HitTestResult for hitting an email address
-	 */
-	public static final int EMAIL_TYPE = 4;
-	/**
-	 * HitTestResult for hitting an HTML::img tag
-	 */
-	public static final int IMAGE_TYPE = 5;
-	/**
-	 * HitTestResult for hitting a HTML::a tag which contains HTML::img
-	 */
-	public static final int IMAGE_ANCHOR_TYPE = 6;
-	/**
-	 * HitTestResult for hitting a HTML::a tag with src=http
-	 */
-	public static final int SRC_ANCHOR_TYPE = 7;
-	/**
-	 * HitTestResult for hitting a HTML::a tag with src=http + HTML::img
-	 */
-	public static final int SRC_IMAGE_ANCHOR_TYPE = 8;
-	/**
-	 * HitTestResult for hitting an edit text area
-	 */
-	public static final int EDIT_TEXT_TYPE = 9;
-	/**
-	 * HitTestResult for hitting an HTML5 video tag
-	 */
-	public static final int VIDEO_TYPE = 10;
-	/**
-	 * HitTestResult for hitting text a text node
-	 */
-	public static final int TEXT_TYPE = 11;
 
-	
-	
-	private int mType;
-	private String mExtra;
-	private Rect mRect;
-	private int mIdentifier;
+    /**
+     * Default HitTestResult, where the target is unknown
+     */
+    public static final int UNKNOWN_TYPE = 0;
+    /**
+     * HitTestResult for hitting a HTML::a tag
+     */
+    public static final int ANCHOR_TYPE = 1;
+    /**
+     * HitTestResult for hitting a phone number
+     */
+    public static final int PHONE_TYPE = 2;
+    /**
+     * HitTestResult for hitting a map address
+     */
+    public static final int GEO_TYPE = 3;
+    /**
+     * HitTestResult for hitting an email address
+     */
+    public static final int EMAIL_TYPE = 4;
+    /**
+     * HitTestResult for hitting an HTML::img tag
+     */
+    public static final int IMAGE_TYPE = 5;
+    /**
+     * HitTestResult for hitting a HTML::a tag which contains HTML::img
+     */
+    public static final int IMAGE_ANCHOR_TYPE = 6;
+    /**
+     * HitTestResult for hitting a HTML::a tag with src=http
+     */
+    public static final int SRC_ANCHOR_TYPE = 7;
+    /**
+     * HitTestResult for hitting a HTML::a tag with src=http + HTML::img
+     */
+    public static final int SRC_IMAGE_ANCHOR_TYPE = 8;
+    /**
+     * HitTestResult for hitting an edit text area
+     */
+    public static final int EDIT_TEXT_TYPE = 9;
+    /**
+     * HitTestResult for hitting an HTML5 video tag
+     */
+    public static final int VIDEO_TYPE = 10;
+    /**
+     * HitTestResult for hitting text a text node
+     */
+    public static final int TEXT_TYPE = 11;
 
-	WebHitTestResult() {
-		mType = UNKNOWN_TYPE;
-		mIdentifier = 0;
-	}
 
-	public void setType(int type) {
-		mType = type;
-	}
 
-	public void setExtra(String extra) {
-		mExtra = extra;
-	}
+    private int mType;
+    private String mExtra;
+    private String mToolTip;
+    private Rect mRect;
+    private int mIdentifier;
 
-	public void setRect(Rect rect) {
-		mRect = rect;
-	}
+    WebHitTestResult() {
+        mType = UNKNOWN_TYPE;
+        mIdentifier = 0;
+    }
 
-	public void setIdentifier(int identifier) {
-		mIdentifier = identifier;
-	}
+    public void setType(int type) {
+        mType = type;
+    }
 
-	public int getType() {
-		return mType;
-	}
+    public void setExtra(String extra) {
+        mExtra = extra;
+    }
+    public void setToolTip(String toolTip) {
+        mToolTip = toolTip;
+    }
 
-	public String getExtra() {
-		return mExtra;
-	}
-	
-	public Rect getRect() {
-		return mRect;
-	}
+    public void setRect(Rect rect) {
+        mRect = rect;
+    }
 
-	public int getIdentifier() {
-		return mIdentifier;
-	}
+    public void setIdentifier(int identifier) {
+        mIdentifier = identifier;
+    }
 
-	public void dump() {
-		Log.v(LOGTAG, "WebHitTestResult mType=" + mType
-				+ ", mExtra=" + mExtra
-				+ ", mIdentifier=" + mIdentifier
-				+ ", mRect=" + mRect.toString()) ;
-		
-	}
-		
+    public int getType() {
+        return mType;
+    }
+
+    public String getExtra() {
+        return mExtra;
+    }
+
+    public Rect getRect() {
+        return mRect;
+    }
+
+    public int getIdentifier() {
+        return mIdentifier;
+    }
+
+    public String getToolTip() {
+        return mToolTip;
+    }
+
+    public void dump() {
+        Log.v(LOGTAG, "WebHitTestResult mType=" + mType
+            + ", mExtra=" + mExtra
+            + ", mToolTip=" + mToolTip
+            + ", mIdentifier=" + mIdentifier
+            + ", mRect=" + mRect.toString()) ;
+    }
 }
 

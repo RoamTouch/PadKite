@@ -1846,6 +1846,7 @@ static jobject nativeGetHitTestResultAtPoint(JNIEnv *env, jobject obj,
     const CachedNode *result = view->findCachedNodeAt(x, y, slop);
 
     WebCore::String extraString ;
+    WebCore::String toolTipString ;
     WebCore::IntRect bounds;
     int type = WebView::HIT_TEST_UNKNOWN_TYPE;
     if (result) {
@@ -1885,9 +1886,12 @@ static jobject nativeGetHitTestResultAtPoint(JNIEnv *env, jobject obj,
             }
         }
 
+        toolTipString = result->getToolTip() ;
     }
 
     jstring extra = env->NewString(extraString.characters(), extraString.length());
+
+    jstring toolTip = env->NewString(toolTipString.characters(), toolTipString.length());
 
     jclass rectClass = env->FindClass("android/graphics/Rect");
     jmethodID initRect = env->GetMethodID(rectClass, "<init>", "(IIII)V");
@@ -1911,6 +1915,9 @@ static jobject nativeGetHitTestResultAtPoint(JNIEnv *env, jobject obj,
 
     jmethodID setIdentifier = env->GetMethodID(hitTestResultClass, "setIdentifier", "(I)V");
     env->CallVoidMethod(hitTestResult, setIdentifier, (int)result) ;
+
+    jmethodID setToolTip = env->GetMethodID(hitTestResultClass, "setToolTip", "(Ljava/lang/String;)V");
+    env->CallVoidMethod(hitTestResult, setToolTip, toolTip) ;
 
     return hitTestResult;
     

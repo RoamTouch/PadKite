@@ -102,6 +102,7 @@ public:
     const WebCore::IntRect& getBounds() const { return mBounds; }
     void getBounds(WebCore::IntRect* bounds) const { *bounds = mBounds; }
     const WebCore::String& getExport() const { return mExport; }
+    const WebCore::String& getToolTip() const { return mToolTip; } //RoamTouch Change
     bool hasCursorRing() const { return !mIsHidden && mHasCursorRing; }
     bool hasMouseOver() const { return mHasMouseOver; }
     void hideCursor(CachedFrame* );
@@ -144,6 +145,7 @@ public:
     void setCondition(Condition condition) const { mCondition = condition; }
     void setDisabled(bool disabled) { mDisabled = disabled; }
     void setExport(const WebCore::String& exported) { mExport = exported; }
+    void setToolTip(const WebCore::String& toolTip) { mToolTip = toolTip; }
     void setHasCursorRing(bool hasRing) { mHasCursorRing = hasRing; }
     void setHasMouseOver(bool hasMouseOver) { mHasMouseOver = hasMouseOver; }
     void setHitBounds(const WebCore::IntRect& bounds) { mHitBounds = bounds; }
@@ -181,6 +183,7 @@ public:
     bool wantsKeyEvents() const { return mWantsKeyEvents; }
 private:
     WebCore::String mExport;
+    WebCore::String mToolTip; //RoamTouch Change
     WebCore::String mName;
     WebCore::IntRect mBounds;
     WebCore::IntRect mHitBounds;

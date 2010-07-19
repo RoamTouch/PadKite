@@ -1002,6 +1002,7 @@ void CacheBuilder::BuildFrame(Frame* root, Frame* frame,
         TextDirection direction = LTR;
         String name;
         String exported;
+        String toolTip;//RoamTouch change
         CachedNodeType type = NORMAL_CACHEDNODETYPE;
         IntRect bounds;
         IntRect absBounds;
@@ -1146,6 +1147,12 @@ void CacheBuilder::BuildFrame(Frame* root, Frame* frame,
                 continue;
             if (node->disabled())
                 continue;
+            //RoamTouch Change - begin
+            toolTip = anchorNode->getAttribute(HTMLNames::titleAttr);
+            if (toolTip.isEmpty()) {
+                toolTip = anchorNode->getAttribute(HTMLNames::altAttr);
+            }
+            //RoamTouch Change - end
             hasMouseOver = NodeHasEventListeners(node, &eventNames().mouseoverEvent, 1);
             isAnchor = true;
             KURL href = anchorNode->href();
@@ -1220,6 +1227,7 @@ void CacheBuilder::BuildFrame(Frame* root, Frame* frame,
         cachedNode.setNavableRects();
         cachedNode.setChildFrameIndex(-1);
         cachedNode.setExport(exported);
+        cachedNode.setToolTip(toolTip); //RoamTouch Change
         cachedNode.setHasCursorRing(hasCursorRing);
         cachedNode.setHasMouseOver(hasMouseOver);
         cachedNode.setHitBounds(absBounds);
