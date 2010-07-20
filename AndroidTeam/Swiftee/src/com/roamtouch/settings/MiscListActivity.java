@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -87,10 +88,11 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 			int id = parent.getId();
 			switch(id){
 				case R.id.translateList:
-					Dialog dialog = new Dialog(MiscListActivity.this);
-					dialog.setContentView(R.layout.languages_dialog);
-					dialog.setTitle("Choose languages");
-					dialog.show();
+					//LanguagesDialog dialog = new LanguagesDialog(MiscListActivity.this);
+					//dialog.show();
+					//PopupWindow window = new PopupWindow(200,300);
+					//window.showAtLocation(, Gravity.CENTER, 10, 20);
+					
 					break;
 				case R.id.miscList:
 					Toast.makeText(MiscListActivity.this, "Misc", 20).show();

@@ -1,6 +1,7 @@
 package com.roamtouch.menu;
 
 import com.roamtouch.floatingcursor.FloatingCursor;
+import com.roamtouch.settings.GestureEditor;
 import com.roamtouch.settings.MiscListActivity;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
@@ -40,24 +41,27 @@ public class SettingsMenu extends CircularLayout implements OnClickListener{
 		int id=v.getId();
 		switch(id){
 
+			case R.id.browsersettings:break;
+			case R.id.setHome:break;
+			case R.id.resizeHit:break;
+			case R.id.gestureEditor:{
+				Intent i = new Intent(mParent,GestureEditor.class);
+				mParent.startActivity(i);
+				break;
+			}
 			case R.id.misc:{
 				Intent i = new Intent(mParent,MiscListActivity.class);
 				mParent.startActivity(i);
 				break;
 			}
-			case R.id.findtext:{
+			case R.id.onlineHelp:{
 				
 				break;
 			}
-			case R.id.refresh:{
-				
-				
+			case R.id.practiceGesture:{
+						
 				break;
 			}
-			case R.id.stop:break;
-			case R.id.zoom:break;
-			case R.id.resizeHit:break;
-			case R.id.windows:break;
 			
 		}
 		

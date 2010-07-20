@@ -26,8 +26,7 @@
 	        		android:layout_height="wrap_content"
             		android:gravity="center"
 	        		android:background="@drawable/stop_btn" />    	
- 	
-		
+ 			
 				<com.roamtouch.menu.MenuButton 
 		  		    android:id="@+id/gestureEditor"
 		    		android:tag="settings"  
@@ -51,5 +50,14 @@
 	        		android:layout_height="wrap_content"
             		android:gravity="center"
 	        		android:background="@drawable/windows_btn" />    	
+	        		
+	        	<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/practiceGesture"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/windows_btn" />    	
+	        		
 
     	</merge >

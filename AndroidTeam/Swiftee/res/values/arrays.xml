@@ -3,13 +3,27 @@
 <resources>
   
     <!-- Languages preferences -->
-    <string-array name="language_preference">
-        <item>English</item>
-        <item>Hindi</item>
-        <item>Spanish</item>  
-        <item>French</item>
-        <item>German</item>
-        <item>Russian</item>  
-    </string-array>
+    	<string-array name="language_preference">
+        	<item>English</item>
+        	<item>Hindi</item>
+        	<item>Spanish</item>  
+        	<item>French</item>
+        	<item>German</item>
+        	<item>Russian</item>  
+    	</string-array>
+    
+    <!-- Gesture Kit Editor Arrays -->
+     	<string-array name="cursor_gestures_array">
+        	<item>Cursor over text</item>
+        	<item>Cursor over link</item>
+        	<item>Cursor over image</item>  
+        	<item>Cursor over no target</item>
+        	<item>Cursor over video</item>
+    	</string-array>
+    	
+    	<string-array name="other_gestures_array">
+        	<item>Custom Gestures</item>
+        	<item>Bookmark Gestures</item>
+        </string-array>
     
 </resources>

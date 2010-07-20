@@ -11,4 +11,8 @@
     	<string name="version_code">1.0.1</string>
     	<string name="dialog_title_language_preference">Choose Language</string>
     	
+    <!-- Gesture Editor Activity Strings -->	
+    	<string name="cursorGestures">Cursor gestures</string>
+    	<string name="otherGestures">Other gestures</string>
+    	
 </resources>

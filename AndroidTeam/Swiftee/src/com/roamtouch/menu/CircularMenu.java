@@ -17,7 +17,7 @@ public class CircularMenu extends CircularLayout implements OnClickListener{
 
 	private FloatingCursor mFloatingCursor;
 	private BrowserActivity mParent;
-	public static boolean USER_REGISTERED = false;
+	public static boolean USER_REGISTERED = true;
 	
 	public CircularMenu(Context context) {
 		super(context);

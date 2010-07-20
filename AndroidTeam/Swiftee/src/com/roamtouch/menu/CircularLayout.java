@@ -118,7 +118,7 @@ public class CircularLayout extends ViewGroup {
 		   }
         
 		   setMeasuredDimension(widthSpecSize, heightSpecSize);
-		   Toast.makeText(context, ""+currentMode, 100).show();
+		   //Toast.makeText(context, ""+currentMode, 100).show();
 	   }
 	   @Override
 	   protected void onLayout(boolean changed, int left, int top, int right, int bot) {
