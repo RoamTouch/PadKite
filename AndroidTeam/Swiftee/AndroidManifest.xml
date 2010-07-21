@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       android:versionCode="1"
       android:versionName="1.06" package="com.roamtouch.swiftee">
-    <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true">
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true" android:name="SwifteeApplication">
         <activity android:name=".BrowserActivity"
                   android:label="@string/app_name">
             <intent-filter>
@@ -24,12 +24,15 @@
                   android:launchMode="singleTop" />
                   
        <activity android:name="com.roamtouch.settings.GestureEditor" />     
-       <activity android:name="com.roamtouch.settings.GesturesListActivity" />           
+       <activity android:name="com.roamtouch.settings.GesturesListActivity" />        
+       <activity android:name="com.roamtouch.settings.GestureRecorder" />           
          
     </application>
 
+<uses-sdk android:targetSdkVersion="4" android:minSdkVersion="4"></uses-sdk>
 
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-<uses-sdk android:targetSdkVersion="4" android:minSdkVersion="4"></uses-sdk>
 <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
+ <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+ 
 </manifest> 

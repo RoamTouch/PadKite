@@ -1,28 +1,23 @@
 package com.roamtouch.settings;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.roamtouch.swiftee.R;
 
 public class GesturesListActivity extends Activity{
 
-	
+		private TextView tv;
 		private int gestureCategory;
 		
-		private final int CURSOR_OVER_TEXT = 1;
-		private final int CURSOR_OVER_LINK = 2;
-		private final int CURSOR_OVER_IMAGE = 3;
-		private final int CURSOR_OVER_NOTARGET = 4;
-		private final int CURSOR_OVER_VIDEO = 5;
-		private final int CUSTOM_GESTURE = 7;
-		private final int BOOKMARK_GESTURE = 8;
-		
-	
 	  	/** Called when the activity is first created. */
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
@@ -33,19 +28,46 @@ public class GesturesListActivity extends Activity{
       
 			ListView list = (ListView) this.findViewById(R.id.gesturesList);
 			
-			TextView tv = new TextView(this);
+			tv = new TextView(this);
 	    	tv.setHeight(60);
 	    	tv.setPadding(5, 0, 0, 0);
-			tv.setText("Cursor over text");
 			tv.setTextColor(Color.WHITE);		
 			tv.setBackgroundColor(Color.BLACK);
 			tv.setGravity(Gravity.CENTER_VERTICAL);
 			
-			list.addHeaderView(tv);
-			list.setAdapter(new GestureAdapter(this));
+			setTitle(gestureCategory);
 			
+			list.addHeaderView(tv);
+			list.setAdapter(new GestureAdapter(this,gestureCategory));
 			
 		}
 		
+		public void setTitle(int gestureType){
+			
+			switch(gestureType){
+			case 1:			
+				tv.setText("Cursor over text");
+				break;
+			case 2:					
+				tv.setText("Cursor over link");
+				break;
+			case 3:
+				tv.setText("Cursor over image");
+				break;
+			case 4:
+				tv.setText("Cursor over no target");
+				break;
+			case 5:
+				tv.setText("Cursor over video");
+				break;
+			case 7:
+				tv.setText("Custom gestures");
+				break;
+			case 8:
+				tv.setText("Bookmark gestures");
+				break;
+			
+			}
+		}
 
 }

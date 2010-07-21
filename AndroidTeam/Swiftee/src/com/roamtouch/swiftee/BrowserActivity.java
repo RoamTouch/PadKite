@@ -12,7 +12,6 @@ import com.roamtouch.view.TutorArea;
 import android.app.Activity;
 import android.content.Intent;
 import android.gesture.Gesture;
-import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.gesture.GestureOverlayView;
 import android.gesture.Prediction;
@@ -50,6 +49,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	private int currentGestureLibrary;
 	public static final int CURSOR_GESTURES = 0; 
 	public static final int BOOKMARK_GESTURES = 1; 
+	private SwifteeApplication appState;
 	
 	 public boolean onKeyDown(int keyCode, android.view.KeyEvent event){
 	        
@@ -60,6 +60,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	    		if (floatingCursor.isMenuVisible())
 	    		{
 		    		floatingCursor.toggleMenuVisibility();
+	    		}
+	    		else if(mTutor.getVisibility() == View.VISIBLE){
+	    			mTutor.setVisibility(View.INVISIBLE);
+	    			mGestures.setEnabled(false);
+	    	    	floatingCursor.enableFC();
+	    	        mSelection = null;
 	    		}
 	    		else if(webView.canGoBack())
 	    			webView.goBack();
@@ -125,16 +131,13 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     public void initGestureLibrary(int id){
     	currentGestureLibrary = id;
     	switch(id){
-    		case 0:mLibrary = GestureLibraries.fromRawResource(this, R.raw.gestures);
-    				if (!mLibrary.load()) {
-    					finish();
-    				}
+    		case 0: 
+    				appState = ((SwifteeApplication)getApplicationContext());
+    				mLibrary = appState.getGestureLibrary(SwifteeApplication.CURSOR_TEXT_GESTURE);
     				break;
     		case 1:
-    				mLibrary = GestureLibraries.fromRawResource(this, R.raw.bookmarks);
-    				if (!mLibrary.load()) {
-    					finish();
-    				}
+    				appState = ((SwifteeApplication)getApplicationContext());
+    				mLibrary = appState.getGestureLibrary(SwifteeApplication.BOOKMARK_GESTURE);
     				break;
     		case 2:break;
     	}
@@ -152,7 +155,6 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
            	 try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 

@@ -2,11 +2,11 @@ package com.roamtouch.settings;
 
 import java.util.ArrayList;
 import java.util.Set;
-
 import com.roamtouch.swiftee.R;
+import com.roamtouch.swiftee.SwifteeApplication;
 import android.content.Context;
+import android.content.Intent;
 import android.gesture.Gesture;
-import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -14,7 +14,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,16 +26,32 @@ public class GestureAdapter extends BaseAdapter{
 		private Context mContext;	
 		private int gestureCount;
 		private Object str[];
-	
+		private OnClickListener listener;
+		private int gestureType;
 		
-		public GestureAdapter(Context context){
+		public GestureAdapter(Context context,int type){
 			mContext=context;
-			mLibrary = GestureLibraries.fromRawResource(mContext, R.raw.gestures);
-			if (!mLibrary.load()) {
-			}
+			this.gestureType = type;
+			
+			SwifteeApplication appState = ((SwifteeApplication)context.getApplicationContext());
+			mLibrary = appState.getGestureLibrary(gestureType);
+			
 			Set<String> s=mLibrary.getGestureEntries();
 			str = s.toArray();
 			gestureCount = str.length;
+		
+			listener = new OnClickListener(){
+
+				public void onClick(View v) {
+					
+					String gestureName =  v.getTag().toString();
+					
+					Intent i = new Intent(mContext,GestureRecorder.class);
+					i.putExtra("Gesture_Type", gestureType);
+					i.putExtra("Gesture_Name", gestureName);
+					mContext.startActivity(i);
+				}
+			};
 		}
 		public int getCount() {
 			return gestureCount ;
@@ -62,10 +80,15 @@ public class GestureAdapter extends BaseAdapter{
 			BitmapDrawable d = new BitmapDrawable(bit);
 			gestureImage.setBackgroundDrawable(d);
 			           
-			TextView v1= (TextView) v.findViewById(R.id.gestureText);
+			TextView v1= (TextView) v.findViewById(R.id.gestureText);			
+			v1.setText(str[position].toString());  
 			
-			v1.setText(str[position].toString());          
+			Button rec = (Button) v.findViewById(R.id.recordButton);
+			rec.setTag(str[position].toString());
+			//rec.setId(position);
+			rec.setOnClickListener(listener);
 			return v;
 		}
+		
 }
 

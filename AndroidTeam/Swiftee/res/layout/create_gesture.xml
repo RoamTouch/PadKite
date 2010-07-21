@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
+
+    
+    
+        <TextView android:id="@+id/gestureText"
+            android:layout_width="fill_parent"
+            android:layout_height="60dip"
+            android:paddingLeft="6dip"   
+            android:gravity="center_vertical"        
+            android:text="Rec Blog text new gesture"
+            android:background="#000000"
+            android:textColor="#FFFFFF"
+            />
+  
+    
+    <android.gesture.GestureOverlayView
+        android:id="@+id/gestures_overlay"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gestureStrokeType="multiple" 
+        android:visibility="invisible"
+        android:layout_weight="1.0" 
+        />
+
+    <LinearLayout
+
+        android:layout_width="fill_parent"
+        android:layout_height="100dip"
+		android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/startRecording"              
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Recording" 
+            android:drawableLeft="@drawable/red_dot"
+           />
+    
+    </LinearLayout>
+    
+</LinearLayout>
