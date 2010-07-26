@@ -45,6 +45,7 @@ import android.text.Spannable;
 import android.util.AttributeSet;
 import android.util.EventLog;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -5892,10 +5893,48 @@ public class WebView extends AbsoluteLayout
      */
     void requestListBox(String[] array, boolean[]enabledArray, int[]
             selectedArray) {
-        mPrivateHandler.post(
-                new InvokeListBox(array, enabledArray, selectedArray));
+        /*mPrivateHandler.post(
+                new InvokeListBox(array, enabledArray, selectedArray));*/
+        mCallbackProxy.requestListBox(array, enabledArray, selectedArray);
+                
+    }
+    //RoamTouch change - begin
+    
+    /*
+     * Set the selected multi-choice listbox choices in WebKit <select> element
+     *
+     * @param choices array selected list items
+     * @param choicesSize  Length of choices array
+     * @param cancel User selection is cancelled or not
+     */
+    public void setListBoxChoices(SparseBooleanArray choices, int choicesSize, boolean cancel) {
+        if (cancel) {
+            mWebViewCore.sendMessage(
+                    EventHub.SINGLE_LISTBOX_CHOICE, -2, 0);
+        } else {
+            mWebViewCore.sendMessage(
+                EventHub.LISTBOX_CHOICES, choicesSize, 0, choices);
+        }
+
     }
 
+    /*
+     * Set the selected single-choice listbox choice in WebKit <select> element
+     *
+     * @param choice selected list item index
+     * @param cancel User selection is cancelled or not
+     */
+    public void setListBoxChoice(int choice, boolean cancel) {
+        if (cancel) {
+            mWebViewCore.sendMessage(
+                    EventHub.SINGLE_LISTBOX_CHOICE, -2, 0);
+        } else {
+            mWebViewCore.sendMessage(
+                    EventHub.SINGLE_LISTBOX_CHOICE, choice, 0);
+        }
+    
+    }
+    //RoamTouch change - end
     private void updateZoomRange(WebViewCore.RestoreState restoreState,
             int viewWidth, int minPrefWidth, boolean updateZoomOverview) {
         if (restoreState.mMinScale == 0) {
@@ -5936,8 +5975,9 @@ public class WebView extends AbsoluteLayout
      * @param selection Which position is initally selected.
      */
     void requestListBox(String[] array, boolean[]enabledArray, int selection) {
-        mPrivateHandler.post(
-                new InvokeListBox(array, enabledArray, selection));
+        /*mPrivateHandler.post(
+                new InvokeListBox(array, enabledArray, selection));*/
+        mCallbackProxy.requestListBox(array, enabledArray, selection);
     }
 
     // called by JNI

@@ -272,6 +272,24 @@ public class WebChromeClient {
      */
     public void onClipBoardUpdate(String type) {}
 
+    /**
+     * Request the application fo create a native listbox to display the single selection <selet> element
+     * items to the user. This client API will get called when user activates the select item on webpage.
+     * @param array array of listbox item text
+     * @param enabledArray array of flags to indicate whether the corresponding item is enabled or not
+     * @param selection default selected item index
+     */
+    void onListBoxRequest(String[] array, boolean[]enabledArray, int selection) {}
+
+    /**
+     * Request the application fo create a native listbox to display the multi selection <selet> element
+     * items to the user. This client API will get called when user activates the select item on webpage.
+     * @param array array of listbox item text
+     * @param enabledArray array of flags to indicate whether the corresponding item is enabled or not
+     * @param selection array of default selected items index
+     */
+    void onListBoxRequest(String[] array, boolean[]enabledArray, int[] selectedArray) {}
+    
     //Roamtouch Change - end
 
     /**
