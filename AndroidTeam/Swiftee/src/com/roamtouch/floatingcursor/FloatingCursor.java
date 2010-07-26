@@ -32,6 +32,7 @@ import com.roamtouch.menu.SettingsMenu;
 import com.roamtouch.menu.WindowTabs;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
+import com.roamtouch.swiftee.SwifteeApplication;
 
 
 public class FloatingCursor extends FrameLayout {
@@ -58,6 +59,7 @@ public class FloatingCursor extends FrameLayout {
 		private CircularMenu fcMainMenu;
 		private SettingsMenu fcSettingsMenu;
 		private WindowTabs fcWindowTabs;
+		private ZoomWebView zoomView;
 				
 	/**
 	 *  integer showing which menu among main,settings and tabs is currently displayed 
@@ -360,6 +362,11 @@ public class FloatingCursor extends FrameLayout {
 			fcWindowTabs.setVisibility(INVISIBLE);
 			fcWindowTabs.setFloatingCursor(this);
 			
+			zoomView = new ZoomWebView(context);
+			zoomView.setFloatingCursor(this);
+			zoomView.setFCRadius(RADIUS);
+			zoomView.setVisibility(INVISIBLE);
+			
 			addView(fcView);
 			addView(fcProgressBar);
 			addView(fcPointerView);
@@ -367,7 +374,8 @@ public class FloatingCursor extends FrameLayout {
 			addView(fcMainMenu);
 			addView(fcSettingsMenu);
 			addView(fcWindowTabs);
-
+			addView(zoomView);
+			
 			vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
 		}
 
@@ -431,6 +439,7 @@ public class FloatingCursor extends FrameLayout {
 					fcSettingsMenu.setVisibility(INVISIBLE);
 					fcMainMenu.setVisibility(INVISIBLE);
 					break;
+		
 			}
 			
 		}
@@ -716,7 +725,7 @@ public class FloatingCursor extends FrameLayout {
 				{
 					sendEvent(MotionEvent.ACTION_UP, X, Y);
 					pointer.setImageResource(R.drawable.no_target_cursor);
-					mParent.startGesture();			
+					mParent.startGesture(SwifteeApplication.CURSOR_TEXT_GESTURE);			
 				}
 				removeTouchPoint();
 			}
@@ -828,6 +837,8 @@ public class FloatingCursor extends FrameLayout {
 					
 				if(X > innerCircleX-innerCirRad && X < innerCircleX+innerCirRad && Y > innerCircleY-innerCirRad && Y < innerCircleY+innerCirRad){
 					//Toast.makeText(mContext, "Circular Menu", 100).show();
+					if(isCircularZoomEnabled())
+						disableCircularZoom();
 					toggleMenuVisibility();
 					mHandleTouch = true; // Let user drag and fling menu
 					//return true;
@@ -963,6 +974,37 @@ public class FloatingCursor extends FrameLayout {
 
 		}
 		/*
+		 * Circular zoom functions 
+		 * 
+		 */
+			public void enableCircularZoom(){
+				zoomView.setVisibility(VISIBLE);
+				zoomView.setClickable(true);
+				eventViewer.setText("Circular Zooming enabled.Click back to disable it");
+				//currentMenu.setVisibility(INVISIBLE);
+			}
+			public void disableCircularZoom(){
+				//currentMenu.setVisibility(VISIBLE);
+				zoomView.setVisibility(INVISIBLE);
+				eventViewer.setText("Circular Zooming disabled");
+			}
+			public boolean isCircularZoomEnabled(){
+				if(zoomView.getVisibility() == VISIBLE)
+					return true;
+				return false;
+			}
+			public void circularZoomIn(){
+				mWebView.zoomIn();
+			}
+			public void circularZoomOut(){
+				mWebView.zoomOut();
+			}
+			
+		public void setEventText(String str){
+			eventViewer.setText(str);
+		}
+			
+		/*
 		 * WebView scrolling with FloatingCursor
 		 */
 		public void scrollWebView(int value,int direction){
@@ -986,7 +1028,7 @@ public class FloatingCursor extends FrameLayout {
 			// @Override
 			public void onClipBoardUpdate (String type) {
 				if (mGesturesEnabled) {
-					mParent.startGesture();
+					mParent.startGesture(SwifteeApplication.CURSOR_TEXT_GESTURE);
 					mGesturesEnabled=false;
 				}
 			}

@@ -1,18 +1,17 @@
 package com.roamtouch.menu;
 
 import com.roamtouch.swiftee.R;
+
 import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Scroller;
 import android.widget.Toast;
 
 /**
@@ -49,7 +48,13 @@ public class CircularLayout extends ViewGroup {
 		private int mMinimumVelocity;
 		private int mMaximumVelocity;
 	  
-
+		/**
+		 * flag indicating moving direction
+		 *  1 for clockwise
+		 * -1 for anti clockwise
+		 */
+		private int direction;
+		
 		private Scroller mScroller;
 		
 		private VelocityTracker mVelocityTracker;
@@ -66,7 +71,7 @@ public class CircularLayout extends ViewGroup {
 	   
 		private float mAngleChange;
 	   
-		private int childStartPoint;
+		private int childEndPoint;
 		
 		public CircularLayout(Context context) {
 			super(context);
@@ -77,8 +82,11 @@ public class CircularLayout extends ViewGroup {
 			setWillNotDraw(false);
 			final ViewConfiguration configuration = ViewConfiguration.get(context);
 			mTouchSlop = configuration.getScaledTouchSlop();
+			mTouchSlop = 3;
+			//Log.d("Touch slope", ""+mTouchSlop);
 			mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
 			mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
+			//Log.d
 			this.context = context;			
 		   }
 		
@@ -90,6 +98,8 @@ public class CircularLayout extends ViewGroup {
 			setWillNotDraw(false);
 			final ViewConfiguration configuration = ViewConfiguration.get(context);
 			mTouchSlop = configuration.getScaledTouchSlop();
+			//Log.d("Touch slope", ""+mTouchSlop);
+			mTouchSlop = 3;
 			mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
 			mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
 		}
@@ -133,23 +143,23 @@ public class CircularLayout extends ViewGroup {
 		   t=55;
         
 		   if(currentMode == CircularLayout.DYNAMIC_MODE){
-			   childStartPoint = 2;
+			   childEndPoint = count - 2;
 			   Button but = (Button)getChildAt(count-1);
 			   int diff = BUTTON_RADIUS/2;
 			   but.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
 			
 		   }
 		   else
-			   childStartPoint = 1;
+			   childEndPoint = count - 1;
 
-		   ImageView cone = (ImageView)getChildAt(count-childStartPoint);
+		   ImageView cone = (ImageView)getChildAt(childEndPoint);
 		   
 		   if (cone.getVisibility() != GONE) {         
 			   cone.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
 			   cone.setClickable(false);
 		   }
 		   
-		   for (int i = 0; i < count-childStartPoint; i++) {
+		   for (int i = 0; i < childEndPoint; i++) {
 			   MenuButton child = (MenuButton)getChildAt(i);
 			   if (child.getVisibility() != GONE) {            
             	// Calc coordinates around the circle at the center of cart. system
@@ -171,9 +181,7 @@ public class CircularLayout extends ViewGroup {
                     child.layout(childLeft, childTop, lb, rb);                	
                 }
             }
-        }	
-		   
-		   
+        }			   
 	}
 	public void setMode(int mode){
 
@@ -200,7 +208,7 @@ public class CircularLayout extends ViewGroup {
 */
 	public boolean canScroll(float angleDiff,int childCount) {
 		MenuButton first = (MenuButton)getChildAt(0);
-		MenuButton last = (MenuButton)getChildAt(childCount-3);
+		MenuButton last = (MenuButton)getChildAt(childEndPoint-1);
 		
 		if((first.getAngle()+angleDiff)>4)
 			return false;
@@ -226,13 +234,12 @@ public class CircularLayout extends ViewGroup {
 		}
 	 @Override
 	public boolean onTouchEvent(MotionEvent event) {
-		
+
 		 final int action = event.getAction();
 	     final float x = event.getX();
 	     final float y = event.getY();
 
-		if(y<80 || y>400)
-			return false;
+		
 		if(Math.pow(x-a, 2)+Math.pow(y-b, 2)-Math.pow(inR-40, 2)<0 && Math.pow(x-a, 2)+Math.pow(y-b, 2)-Math.pow(outR, 2)>0)
 			return false;
 		
@@ -245,49 +252,131 @@ public class CircularLayout extends ViewGroup {
 		
 		 if (mVelocityTracker == null) {
 	            mVelocityTracker = VelocityTracker.obtain();
+	            mVelocityTracker.setRotationCenter(a, b);
 	        }
 	       
 		switch(action){
 		
 		case MotionEvent.ACTION_DOWN:{
 			
+			 if (!mScroller.isFinished()) {
+                 mScroller.abortAnimation();
+             }
+			   mIsBeingDragged=false;
+			    mLastMotionAngle = -999;
+			    mLastMotionX =0;
+			    mLastMotionY =0;
+			    Log.d("inside mLastMotionAngle touch Down"," resetting position!!----------------------");
             break;
 		}
+		case MotionEvent.ACTION_OUTSIDE:{
+			 mIsBeingDragged=false;
+			    mLastMotionAngle = -999;
+			    mLastMotionX =0;
+			    mLastMotionY =0;
+			    Log.d("inside mLastMotionAngle touch outside"," resetting position!!----------------------");
+		}
 		case MotionEvent.ACTION_MOVE:{
+			 
 			
 //			final int yDiff = (int) Math.abs(y - mLastMotionY);
 //            final int xDiff = (int) Math.abs(x - mLastMotionX);
             
-			 mVelocityTracker.addMovement(event);
-			 
             float currentAngle, angleDiff;
-            
+            mVelocityTracker.addMovement(event);
             if(mLastMotionAngle == -999) {
             	mLastMotionAngle = (float)computeAngle1(a, b, x, y);
     			mLastMotionX = x;
                 mLastMotionY = y;
-                
+                Log.d("inside mLastMotionAngle,"," reseted initial position!!----------------------");
                 currentAngle = mLastMotionAngle;
             }
             currentAngle = (float)computeAngle1(a, b, x, y);
+            //Log.d("Action move---------------Current angle",""+currentAngle);
             angleDiff = currentAngle-mLastMotionAngle;
-           //if (yDiff > 3 || xDiff > 3) {
-            if(Math.abs(angleDiff) > 2) {
+            //Log.d("Angle diff---------------",""+angleDiff);
             
-           
+            // Special case to handle move from fourth quadrant to first quadrant
+            if(Math.abs(angleDiff) > 200) {
+            	if(currentAngle < mLastMotionAngle) {
+            		if((mLastMotionAngle > 270) && (currentAngle < 90)) {
+            			angleDiff = currentAngle + (360 - mLastMotionAngle);
+            			Log.d("Angle diff adjusted---------------",""+angleDiff);
+            		}
+            	}
+           		else {
+           			if((mLastMotionAngle < 90) && (currentAngle > 270)) {
+            				angleDiff = mLastMotionAngle + (360 - currentAngle);
+            				angleDiff = -1*angleDiff;
+            				Log.d("Angle diff adjusted---------------",""+angleDiff);
+           			}
+           		}
+            }
+            		
+           //if (yDiff > 3 || xDiff > 3) {
+            
+            if(Math.abs(angleDiff) > 0.5 && Math.abs(angleDiff) < 250)  {
+            
+          
      	    //checkForMotionDir(x,y);
             //computeAngle(x,y);
             mAngleChange = angleDiff;
+            if(mAngleChange<0)
+            	direction = -1;
+            else
+            	direction = 1;
 			int count=getChildCount();
+			
+			mLastMotionAngle = currentAngle;
+			mLastMotionX = x;
+            mLastMotionY = y;
+            
             if(!canScroll(angleDiff, count))
             	return true;
             //if(mLastMotionAngle>270 && currentAngle<90)
             //	mAngleChange = currentAngle;
             
                   
-    	
+            moveChilds();
         	//Log.i("x,y" , "("+ x +","+ y +")");
-			for (int i = 0; i < count-childStartPoint; i++) {
+			
+			
+            //Log.d("x,y,angle: ", x+","+y+","+mLastMotionAngle);
+			}
+            break;
+		}
+		case MotionEvent.ACTION_UP:
+			final VelocityTracker velocityTracker = mVelocityTracker;
+            velocityTracker.computeCurrentVelocity(1000);
+            float initialVelocityY =  velocityTracker.getYVelocity();
+            float initialVelocityX =  velocityTracker.getXVelocity();
+            Log.d("X and Y velocity","x:"+initialVelocityX+"y:"+initialVelocityY);
+        	//Toast.makeText(mContext, "fling: " + 
+        		//	getScrollX() + "," + getScrollY() + "-" + initialVelocityX + "," + initialVelocityY + "-" + 
+        			//getWidth() + "," + getHeight(), Toast.LENGTH_SHORT).show();
+
+            if (Math.abs(initialVelocityX) > 0.2) {
+            	fling(Math.abs(initialVelocityX), initialVelocityY);
+            }
+
+            if (mVelocityTracker != null) {
+                mVelocityTracker.recycle();
+                mVelocityTracker = null;
+            }
+		    mIsBeingDragged=false;
+		    mLastMotionAngle = -999;
+		    mLastMotionX =0;
+		    mLastMotionY =0;
+		    Log.d("inside mLastMotionAngle,"," resetting position!!----------------------");
+		}
+		
+		
+		return true;
+	}
+	
+	 public void moveChilds(){
+		 //int count=getChildCount();
+		 for (int i = 0; i < childEndPoint; i++) {
 				
 	            MenuButton child = (MenuButton)getChildAt(i);
 	            
@@ -311,59 +400,38 @@ public class CircularLayout extends ViewGroup {
 	                	child.setVisibility(View.INVISIBLE);
 	            }
 	        }
-			mLastMotionAngle = currentAngle;
-			mLastMotionX = x;
-            mLastMotionY = y;
-            Log.d("x,y,angle: ", x+","+y+","+mLastMotionAngle);
-			}
-            break;
-		}
-		case MotionEvent.ACTION_UP:
-			final VelocityTracker velocityTracker = mVelocityTracker;
-            velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
-            int initialVelocityY = (int) velocityTracker.getYVelocity();
-            int initialVelocityX = (int) velocityTracker.getXVelocity();
-        	//Toast.makeText(mContext, "fling: " + 
-        		//	getScrollX() + "," + getScrollY() + "-" + initialVelocityX + "," + initialVelocityY + "-" + 
-        			//getWidth() + "," + getHeight(), Toast.LENGTH_SHORT).show();
-
-            if ((Math.abs(initialVelocityY) > mMinimumVelocity) || (Math.abs(initialVelocityX) > mMinimumVelocity)) {
-            	fling(-initialVelocityX, -initialVelocityY);
-            }
-
-            if (mVelocityTracker != null) {
-                mVelocityTracker.recycle();
-                mVelocityTracker = null;
-            }
-		    mIsBeingDragged=false;
-		    mLastMotionAngle = -999;
-		    mLastMotionX =0;
-		    mLastMotionY =0;
-		}
-		
-		
-		return true;
-	}
-	
-	public void fling(int velocityX, int velocityY) 
+	 }
+	public void fling(float velocityX, float velocityY) 
 	{
 		Log.d("Scroll X,Y",getScrollX()+","+getScrollY());
 		mScroller.fling(getScrollX(), getScrollY(), velocityX, velocityY, 0,320, 0, 320);
+		
 		invalidate();
 	}
 
 	@Override
 	public void computeScroll() {
-	//	if (mScroller.computeScrollOffset()) {
+		Log.d("INSIDE computeScroll","-----------------------------");
+		if (mScroller.computeScrollOffset()) {
+			Log.d("INSIDE computeScrolloffset","-----------------------------");
+			mAngleChange = mScroller.getAngle();
+			int count = getChildCount();
+			mAngleChange *= direction;
+			if(!canScroll(mAngleChange, count)){
+					mScroller.forceFinished(true);
+	            	return;
+			}
+			moveChilds();
 	//		Toast.makeText(context, "scrollTo:" + mScroller.getCurrX() +
 	//			 "," + mScroller.getCurrY(), Toast.LENGTH_SHORT).show();
-			scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
-        
+			//scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
+			//mAngleChange = mScroller.get;
+			//moveChilds();
 			// FIXME: Update cursor image
 
 			// Keep on drawing until the animation has finished.
 			postInvalidate();
-	//	}
+		}
 	}
 	
 	   @Override
@@ -379,7 +447,7 @@ public class CircularLayout extends ViewGroup {
 	        switch (action) {
             case MotionEvent.ACTION_MOVE:
               
-//            	 Log.i("inside ACTION_MOVE mLastMotionX,mLastMotionY" , "("+ mLastMotionX +","+ mLastMotionY +")");
+            	 Log.i("inside ACTION_MOVE mLastMotionX,mLastMotionY" , "("+ mLastMotionX +","+ mLastMotionY +")");
                 final int yDiff = (int) Math.abs(y - mLastMotionY);
                 final int xDiff = (int) Math.abs(x - mLastMotionX);
                 

@@ -1,11 +1,10 @@
 package com.roamtouch.swiftee;
 
 import java.util.ArrayList;
-
-import com.roamtouch.database.DBConnector;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.view.EventViewerArea;
+import com.roamtouch.view.SwifteeGestureView;
 import com.roamtouch.view.SwifteeOverlayView;
 import com.roamtouch.view.TopBarArea;
 import com.roamtouch.view.TutorArea;
@@ -41,14 +40,13 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	private GestureLibrary mLibrary;
 	private TopBarArea mTopBarArea;
 	
-	private GestureOverlayView mGestures;
+	private SwifteeGestureView mGestures;
 	private HorizontalScrollView mTutor;
 	
 	private final Handler mHandler = new Handler();
 		
 	private int currentGestureLibrary;
-	public static final int CURSOR_GESTURES = 0; 
-	public static final int BOOKMARK_GESTURES = 1; 
+	
 	private SwifteeApplication appState;
 	
 	 public boolean onKeyDown(int keyCode, android.view.KeyEvent event){
@@ -57,15 +55,15 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	    		floatingCursor.toggleMenuVisibility();
 	    	}
 	    	else if(keyCode == KeyEvent.KEYCODE_BACK){
-	    		if (floatingCursor.isMenuVisible())
+	    		if(floatingCursor.isCircularZoomEnabled()){
+	    			floatingCursor.disableCircularZoom();
+	    		}
+	    		else if (floatingCursor.isMenuVisible())
 	    		{
 		    		floatingCursor.toggleMenuVisibility();
 	    		}
 	    		else if(mTutor.getVisibility() == View.VISIBLE){
-	    			mTutor.setVisibility(View.INVISIBLE);
-	    			mGestures.setEnabled(false);
-	    	    	floatingCursor.enableFC();
-	    	        mSelection = null;
+	    			stopGesture();
 	    		}
 	    		else if(webView.canGoBack())
 	    			webView.goBack();
@@ -88,12 +86,14 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	
         setContentView(R.layout.main);
         
-        DBConnector dbConnector = new DBConnector(this);
-        dbConnector.open();
-        
        // LinearLayout webLayout = (LinearLayout) findViewById(R.id.webviewLayout);
         
         webView = (WebView)findViewById(R.id.webview);
+        webView.setScrollbarFadingEnabled(true);
+        webView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
+        webView.setMapTrackballToArrowKeys(false); // use trackball directly
+        // Enable the built-in zoom
+        webView.getSettings().setBuiltInZoomControls(true);
 		webView.loadUrl("http://www.google.com");
 		
 		//webLayout.addView(webView);
@@ -114,40 +114,33 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 		overlay.setFloatingCursor(floatingCursor);
 		
-		mGestures = (GestureOverlayView) findViewById(R.id.gestures);
+		mGestures = (SwifteeGestureView) findViewById(R.id.gestures);
 		mGestures.addOnGesturePerformedListener(this);
 		mGestures.setEnabled(false);
 		
 		mTutor = (HorizontalScrollView) findViewById(R.id.gestureScrollView);
-		initGestureLibrary(CURSOR_GESTURES);
 		
 		mTutor.setVisibility(View.INVISIBLE);
 				
 		mTopBarArea=(TopBarArea)this.findViewById(R.id.topbararea);
 		mTopBarArea.setWebView(webView);
+		
+		appState = ((SwifteeApplication)getApplicationContext());
     }
     private String mSelection;
     
     public void initGestureLibrary(int id){
     	currentGestureLibrary = id;
-    	switch(id){
-    		case 0: 
-    				appState = ((SwifteeApplication)getApplicationContext());
-    				mLibrary = appState.getGestureLibrary(SwifteeApplication.CURSOR_TEXT_GESTURE);
-    				break;
-    		case 1:
-    				appState = ((SwifteeApplication)getApplicationContext());
-    				mLibrary = appState.getGestureLibrary(SwifteeApplication.BOOKMARK_GESTURE);
-    				break;
-    		case 2:break;
-    	}
+    	mLibrary = appState.getGestureLibrary(currentGestureLibrary);
+    	
     	TutorArea tArea=(TutorArea)mTutor.getChildAt(0);
 		tArea.setGestureLibrary(mLibrary);
 		tArea.setParent(this);
     }
     
-    public void startGesture()
+    public void startGesture(int gestureType)
     {
+    	initGestureLibrary(gestureType);
     	floatingCursor.disableFC();
 
 		mHandler.post(new Runnable() {
@@ -209,9 +202,13 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     		
     			// cancel
     	}
-		stopGesture();
+		//stopGesture();
     }
 
+    public void drawGesture(Gesture gesture){
+    	
+    	//mGestures.drawGesture();
+    }
 	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
 		
 		 ArrayList<Prediction> predictions = mLibrary.recognize(gesture);
@@ -219,13 +216,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
                  if (predictions.get(0).score > 1.5) {
                          String action = predictions.get(0).name;
                          
-                         if ("Cancel".equals(action)) 
-                         	gestureDone(GESTURE_c);
-                         
-                         if(currentGestureLibrary == CURSOR_GESTURES){
+                         if(currentGestureLibrary == SwifteeApplication.CURSOR_TEXT_GESTURE){
                         	 cursorGestures(action);
                          }
-                         else if(currentGestureLibrary == BOOKMARK_GESTURES){
+                         else if(currentGestureLibrary == SwifteeApplication.BOOKMARK_GESTURE){
                         	 bookmarkGestures(action);
                          }
                         
@@ -241,11 +235,27 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
          	gestureDone(GESTURE_s);
         else if ("Email".equals(action))
          	gestureDone(GESTURE_e);
+        else if("Calendar".equals(action)){
+        	Intent intent = new Intent(Intent.ACTION_EDIT);
+        	intent.setType("vnd.android.cursor.item/event");
+        	intent.putExtra("title", "Some title");
+        	intent.putExtra("description", "Some description");
+        	startActivity(intent);
+        }
+        else if("Translate".equals(action)){
+        	eventViewer.setText("Translated:"+Translater.text(mSelection, "ENGLISH", "HINDI"));
+        }
+        else if("Wikipedia".equals(action)){
+        	webView.loadUrl("http://en.wikipedia.org/wiki/"+mSelection);
+        	eventViewer.setText("W (wikipedia) gesture done, wiki searching for: " + mSelection);
+        }       	
         else                
 			eventViewer.setText("Unrecognized gesture. Please draw 'S', 'e' or 'c'.");
+		stopGesture();
 	}
 	private void bookmarkGestures(String action){
 		if ("Google".equals(action))
+			
 			webView.loadUrl("http://www.google.com");
         else if ("Yahoo".equals(action))
         	webView.loadUrl("http://www.yahoo.com");

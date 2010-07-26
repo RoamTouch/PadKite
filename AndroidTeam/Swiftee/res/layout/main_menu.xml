@@ -62,11 +62,32 @@
 	        		android:background="@drawable/bookmark_btn" />    	
  	
 				<com.roamtouch.menu.MenuButton 
-		    		android:id="@+id/windows"
+		    		android:id="@+id/customGesture"
 		    		android:tag="random_gesture"  
 	        		android:layout_width="fill_parent"
 	        		android:layout_height="wrap_content"
             		android:gravity="center"
 	        		android:background="@drawable/windows_btn" />    	
+	        	<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/forward"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/windows_btn" />    	
+	        	<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/history"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/windows_btn" />    	
+	        	<com.roamtouch.menu.MenuButton 
+		    		android:id="@+id/download"
+		    		android:tag="random_gesture"  
+	        		android:layout_width="fill_parent"
+	        		android:layout_height="wrap_content"
+            		android:gravity="center"
+	        		android:background="@drawable/windows_btn" />    				
     	</merge >
     	

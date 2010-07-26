@@ -4,6 +4,8 @@ package com.roamtouch.swiftee;
 //import java.net.URI;
 //import java.net.URL;
 
+import com.roamtouch.database.DBConnector;
+
 import android.app.Application;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
@@ -20,7 +22,24 @@ public class SwifteeApplication extends Application{
 	public static final int CUSTOM_GESTURE = 7;
 	public static final int BOOKMARK_GESTURE = 8;
 	
+	private DBConnector database;
+	
+	@Override
+	public void onCreate(){
+		super.onCreate(); 
+		database = new DBConnector(this);
+		database.open();
+	}
+	@Override
+	public void onTerminate(){
+		super.onTerminate();
+		database.close();
+	}
+	public DBConnector getDatabase(){
+		return database;
+	}
 	public GestureLibrary getGestureLibrary(int gestureType){
+		
 		
 /*		File f1 = this.getFilesDir();
 		File f = new File(f1, "text_gestures");

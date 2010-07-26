@@ -3,6 +3,7 @@ package com.roamtouch.settings;
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.menu.CircularMenu;
 import com.roamtouch.swiftee.R;
+import com.roamtouch.swiftee.SwifteeApplication;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -17,7 +18,7 @@ public class RegisterActivity extends Activity{
 	    private EditText email,username,password;
 	    private Button register;
 	    private TextView errorText;
-	    private DBConnector dbConnector;
+	    private DBConnector database;
 	    
 	    @Override
 	    public void onCreate(Bundle savedInstanceState) {
@@ -25,8 +26,8 @@ public class RegisterActivity extends Activity{
 
 	    	setContentView(R.layout.register);
 
-	    	dbConnector = new DBConnector(this);
-	    	dbConnector.open();
+	    	SwifteeApplication appState = ((SwifteeApplication)getApplicationContext());
+	    	database = appState.getDatabase();
 
 
 
@@ -58,7 +59,7 @@ public class RegisterActivity extends Activity{
 	    				errorText.setText("You must enter password");
 	    				return;
 	    			}
-	    			dbConnector.registerUser(emailStr, usrStr, passStr);
+	    			database.registerUser(emailStr, usrStr, passStr);
 	    			CircularMenu.USER_REGISTERED = true;
 	    		}
 

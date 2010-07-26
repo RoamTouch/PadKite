@@ -23,6 +23,7 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 	private Context mContext;
 	private BrowserActivity parent;
 	private int gestureCount;
+	private Object str[];
 	
 	public TutorArea(Context context, AttributeSet attrs) {
 		super(context, attrs);	
@@ -35,7 +36,7 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 	private void initView(){
 		this.removeAllViews();
 		Set<String> s=mLibrary.getGestureEntries();
-		Object str[] = s.toArray();
+		str = s.toArray();
 		gestureCount = str.length;
 		
 		LayoutParams params=new LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -54,6 +55,7 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 	}
 	public void onClick(View v) {
 			parent.gestureDone(v.getId());	
+			ArrayList<Gesture> list = mLibrary.getGestures(str[v.getId()-1].toString());
 	}
 	public void setParent(BrowserActivity parent) {
 		this.parent = parent;
