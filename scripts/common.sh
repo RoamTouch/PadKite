@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REL="Alpha"
+REL="Beta-pre"
 
 # Find actual md5sum
 
