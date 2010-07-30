@@ -3,8 +3,8 @@
     			android:layout_width="fill_parent" android:layout_height="280dip" android:layout_weight="1"
     			android:layout_gravity="center" android:visibility="gone">
     			
-				<com.roamtouch.menu.MenuButton 
-		    		android:id="@+id/addTab"
+				<com.roamtouch.menu.TabButton 
+		    		android:id="@+id/Tab1"
 		    		android:tag="random_gesture"  
 	        		android:layout_width="fill_parent"
 	        		android:layout_height="wrap_content"

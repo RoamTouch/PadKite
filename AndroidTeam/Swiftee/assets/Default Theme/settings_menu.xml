@@ -1,0 +1,24 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+   		
+   		<MenuButton android:button_image="icon.png"
+					android:button_highlightImage="icon.png" />    	         	            
+		
+		<MenuButton android:button_image="refresh_normal.png"
+					android:button_highlightImage="refresh_pressed.png" />   
+
+		<MenuButton android:button_image="stop_normal.png"
+					android:button_highlightImage="stop_pressed.png" />
+		
+		<MenuButton android:button_image="zoom_normal.png"
+					android:button_highlightImage="zoom_pressed.png" />
+	
+		<MenuButton android:button_image="find_text_normal.png"
+					android:button_highlightImage="find_text_pressed.png" />
+	
+		<MenuButton android:button_image="windows_normal.png"
+					android:button_highlightImage="windows_pressed.png" />
+	
+		<MenuButton android:button_image="bookmark_normal.png"
+					android:button_highlightImage="bookmark_pressed.png" />
+</merge>
+    	

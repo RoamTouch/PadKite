@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-public class WindowTabs extends CircularLayout implements OnClickListener{
+public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 
 	private FloatingCursor mFloatingCursor;
 	private BrowserActivity mParent;
@@ -44,12 +44,15 @@ public class WindowTabs extends CircularLayout implements OnClickListener{
 		int id=v.getId();
 		int count = getChildCount();
 		if(v == getChildAt(count-1)){
-			MenuButton but = new MenuButton(mContext);
+			TabButton but = new TabButton(mContext);
 			but.setBackgroundResource(R.drawable.settings_btn);
-			addView(but,0);
+			//but.setDrawables(drawableStr, selectDrawableStr);
+			addView(but,1);
 		}
 		
 		switch(id){
+
+		case 0: removeViewAt(getActiveTabIndex());
 			
 		}
 		

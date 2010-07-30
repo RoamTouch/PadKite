@@ -4,6 +4,10 @@ package com.roamtouch.swiftee;
 //import java.net.URI;
 //import java.net.URL;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
 import com.roamtouch.database.DBConnector;
 
 import android.app.Application;
@@ -29,7 +33,45 @@ public class SwifteeApplication extends Application{
 		super.onCreate(); 
 		database = new DBConnector(this);
 		database.open();
+		
+		copyFilestoSdcard();
 	}
+	
+	public void copyFilestoSdcard(){
+		try{
+			String arr[] = getAssets().list("Default Theme");
+			File dir = new File("/sdcard/Swiftee/Default Theme/");
+			boolean cw = dir.canWrite();
+			boolean t = dir.mkdirs();
+			
+			
+			int count = arr.length;
+			
+			for(int i=0;i<count;i++){
+				InputStream is = getAssets().open("Default Theme/"+arr[i]);
+				
+				FileOutputStream myOutput = new FileOutputStream("/sdcard/Swiftee/Default Theme/"+arr[i]);
+	   			 byte[] buffer = new byte[1024];
+	      		 int length;
+	      		 while ((length = is.read(buffer))>0)
+	      		 {
+	      			 myOutput.write(buffer, 0, length);
+	      		 }
+
+	      		 //Close the streams
+	      		 myOutput.flush();
+	      		 myOutput.close();
+	      		 is.close();
+			}
+			
+			
+			
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public void onTerminate(){
 		super.onTerminate();

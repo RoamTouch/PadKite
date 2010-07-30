@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -27,7 +28,7 @@ import android.widget.Scroller;
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.TopBarArea;
 import com.roamtouch.menu.CircularLayout;
-import com.roamtouch.menu.CircularMenu;
+import com.roamtouch.menu.MainMenu;
 import com.roamtouch.menu.SettingsMenu;
 import com.roamtouch.menu.WindowTabs;
 import com.roamtouch.swiftee.BrowserActivity;
@@ -56,7 +57,7 @@ public class FloatingCursor extends FrameLayout {
 		private FloatingCursorView fcView,  fcPointerView = null;
 		private CircularProgressBar fcProgressBar;
 		private ImageView pointer;
-		private CircularMenu fcMainMenu;
+		private MainMenu fcMainMenu;
 		private SettingsMenu fcSettingsMenu;
 		private WindowTabs fcWindowTabs;
 		private ZoomWebView zoomView;
@@ -64,7 +65,7 @@ public class FloatingCursor extends FrameLayout {
 	/**
 	 *  integer showing which menu among main,settings and tabs is currently displayed 
 	 */
-		private CircularLayout currentMenu;
+		private ViewGroup currentMenu;
 		
 		private boolean mIsDisabled = false;
 		
@@ -346,7 +347,7 @@ public class FloatingCursor extends FrameLayout {
 		
 			fcProgressBar=new CircularProgressBar(getContext(),(int)(RADIUS*0.3f)+20);
 
-			fcMainMenu = new CircularMenu(context);
+			fcMainMenu = new MainMenu(context);
 			fcMainMenu.setfcRadius(RADIUS);
 			fcMainMenu.setVisibility(INVISIBLE);
 			fcMainMenu.setFloatingCursor(this);
@@ -1032,6 +1033,11 @@ public class FloatingCursor extends FrameLayout {
 					mGesturesEnabled=false;
 				}
 			}
+			
+			@Override
+	        public void onRequestFocus(WebView view) {
+				Log.d("INSIDE ONREQUEST FOCUS","--------------------------");
+			}
 		}
 		
 		private class GestureWebViewClient extends WebViewClient {
@@ -1048,6 +1054,7 @@ public class FloatingCursor extends FrameLayout {
 				fcProgressBar.disable();
 				mContentWidth = view.getContentWidth();
 				mContentHeight = view.getContentHeight();
+				mWebView.clearCache(true);
 			}
 		
 			public void onPageStarted(WebView view, String url,Bitmap b) {

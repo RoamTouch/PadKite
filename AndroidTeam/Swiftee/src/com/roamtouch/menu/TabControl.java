@@ -22,7 +22,7 @@ import java.util.Vector;
 
 import com.roamtouch.swiftee.BrowserActivity;
 
-class TabControl {
+public class TabControl {
     // Log Tag
     private static final String LOGTAG = "TabControl";
     // Maximum number of tabs.
@@ -428,7 +428,7 @@ class TabControl {
      * @param activity A BrowserActivity instance that TabControl will interface
      *                 with.
      */
-    TabControl(BrowserActivity activity) {
+    public TabControl(BrowserActivity activity) {
         mActivity = activity;
  //       mInflateService =((LayoutInflater) activity.getSystemService(
  //                       Context.LAYOUT_INFLATER_SERVICE));

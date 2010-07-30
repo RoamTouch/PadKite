@@ -1,6 +1,8 @@
 package com.roamtouch.swiftee;
 
 import java.util.ArrayList;
+
+import com.roamtouch.menu.TabControl;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.view.EventViewerArea;
@@ -25,6 +27,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import roamtouch.webkit.WebView;
 import android.widget.HorizontalScrollView;
+import android.widget.TabHost.TabContentFactory;
 
 
 public class BrowserActivity extends Activity implements OnGesturePerformedListener {
@@ -48,6 +51,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	private int currentGestureLibrary;
 	
 	private SwifteeApplication appState;
+    private TabControl mTabControl;
 	
 	 public boolean onKeyDown(int keyCode, android.view.KeyEvent event){
 	        
@@ -87,6 +91,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         setContentView(R.layout.main);
         
        // LinearLayout webLayout = (LinearLayout) findViewById(R.id.webviewLayout);
+        mTabControl = new TabControl(this);
         
         webView = (WebView)findViewById(R.id.webview);
         webView.setScrollbarFadingEnabled(true);
@@ -94,7 +99,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         webView.setMapTrackballToArrowKeys(false); // use trackball directly
         // Enable the built-in zoom
         webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setJavaScriptEnabled(true);
 		webView.loadUrl("http://www.google.com");
+		//webView.setDragTracker(tracker);
 		
 		//webLayout.addView(webView);
 

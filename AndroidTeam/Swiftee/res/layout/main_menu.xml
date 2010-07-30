@@ -1,15 +1,13 @@
 	<merge xmlns:android="http://schemas.android.com/apk/res/android"
 				android:id="@+id/circleMenu"
-    			android:layout_width="fill_parent" android:layout_height="280dip" android:layout_weight="1"
-    			android:layout_gravity="center" android:visibility="invisible" 
+    			android:layout_width="fill_parent" android:layout_height="fill_parent" 
+    			android:visibility="invisible" 
     			>
     			     	            
 				<com.roamtouch.menu.MenuButton 
 		    		android:id="@+id/settings"
-		    		android:tag="find_text"  
 	        		android:layout_width="wrap_content"
 	       		 	android:layout_height="wrap_content"
-            		android:gravity="center"
 	        		android:background="@drawable/settings_btn" />    	         	            
 
 				<com.roamtouch.menu.MenuButton  

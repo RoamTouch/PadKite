@@ -1,7 +1,7 @@
 package com.roamtouch.settings;
 
 import com.roamtouch.database.DBConnector;
-import com.roamtouch.menu.CircularMenu;
+import com.roamtouch.menu.MainMenu;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
 
@@ -60,7 +60,7 @@ public class RegisterActivity extends Activity{
 	    				return;
 	    			}
 	    			database.registerUser(emailStr, usrStr, passStr);
-	    			CircularMenu.USER_REGISTERED = true;
+	    			MainMenu.USER_REGISTERED = true;
 	    		}
 
 	    	});
