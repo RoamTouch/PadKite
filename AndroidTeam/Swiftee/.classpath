@@ -4,5 +4,7 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="lib" path="libs/RoamTouchWebKit.jar"/>
+	<classpathentry kind="lib" path="libs/android-gdata-1.30.0.jar"/>
+	<classpathentry kind="lib" path="libs/google-api-translate-java-0.92.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
