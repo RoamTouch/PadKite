@@ -7,7 +7,8 @@
 		<EditText android:id="@+id/searchBox" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:hint="enter a number"
 			android:background="@drawable/square_bg1" 
-			android:layout_margin="10dip" android:cursorVisible="false"></EditText>
+			android:layout_margin="10dip" android:cursorVisible="false"
+			android:singleLine="true"></EditText>
 		<Button android:id="@+id/goforward" android:layout_width="wrap_content" android:layout_marginLeft="80dip"
 			android:layout_marginRight="80dip" android:layout_height="wrap_content"
 			android:text="Go" android:textSize="20dip"

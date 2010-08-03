@@ -162,7 +162,7 @@ public class CircularTabsLayout extends ViewGroup {
             	angle=angle-90 + 46;
             	child.setAngle(angle);
             	child.calculateCenter(a,b,inR,angle);
-            	
+            	child.calCloseButCenter(a,b,inR-50,angle);
             	//Log.i("Circle before if angle,x,y" , "("+ x +","+ y +")angle"+angle);
             
             	//Log.i("Circle x,y" , "("+ x +","+ y +")");
@@ -176,11 +176,12 @@ public class CircularTabsLayout extends ViewGroup {
                 if(child.shouldDraw()) {
                 	if(i == activetabIndex){
                     	Button but1 = (Button)getChildAt(count-3);
-         			    but1.layout(childLeft, childTop,childLeft+40, childTop+40);
-         			    
+         			    //but1.layout(childLeft-10, childTop-10,childLeft+40, childTop+40);
+						but1.layout(child.getCloseButCenterX()-25, child.getCloseButCenterY()-25,child.getCloseButCenterX()+25, child.getCloseButCenterY()+25);
+
          			    ImageView redCircle = (ImageView)getChildAt(0);
          			    redCircle.setBackgroundResource(R.drawable.red_circle);
-         			    redCircle.layout(childLeft-2, childTop-2, lb+2, rb+2);   
+         			    redCircle.layout(childLeft-4, childTop-4, lb+4, rb+4);   
                     }
                     child.layout(childLeft, childTop, lb, rb);                	
                 }
@@ -220,9 +221,9 @@ public class CircularTabsLayout extends ViewGroup {
 		return true;
 	}
 	
-	public void setActiveTabIndex(int id){
-			activetabIndex = id;
-			TabButton child = (TabButton)getChildAt(id);
+	public void setActiveTabIndex(TabButton child){
+			//activetabIndex = id;
+			//TabButton child = (TabButton)getChildAt(id);
 			final int childLeft = child.getCenterX() - BUTTON_RADIUS;
 			final int childTop = child.getCenterY() - BUTTON_RADIUS;
 			final int lb = child.getCenterX() + BUTTON_RADIUS;
@@ -232,7 +233,7 @@ public class CircularTabsLayout extends ViewGroup {
 			int count = getChildCount();
 			child.calCloseButCenter(a,b,inR-40,child.getAngle());
 			Button but1 = (Button)getChildAt(count-3);
-			but1.layout(child.getCloseButCenterX()-20, child.getCloseButCenterY()-20,child.getCloseButCenterX()+20, child.getCloseButCenterY()+20);
+			but1.layout(child.getCloseButCenterX()-25, child.getCloseButCenterY()-25,child.getCloseButCenterX()+25, child.getCloseButCenterY()+25);
 
 			redCircle.setBackgroundResource(R.drawable.red_circle);
 			redCircle.layout(childLeft-3, childTop-3, lb+3, rb+3);   
@@ -411,9 +412,9 @@ public class CircularTabsLayout extends ViewGroup {
 						if(i == activetabIndex){
 							redCircle.setVisibility(View.VISIBLE);
 							but1.setVisibility(View.VISIBLE);
-							child.calCloseButCenter(a,b,inR-40,angle);
+							child.calCloseButCenter(a,b,inR-50,angle);
 
-							but1.layout(child.getCloseButCenterX()-20, child.getCloseButCenterY()-20,child.getCloseButCenterX()+20, child.getCloseButCenterY()+20);
+							but1.layout(child.getCloseButCenterX()-25, child.getCloseButCenterY()-25,child.getCloseButCenterX()+25, child.getCloseButCenterY()+25);
 
 							redCircle.setBackgroundResource(R.drawable.red_circle);
 							redCircle.layout(childLeft-3, childTop-3, lb+3, rb+3);   

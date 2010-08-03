@@ -116,10 +116,10 @@ public class ZoomWebView extends View{
 	            
 	            mAngleChange = angleDiff;
 	            if(mAngleChange<0)
-	            	floatingCursor.circularZoomIn();
+	            	floatingCursor.circularZoomOut();
 	            	//direction = -1;
 	            else
-	            	floatingCursor.circularZoomOut();
+	            	floatingCursor.circularZoomIn();
 				
 				mLastMotionAngle = currentAngle;
 				mLastMotionX = x;

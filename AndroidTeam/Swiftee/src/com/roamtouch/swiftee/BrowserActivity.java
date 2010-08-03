@@ -2,6 +2,7 @@ package com.roamtouch.swiftee;
 
 import java.util.ArrayList;
 
+import com.api.blogger.BloggerActivity;
 import com.roamtouch.menu.TabControl;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.swiftee.R;
@@ -27,6 +28,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import roamtouch.webkit.WebView;
 import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TabHost.TabContentFactory;
 
 
@@ -43,6 +46,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	private GestureLibrary mLibrary;
 	private TopBarArea mTopBarArea;
 	
+	private LinearLayout webLayout;
 	private SwifteeGestureView mGestures;
 	private HorizontalScrollView mTutor;
 	
@@ -51,8 +55,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	private int currentGestureLibrary;
 	
 	private SwifteeApplication appState;
-    private TabControl mTabControl;
-	
+    
 	 public boolean onKeyDown(int keyCode, android.view.KeyEvent event){
 	        
 	    	if (keyCode == KeyEvent.KEYCODE_MENU) { 
@@ -90,21 +93,22 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	
         setContentView(R.layout.main);
         
-       // LinearLayout webLayout = (LinearLayout) findViewById(R.id.webviewLayout);
-        mTabControl = new TabControl(this);
+        webLayout = (LinearLayout) findViewById(R.id.webviewLayout);
         
-        webView = (WebView)findViewById(R.id.webview);
+        webView = new WebView(this);
         webView.setScrollbarFadingEnabled(true);
         webView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
         webView.setMapTrackballToArrowKeys(false); // use trackball directly
         // Enable the built-in zoom
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setJavaScriptEnabled(true);
-		webView.loadUrl("http://www.google.com");
-		//webView.setDragTracker(tracker);
+		LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
+		webView.setLayoutParams(params);
 		
-		//webLayout.addView(webView);
-
+		//webView.setDragTracker(tracker);	
+		webLayout.addView(webView);
+		webView.loadUrl("http://www.google.com");
+		
 		eventViewer= (EventViewerArea) findViewById(R.id.eventViewer);
 	
 		//webView.findAll("image");
@@ -112,7 +116,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		overlay = (SwifteeOverlayView) findViewById(R.id.overlay);
 		
 		floatingCursor = (FloatingCursor)findViewById(R.id.floatingCursor);	
-		floatingCursor.setWebView(webView);
+		floatingCursor.setWebView(webView,true);
 		floatingCursor.setEventViewerArea(eventViewer);
 		floatingCursor.setParent(this);
 		//floatingCursor.setHandler(handler);
@@ -133,6 +137,13 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		mTopBarArea.setWebView(webView);
 		
 		appState = ((SwifteeApplication)getApplicationContext());
+    }
+    
+    public void setWebView(WebView wv){
+    	webLayout.removeViewAt(0);
+    	webLayout.addView(wv);
+    	floatingCursor.setWebView(wv,false);
+    	mTopBarArea.setWebView(wv);
     }
     private String mSelection;
     
@@ -247,6 +258,16 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         	intent.setType("vnd.android.cursor.item/event");
         	intent.putExtra("title", "Some title");
         	intent.putExtra("description", "Some description");
+        	startActivity(intent);
+        }
+        else if("Twitter".equals(action)){
+        	Intent intent = new Intent(this,TwitterActivity.class);
+        	intent.putExtra("Tweet", mSelection);
+        	startActivity(intent);
+        }
+        else if("Blog".equals(action)){
+        	Intent intent = new Intent(this,BloggerActivity.class);
+        	intent.putExtra("PostContent", mSelection);
         	startActivity(intent);
         }
         else if("Translate".equals(action)){

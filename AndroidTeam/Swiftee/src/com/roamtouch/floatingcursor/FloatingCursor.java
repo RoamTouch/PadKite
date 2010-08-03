@@ -2,7 +2,11 @@ package com.roamtouch.floatingcursor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Handler;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.util.AttributeSet;
@@ -400,12 +404,21 @@ public class FloatingCursor extends FrameLayout {
 			this.setVisibility(View.VISIBLE);
 		}
 	
-		public void setWebView(WebView wv) {
+		public void setWebView(WebView wv,boolean isFirst) {
+			/*
+			 * setTab() method is called only when isFirst = true.
+			 */
+			if(isFirst)
+				fcWindowTabs.setTab(wv);
 			mWebView = wv;
+			mWebView.setDrawingCacheEnabled(true);
 			mWebView.setWebChromeClient(new WebClient());
 			mWebView.setWebViewClient(new GestureWebViewClient());	
 		}
 		
+		public WebView getWebView(){
+			return mWebView;
+		}
 		public void setEventViewerArea(EventViewerArea eventViewer) {
 			this.eventViewer = eventViewer;
 		}
@@ -948,7 +961,12 @@ public class FloatingCursor extends FrameLayout {
 				//if(fcX>BrowserActivity.DEVICE_WIDTH && fcX<mContentWidth)
 				//	scrollWebView(10, 0);
 			}
-			
+			if(event.getAction() == MotionEvent.ACTION_POINTER_DOWN){
+				
+			}
+			if(event.getAction() == MotionEvent.ACTION_POINTER_UP){
+				
+			}
 			/* FC: Drag + Fling Support */
 			
 			/* If there is a second finger press, ignore */
@@ -1054,11 +1072,53 @@ public class FloatingCursor extends FrameLayout {
 				fcProgressBar.disable();
 				mContentWidth = view.getContentWidth();
 				mContentHeight = view.getContentHeight();
-				mWebView.clearCache(true);
+				Bitmap b = mWebView.getDrawingCache();
+				Bitmap cb = Bitmap.createBitmap(b, 30, 30, 80, 80);				
+				BitmapDrawable bd = new BitmapDrawable(getCircleBitmap(cb));
+				fcWindowTabs.setCurrentThumbnail(bd);
+				//mWebView.clearCache(true);
 			}
 		
+			public Bitmap getCircleBitmap(Bitmap sourceBitmap){
+				
+				Paint mPaint = new Paint();
+				mPaint.setAntiAlias(true);
+				mPaint.setColor(0xFFAAAAAA); // 0xFFFF0000
+				mPaint.setStrokeWidth(0.0f);
+				
+				/*Bitmap buffer=Bitmap.createBitmap(50, 50,Bitmap.Config.ARGB_8888);
+				Canvas bufferCanvas = new Canvas();
+				bufferCanvas.setBitmap(buffer);
+				bufferCanvas.drawCircle(25, 25, 25, mPaint);
+		*/
+				int targetWidth = 50;
+			    int targetHeight = 50;
+			    Bitmap targetBitmap = Bitmap.createBitmap(
+			        targetWidth,
+			        targetHeight,
+			        Bitmap.Config.ARGB_8888);
+			    Canvas canvas = new Canvas(targetBitmap);
+			    Path path = new Path();
+			    
+			    path.addCircle(
+			        ((float)targetWidth - 1) / 2,
+			        ((float)targetHeight - 1) / 2,
+			        (Math.min(((float)targetWidth), ((float)targetHeight)) / 2),
+			        Path.Direction.CCW);
+			    canvas.clipPath(path);
+			    	    
+			    //canvas.drawCircle(25, 25, 27, mPaint);
+
+			    canvas.drawBitmap(
+			        sourceBitmap,
+			        new Rect(0, 0, sourceBitmap.getWidth(), sourceBitmap.getHeight()),
+			        new Rect(0, 0, targetWidth-2, targetHeight-2),
+			        null);
+			    return targetBitmap;
+			}
+			
 			public void onPageStarted(WebView view, String url,Bitmap b) {
-				fcProgressBar.enable();
+				fcProgressBar.enable();				
 			}
 		}
 }

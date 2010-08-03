@@ -1,5 +1,6 @@
 package com.roamtouch.menu;
 
+import roamtouch.webkit.WebView;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.Button;
@@ -9,7 +10,7 @@ public class TabButton extends Button{
 		private double angle;
 		private int centerX,centerY;
 		private int closeButCenterX,closeButCenterY;
-
+		private WebView mWebView;
 		
 		public TabButton(Context context, AttributeSet attrs) {
 			super(context, attrs);					
@@ -58,5 +59,13 @@ public class TabButton extends Button{
 			if(angle < -90 || angle > 270)
 				return false;
 			return true;
+		}
+
+		public void setWebView(WebView mWebView) {
+			this.mWebView = mWebView;
+		}
+
+		public WebView getWebView() {
+			return mWebView;
 		}
 }
