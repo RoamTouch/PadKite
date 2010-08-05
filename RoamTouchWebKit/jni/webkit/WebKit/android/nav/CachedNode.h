@@ -102,7 +102,6 @@ public:
     const WebCore::IntRect& getBounds() const { return mBounds; }
     void getBounds(WebCore::IntRect* bounds) const { *bounds = mBounds; }
     const WebCore::String& getExport() const { return mExport; }
-    const WebCore::String& getToolTip() const { return mToolTip; } //RoamTouch Change
     bool hasCursorRing() const { return !mIsHidden && mHasCursorRing; }
     bool hasMouseOver() const { return mHasMouseOver; }
     void hideCursor(CachedFrame* );
@@ -124,8 +123,12 @@ public:
     bool isRtlText() const { return mIsRtlText; }
     bool isTextArea() const { return mIsTextArea; }
     bool isTextField() const { return mIsTextField; }
-    //ROAMTOUCH CHANGE
+    //ROAMTOUCH CHANGE - begin
     bool isText() const { return mIsText; }
+    bool isVideo() const { return mIsVideo; }
+    const WebCore::String& getToolTip() const { return mToolTip; }
+    const WebCore::IntSize& getVideoSize() const { return mVideoSize; }
+    //ROAMTOUCH CHANGE - end
     bool isTransparent() const { return mIsTransparent; }
     bool isUnclipped() const { return mIsUnclipped; }
     int maxLength() const { return mMaxLength; };
@@ -145,7 +148,6 @@ public:
     void setCondition(Condition condition) const { mCondition = condition; }
     void setDisabled(bool disabled) { mDisabled = disabled; }
     void setExport(const WebCore::String& exported) { mExport = exported; }
-    void setToolTip(const WebCore::String& toolTip) { mToolTip = toolTip; }
     void setHasCursorRing(bool hasRing) { mHasCursorRing = hasRing; }
     void setHasMouseOver(bool hasMouseOver) { mHasMouseOver = hasMouseOver; }
     void setHitBounds(const WebCore::IntRect& bounds) { mHitBounds = bounds; }
@@ -159,8 +161,12 @@ public:
     void setIsRtlText(bool isRtlText) { mIsRtlText = isRtlText; }
     void setIsTextArea(bool isTextArea) { mIsTextArea = isTextArea; }
     void setIsTextField(bool isTextField) { mIsTextField = isTextField; }
-    //ROAMTOUCH CHANGE
+    //ROAMTOUCH CHANGE - begin
     void setIsText(bool isTextField) { mIsText = isTextField; }
+    void setIsVideo(bool isVideo) { mIsVideo = isVideo; }
+    void setVideoSize(WebCore::IntSize size) { mVideoSize = size; }
+    void setToolTip(const WebCore::String& toolTip) { mToolTip = toolTip; }
+    //ROAMTOUCH CHANGE - end
     void setIsTransparent(bool isTransparent) { mIsTransparent = isTransparent; }
     void setIsUnclipped(bool unclipped) { mIsUnclipped = unclipped; }
     void setLast() { mLast = true; }
@@ -185,11 +191,13 @@ private:
     WebCore::String mExport;
     WebCore::String mToolTip; //RoamTouch Change
     WebCore::String mName;
+    WebCore::IntSize mVideoSize;
     WebCore::IntRect mBounds;
     WebCore::IntRect mHitBounds;
     WTF::Vector<WebCore::IntRect> mCursorRing;
     void* mNode; // WebCore::Node*, only used to match pointers
     void* mParentGroup; // WebCore::Node*, only used to match pointers
+    void* mInfo; //RoamTouch Change
     int mChildFrameIndex; // set to -1 if node is not a frame
     int mIndex; // index of itself, to find first in array (document)
     int mMaxLength;
@@ -214,8 +222,10 @@ private:
     bool mIsRtlText : 1;
     bool mIsTextArea : 1;
     bool mIsTextField : 1;
-    //ROAMTOUCH CHANGE
+    //ROAMTOUCH CHANGE - begin
     bool mIsText : 1;
+    bool mIsVideo : 1;
+    //ROAMTOUCH CHANGE - end
     bool mIsTransparent : 1;
     bool mIsUnclipped : 1;
     bool mLast : 1;             // true if this is the last node in a group

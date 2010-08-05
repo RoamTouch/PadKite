@@ -222,6 +222,7 @@ void CachedNode::init(WebCore::Node* node)
     mNode = node;
     mParentIndex = mChildFrameIndex = -1;
     mType = android::NORMAL_CACHEDNODETYPE;
+    mToolTip = WebCore::String();
 }
 
 void CachedNode::move(int x, int y)

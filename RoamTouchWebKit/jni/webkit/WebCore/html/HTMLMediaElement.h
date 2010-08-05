@@ -92,6 +92,7 @@ public:
     KURL src() const;
     void setSrc(const String&);
     String currentSrc() const;
+    String currentType() const; //RoamTouch Change
 
     enum NetworkState { NETWORK_EMPTY, NETWORK_IDLE, NETWORK_LOADING, NETWORK_LOADED, NETWORK_NO_SOURCE };
     NetworkState networkState() const;
@@ -256,6 +257,7 @@ protected:
     NetworkState m_networkState;
     ReadyState m_readyState;
     String m_currentSrc;
+    String m_currentType; //RoamTouch Change
     
     RefPtr<MediaError> m_error;
 

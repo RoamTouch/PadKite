@@ -1855,6 +1855,8 @@ static jobject nativeGetHitTestResultAtPoint(JNIEnv *env, jobject obj,
         } else if (result->isText()) {
             type = WebView::HIT_TEST_TEXT_TYPE;
             //extraString = text;
+        } else if (result->isVideo()){
+            type = WebView::HIT_TEST_VIDEO_TYPE;
         } else {
             String text = result->getExport();
             if (!text.isEmpty()) {
@@ -1889,8 +1891,6 @@ static jobject nativeGetHitTestResultAtPoint(JNIEnv *env, jobject obj,
         toolTipString = result->getToolTip() ;
     }
 
-    jstring extra = env->NewString(extraString.characters(), extraString.length());
-
     jstring toolTip = env->NewString(toolTipString.characters(), toolTipString.length());
 
     jclass rectClass = env->FindClass("android/graphics/Rect");
@@ -1907,8 +1907,6 @@ static jobject nativeGetHitTestResultAtPoint(JNIEnv *env, jobject obj,
     jmethodID setType = env->GetMethodID(hitTestResultClass, "setType", "(I)V");
     env->CallVoidMethod(hitTestResult, setType, (jint)type) ;
     
-    jmethodID setExtra = env->GetMethodID(hitTestResultClass, "setExtra", "(Ljava/lang/String;)V");
-    env->CallVoidMethod(hitTestResult, setExtra, extra) ;
     
     jmethodID setRect = env->GetMethodID(hitTestResultClass, "setRect", "(Landroid/graphics/Rect;)V");
     env->CallVoidMethod(hitTestResult, setRect, rect) ;
@@ -1918,6 +1916,39 @@ static jobject nativeGetHitTestResultAtPoint(JNIEnv *env, jobject obj,
 
     jmethodID setToolTip = env->GetMethodID(hitTestResultClass, "setToolTip", "(Ljava/lang/String;)V");
     env->CallVoidMethod(hitTestResult, setToolTip, toolTip) ;
+
+    if (type == WebView::HIT_TEST_VIDEO_TYPE) {
+        jclass videoInfoClass = env->FindClass("roamtouch/webkit/WebVideoInfo");
+        LOG_ASSERT(videoInfoClass, "Could not find WebVideoInfo class!");
+
+        jmethodID initInfo = env->GetMethodID(videoInfoClass, "<init>", "()V");
+        LOG_ASSERT(initInfo, "Could not find constructor for WebVideoInfo class!");
+        jobject videoInfoObj = env->NewObject(videoInfoClass, initInfo);
+
+        Vector<String> infoList ;
+        result->getExport().split((UChar)'|', true, infoList) ;
+        extraString = infoList[0];
+        
+        jstring poster = env->NewString(infoList[1].characters(), infoList[1].length());
+        jmethodID setPoster = env->GetMethodID(videoInfoClass, "setPoster", "(Ljava/lang/String;)V");
+        env->CallVoidMethod(videoInfoObj, setPoster, poster) ;
+
+        jstring videoType = env->NewString(infoList[2].characters(), infoList[2].length());
+        jmethodID setContentType = env->GetMethodID(videoInfoClass, "setContentType", "(Ljava/lang/String;)V");
+        env->CallVoidMethod(videoInfoObj, setContentType, videoType) ;
+
+        jmethodID setVideoSize = env->GetMethodID(videoInfoClass, "setVideoSize", "(II)V");
+        env->CallVoidMethod(videoInfoObj, setVideoSize, result->getVideoSize().width(), result->getVideoSize().height()) ;
+
+        jmethodID setVideoInfo = env->GetMethodID(hitTestResultClass, "setVideoInfo", "(Lroamtouch/webkit/WebVideoInfo;)V");
+        env->CallVoidMethod(hitTestResult, setVideoInfo, videoInfoObj) ;
+    }
+
+    jstring extra = env->NewString(extraString.characters(), extraString.length());
+
+    jmethodID setExtra = env->GetMethodID(hitTestResultClass, "setExtra", "(Ljava/lang/String;)V");
+    env->CallVoidMethod(hitTestResult, setExtra, extra) ;
+    
 
     return hitTestResult;
     

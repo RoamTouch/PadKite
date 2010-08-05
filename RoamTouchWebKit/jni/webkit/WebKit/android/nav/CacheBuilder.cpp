@@ -26,6 +26,7 @@
 #include "CachedPrefix.h"
 #include "CachedNode.h"
 #include "CachedRoot.h"
+#include "CString.h"
 #include "Document.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -42,6 +43,7 @@
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
+#include "HTMLVideoElement.h" //RoamTouch Change
 #include "InlineTextBox.h"
 #include "KURL.h"
 #include "PluginView.h"
@@ -51,6 +53,7 @@
 #include "RenderListBox.h"
 #include "RenderSkinCombo.h"
 #include "RenderTextControl.h"
+#include "RenderVideo.h" //RoamTouch Change
 #include "RenderWidget.h"
 #include "SkCanvas.h"
 #include "SkPoint.h"
@@ -1002,7 +1005,11 @@ void CacheBuilder::BuildFrame(Frame* root, Frame* frame,
         TextDirection direction = LTR;
         String name;
         String exported;
-        String toolTip;//RoamTouch change
+        //RoamTouch change - begin
+        String toolTip;
+        bool isVideo = false;
+        IntSize videoSize;
+        //RoamTouch change - end
         CachedNodeType type = NORMAL_CACHEDNODETYPE;
         IntRect bounds;
         IntRect absBounds;
@@ -1148,9 +1155,9 @@ void CacheBuilder::BuildFrame(Frame* root, Frame* frame,
             if (node->disabled())
                 continue;
             //RoamTouch Change - begin
-            toolTip = anchorNode->getAttribute(HTMLNames::titleAttr);
+            toolTip = anchorNode->getAttribute(HTMLNames::titleAttr).string().copy();
             if (toolTip.isEmpty()) {
-                toolTip = anchorNode->getAttribute(HTMLNames::altAttr);
+                toolTip = anchorNode->getAttribute(HTMLNames::altAttr).string().copy();
             }
             //RoamTouch Change - end
             hasMouseOver = NodeHasEventListeners(node, &eventNames().mouseoverEvent, 1);
@@ -1159,6 +1166,35 @@ void CacheBuilder::BuildFrame(Frame* root, Frame* frame,
             if (!href.isEmpty() && !WebCore::protocolIsJavaScript(href.string()))
                 // Set the exported string for all non-javascript anchors.
                 exported = href.string().copy();
+            //RoamTouch Change - begin
+        }else if (node->hasTagName(HTMLNames::videoTag)) {
+            HTMLVideoElement * video = static_cast<HTMLVideoElement*>(node);
+            RenderVideo* renderVideo = static_cast<RenderVideo*>(nodeRenderer);
+
+            KURL posterUrl = video->poster();
+            String curSrc = video->currentSrc() ;
+            exported = curSrc.copy();
+
+            exported += "|" ;
+            exported += posterUrl.string() ;
+            
+            exported += "|" ;
+            exported += video->currentType() ;
+            exported += "|" ;
+
+            videoSize.setWidth(video->videoWidth());
+            videoSize.setHeight(video->videoHeight());
+
+            DBG_NAV_LOGD("VIDEO NODE exported=%s ", exported.latin1().data() );
+            DBG_NAV_LOGD("VIDEO NODE absBounds={%d, %d, %d, %d}  videoSize={%d, %d}",
+                absBounds.x(), absBounds.y(), absBounds.width(), absBounds.height(),
+                 videoSize.width(), videoSize.height());
+
+            isVideo = true;
+            computeCursorRings = true;
+            isUnclipped = true;
+            
+            //RoamTouch Change - end
         }
         if (isTextField || isTextArea) {
             RenderTextControl* renderText = 
@@ -1179,7 +1215,7 @@ void CacheBuilder::BuildFrame(Frame* root, Frame* frame,
         }
         takesFocus = true;
         bounds = absBounds;
-        if (!isAnchor) {
+        if (!isAnchor && !isVideo) {
             bool isFocusable = node->isKeyboardFocusable(NULL) || 
                 node->isMouseFocusable() || node->isFocusable();
             if (isFocusable == false) {
@@ -1227,7 +1263,11 @@ void CacheBuilder::BuildFrame(Frame* root, Frame* frame,
         cachedNode.setNavableRects();
         cachedNode.setChildFrameIndex(-1);
         cachedNode.setExport(exported);
-        cachedNode.setToolTip(toolTip); //RoamTouch Change
+        //RoamTouch Change - begin
+        cachedNode.setToolTip(toolTip); 
+        cachedNode.setVideoSize(videoSize);
+        cachedNode.setIsVideo(isVideo);
+        //RoamTouch Change - end
         cachedNode.setHasCursorRing(hasCursorRing);
         cachedNode.setHasMouseOver(hasMouseOver);
         cachedNode.setHitBounds(absBounds);

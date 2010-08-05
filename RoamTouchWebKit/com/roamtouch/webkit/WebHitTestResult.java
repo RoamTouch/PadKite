@@ -73,13 +73,12 @@ public class WebHitTestResult {
      */
     public static final int TEXT_TYPE = 11;
 
-
-
     private int mType;
     private String mExtra;
     private String mToolTip;
     private Rect mRect;
     private int mIdentifier;
+    private WebVideoInfo mVideoInfo = null;
 
     WebHitTestResult() {
         mType = UNKNOWN_TYPE;
@@ -105,6 +104,10 @@ public class WebHitTestResult {
         mIdentifier = identifier;
     }
 
+    public void setVideoInfo(WebVideoInfo info) {
+        mVideoInfo = info;
+    }
+
     public int getType() {
         return mType;
     }
@@ -123,6 +126,10 @@ public class WebHitTestResult {
 
     public String getToolTip() {
         return mToolTip;
+    }
+
+    public WebVideoInfo getVideoInfo() {
+        return mVideoInfo;
     }
 
     public void dump() {
