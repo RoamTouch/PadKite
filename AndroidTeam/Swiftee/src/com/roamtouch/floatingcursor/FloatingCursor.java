@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.graphics.Region;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.SystemClock;
 import android.os.Vibrator;
@@ -22,6 +23,7 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import roamtouch.webkit.WebChromeClient;
 import roamtouch.webkit.WebHitTestResult;
+import roamtouch.webkit.WebVideoInfo;
 import roamtouch.webkit.WebView;
 import roamtouch.webkit.WebViewClient;
 //import roamtouch.webkit.WebView.HitTestResult;
@@ -31,7 +33,6 @@ import android.widget.Scroller;
 
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.TopBarArea;
-import com.roamtouch.menu.CircularLayout;
 import com.roamtouch.menu.MainMenu;
 import com.roamtouch.menu.SettingsMenu;
 import com.roamtouch.menu.WindowTabs;
@@ -261,7 +262,7 @@ public class FloatingCursor extends FrameLayout {
 
                 mLastMotionY = y;
                 mLastMotionX = x;
-              
+ 
                 scrollBy(deltaX, deltaY);
 
                 break;
@@ -566,10 +567,9 @@ public class FloatingCursor extends FrameLayout {
 
 				mWebHitTestResult = mWebView.getHitTestResultAt(X,Y);
 				int resultType = mWebHitTestResult.getType();
-				String extra = mWebHitTestResult.getExtra();
+				
 				int identifier = mWebHitTestResult.getIdentifier();
 				
-				Log.i(TAG, "Extra:"  + extra);
 			
 				int cursorImage = 0;
 			
@@ -580,14 +580,16 @@ public class FloatingCursor extends FrameLayout {
 					break;
 				}
 				case WebHitTestResult.VIDEO_TYPE: {
-					cursorImage = R.drawable.link_cursor;
+					cursorImage = R.drawable.video_cursor;
+					WebVideoInfo videoInfo = mWebHitTestResult.getVideoInfo();
 					break;
 				}
 				
 				case WebHitTestResult.ANCHOR_TYPE: {
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
-					eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,extra);
+					String tooltip = mWebHitTestResult.getToolTip();
+					eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
 	/*				if(shouldLinkExec){
 						mWebView.loadUrl(extra);
 						shouldLinkExec = false; 
@@ -605,11 +607,9 @@ public class FloatingCursor extends FrameLayout {
 				{
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
-					eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,extra);
-	/*				if(shouldLinkExec){
-						mWebView.loadUrl(extra);
-						shouldLinkExec = false; 
-					} */
+					String tooltip = mWebHitTestResult.getToolTip();
+					eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
+	
 					break;
 				}
 	
@@ -772,8 +772,9 @@ public class FloatingCursor extends FrameLayout {
 						pointer.setImageResource(R.drawable.text_cursor);
 						mWebView.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
 						sendEvent(MotionEvent.ACTION_DOWN, X, Y);
+						//mWebView.executeSelectionCommand(X, Y, WebView.SELECT_WORD_OR_LINK);
 						mSelectionStarted = true;
-						// 					mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD_OR_LINK);
+											
 
 					}
 				}
@@ -801,7 +802,8 @@ public class FloatingCursor extends FrameLayout {
 		
 		public boolean dispatchTouchEventFC(MotionEvent event) {
 				
-
+			final int action = event.getAction() & MotionEvent.ACTION_MASK;
+			 
 			boolean status;
 		
 			int X,Y;		
@@ -826,7 +828,7 @@ public class FloatingCursor extends FrameLayout {
 			int fcX = -(int)pointer.getScrollX() + -(int)getScrollX() + w/2;
 			int fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;
 			
-			if (event.getAction() == MotionEvent.ACTION_DOWN)
+			if (action == MotionEvent.ACTION_DOWN)
 			{		
 				mActivePointerId = event.getPointerId(0);
 				
@@ -835,8 +837,8 @@ public class FloatingCursor extends FrameLayout {
 				final int CircleX = -(int)getScrollX() + w/2;
 				final int CircleY = -(int)getScrollY() + h/2;
 			
-				final int r = fcView.getRadius();
-			
+				 final int r = fcView.getRadius();
+				
 				// Check for inner circle click and show Circular menu
 				final int innerCirRad = fcPointerView.getRadius();
 				
@@ -913,13 +915,13 @@ public class FloatingCursor extends FrameLayout {
 				}*/
 			}
 			
-			if (event.getAction() == MotionEvent.ACTION_CANCEL)
+			if (action == MotionEvent.ACTION_CANCEL)
 			{
 				mActivePointerId = INVALID_POINTER_ID;
 			}
 
 				
-			if (event.getAction() == MotionEvent.ACTION_UP)
+			if (action == MotionEvent.ACTION_UP)
 			{
 				mActivePointerId = INVALID_POINTER_ID;
 
@@ -940,32 +942,31 @@ public class FloatingCursor extends FrameLayout {
 			else if (!mHandleTouch)
 				return false;
 	
-			if (event.getAction() == MotionEvent.ACTION_MOVE)
-			{	
-				/*if(event.getPointerCount()>1){
-					shouldLinkExec = true;
-				}*/
-				if (touchCount >= 2)
+			if (action == MotionEvent.ACTION_MOVE)
+			{					
+				/*if (touchCount >= 2)
 				{
 					stopHitTest(fcX,fcY,false);
 					startSelection(fcX, fcY);
 				}
 				else
 					checkClickSelection(fcX, fcY);
-					
+				*/	
 				moveSelection(fcX, fcY);
 				moveHitTest(fcX, fcY);
 				
 				// FF: This will not work ...
 				
-				//if(fcX>BrowserActivity.DEVICE_WIDTH && fcX<mContentWidth)
-				//	scrollWebView(10, 0);
+				if(fcX>BrowserActivity.DEVICE_WIDTH && fcX<mContentWidth)
+					scrollWebView(10, 0);
 			}
-			if(event.getAction() == MotionEvent.ACTION_POINTER_DOWN){
+			if(action == MotionEvent.ACTION_POINTER_DOWN){
 				
+				stopHitTest(fcX,fcY,false);
+				startSelection(fcX, fcY);
 			}
-			if(event.getAction() == MotionEvent.ACTION_POINTER_UP){
-				
+			if(action == MotionEvent.ACTION_POINTER_UP){
+				checkClickSelection(fcX, fcY);
 			}
 			/* FC: Drag + Fling Support */
 			
@@ -1081,12 +1082,12 @@ public class FloatingCursor extends FrameLayout {
 		
 			public Bitmap getCircleBitmap(Bitmap sourceBitmap){
 				
-				Paint mPaint = new Paint();
+				/*			Paint mPaint = new Paint();
 				mPaint.setAntiAlias(true);
 				mPaint.setColor(0xFFAAAAAA); // 0xFFFF0000
-				mPaint.setStrokeWidth(0.0f);
-				
-				/*Bitmap buffer=Bitmap.createBitmap(50, 50,Bitmap.Config.ARGB_8888);
+				mPaint.setStrokeWidth(2.0f);
+					
+				Bitmap buffer=Bitmap.createBitmap(25, 25,Bitmap.Config.ARGB_8888);
 				Canvas bufferCanvas = new Canvas();
 				bufferCanvas.setBitmap(buffer);
 				bufferCanvas.drawCircle(25, 25, 25, mPaint);
@@ -1100,15 +1101,21 @@ public class FloatingCursor extends FrameLayout {
 			    Canvas canvas = new Canvas(targetBitmap);
 			    Path path = new Path();
 			    
-			    path.addCircle(
+			   /* path.addCircle(
 			        ((float)targetWidth - 1) / 2,
 			        ((float)targetHeight - 1) / 2,
 			        (Math.min(((float)targetWidth), ((float)targetHeight)) / 2),
-			        Path.Direction.CCW);
-			    canvas.clipPath(path);
+			        Path.Direction.CW);
+			    */
+			    path.addCircle(
+			    		25,
+			    		25,
+				        25,
+				        Path.Direction.CCW);
+			    canvas.clipPath(path,Region.Op.REPLACE);
 			    	    
-			    //canvas.drawCircle(25, 25, 27, mPaint);
-
+			   // canvas.drawCircle(27, 27, 30, mPaint);
+			   // canvas.drawBitmap(buffer, 0, 0, mPaint);
 			    canvas.drawBitmap(
 			        sourceBitmap,
 			        new Rect(0, 0, sourceBitmap.getWidth(), sourceBitmap.getHeight()),

@@ -1,14 +1,13 @@
 package com.roamtouch.menu;
 
+import com.roamtouch.database.DBConnector;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.settings.RegisterActivity;
 import com.roamtouch.swiftee.BrowserActivity;
-import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
 import com.roamtouch.view.TopBarArea;
 import android.content.Context;
 import android.content.Intent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -18,13 +17,17 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 	private FloatingCursor mFloatingCursor;
 	private BrowserActivity mParent;
 	public static boolean USER_REGISTERED = true;
-	
+	private DBConnector database;
+	 
 	public MainMenu(Context context) {
 		super(context);
 		
 		//LayoutInflater.from(context).inflate(R.layout.main_menu, this);
 		MenuInflater.inflate("/sdcard/Swiftee/Default Theme/main_menu.xml", context, this);
 		
+		SwifteeApplication appState = ((SwifteeApplication)context.getApplicationContext());
+    	database = appState.getDatabase();
+    	
 		setMode(CircularLayout.STATIC_MODE);
 		
 		int count = getChildCount();
@@ -100,7 +103,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			
 			//Settings
 			case 0:
-				if(USER_REGISTERED)
+				boolean b = database.checkUserRegistered();
+				if(b)
 					mFloatingCursor.setCurrentMenu(1);
 				else{
 					Intent i = new Intent(mParent,RegisterActivity.class);

@@ -15,4 +15,7 @@
     	<string name="cursorGestures">Cursor gestures</string>
     	<string name="otherGestures">Other gestures</string>
     	
+    <string name="get_permission">Get Permission</string>
+    <string name="publish_to_feed">Publish Photo</string>
+    	
 </resources>

@@ -27,7 +27,10 @@
        <activity android:name="com.roamtouch.settings.GesturesListActivity" />        
        <activity android:name="com.roamtouch.settings.GestureRecorder" />          
        <activity android:name="com.roamtouch.swiftee.TwitterActivity" />   
-       <activity android:name="com.api.blogger.BloggerActivity" />              
+       <activity android:name="com.api.blogger.BloggerActivity" />      
+       <activity android:name="com.api.facebook.FacebookActivity" />   
+       <activity android:name="com.api.facebook.FBLoginActivity"
+			android:theme="@android:style/Theme.Translucent.NoTitleBar"/>         
          
     </application>
 

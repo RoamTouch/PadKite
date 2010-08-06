@@ -1,24 +1,33 @@
 package com.roamtouch.settings;
 
-import com.roamtouch.swiftee.R;
+import java.util.Locale;
 
+import com.roamtouch.swiftee.R;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class MiscListActivity extends Activity implements OnItemClickListener {
 	
 	
-	private ListView mTranslateList,mMiscList,aboutList;
+	private ListView mMiscList;
+	private String phoneLanguage;
 	
 	  /** Called when the activity is first created. */
     @Override
@@ -26,81 +35,145 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
         super.onCreate(savedInstanceState);
     	
     	setContentView(R.layout.misc_list);
-    	
-    /** Translate List */    
-    	
-    	TextView tv = new TextView(this);
-    	tv.setBackgroundColor(Color.DKGRAY);
-    	tv.setTextColor(Color.LTGRAY);
-    	tv.setText(R.string.translate);
-    	tv.setHeight(28);
-    	tv.setGravity(Gravity.CENTER_VERTICAL);
-    	tv.setPadding(5, 0, 0, 0);
-    	    	
-    	mTranslateList = (ListView) findViewById(R.id.translateList);
-    	
-    	mTranslateList.addHeaderView(tv);
- 
-    	mTranslateList.setAdapter(new TranslateAdapter(this));
-    	mTranslateList.setOnItemClickListener(this);
-
-    	
-    /** Miscellaneous List */   	
-    	
-    	tv = new TextView(this);
-    	tv.setBackgroundColor(Color.DKGRAY);
-    	tv.setTextColor(Color.LTGRAY);
-    	tv.setText(R.string.Miscellaneous);
-    	tv.setHeight(28);
-    	tv.setGravity(Gravity.CENTER_VERTICAL);
-    	tv.setPadding(5, 0, 0, 0);
-    	    	
-    	mMiscList = (ListView) findViewById(R.id.miscList);
-    	mMiscList.addHeaderView(tv);
- 
-    	mMiscList.setAdapter(new MiscAdapter(this));
+    	mMiscList = (ListView)findViewById(R.id.miscList);
+    	mMiscList.setAdapter(new MiscListAdapter());
     	mMiscList.setOnItemClickListener(this);
-    	mMiscList.setItemsCanFocus(false);
-    	mMiscList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
     	
-   	/** About List */   	
-    	
-    	tv = new TextView(this);
-    	tv.setBackgroundColor(Color.DKGRAY);
-    	tv.setTextColor(Color.LTGRAY);
-    	tv.setText(R.string.About);
-    	tv.setHeight(28);
-    	tv.setGravity(Gravity.CENTER_VERTICAL);
-    	tv.setPadding(5, 0, 0, 0);
-    	
-    	
-    	aboutList = (ListView) findViewById(R.id.aboutList);
-    	aboutList.addHeaderView(tv);
- 
-    	aboutList.setAdapter(new AboutAdapter(this));
-    	
-    	aboutList.setOnItemClickListener(this);
+    	Locale l=Locale.getDefault();
+    	phoneLanguage = l.getDisplayLanguage();
     	
     }
 
-	public void onItemClick(AdapterView<?> parent, View view, int arg2, long arg3) {
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		
-			int id = parent.getId();
-			switch(id){
-				case R.id.translateList:
-					//LanguagesDialog dialog = new LanguagesDialog(MiscListActivity.this);
-					//dialog.show();
-					//PopupWindow window = new PopupWindow(200,300);
-					//window.showAtLocation(, Gravity.CENTER, 10, 20);
-					
-					break;
-				case R.id.miscList:
-					Toast.makeText(MiscListActivity.this, "Misc", 20).show();
-								break;
-				case R.id.aboutList:
-					Toast.makeText(MiscListActivity.this, "about", 20).show();
-								break;
+			switch(position){
+				case 2:
+					final TextView tv2 = (TextView)view.findViewById(R.id.tv2);
+					String langs[] = getResources().getStringArray(R.array.language_preference);
+					final Dialog d = new Dialog(this);
+					d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+					d.setContentView(R.layout.languages_dialog);
+					ListView list = (ListView)d.findViewById(R.id.list);
+					list.setOnItemClickListener(new OnItemClickListener(){
+
+						public void onItemClick(AdapterView<?> parent, View view,
+								int position, long id) {
+							TextView v = (TextView)view;
+							tv2.setText(v.getText());
+							d.cancel();
+						}
+						
+					});
+					list.setAdapter(new ArrayAdapter<String>(this,R.layout.simple_list_item_1,langs));
+					d.show();
 			}
+	}
+	
+	public class TranslateView extends LinearLayout {
+		String arr[] = {"Origin:","Translate to:"};
+		public TranslateView(Context context,int position) {
+			super(context);
+			LayoutInflater.from(context).inflate(R.layout.translate_adapter, this);		
+			TextView v1= (TextView) findViewById(R.id.tv1);
+			v1.setText(arr[position-1]);
+			
+			TextView v2= (TextView) findViewById(R.id.tv2);
+			if(position == 1){
+				v2.setText(phoneLanguage);
+				ImageView image = (ImageView)findViewById(R.id.image);
+				image.setVisibility(INVISIBLE);
+			}
+			else
+				v2.setText("Italian");
+		}
+		
+	}
+	public class MiscView extends LinearLayout{
+		String arr[] = {"Enable Tutor Menu","Tell a contact"};
+		public MiscView(Context context,int position) {
+			super(context);
+			
+			LayoutInflater.from(context).inflate(R.layout.misc_adapter, this);
+
+			TextView v1= (TextView) findViewById(R.id.tv1);
+			v1.setText(arr[position-4]);
+		
+			if(position == 5){
+				CheckBox cb= (CheckBox) findViewById(R.id.checkbox);
+				cb.setVisibility(GONE);
+				
+				ImageView image = (ImageView)findViewById(R.id.image);
+				image.setVisibility(VISIBLE);
+			}
+			
+			}
+	}
+	public class AboutView extends LinearLayout{
+
+		public AboutView(Context context) {
+			super(context);
+			LayoutInflater.from(context).inflate(R.layout.about_text, this);		
+		}
+		
+	}
+	
+	public class MiscListAdapter extends BaseAdapter{
+
+		public int getCount() {
+			return 8;
+		}
+
+		public Object getItem(int position) {
+			return position;
+		}
+
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+			if(position == 0){
+				TextView tv = new TextView(MiscListActivity.this);
+		    	tv.setHeight(60);
+		    	tv.setPadding(5, 0, 0, 0);
+				tv.setText("Translate");
+				tv.setTextColor(Color.WHITE);		
+				tv.setBackgroundColor(Color.BLACK);
+				tv.setGravity(Gravity.CENTER_VERTICAL);
+				return tv; 
+			}
+			else if(position == 3){
+				TextView tv = new TextView(MiscListActivity.this);
+		    	tv.setHeight(60);
+		    	tv.setPadding(5, 0, 0, 0);
+				tv.setText("Miscellaneous");
+				tv.setTextColor(Color.WHITE);		
+				tv.setBackgroundColor(Color.BLACK);
+				tv.setGravity(Gravity.CENTER_VERTICAL);
+				return tv; 
+			}
+			else if(position == 6){
+				TextView tv = new TextView(MiscListActivity.this);
+		    	tv.setHeight(60);
+		    	tv.setPadding(5, 0, 0, 0);
+				tv.setText("About");
+				tv.setTextColor(Color.WHITE);		
+				tv.setBackgroundColor(Color.BLACK);
+				tv.setGravity(Gravity.CENTER_VERTICAL);
+				return tv; 
+			}
+			else if(position == 7){
+				AboutView about=new AboutView(MiscListActivity.this);
+				return about;
+			}
+			else if(position == 1 || position == 2){
+				TranslateView translateView=new TranslateView(MiscListActivity.this,position);
+				return translateView;
+			}
+			MiscView miscView = new MiscView(MiscListActivity.this,position);
+			return miscView;
+		}
+		
 	}
 
 }

@@ -24,7 +24,8 @@
 			android:paddingLeft="15dip"></EditText>
 		<EditText android:id="@+id/tweet" 
 			android:layout_width="fill_parent"
-			android:layout_height="40dip" 
+			android:layout_height="wrap_content" 
+			android:minHeight="40dip"
 			android:background="@drawable/rounded"
 			android:layout_margin="10dip" 
 			android:cursorVisible="true"

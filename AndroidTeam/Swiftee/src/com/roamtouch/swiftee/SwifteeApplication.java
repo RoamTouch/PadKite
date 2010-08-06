@@ -34,38 +34,38 @@ public class SwifteeApplication extends Application{
 		database = new DBConnector(this);
 		database.open();
 		
-		copyFilestoSdcard();
+		copyFilestoSdcard("Default Theme");
+		copyFilestoSdcard("Gesture Library");
 	}
 	
-	public void copyFilestoSdcard(){
+	public void copyFilestoSdcard(String dir){
 		try{
-			String arr[] = getAssets().list("Default Theme");
-			File dir = new File("/sdcard/Swiftee/Default Theme/");
-			boolean cw = dir.canWrite();
-			boolean t = dir.mkdirs();
+			String arr[] = getAssets().list(dir);
 			
-			
-			int count = arr.length;
-			
-			for(int i=0;i<count;i++){
-				InputStream is = getAssets().open("Default Theme/"+arr[i]);
-				
-				FileOutputStream myOutput = new FileOutputStream("/sdcard/Swiftee/Default Theme/"+arr[i]);
-	   			 byte[] buffer = new byte[1024];
-	      		 int length;
-	      		 while ((length = is.read(buffer))>0)
-	      		 {
-	      			 myOutput.write(buffer, 0, length);
-	      		 }
+			File d = new File("/sdcard/Swiftee/"+dir);
+			if(!d.exists()){
+				d.mkdirs();
 
-	      		 //Close the streams
-	      		 myOutput.flush();
-	      		 myOutput.close();
-	      		 is.close();
+				int count = arr.length;
+
+				for(int i=0;i<count;i++){
+					InputStream is = getAssets().open(dir+"/"+arr[i]);
+
+					FileOutputStream myOutput = new FileOutputStream("/sdcard/Swiftee/"+dir+"/"+arr[i]);
+					byte[] buffer = new byte[1024];
+					int length;
+					while ((length = is.read(buffer))>0)
+					{
+						myOutput.write(buffer, 0, length);
+					}
+
+					//Close the streams
+					myOutput.flush();
+					myOutput.close();
+					is.close();
+				}
 			}
-			
-			
-			
+				
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -92,31 +92,38 @@ public class SwifteeApplication extends Application{
 		GestureLibrary mLibrary = null;
 		switch(gestureType){
 			case CURSOR_TEXT_GESTURE:
-				mLibrary = GestureLibraries.fromRawResource(this, R.raw.text_gestures);
+				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.text_gestures);
+				mLibrary = GestureLibraries.fromFile("/sdcard/Swiftee/Gesture Library/text_gestures");
 				mLibrary.load();
 				break;
 			case CURSOR_LINK_GESTURE:
-				mLibrary = GestureLibraries.fromRawResource(this, R.raw.link_gestures);
+				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.link_gestures);
+				mLibrary = GestureLibraries.fromFile("/sdcard/Swiftee/Gesture Library/link_gestures");
 				mLibrary.load();
 				break;
 			case CURSOR_IMAGE_GESTURE:
-				mLibrary = GestureLibraries.fromRawResource(this, R.raw.image_gestures);
+				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.image_gestures);
+				mLibrary = GestureLibraries.fromFile("/sdcard/Swiftee/Gesture Library/image_gestures");
 				mLibrary.load();
 				break;
 			case CURSOR_NOTARGET_GESTURE:
-				mLibrary = GestureLibraries.fromRawResource(this, R.raw.notarget_gestures);
+				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.notarget_gestures);
+				mLibrary = GestureLibraries.fromFile("/sdcard/Swiftee/Gesture Library/notarget_gestures");
 				mLibrary.load();
 				break;
 			case CURSOR_VIDEO_GESTURE:
-				mLibrary = GestureLibraries.fromRawResource(this, R.raw.video_gestures);
+				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.video_gestures);
+				mLibrary = GestureLibraries.fromFile("/sdcard/Swiftee/Gesture Library/video_gestures");
 				mLibrary.load();
 				break;
 			case CUSTOM_GESTURE:
-				mLibrary = GestureLibraries.fromRawResource(this, R.raw.custom_gestures);
+				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.custom_gestures);
+				mLibrary = GestureLibraries.fromFile("/sdcard/Swiftee/Gesture Library/custom_gestures");
 				mLibrary.load();
 				break;
 			case BOOKMARK_GESTURE:
-				mLibrary = GestureLibraries.fromRawResource(this, R.raw.bookmarks);
+				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.bookmarks);
+				mLibrary = GestureLibraries.fromFile("/sdcard/Swiftee/Gesture Library/bookmarks");
 				mLibrary.load();
 				break;
 		}		

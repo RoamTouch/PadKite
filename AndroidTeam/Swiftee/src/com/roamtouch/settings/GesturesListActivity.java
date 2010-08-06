@@ -1,15 +1,11 @@
 package com.roamtouch.settings;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.roamtouch.swiftee.R;
 
@@ -17,6 +13,7 @@ public class GesturesListActivity extends Activity{
 
 		private TextView tv;
 		private int gestureCategory;
+		private ListView list;
 		
 	  	/** Called when the activity is first created. */
 		@Override
@@ -26,7 +23,7 @@ public class GesturesListActivity extends Activity{
 			gestureCategory = getIntent().getIntExtra("Gesture_Category", -1);		
 			setContentView(R.layout.gesture_editor);
       
-			ListView list = (ListView) this.findViewById(R.id.gesturesList);
+			list = (ListView) this.findViewById(R.id.gesturesList);
 			
 			tv = new TextView(this);
 	    	tv.setHeight(60);
@@ -38,9 +35,16 @@ public class GesturesListActivity extends Activity{
 			setTitle(gestureCategory);
 			
 			list.addHeaderView(tv);
-			list.setAdapter(new GestureAdapter(this,gestureCategory));
+			//list.setAdapter(new GestureAdapter(this,gestureCategory));
 			
 		}
+		
+		@Override
+	    protected void onResume() {
+	        super.onResume();
+	        list.setAdapter(new GestureAdapter(this,gestureCategory));
+	    }
+		
 		
 		public void setTitle(int gestureType){
 			

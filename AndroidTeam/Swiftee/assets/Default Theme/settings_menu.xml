@@ -1,24 +1,24 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
    		
-   		<MenuButton android:button_image="icon.png"
-					android:button_highlightImage="icon.png" />    	         	            
+   		<MenuButton android:button_image="browser_setting_nor.png"
+					android:button_highlightImage="browser_setting_press.png" />    	         	            
 		
-		<MenuButton android:button_image="refresh_normal.png"
-					android:button_highlightImage="refresh_pressed.png" />   
+		<MenuButton android:button_image="set_homepage_nor.png"
+					android:button_highlightImage="set_homepage_press.png" />   
 
-		<MenuButton android:button_image="stop_normal.png"
-					android:button_highlightImage="stop_pressed.png" />
+		<MenuButton android:button_image="resize_hitarea_normal.png"
+					android:button_highlightImage="resize_hitarea_press.png" />
 		
-		<MenuButton android:button_image="zoom_normal.png"
-					android:button_highlightImage="zoom_pressed.png" />
+		<MenuButton android:button_image="gesture_kit_editor_nor.png"
+					android:button_highlightImage="gesture_kit_editor_press.png" />
 	
-		<MenuButton android:button_image="find_text_normal.png"
-					android:button_highlightImage="find_text_pressed.png" />
+		<MenuButton android:button_image="miscellaneous_nor.png"
+					android:button_highlightImage="miscellaneous_press.png" />
 	
-		<MenuButton android:button_image="windows_normal.png"
-					android:button_highlightImage="windows_pressed.png" />
+		<MenuButton android:button_image="help_online_nor.png"
+					android:button_highlightImage="help_online_press.png" />
 	
-		<MenuButton android:button_image="bookmark_normal.png"
-					android:button_highlightImage="bookmark_pressed.png" />
+		<MenuButton android:button_image="practice_gesture_nor.png"
+					android:button_highlightImage="practice_gesture_press.png" />
 </merge>
     	

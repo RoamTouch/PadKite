@@ -54,9 +54,9 @@ public class GestureRecorder extends Activity {
 						
 						if(mGesture!=null){
 							mLibrary.removeGesture(gestureName, mLibrary.getGestures(gestureName).get(0));
-							//mLibrary.addGesture(gestureName, mGesture);
+							mLibrary.addGesture(gestureName, mGesture);
 							boolean bool = mLibrary.save();
-							Log.d("","");
+							//Log.d("","");
 						}
 						finish();
 					}

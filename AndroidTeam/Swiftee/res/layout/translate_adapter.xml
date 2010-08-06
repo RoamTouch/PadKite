@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
-    android:layout_height="60dip"
-    android:gravity="center_vertical">
+    android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:gravity="center_vertical"
+    android:background="#FFFFFF">
 <TextView 
 	android:id="@+id/tv1"
     android:layout_width="100dip"
     android:layout_height="wrap_content"
     android:gravity="right"
-    android:text="Origin:"
+    android:textColor="#000000"
     />
 <TextView 
 	android:id="@+id/tv2"
@@ -16,9 +18,10 @@
     android:layout_height="wrap_content"
     android:paddingLeft="10dip"
     android:textSize="25sp"
-    android:text="Spanish"
+    android:textColor="#000000"
     />
 <ImageView 
+	android:id="@+id/image"
 	android:src="@drawable/ic_menu_more"
 	android:layout_width="40dip"
     android:layout_height="wrap_content"/>

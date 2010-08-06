@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteStatement;
 
 
 /**
@@ -63,11 +62,28 @@ public class DBConnector {
 		public void registerUser(String name,String username,String password){
 			try
 			{
-				mDatabase.execSQL("INSERT INTO user_profiles VALUES('"+name+"','"+username+"','"+password+"')");
+				mDatabase.execSQL("INSERT INTO user_profiles(email,username,password) VALUES('"+name+"','"+username+"','"+password+"')");
 			}
 			catch(Exception e)
 			{
 				e.printStackTrace();
 			}
     	}
+		
+		public boolean checkUserRegistered(){
+			try{
+				Cursor c = mDatabase.rawQuery("SELECT count(*) FROM user_profiles", null);
+				if(c!=null){
+					c.moveToFirst();
+					int count = c.getInt(0);
+					if(count>0)
+						return true;
+				}
+				return false;
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		}
 }

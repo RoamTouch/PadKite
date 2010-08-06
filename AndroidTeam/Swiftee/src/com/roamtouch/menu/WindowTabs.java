@@ -1,21 +1,16 @@
 package com.roamtouch.menu;
 
-import java.util.ArrayList;
 
 import roamtouch.webkit.WebView;
-
 import com.roamtouch.floatingcursor.FloatingCursor;
-import com.roamtouch.settings.MiscListActivity;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.LinearLayout.LayoutParams;
 
 public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 

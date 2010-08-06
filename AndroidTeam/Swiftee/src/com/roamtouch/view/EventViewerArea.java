@@ -34,7 +34,10 @@ public class EventViewerArea extends LinearLayout {
 	{
 		tv1.setText(Html.fromHtml("<font color=\"yellow\">" + txt + "</font>"));
 	}
-	
+	public void setSplitedText(String txt,String txt2)
+	{
+		tv1.setText(Html.fromHtml("<font color=\"yellow\">" + txt + "</font><font color=\"white\">" + txt2 + "</font>"));
+	}
 	public void splitText(int type, String extra){
 		
 		switch(type){

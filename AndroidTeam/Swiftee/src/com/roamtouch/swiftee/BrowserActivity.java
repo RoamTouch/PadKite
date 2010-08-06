@@ -3,7 +3,7 @@ package com.roamtouch.swiftee;
 import java.util.ArrayList;
 
 import com.api.blogger.BloggerActivity;
-import com.roamtouch.menu.TabControl;
+import com.api.facebook.FacebookActivity;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.view.EventViewerArea;
@@ -30,7 +30,6 @@ import roamtouch.webkit.WebView;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.TabHost.TabContentFactory;
 
 
 public class BrowserActivity extends Activity implements OnGesturePerformedListener {
@@ -260,6 +259,11 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         	intent.putExtra("description", "Some description");
         	startActivity(intent);
         }
+        else if("Facebook".equals(action)){
+        	Intent intent = new Intent(this,FacebookActivity.class);
+        	intent.putExtra("Post", mSelection);
+        	startActivity(intent);
+        }
         else if("Twitter".equals(action)){
         	Intent intent = new Intent(this,TwitterActivity.class);
         	intent.putExtra("Tweet", mSelection);
@@ -271,7 +275,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         	startActivity(intent);
         }
         else if("Translate".equals(action)){
-        	eventViewer.setText("Translated:"+Translater.text(mSelection, "ENGLISH", "HINDI"));
+        	String translated = Translater.text(mSelection, "ENGLISH", "ITALIAN");
+        	eventViewer.setSplitedText("Translated from ENGLISH to ITALIAN:",translated);
         }
         else if("Wikipedia".equals(action)){
         	webView.loadUrl("http://en.wikipedia.org/wiki/"+mSelection);

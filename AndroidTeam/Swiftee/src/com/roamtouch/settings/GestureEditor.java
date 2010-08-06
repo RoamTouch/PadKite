@@ -32,7 +32,7 @@ public class GestureEditor extends Activity implements OnItemClickListener{
         setContentView(R.layout.gesture_editor);
         ListView list = (ListView) this.findViewById(R.id.gesturesList);
         list.setOnItemClickListener(this);
-    	list.setSelector(R.drawable.cone);
+    	//list.setSelector(R.drawable.cone);
         list.setAdapter(new GestureCategory(this));
     }
     
