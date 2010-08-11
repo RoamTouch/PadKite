@@ -1648,7 +1648,19 @@ void WebViewCore::executeSelectionCommand(int x, int y, int cmd)
     case 8: //EXTEND_SELECTION
         extendSelectionTo(frame, result) ;
         break;
-    case 9://STOP_SELECTION
+    case 9: //EXTEND_SELECTION_LEFT
+        m_mainFrame->selection()->modify(SelectionController::EXTEND, SelectionController::LEFT, CharacterGranularity, true);
+        break;
+    case 10: //EXTEND_SELECTION_RIGHT
+        m_mainFrame->selection()->modify(SelectionController::EXTEND, SelectionController::RIGHT, CharacterGranularity, true);
+        break;
+    case 11: //EXTEND_SELECTION_UP
+        m_mainFrame->selection()->modify(SelectionController::EXTEND, SelectionController::BACKWARD, LineGranularity, true);
+    break;
+    case 12: //EXTEND_SELECTION_RIGHT
+        m_mainFrame->selection()->modify(SelectionController::EXTEND, SelectionController::FORWARD, LineGranularity, true);
+        break;
+    case 13://STOP_SELECTION
         StopSelection(frame, result) ;
         break;
 

@@ -1761,11 +1761,20 @@ public class WebView extends AbsoluteLayout
     /* Start selection at given location */
     public static final int START_SELECTION        = 7;
     /* Extend selection from the start location to the given location */
-    public static final int EXTEND_SELECTION         = 8;
+    public static final int EXTEND_SELECTION       = 8;
+    /* Extend selection from the start location to one character left */
+    public static final int EXTEND_SELECTION_LEFT  = 9;
+    /* Extend selection from the start location to one character right */
+    public static final int EXTEND_SELECTION_RIGHT = 10;
+    /* Extend selection from the start location to one line up */
+    public static final int EXTEND_SELECTION_UP    = 11;
+    /* Extend selection from the start location to one line down */
+    public static final int EXTEND_SELECTION_DOWN  = 12;
+
     /* Stop selection, after this command the application can 
      * copy the selected content to clipboard by COPY_TO_CKIPBOARD command 
      */
-    public static final int STOP_SELECTION         = 9;
+    public static final int STOP_SELECTION         = 13;
 
     /**
        * Executes the selection command on the given point. The x,y co-ordinates are
