@@ -1527,6 +1527,75 @@ static void selectClosestWordOrLink(WebCore::Frame* frame, const WebCore::HitTes
     }
 }
 
+
+static void startSelectionAt(WebCore::Frame* frame, const WebCore::HitTestResult& result)
+{
+    Node* innerNode = targetNode(result);
+
+    if (innerNode && innerNode->renderer()) {
+        WebCore::VisiblePosition visiblePos(innerNode->renderer()->positionForPoint(result.localPoint()));
+        if (visiblePos.isNull())
+            visiblePos = WebCore::VisiblePosition(innerNode, 0, DOWNSTREAM);
+        WebCore::Position pos = visiblePos.deepEquivalent();
+
+        WebCore::VisibleSelection newSelection = frame->selection()->selection();
+
+        newSelection = WebCore::VisibleSelection(visiblePos);
+        frame->setSelectionGranularity(WebCore::CharacterGranularity);
+        
+
+        if (frame->shouldChangeSelection(newSelection))
+            frame->selection()->setSelection(newSelection);
+    }
+}
+
+
+static void extendSelectionTo(WebCore::Frame* frame, const WebCore::HitTestResult& result)
+{
+    Node* innerNode = targetNode(result);
+
+    if (innerNode && innerNode->renderer()) {
+        frame->setSelectionGranularity(WebCore::CharacterGranularity);
+
+        VisiblePosition targetPosition(innerNode->renderer()->positionForPoint(result.localPoint()));
+        
+        // Don't modify the selection if we're not on a node.
+        if (targetPosition.isNull())
+            return;
+
+        // Restart the selection if this is the first mouse move. This work is usually
+        // done in handleMousePressEvent, but not if the mouse press was on an existing selection.
+        VisibleSelection newSelection = frame->selection()->selection();
+
+#if ENABLE(SVG)
+        // Special case to limit selection to the containing block for SVG text.
+        // FIXME: Isn't there a better non-SVG-specific way to do this?
+        if (Node* selectionBaseNode = newSelection.base().node())
+            if (RenderObject* selectionBaseRenderer = selectionBaseNode->renderer())
+                if (selectionBaseRenderer->isSVGText())
+                    if (targetNode->renderer()->containingBlock() != selectionBaseRenderer->containingBlock())
+                        return;
+#endif
+
+ 
+        newSelection.setExtent(targetPosition);
+        if (frame->selectionGranularity() != CharacterGranularity)
+            newSelection.expandUsingGranularity(frame->selectionGranularity());
+
+        if (frame->shouldChangeSelection(newSelection)) {
+            frame->selection()->setLastChangeWasHorizontalExtension(false);
+            frame->selection()->setSelection(newSelection);
+        }        
+        //frame->eventHandler()->updateSelectionForMouseDrag(innerNode, result.localPoint());
+    }
+}
+
+static void StopSelection(WebCore::Frame* frame, const WebCore::HitTestResult& result) {
+
+    frame->notifyRendererOfSelectionChange(true);
+    frame->selection()->selectFrameElementInParentIfFullySelected();
+}
+
 void WebViewCore::copySelectedContentToClipboard()
 {
     /*Android clipboard supports only the text type.*/
@@ -1555,21 +1624,34 @@ void WebViewCore::executeSelectionCommand(int x, int y, int cmd)
 
     switch (cmd)
     {
-    case 1:
+    case 1: //SELECT_WORD_OR_LINK
         selectClosestWordOrLink(frame, result) ;
         break ;
-    case 2:
+    case 2: //SELECT_LINE
         selectUsingGranularity(frame, result, WebCore::LineGranularity) ;
         break ;
-    case 3:
+    case 3: //SELECT_SENTENCE
         selectUsingGranularity(frame, result, WebCore::SentenceGranularity) ;
         break ;
-    case 4:
+    case 4: //SELECT_PARAGRAPH
         selectUsingGranularity(frame, result, WebCore::ParagraphGranularity) ;
         break ;
-    case 5:
+    case 5: //COPY_TO_CLIPBOARD
         copySelectedContentToClipboard() ;
         break;
+    case 6: //CLEAR_SELECTION
+        m_mainFrame->selection()->clear();
+        break;
+    case 7: //START_SELECTION
+        startSelectionAt(frame, result) ;
+        break;
+    case 8: //EXTEND_SELECTION
+        extendSelectionTo(frame, result) ;
+        break;
+    case 9://STOP_SELECTION
+        StopSelection(frame, result) ;
+        break;
+
     default:
         break ;
     }

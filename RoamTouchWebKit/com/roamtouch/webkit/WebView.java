@@ -1758,6 +1758,14 @@ public class WebView extends AbsoluteLayout
     public static final int COPY_TO_CLIPBOARD      = 5;
     /* Clear the selected contents on the page */
     public static final int CLEAR_SELECTION        = 6;
+    /* Start selection at given location */
+    public static final int START_SELECTION        = 7;
+    /* Extend selection from the start location to the given location */
+    public static final int EXTEND_SELECTION         = 8;
+    /* Stop selection, after this command the application can 
+     * copy the selected content to clipboard by COPY_TO_CKIPBOARD command 
+     */
+    public static final int STOP_SELECTION         = 9;
 
     /**
        * Executes the selection command on the given point. The x,y co-ordinates are
