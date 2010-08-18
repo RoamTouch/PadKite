@@ -315,7 +315,8 @@ void setUpFindPaint()
     const SkScalar roundiness = SkIntToScalar(2);
     SkCornerPathEffect* cornerEffect = new SkCornerPathEffect(roundiness);
     m_findPaint.setPathEffect(cornerEffect);
-    m_findPaint.setARGB(255, 132, 190, 0);
+    //m_findPaint.setARGB(255, 132, 190, 0);
+    m_findPaint.setARGB(255, 255, 146, 0); //RoamTouch Change
 
     // Set up the background blur paint.
     m_findBlurPaint.setAntiAlias(true);

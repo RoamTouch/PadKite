@@ -1775,6 +1775,10 @@ public class WebView extends AbsoluteLayout
      * copy the selected content to clipboard by COPY_TO_CKIPBOARD command 
      */
     public static final int STOP_SELECTION         = 13;
+    /* Select an object on the given point x,y */
+    public static final int SELECT_OBJECT          = 14;
+    /* Copy the HTML fragment of the copied content to clipboard */
+    public static final int COPY_HTML_FRAGMENT_TO_CLIPBOARD      = 15;
 
     /**
        * Executes the selection command on the given point. The x,y co-ordinates are

@@ -66,6 +66,7 @@
 #include "InlineTextBox.h"
 #include <JNIHelp.h>
 #include "KeyboardCodes.h"
+#include "markup.h" //RoamTouch Change
 #include "Navigator.h"
 #include "Node.h"
 #include "Page.h"
@@ -1549,6 +1550,24 @@ static void startSelectionAt(WebCore::Frame* frame, const WebCore::HitTestResult
     }
 }
 
+static void selectObjectAt(WebCore::Frame* frame, const WebCore::HitTestResult& result)
+{
+    Node* innerNode = result.innerNode();
+
+    if (innerNode && innerNode->renderer() 
+        && (innerNode->renderer()->isImage() || innerNode->renderer()->isVideo())) {
+
+        RefPtr<Range> resultRange = Range::create(innerNode->document());
+        ExceptionCode ec ;
+        resultRange->selectNode(innerNode, ec) ;
+        
+        WebCore::VisibleSelection newSelection(resultRange.get(), DOWNSTREAM);
+        if (frame->shouldChangeSelection(newSelection))
+            frame->selection()->setSelection(newSelection);
+
+    }
+}
+
 
 static void extendSelectionTo(WebCore::Frame* frame, const WebCore::HitTestResult& result)
 {
@@ -1596,10 +1615,17 @@ static void StopSelection(WebCore::Frame* frame, const WebCore::HitTestResult& r
     frame->selection()->selectFrameElementInParentIfFullySelected();
 }
 
-void WebViewCore::copySelectedContentToClipboard()
+void WebViewCore::copySelectedContentToClipboard(bool bHTMLFragment)
 {
     /*Android clipboard supports only the text type.*/
-    WebCore::String text = m_mainFrame->displayStringModifiedByEncoding(m_mainFrame->selectedText());
+    WebCore::String text ;
+    if (bHTMLFragment) {
+        const WebCore::VisibleSelection& selection = m_mainFrame->selection()->selection();
+        RefPtr<WebCore::Range> range = selection.firstRange();
+        text = range->toHTML(); ;
+    } else {
+        text = m_mainFrame->displayStringModifiedByEncoding(m_mainFrame->selectedText());
+    }
 
     JNIEnv* env = JSC::Bindings::getJNIEnv();
     AutoJObject obj = m_javaGlue->object(env);
@@ -1637,7 +1663,7 @@ void WebViewCore::executeSelectionCommand(int x, int y, int cmd)
         selectUsingGranularity(frame, result, WebCore::ParagraphGranularity) ;
         break ;
     case 5: //COPY_TO_CLIPBOARD
-        copySelectedContentToClipboard() ;
+        copySelectedContentToClipboard(false) ;
         break;
     case 6: //CLEAR_SELECTION
         m_mainFrame->selection()->clear();
@@ -1662,6 +1688,12 @@ void WebViewCore::executeSelectionCommand(int x, int y, int cmd)
         break;
     case 13://STOP_SELECTION
         StopSelection(frame, result) ;
+        break;
+    case 14: //SELECT_OBJECT
+        selectObjectAt(frame, result) ;
+        break;
+    case 15: //COPY_HTML_FRAGMENT_TO_CLIPBOARD
+        copySelectedContentToClipboard(true) ;
         break;
 
     default:
