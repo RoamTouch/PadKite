@@ -7,6 +7,7 @@ import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,13 +32,12 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		for(int i=0;i<count;i++ ){
 			View v = getChildAt(i);
 			v.setOnClickListener(this);
-		}
-		
+		}		
 	}
 
 	public void setTab(WebView wv){
 		TabButton tab1 = (TabButton) findViewById(R.id.Tab1);
-		tab1.setId(1);
+		tab1.setId(0);
 		tab1.setWebView(wv);
 	}
 	public void setFloatingCursor(FloatingCursor mFloatingCursor) {
@@ -49,42 +49,34 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 	
 	public void setCurrentThumbnail(BitmapDrawable bd){
 		TabButton tab = (TabButton) getChildAt(currentTab);
-		tab.setBackgroundDrawable(bd);
+	//	tab.setBackgroundColor(Color.GRAY);
+		tab.setImageDrawable(bd);
 	}
 	public void onClick(View v) {
-		int count = getChildCount();
-		for(int i=0;i<count;i++){
-			if(v == getChildAt(i)){
-				if(i == count-1){
-					addWindow();
-					currentTab = 1;
-					return;
-				}
-				else if(i == count-3 && count>5){
-					removeWindow();
-					return;
-				}
-				else{
-					TabButton child = (TabButton)getChildAt(i);
-					mParent.setWebView(child.getWebView());
-					setActiveTabIndex(child);
-					currentTab = i;
-					return;
-				}
-			}
+		int id = v.getId();
+		if(id == 33){
+			addWindow();
+			currentTab = 1;
+			return;
 		}
-		
+		else{
+			TabButton child = (TabButton)v;
+			mParent.setActiveWebViewIndex(id);
+			setActiveTabIndex(child);
+			currentTab = id+1;
+			return;
+		}
 	}
 	
 	
 	public void addWindow(){
 		TabButton but = new TabButton(mContext);
 		but.setBackgroundResource(R.drawable.settings_btn);
-		but.setId(1);
+		but.setId(mParent.getActiveWebViewIndex()+1);
 		but.setWebView(createWebView());
 		but.setOnClickListener(this);
 		addView(but,1);
-		mParent.setWebView(but.getWebView());
+		mParent.addWebView(but.getWebView());
 	}
 	public WebView createWebView(){
 		WebView webView = new WebView(mContext);
@@ -96,7 +88,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
         webView.getSettings().setJavaScriptEnabled(true);
         LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
 		webView.setLayoutParams(params);
-		//webView.loadUrl("http://www.google.com");
+		webView.loadUrl("file:///android_asset/loadPage.html");
 		return webView;
 	}
 	public void removeWindow(){
@@ -106,9 +98,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		else
 			currentTab=1;
 		TabButton child = (TabButton)getChildAt(currentTab);
-		mParent.setWebView(child.getWebView());
 		setActiveTabIndex(child);
-		//currentTab = getActiveTabIndex();
 	}
 	// Extra saved information for displaying the tab in the picker.
     public static class PickerData {

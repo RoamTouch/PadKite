@@ -4,12 +4,13 @@ import roamtouch.webkit.WebView;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.Button;
+import android.widget.ImageView;
 
-public class TabButton extends Button{
+public class TabButton extends ImageView{
 
 		private double angle;
 		private int centerX,centerY;
-		private int closeButCenterX,closeButCenterY;
+//		private int closeButCenterX,closeButCenterY;
 		private WebView mWebView;
 		
 		public TabButton(Context context, AttributeSet attrs) {
@@ -41,7 +42,7 @@ public class TabButton extends Button{
 		public int getCenterY() {
 			return centerY;
 		}
-		
+/*		
 		public void calCloseButCenter(int h,int k,int r,double angle){
 			closeButCenterX  = (h+(int) (r*Math.cos(Math.toRadians(angle))));
 			closeButCenterY = (k+(int) (r*Math.sin(Math.toRadians(angle))));
@@ -54,7 +55,7 @@ public class TabButton extends Button{
 		public int getCloseButCenterY() {
 			return closeButCenterY;
 		}
-		
+*/		
 		public boolean shouldDraw() {
 			if(angle < -90 || angle > 270)
 				return false;

@@ -1,19 +1,13 @@
 package com.roamtouch.menu;
 
 import com.roamtouch.swiftee.R;
-
 import android.content.Context;
-import android.graphics.Color;
-import android.os.Handler;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 /**
  * Circular layout containing menu items and performing circular wheel animation
@@ -21,18 +15,6 @@ import android.widget.Toast;
  */
 public class CircularTabsLayout extends ViewGroup {
 	
-	/**
-	 *   CircularLayout Mode dynamic or static 
-	 *   Dynamic mode enables add menu button on separator and assigns first child from xml to it
-	 *   Static mode can not add buttons dynamically
-	 */
-	   public static final int STATIC_MODE = 0;
-	   public static final int DYNAMIC_MODE = 1;
-	   
-	   private int currentMode = STATIC_MODE;
-	
-	
-	   
 	/**
 	 * Calculate the radius for menu buttons and inner radius 
 	 */
@@ -46,9 +28,7 @@ public class CircularTabsLayout extends ViewGroup {
 		private boolean mIsBeingDragged = false;
 		private float mLastMotionY,mLastMotionX, mLastMotionAngle=-999;
 		private int mTouchSlop;
-//		private int mMinimumVelocity;
-//		private int mMaximumVelocity;
-	  
+
 		/**
 		 * flag indicating moving direction
 		 *  1 for clockwise
@@ -91,16 +71,6 @@ public class CircularTabsLayout extends ViewGroup {
 			addView(redCircle);
 		   }
 		
-		 /*public CircularLayout(Context context, AttributeSet attrs) {
-			super(context, attrs);
-			mScroller = new Scroller(context);
-			setFocusable(true);
-			setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
-			setWillNotDraw(false);
-			mTouchSlop = 3;
-			
-		}*/
-		
 		@Override
 		protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
 		   final int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
@@ -129,116 +99,87 @@ public class CircularTabsLayout extends ViewGroup {
 	   @Override
 	   protected void onLayout(boolean changed, int left, int top, int right, int bot) {
 
-//		   Toast.makeText(context, ""+currentMode, 100).show();
-		   final int count = getChildCount();
-		   double t = 0;
-		   int x = 0, y = 0;
+		    final int count = getChildCount();
+		    double t = 0;
+		    t=55;
 
-		   //t = (360 / (count-1));
-		   //t = 360 / 7;
-		   t=55;
-        
-		   if(currentMode == CircularLayout.DYNAMIC_MODE){
-			   childStartPoint = 3;
-			   Button but = (Button)getChildAt(count-1);
-			   int diff = BUTTON_RADIUS/2;
-			   but.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
-		   }
-		   else
-			   childStartPoint = 1;
 
-		   ImageView cone = (ImageView)getChildAt(count-2);
-		   
-		   if (cone.getVisibility() != GONE) {         
-			   cone.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
-			   cone.setClickable(false);
-		   }
-		   
-		   for (int i = 1; i < count-childStartPoint; i++) {
-			   TabButton child = (TabButton)getChildAt(i);
-			   if (child.getVisibility() != GONE) {            
-            	// Calc coordinates around the circle at the center of cart. system
-            	double angle = i*t;
-            	angle=angle-90 + 46;
-            	child.setAngle(angle);
-            	child.calculateCenter(a,b,inR,angle);
-            	child.calCloseButCenter(a,b,inR-50,angle);
-            	//Log.i("Circle before if angle,x,y" , "("+ x +","+ y +")angle"+angle);
-            
-            	//Log.i("Circle x,y" , "("+ x +","+ y +")");
- 
-                final int childLeft = child.getCenterX() - BUTTON_RADIUS;
-                final int childTop = child.getCenterY() - BUTTON_RADIUS;
-                final int lb = child.getCenterX() + BUTTON_RADIUS;
-                final int rb = child.getCenterY() + BUTTON_RADIUS;
-               
-                
-                if(child.shouldDraw()) {
-                	if(i == activetabIndex){
-                    	Button but1 = (Button)getChildAt(count-3);
-         			    //but1.layout(childLeft-10, childTop-10,childLeft+40, childTop+40);
-						but1.layout(child.getCloseButCenterX()-25, child.getCloseButCenterY()-25,child.getCloseButCenterX()+25, child.getCloseButCenterY()+25);
+		    childStartPoint = 2;
+		    Button but = (Button)getChildAt(count-1);
+		    int diff = BUTTON_RADIUS/2;
+		    but.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
 
-         			    ImageView redCircle = (ImageView)getChildAt(0);
-         			    redCircle.setBackgroundResource(R.drawable.red_circle);
-         			    redCircle.layout(childLeft-4, childTop-4, lb+4, rb+4);   
-                    }
-                    child.layout(childLeft, childTop, lb, rb);                	
-                }
-            }
-        }	
-		   
-		   
-	}
-	public void setMode(int mode){
-		currentMode = mode;
+		    ImageView cone = (ImageView)getChildAt(count-2);	   
+		    if (cone.getVisibility() != GONE) {         
+		    	cone.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
+		    	cone.setClickable(false);
+		    }
 
-		if(currentMode == CircularLayout.DYNAMIC_MODE){			
-			Button but1 = new Button(context);
-			but1.setBackgroundResource(R.drawable.cross);
-			but1.setId(0);
-			addView(but1);		
-		}
-		ImageView coneSeparator = new ImageView(context);
-		coneSeparator.setBackgroundResource(R.drawable.cone);
-		addView(coneSeparator);
+		    for (int i = 1; i < count-childStartPoint; i++) {
+		    	TabButton child = (TabButton)getChildAt(i);
+		    	if (child.getVisibility() != GONE) { 
+
+		    		// Calculate coordinates around the circle at the centre of cart. system
+		    		double angle = i*t;
+		    		angle=angle-90 + 46;
+		    		child.setAngle(angle);
+		    		child.calculateCenter(a,b,inR,angle);
+		    		//child.calCloseButCenter(a,b,inR-50,angle);            	
+
+		    		final int childLeft = child.getCenterX() - BUTTON_RADIUS;
+		    		final int childTop = child.getCenterY() - BUTTON_RADIUS;
+		    		final int lb = child.getCenterX() + BUTTON_RADIUS;
+		    		final int rb = child.getCenterY() + BUTTON_RADIUS;
+
+
+		    		if(child.shouldDraw()) {
+		    			if(i == activetabIndex){
+
+		    				ImageView redCircle = (ImageView)getChildAt(0);
+		    				redCircle.setBackgroundResource(R.drawable.red_circle);
+		    				redCircle.layout(childLeft-4, childTop-4, lb+4, rb+4);   
+		    			}
+		    			child.layout(childLeft, childTop, lb, rb);                	
+		    		}
+		    	}
+		    }			   
+	   }
+	   public void setMode(int mode){
 		
-		if(currentMode == CircularLayout.DYNAMIC_MODE){
-			Button but = new Button(context);
-			but.setBackgroundResource(R.drawable.add_tab);
-			addView(but);
-		}
-	}   
+		 	ImageView coneSeparator = new ImageView(context);
+		 	coneSeparator.setBackgroundResource(R.drawable.cone);
+		 	addView(coneSeparator);
 
-	public boolean canScroll(float angleDiff,int childCount) {
-		TabButton first = (TabButton)getChildAt(1);
-		TabButton last = (TabButton)getChildAt(childCount-4);
-		
-		if((first.getAngle()+angleDiff)>4)
-			return false;
-		else if(last.getAngle()+angleDiff < 174)
-			return false;
-		return true;
-	}
+		 	Button but = new Button(context);
+		 	but.setId(33);
+		 	but.setBackgroundResource(R.drawable.add_tab);
+		 	addView(but);
+
+	   }   
+
+	   public boolean canScroll(float angleDiff,int childCount) {
+		   	TabButton first = (TabButton)getChildAt(1);
+		   	TabButton last = (TabButton)getChildAt(childCount-3);
+
+		   	if((first.getAngle()+angleDiff)>4)
+		   		return false;
+		   	else if(last.getAngle()+angleDiff < 174)
+		   		return false;
+		   	return true;
+	   }
 	
-	public void setActiveTabIndex(TabButton child){
-			//activetabIndex = id;
-			//TabButton child = (TabButton)getChildAt(id);
-			final int childLeft = child.getCenterX() - BUTTON_RADIUS;
-			final int childTop = child.getCenterY() - BUTTON_RADIUS;
-			final int lb = child.getCenterX() + BUTTON_RADIUS;
-			final int rb = child.getCenterY() + BUTTON_RADIUS;
+	   public void setActiveTabIndex(TabButton child){
 
-			ImageView redCircle = (ImageView)getChildAt(0);
-			int count = getChildCount();
-			child.calCloseButCenter(a,b,inR-40,child.getAngle());
-			Button but1 = (Button)getChildAt(count-3);
-			but1.layout(child.getCloseButCenterX()-25, child.getCloseButCenterY()-25,child.getCloseButCenterX()+25, child.getCloseButCenterY()+25);
+		   	final int childLeft = child.getCenterX() - BUTTON_RADIUS;
+		   	final int childTop = child.getCenterY() - BUTTON_RADIUS;
+		   	final int lb = child.getCenterX() + BUTTON_RADIUS;
+		   	final int rb = child.getCenterY() + BUTTON_RADIUS;
 
-			redCircle.setBackgroundResource(R.drawable.red_circle);
-			redCircle.layout(childLeft-3, childTop-3, lb+3, rb+3);   
+		   	ImageView redCircle = (ImageView)getChildAt(0);
+		   	redCircle.setBackgroundResource(R.drawable.red_circle);
+		   	redCircle.layout(childLeft-3, childTop-3, lb+3, rb+3);   
 
-	}
+	   }
 		public int getActiveTabIndex(){
 			return activetabIndex;
 		}
@@ -405,16 +346,16 @@ public class CircularTabsLayout extends ViewGroup {
 					final int rb = child.getCenterY() + BUTTON_RADIUS;
 
 					ImageView redCircle = (ImageView)getChildAt(0);
-					Button but1 = (Button)getChildAt(count-3);
+					//Button but1 = (Button)getChildAt(count-3);
 					if(child.shouldDraw()) {
 						child.setVisibility(View.VISIBLE);
 						child.layout(childLeft, childTop, lb, rb);
 						if(i == activetabIndex){
 							redCircle.setVisibility(View.VISIBLE);
-							but1.setVisibility(View.VISIBLE);
-							child.calCloseButCenter(a,b,inR-50,angle);
+						//	but1.setVisibility(View.VISIBLE);
+							//child.calCloseButCenter(a,b,inR-50,angle);
 
-							but1.layout(child.getCloseButCenterX()-25, child.getCloseButCenterY()-25,child.getCloseButCenterX()+25, child.getCloseButCenterY()+25);
+						//	but1.layout(child.getCloseButCenterX()-25, child.getCloseButCenterY()-25,child.getCloseButCenterX()+25, child.getCloseButCenterY()+25);
 
 							redCircle.setBackgroundResource(R.drawable.red_circle);
 							redCircle.layout(childLeft-3, childTop-3, lb+3, rb+3);   
@@ -424,7 +365,7 @@ public class CircularTabsLayout extends ViewGroup {
 						if(i == activetabIndex){
 							redCircle.setVisibility(View.INVISIBLE);
 							child.setVisibility(View.INVISIBLE);
-							but1.setVisibility(View.INVISIBLE);
+						//	but1.setVisibility(View.INVISIBLE);
 						}
 						child.setVisibility(View.INVISIBLE);
 					}

@@ -422,6 +422,8 @@ public class FloatingCursor extends FrameLayout {
 		}
 		public void setEventViewerArea(EventViewerArea eventViewer) {
 			this.eventViewer = eventViewer;
+			eventViewer.setWindowTabs(fcWindowTabs);
+			fcMainMenu.setEventViewer(eventViewer);
 		}
 
 		public void setParent(BrowserActivity p){
@@ -465,6 +467,7 @@ public class FloatingCursor extends FrameLayout {
 		}
 		
 		public void toggleMenuVisibility(){
+			eventViewer.setMode(EventViewerArea.TEXT_ONLY_MODE);
 			AlphaAnimation menuAnimation;
 
 			if(currentMenu.getVisibility() == INVISIBLE){
@@ -482,8 +485,9 @@ public class FloatingCursor extends FrameLayout {
 				});
 				currentMenu.startAnimation(menuAnimation);
 				vibrator.vibrate(25);
-				mParent.setTopBarVisibility(VISIBLE);
-				mParent.setTopBarMode(TopBarArea.ADDR_BAR_MODE);
+				eventViewer.setText("");
+//				mParent.setTopBarVisibility(VISIBLE);
+//				mParent.setTopBarMode(TopBarArea.ADDR_BAR_MODE);
 			}
 			else if(currentMenu.getVisibility() == VISIBLE){
 				menuAnimation = new AlphaAnimation(1.0f, 0.0f);
@@ -501,7 +505,7 @@ public class FloatingCursor extends FrameLayout {
 				});
 				currentMenu.startAnimation(menuAnimation);
 				vibrator.vibrate(25);
-				mParent.setTopBarVisibility(INVISIBLE);
+//				mParent.setTopBarVisibility(INVISIBLE);
 			}		
 		}
 		
@@ -598,7 +602,7 @@ public class FloatingCursor extends FrameLayout {
 				}
 
 				case WebHitTestResult.EDIT_TEXT_TYPE: {
-					cursorImage = R.drawable.text_cursor;
+					cursorImage = R.drawable.keyboard_cursor;
 					break;
 				}
 			
@@ -698,9 +702,16 @@ public class FloatingCursor extends FrameLayout {
 				pointer.setImageResource(R.drawable.address_bar_cursor);
 				sendEvent(MotionEvent.ACTION_UP, X, Y);		
 			}
+			if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE){
+				sendEvent(MotionEvent.ACTION_DOWN, X, Y);
+				pointer.setImageResource(R.drawable.address_bar_cursor);
+				sendEvent(MotionEvent.ACTION_UP, X, Y);	
+			}
 			else if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE)
 			{
 				eventViewer.setText("Downloading image ...");
+				mWebView.executeSelectionCommand(X, Y, WebView.SELECT_OBJECT);
+				mWebView.executeSelectionCommand(X, Y, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);	
 				pointer.setImageResource(R.drawable.address_bar_cursor);
 				removeTouchPoint();
 
@@ -930,7 +941,7 @@ public class FloatingCursor extends FrameLayout {
 				stopSelection(fcX, fcY);
 				stopHitTest(fcX, fcY,true);
 
-				removeTouchPoint();
+				//removeTouchPoint();
 
 				//fcTouchView.setVisibility(View.INVISIBLE);
 
@@ -1063,7 +1074,7 @@ public class FloatingCursor extends FrameLayout {
 
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
-				mParent.setTopBarURL(url);
+//				mParent.setTopBarURL(url);
 				view.loadUrl(url);
 				return true;
 			}
@@ -1121,6 +1132,7 @@ public class FloatingCursor extends FrameLayout {
 			        new Rect(0, 0, sourceBitmap.getWidth(), sourceBitmap.getHeight()),
 			        new Rect(0, 0, targetWidth-2, targetHeight-2),
 			        null);
+			    sourceBitmap.recycle();
 			    return targetBitmap;
 			}
 			

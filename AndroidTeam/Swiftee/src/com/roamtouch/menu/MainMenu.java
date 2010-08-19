@@ -5,12 +5,18 @@ import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.settings.RegisterActivity;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.SwifteeApplication;
+import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.TopBarArea;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.inputmethod.InputMethodManager;
 
 public class MainMenu extends CircularLayout implements OnTouchListener{
 
@@ -18,6 +24,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 	private BrowserActivity mParent;
 	public static boolean USER_REGISTERED = true;
 	private DBConnector database;
+	private EventViewerArea eventViewer;
 	 
 	public MainMenu(Context context) {
 		super(context);
@@ -46,7 +53,9 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 	public void setParent(BrowserActivity parent){
 		mParent = parent;
 	}
-
+	public void setEventViewer(EventViewerArea ev){
+		eventViewer = ev;
+	}
 	public boolean onTouch(View v, MotionEvent event) {
 		int id=v.getId();
 		if(event.getAction() == MotionEvent.ACTION_DOWN){
@@ -99,6 +108,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		}
 		}
 		if(event.getAction() == MotionEvent.ACTION_UP){
+			mParent.setEventViewerMode(EventViewerArea.TEXT_ONLY_MODE);
 			switch(id){
 			
 			//Settings
@@ -129,13 +139,18 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 					
 			//Find text
 			case 4:
-				mParent.setTopBarMode(TopBarArea.SEARCH_BAR_MODE);
+//				mParent.setTopBarMode(TopBarArea.SEARCH_BAR_MODE);
+				
+				InputMethodManager imm = (InputMethodManager)((Activity)getContext()).getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.showSoftInput(eventViewer.getTextView(), InputMethodManager.SHOW_IMPLICIT);
+				//imm.showSoftInput(eventViewer, InputMethodManager.SHOW_FORCED, new ResultReceiver(new Handler()));
 				this.setVisibility(INVISIBLE);
 				break;
 			
 			//Windows	
 			case 5:
 				mFloatingCursor.setCurrentMenu(2);
+				mParent.setEventViewerMode(EventViewerArea.WINDOWS_MODE);
 				break;
 			
 			//Bookmark	

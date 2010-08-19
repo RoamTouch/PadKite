@@ -9,7 +9,7 @@ import com.roamtouch.swiftee.R;
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SwifteeGestureView;
 import com.roamtouch.view.SwifteeOverlayView;
-import com.roamtouch.view.TopBarArea;
+//import com.roamtouch.view.TopBarArea;
 import com.roamtouch.view.TutorArea;
 import android.app.Activity;
 import android.content.Intent;
@@ -27,8 +27,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import roamtouch.webkit.WebView;
+import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
+//import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
 
@@ -38,14 +39,16 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 
 	public static String version = "Version Alpha-v1.06 build #eacd86/4d284d";
 
+	private int activeWebViewIndex = 0;
+	
 	private WebView webView;
 	private SwifteeOverlayView overlay;
 	private FloatingCursor floatingCursor;
 	private EventViewerArea eventViewer;
 	private GestureLibrary mLibrary;
-	private TopBarArea mTopBarArea;
+//	private TopBarArea mTopBarArea;
 	
-	private LinearLayout webLayout;
+	private FrameLayout webLayout;
 	private SwifteeGestureView mGestures;
 	private HorizontalScrollView mTutor;
 	
@@ -92,7 +95,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	
         setContentView(R.layout.main);
         
-        webLayout = (LinearLayout) findViewById(R.id.webviewLayout);
+        webLayout = (FrameLayout) findViewById(R.id.webviewLayout);
         
         webView = new WebView(this);
         webView.setScrollbarFadingEnabled(true);
@@ -102,14 +105,17 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setJavaScriptEnabled(true);
 		LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
+		//params.setMargins(0, 20, 0, 0);
+		
 		webView.setLayoutParams(params);
 		
 		//webView.setDragTracker(tracker);	
 		webLayout.addView(webView);
-		webView.loadUrl("http://www.google.com");
-		
+		//webView.loadUrl("http://www.google.com");
+		webView.loadUrl("file:///android_asset/loadPage.html");
 		eventViewer= (EventViewerArea) findViewById(R.id.eventViewer);
-	
+		eventViewer.setParent(this);
+		
 		//webView.findAll("image");
 		
 		overlay = (SwifteeOverlayView) findViewById(R.id.overlay);
@@ -132,18 +138,20 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 		mTutor.setVisibility(View.INVISIBLE);
 				
-		mTopBarArea=(TopBarArea)this.findViewById(R.id.topbararea);
+/*		mTopBarArea=(TopBarArea)this.findViewById(R.id.topbararea);
+		mTopBarArea.setVisibility(View.GONE);
 		mTopBarArea.setWebView(webView);
-		
+*/		
 		appState = ((SwifteeApplication)getApplicationContext());
     }
     
-    public void setWebView(WebView wv){
+/*    public void setWebView(WebView wv){
     	webLayout.removeViewAt(0);
     	webLayout.addView(wv);
     	floatingCursor.setWebView(wv,false);
-    	mTopBarArea.setWebView(wv);
+//    	mTopBarArea.setWebView(wv);
     }
+*/    
     private String mSelection;
     
     public void initGestureLibrary(int id){
@@ -198,7 +206,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     		case GESTURE_s:
 				eventViewer.setText("S (search) gesture done, searching for: " + mSelection);
 				webView.loadUrl("http://www.google.com/search?q=" + mSelection);
-				setTopBarURL("http://www.google.com/search?q=" + mSelection);
+//				setTopBarURL("http://www.google.com/search?q=" + mSelection);
 				break;
     		case GESTURE_e:
 				eventViewer.setText("e (email) gesture done");
@@ -300,6 +308,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			eventViewer.setText("Unrecognized gesture. Please draw 'g', 'y' 'p' or 'c'.");
 		stopGesture();
 	}
+	
+/*	
 	public void setTopBarVisibility(int visibility){
 			mTopBarArea.setVisibility(visibility);
 	}
@@ -312,9 +322,38 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	{
 		mTopBarArea.setURL(url);
 	}
-	
+*/	
 	public void refreshWebView(){
 		webView.reload();
 	}
 
+	public void setActiveWebViewIndex(int activeWebViewIndex) {
+		this.activeWebViewIndex = activeWebViewIndex;
+		int count = webLayout.getChildCount();
+		for(int i=0;i<count;i++){
+			if(i == activeWebViewIndex){
+				WebView wv = (WebView)webLayout.getChildAt(i);
+				wv.setVisibility(View.VISIBLE);
+				floatingCursor.setWebView(wv,false);
+			}
+			else
+				webLayout.getChildAt(i).setVisibility(View.INVISIBLE);
+				
+		}
+	}
+
+	public int getActiveWebViewIndex() {
+		return activeWebViewIndex;
+	}
+	
+	public void addWebView(WebView wv){
+		webLayout.addView(wv);
+		floatingCursor.setWebView(wv,false);
+	}
+	public void removeWebView(){
+		
+	}
+	public void setEventViewerMode(int mode){
+			eventViewer.setMode(mode);		
+	}
 }

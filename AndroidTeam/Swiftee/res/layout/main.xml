@@ -21,16 +21,17 @@
     	android:layout_width="fill_parent"
     	android:layout_height="fill_parent">
    		 			
-	<LinearLayout android:id="@+id/webviewLayout"
+	<FrameLayout android:id="@+id/webviewLayout"
 		 	android:layout_width="fill_parent" 
 			android:layout_height="fill_parent"
-			android:orientation="vertical">
+			android:orientation="vertical"
+			>
 	 
 		<!--  <roamtouch.webkit.WebView android:id="@+id/webview"
 		 		android:layout_width="fill_parent"
 		 		android:layout_height="fill_parent"/>-->	
 		 		
-	</LinearLayout>
+	</FrameLayout>
 
 	<com.roamtouch.floatingcursor.FloatingCursor xmlns:android="http://schemas.android.com/apk/res/android"
 		android:id="@+id/floatingCursor"
@@ -51,10 +52,12 @@
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent" 
     android:gravity="top|center_horizontal"
-    android:layout_weight="1"
-    android:paddingTop="10dip" 
+    android:layout_weight="1" 
     >
-	<com.roamtouch.view.TopBarArea android:id="@+id/topbararea"  android:layout_width="wrap_content" 
+     <com.roamtouch.view.EventViewerArea android:id="@+id/eventViewer" android:layout_width="fill_parent" android:layout_height="35dip" android:background="#000000">
+    </com.roamtouch.view.EventViewerArea>
+	
+<!--  	<com.roamtouch.view.TopBarArea android:id="@+id/topbararea"  android:layout_width="wrap_content" 
     			android:layout_height="wrap_content" 
     			android:visibility="invisible"
     			android:background="@drawable/square_bg1"
@@ -62,7 +65,7 @@
     			android:paddingRight="3dip"
     			android:paddingTop="3dip"
     			android:paddingBottom="3dip"
-    			 />	
+    			 />	-->
     </LinearLayout>
     
      <LinearLayout  
@@ -78,8 +81,7 @@
  			</com.roamtouch.view.TutorArea>
     </HorizontalScrollView>    
    
-    <com.roamtouch.view.EventViewerArea android:id="@+id/eventViewer" android:layout_width="fill_parent" android:layout_height="35dip" android:background="#000000">
-    </com.roamtouch.view.EventViewerArea>
+   
     </LinearLayout>
 </LinearLayout>
 </FrameLayout>
