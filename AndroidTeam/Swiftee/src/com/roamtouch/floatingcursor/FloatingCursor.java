@@ -875,8 +875,9 @@ public class FloatingCursor extends FrameLayout {
 				
 				// We need to factor the inner circle relocation so
 				// it does not get out of the outer circle
-				final float radFact = (float)(2*innerCirRad) / (float)r;
-				
+				// Fixed Size: 60 % from our radius
+				final float radFact = 0.6f*r; //(float)(2*innerCirRad) / (float)r;
+
 				//Toast.makeText(mContext, "radFact: " + radFact, 100).show();
 				
 				final int innerCircleX = -(int)fcPointerView.getScrollX() + CircleX;
@@ -917,8 +918,10 @@ public class FloatingCursor extends FrameLayout {
 					int scrollX = X - CircleX;
 					int scrollY = Y - CircleY;
 					
-					scrollX *= radFact;
-					scrollY *= radFact;
+					double length = Math.sqrt(scrollX*scrollX + scrollY*scrollY);
+					
+					scrollX *= (radFact/length);
+					scrollY *= (radFact/length);
 					
 					pointer.scrollTo(scrollX, scrollY);
 					fcPointerView.scrollTo(scrollX, scrollY);
