@@ -119,6 +119,8 @@ public class FloatingCursor extends FrameLayout {
 		private int mTouchSlop;
 		private int mMinimumVelocity;
 		private int mMaximumVelocity;
+
+		private boolean mCanBeDisabled = false;
     
 	/**
 	 * Vibrator for device vibration	
@@ -391,6 +393,21 @@ public class FloatingCursor extends FrameLayout {
 			init(context);
 		}
 
+		public void gestureDisableFC()
+		{
+			mCanBeDisabled  = true;
+		}
+		
+		public void gestureEnableFC()
+		{
+			mCanBeDisabled = false;
+			if (mIsDisabled)
+			{
+				fcView.setVisibility(View.VISIBLE);
+				enableFC();
+			}
+		}
+
 		public void disableFC()
 		{
 			mIsDisabled = true;
@@ -403,7 +420,7 @@ public class FloatingCursor extends FrameLayout {
 		{
 			mIsDisabled = false;
 			this.setVisibility(View.VISIBLE);
-		}
+ 		}
 	
 		public void setWebView(WebView wv,boolean isFirst) {
 			/*
@@ -713,7 +730,7 @@ public class FloatingCursor extends FrameLayout {
 				mWebView.executeSelectionCommand(X, Y, WebView.SELECT_OBJECT);
 				mWebView.executeSelectionCommand(X, Y, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);	
 				pointer.setImageResource(R.drawable.address_bar_cursor);
-				removeTouchPoint();
+				//removeTouchPoint();
 
 			// FIXME: Add Downloading of image
 			}
@@ -726,7 +743,7 @@ public class FloatingCursor extends FrameLayout {
 				mWebView.executeSelectionCommand(X, Y, WebView.COPY_TO_CLIPBOARD);	
 
 				pointer.setImageResource(R.drawable.no_target_cursor);
-				removeTouchPoint();
+				//removeTouchPoint();
 
 				// This is called by onClipBoardUpdate changed if mGesturesEnabled is true
 				// mParent.startGesture();	
@@ -854,7 +871,7 @@ public class FloatingCursor extends FrameLayout {
 	        }
 				
 			if (mIsDisabled)
-				return true;  
+				return false;  
 			
 			int fcX = -(int)pointer.getScrollX() + -(int)getScrollX() + w/2;
 			int fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;
@@ -947,6 +964,13 @@ public class FloatingCursor extends FrameLayout {
 					//	innerCircleX + "," + innerCircleY + "R: " + ir, Toast.LENGTH_LONG).show();
 				}
 				}*/
+				if (mCanBeDisabled)
+				{
+					if (mHandleTouch)
+						mParent.stopGesture();
+					else
+						disableFC();
+				}
 			}
 			
 			if (action == MotionEvent.ACTION_CANCEL)
@@ -960,7 +984,7 @@ public class FloatingCursor extends FrameLayout {
 				mActivePointerId = INVALID_POINTER_ID;
 
 				fcView.setVisibility(View.VISIBLE);
-			
+
 				stopSelection(fcX, fcY);
 				stopHitTest(fcX, fcY,true);
 

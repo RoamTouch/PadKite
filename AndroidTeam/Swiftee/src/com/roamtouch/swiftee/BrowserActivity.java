@@ -17,12 +17,14 @@ import android.gesture.Gesture;
 import android.gesture.GestureLibrary;
 import android.gesture.GestureOverlayView;
 import android.gesture.Prediction;
+import android.gesture.GestureOverlayView.OnGestureListener;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.ClipboardManager;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -33,7 +35,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout.LayoutParams;
 
 
-public class BrowserActivity extends Activity implements OnGesturePerformedListener {
+public class BrowserActivity extends Activity implements OnGesturePerformedListener, OnGestureListener {
 	
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 
@@ -132,6 +134,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 		mGestures = (SwifteeGestureView) findViewById(R.id.gestures);
 		mGestures.addOnGesturePerformedListener(this);
+		mGestures.addOnGestureListener(this);
 		mGestures.setEnabled(false);
 		
 		mTutor = (HorizontalScrollView) findViewById(R.id.gestureScrollView);
@@ -166,7 +169,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     public void startGesture(int gestureType)
     {
     	initGestureLibrary(gestureType);
-    	floatingCursor.disableFC();
+    	floatingCursor.gestureDisableFC();
 
 		mHandler.post(new Runnable() {
             public void run() {
@@ -190,7 +193,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     {
 		mTutor.setVisibility(View.INVISIBLE);
 		mGestures.setEnabled(false);
-    	floatingCursor.enableFC();
+    	floatingCursor.gestureEnableFC();
         mSelection = null;
     }
     
@@ -228,6 +231,32 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     			// cancel
     	}
 		//stopGesture();
+    }
+    
+    private boolean mCancelGesture = false;
+    
+    public void onGestureStarted(GestureOverlayView overlay, MotionEvent event) {
+    	mCancelGesture = true;
+//    	eventViewer.setText("Gesture started.");
+    }
+
+    public void onGesture(GestureOverlayView overlay, MotionEvent event) {
+    	mCancelGesture = false;
+    	//   	eventViewer.setText("Gesture continuing.");
+    }
+
+    public void onGestureEnded(GestureOverlayView overlay, MotionEvent event) {
+    	if (mCancelGesture)
+    	{
+        	eventViewer.setText("Gesture cancelled.");
+    		stopGesture();
+    	}
+    	// eventViewer.setText("Gesture ended.");
+    }
+
+    public void onGestureCancelled(GestureOverlayView overlay, MotionEvent event) {
+    	eventViewer.setText("Gesture cancelled. Please draw 'S', 'e' or 'c'.");
+		stopGesture();
     }
 
     public void drawGesture(Gesture gesture){
