@@ -39,7 +39,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 
-	public static String version = "Version Beta-pre-v1.11 build #4adefc/bbd111";
+	public static String version = "Version Beta-pre-v1.12 build #4adefc/bbd111";
 
 	private int activeWebViewIndex = 0;
 	
