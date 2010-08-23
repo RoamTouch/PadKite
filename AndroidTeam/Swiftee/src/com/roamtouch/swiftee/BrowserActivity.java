@@ -37,7 +37,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 
-	public static String version = "Version Alpha-v1.06 build #eacd86/4d284d";
+	public static String version = "Version Beta-pre-v1.11 build #4adefc/bbd111";
 
 	private int activeWebViewIndex = 0;
 	
@@ -111,8 +111,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 		//webView.setDragTracker(tracker);	
 		webLayout.addView(webView);
-		//webView.loadUrl("http://www.google.com");
-		webView.loadUrl("file:///android_asset/loadPage.html");
+		webView.loadUrl("http://www.google.com");
+		//webView.loadUrl("file:///android_asset/loadPage.html");
 		eventViewer= (EventViewerArea) findViewById(R.id.eventViewer);
 		eventViewer.setParent(this);
 		
@@ -340,6 +340,11 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 				webLayout.getChildAt(i).setVisibility(View.INVISIBLE);
 				
 		}
+	}
+	
+	public void setTopBarMode(int mode)
+	{
+		// FIXME: Stub
 	}
 
 	public int getActiveWebViewIndex() {
