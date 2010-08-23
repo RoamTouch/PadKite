@@ -64,6 +64,10 @@ public class SwifteeOverlayView extends FrameLayout {
 	private int q = 0;
 	
 	public boolean dispatchKeyEvent(KeyEvent event) {
+		if (event.getKeyCode() == KeyEvent.KEYCODE_SPACE) {
+    		return m_floatingCursor.dispatchKeyEventFC(event);
+    	}
+		
 		if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_MENU )
 		{
 			//Toast.makeText(getContext(), "New key event OV", Toast.LENGTH_SHORT ).show();

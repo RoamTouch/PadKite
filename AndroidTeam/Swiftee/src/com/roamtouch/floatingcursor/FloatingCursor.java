@@ -811,6 +811,26 @@ public class FloatingCursor extends FrameLayout {
 		
 		private int mActivePointerId = INVALID_POINTER_ID;
 		
+		public boolean dispatchKeyEventFC(KeyEvent event) {
+
+			int fcX = -(int)pointer.getScrollX() + -(int)getScrollX() + w/2;
+			int fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;
+			
+			//Toast.makeText(mContext, "KeyEvent: " + event.getAction(), Toast.LENGTH_LONG).show();
+			
+			if ( event.getAction() == KeyEvent.ACTION_DOWN)
+			{
+					stopHitTest(fcX,fcY,false);
+					startSelection(fcX, fcY);
+			}
+			else if (event.getAction() == KeyEvent.ACTION_UP)
+			{
+				checkClickSelection(fcX, fcY);				
+			}
+			
+			return true;			
+		}
+		
 		public boolean dispatchTouchEventFC(MotionEvent event) {
 				
 			final int action = event.getAction() & MotionEvent.ACTION_MASK;
