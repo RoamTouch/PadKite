@@ -13,7 +13,7 @@ public class FloatingCursorView extends View {
 	private float y = 0;
 	private int r = 25;
 	//private float radius_scale = 0.3f;
-	private final Paint[] mPaints = new Paint[3];
+	private final Paint[] mPaints = new Paint[4];
 	private final Paint mSmallPaint = new Paint();
 
 	private int paintQuality = 0;
@@ -27,9 +27,16 @@ public class FloatingCursorView extends View {
 		mPaints[0] = new Paint();
 		mPaints[0].setAntiAlias(true);
 		mPaints[0].setColor(0xFF000000); // 0xFFFF0000
-		mPaints[0].setStrokeWidth(0);
-		mPaints[0].setPathEffect(new DashPathEffect(new float[] { 5, 5 }, 0) ); 
+		mPaints[0].setStrokeWidth(2.0f);
+		mPaints[0].setPathEffect(new DashPathEffect(new float[] { 2.0f, 6 }, 0) ); 
 		mPaints[0].setStyle(Paint.Style.STROKE);
+		
+		mPaints[3] = new Paint();
+		mPaints[3].setAntiAlias(true);
+		mPaints[3].setColor(0xFFFFFFFF); // 0xFFFF0000
+		mPaints[3].setStrokeWidth(2.0f);
+		mPaints[3].setPathEffect(new DashPathEffect(new float[] { 2.0f, 6 }, 3) ); 
+		mPaints[3].setStyle(Paint.Style.STROKE);
 		
 		mPaints[1] = new Paint();
 		mPaints[1].setAntiAlias(true);
@@ -56,9 +63,10 @@ public class FloatingCursorView extends View {
 	
 	protected void updateBuffer()
 	{
-		buffer=Bitmap.createBitmap(2*r, 2*r,Bitmap.Config.ARGB_8888);
+		buffer=Bitmap.createBitmap(4*r, 4*r,Bitmap.Config.ARGB_8888);
 		bufferCanvas.setBitmap(buffer);
         bufferCanvas.drawCircle(r, r, r, mPaints[paintQuality]);
+        bufferCanvas.drawCircle(r, r, r, mPaints[3]);
         
         // Inner circle
         //final int r2 = (int) (r * radius_scale+0.5f);
