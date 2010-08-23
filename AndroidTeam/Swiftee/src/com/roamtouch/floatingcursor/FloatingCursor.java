@@ -718,6 +718,7 @@ public class FloatingCursor extends FrameLayout {
 				sendEvent(MotionEvent.ACTION_DOWN, X, Y);
 				pointer.setImageResource(R.drawable.address_bar_cursor);
 				sendEvent(MotionEvent.ACTION_UP, X, Y);		
+				startHitTest(X,Y);
 			}
 			if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE){
 				sendEvent(MotionEvent.ACTION_DOWN, X, Y);
@@ -741,8 +742,11 @@ public class FloatingCursor extends FrameLayout {
 				mGesturesEnabled = true;
 				mWebView.executeSelectionCommand(X, Y, WebView.SELECT_WORD_OR_LINK);
 				mWebView.executeSelectionCommand(X, Y, WebView.COPY_TO_CLIPBOARD);	
-
+				
 				pointer.setImageResource(R.drawable.no_target_cursor);
+				// Re-start HitTest functionality
+				startHitTest(X,Y);
+
 				//removeTouchPoint();
 
 				// This is called by onClipBoardUpdate changed if mGesturesEnabled is true

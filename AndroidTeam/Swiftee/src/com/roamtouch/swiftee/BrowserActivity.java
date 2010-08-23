@@ -74,7 +74,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		    		floatingCursor.toggleMenuVisibility();
 	    		}
 	    		else if(mTutor.getVisibility() == View.VISIBLE){
-	    			stopGesture();
+	    			cancelGesture();
 	    		}
 	    		else if(webView.canGoBack())
 	    			webView.goBack();
@@ -171,22 +171,17 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	initGestureLibrary(gestureType);
     	floatingCursor.gestureDisableFC();
 
-		mHandler.post(new Runnable() {
-            public void run() {
-           	 try {
-					Thread.sleep(50);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-
-				mSelection = (String) ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).getText();
-				
-				mGestures.setEnabled(true);
-				mTutor.setVisibility(View.VISIBLE);
-
-				eventViewer.setText("Please now make S or e gesture for: " + mSelection);
-            }
-		});
+		mSelection = (String) ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).getText();		
+		mGestures.setEnabled(true);
+		mTutor.setVisibility(View.VISIBLE);
+		
+		eventViewer.setText("Please now make S or e gesture for: " + mSelection);
+    }
+    
+    public void cancelGesture()
+    {
+    	eventViewer.setText("Gesture cancelled.");
+    	stopGesture();
     }
     
     public void stopGesture()
@@ -248,8 +243,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     public void onGestureEnded(GestureOverlayView overlay, MotionEvent event) {
     	if (mCancelGesture)
     	{
-        	eventViewer.setText("Gesture cancelled.");
-    		stopGesture();
+    		mCancelGesture = false;
+    		cancelGesture();
     	}
     	// eventViewer.setText("Gesture ended.");
     }
