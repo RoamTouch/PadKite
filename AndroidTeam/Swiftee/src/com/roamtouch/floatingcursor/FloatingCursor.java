@@ -918,6 +918,9 @@ public class FloatingCursor extends FrameLayout {
 					removeTouchPoint();
 					
 					mHandleTouch = false;
+					startHitTest(fcX, fcY);	 // Also do the HitTest when the webview 
+								 // window is scrolled
+
 					//return false;
 				}
 				else if(currentMenu.getVisibility() == VISIBLE)
@@ -1002,8 +1005,12 @@ public class FloatingCursor extends FrameLayout {
 				mHandleTouch = false;
 			}		
 			else if (!mHandleTouch)
+			{
+				// Even though we did not handle the touch, we still move the HitTest
+				moveHitTest(fcX, fcY);
 				return false;
-	
+			}
+
 			if (action == MotionEvent.ACTION_MOVE)
 			{					
 				/*if (touchCount >= 2)
