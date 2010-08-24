@@ -9,7 +9,6 @@ cp AndroidTeam/Swiftee/bin/Swiftee.apk releases/"Swiftee-$REL-v$VER.apk"
 if [ "$1" == "" ]
 then
 	git add releases/
-	git add AndroidTeam/Swiftee/bin/Swiftee.apk 
 fi
 
 echo "done"
