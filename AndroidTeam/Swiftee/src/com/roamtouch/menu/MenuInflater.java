@@ -3,6 +3,8 @@ package com.roamtouch.menu;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -33,9 +35,18 @@ public class MenuInflater {
 			if(eventType == XmlPullParser.START_TAG) {
 				String tag = parser.getName();
 				if(tag.equals("MenuButton")){
-					System.out.println("attr count"+parser.getAttributeCount()+","+parser.getAttributeValue(0)+","+parser.getAttributeValue(1));
-					MenuButton b = new MenuButton(context);		
-					b.setDrawables(PATH+parser.getAttributeValue(0),PATH+parser.getAttributeValue(1));
+	//				System.out.println("attr count"+parser.getAttributeCount()+","+parser.getAttributeValue(0)+","+parser.getAttributeValue(1));
+					MenuButton b = new MenuButton(context);	
+					
+					HashMap<String,String> attrs = new HashMap<String,String>();
+					
+					for (int i = 0; i < parser.getAttributeCount(); i++)
+						attrs.put(parser.getAttributeName(i), parser.getAttributeValue(i));
+
+					b.setDrawables(PATH+attrs.get("button_image"),PATH+attrs.get("button_highlightImage"));
+					
+					b.setFunction(attrs.get("button_function"));
+					
 					view.addView(b);	
 				}	
 			}

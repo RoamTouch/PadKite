@@ -1,6 +1,6 @@
 package com.roamtouch.menu;
 
-import android.R;
+import com.roamtouch.swiftee.R;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -11,23 +11,46 @@ public class MenuButton extends Button{
 
 		private double angle;
 		private int centerX,centerY;
-		private Drawable drawable;
-		private Drawable selectDrawable;
-
+		private Drawable m_drawable;
+		private Drawable m_selectDrawable;
+		private String m_button_function = null;
+		
+		private void init(Context context)
+		{
+			m_drawable = context.getResources().getDrawable(R.drawable.default_normal);
+			m_selectDrawable = context.getResources().getDrawable(R.drawable.default_pressed);
+		}
 		
 		public MenuButton(Context context, AttributeSet attrs) {
 			super(context, attrs);					
+			init(context);
 		}
 
 		public MenuButton(Context context) {
 			super(context);		
-			
+			init(context);
 		}
+		
 		public void setDrawables(String drawableStr,String selectDrawableStr){
-			drawable = Drawable.createFromPath(drawableStr);
-			selectDrawable = Drawable.createFromPath(selectDrawableStr);
-			this.setBackgroundDrawable(drawable);
+			Drawable drawable = Drawable.createFromPath(drawableStr);
+			Drawable selectDrawable = Drawable.createFromPath(selectDrawableStr);
+			if (drawable != null)
+				m_drawable = drawable;
+			if (selectDrawable != null)
+				m_selectDrawable = selectDrawable;
+			this.setBackgroundDrawable(m_drawable);
 		}
+		
+		public String getFunction()
+		{
+			return m_button_function;
+		}
+
+		public void setFunction(String button_function)
+		{
+			m_button_function = button_function;
+		}
+		
 		public void setAngle(double angle) {
 			this.angle = angle;
 		}
@@ -61,10 +84,10 @@ public class MenuButton extends Button{
 
 			int[] states = getDrawableState();
 
-			if (StateSet.stateSetMatches(new int[] { R.attr.state_pressed }, states) || StateSet.stateSetMatches(new int[] { R.attr.state_focused }, states)) {
-				setBackgroundDrawable(selectDrawable);
+			if (StateSet.stateSetMatches(new int[] { android.R.attr.state_pressed }, states) || StateSet.stateSetMatches(new int[] { android.R.attr.state_focused }, states)) {
+				setBackgroundDrawable(m_selectDrawable);
 			} else {
-				setBackgroundDrawable(drawable);
+				setBackgroundDrawable(m_drawable);
 			}
 
 		}

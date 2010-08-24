@@ -1,24 +1,37 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
    		
    		<MenuButton android:button_image="browser_setting_nor.png"
-					android:button_highlightImage="browser_setting_press.png" />    	         	            
+					android:button_highlightImage="browser_setting_press.png" 
+					android:button_function="browser_settings"
+		/>  
 		
 		<MenuButton android:button_image="set_homepage_nor.png"
-					android:button_highlightImage="set_homepage_press.png" />   
+					android:button_highlightImage="set_homepage_press.png"
+					android:button_function="set_homepage"
+		/>  
 
 		<MenuButton android:button_image="resize_hitarea_normal.png"
-					android:button_highlightImage="resize_hitarea_press.png" />
+					android:button_highlightImage="resize_hitarea_press.png"
+					android:button_function="resize_hitarea"
+		/>  
 		
 		<MenuButton android:button_image="gesture_kit_editor_nor.png"
-					android:button_highlightImage="gesture_kit_editor_press.png" />
+					android:button_highlightImage="gesture_kit_editor_press.png"
+					android:button_function="gesture_kit_editor"
+		/>  
 	
 		<MenuButton android:button_image="miscellaneous_nor.png"
-					android:button_highlightImage="miscellaneous_press.png" />
+					android:button_highlightImage="miscellaneous_press.png"
+					android:button_function="miscellaneous"
+		/>
 	
 		<MenuButton android:button_image="help_online_nor.png"
-					android:button_highlightImage="help_online_press.png" />
+					android:button_highlightImage="help_online_press.png"
+					android:button_function="help_online"
+		/>
 	
 		<MenuButton android:button_image="practice_gesture_nor.png"
-					android:button_highlightImage="practice_gesture_press.png" />
+					android:button_highlightImage="practice_gesture_press.png"
+					android:button_function="practice_gesture"
+		/>
 </merge>
-    	

@@ -17,8 +17,18 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 
-public class SettingsMenu extends CircularLayout implements OnTouchListener{
+enum SettingsMenuFunctions {
+	browser_settings,
+	set_homepage,
+	resize_hitarea,
+	gesture_kit_editor,
+	miscellaneous,
+	help_online,
+	practice_gesture,
+}
 
+public class SettingsMenu extends CircularLayout implements OnTouchListener{
+	
 	private FloatingCursor mFloatingCursor;
 	private BrowserActivity mParent;
 	
@@ -45,7 +55,7 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 	public void setParent(BrowserActivity parent){
 		mParent = parent;
 	}
-	public void onClick(View v) {
+	/*public void onClick(View v) {
 		int id=v.getId();
 		switch(id){
 
@@ -71,84 +81,99 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 			
 		}
 		
-	}
+	}*/
+
 	public boolean onTouch(View v, MotionEvent event) {
-		int id=v.getId();
+		
+		if (!(v instanceof MenuButton))
+			return false;
+
+		MenuButton b = (MenuButton)v;
+
+		SettingsMenuFunctions button_function = SettingsMenuFunctions.valueOf(b.getFunction());
+	
 		if(event.getAction() == MotionEvent.ACTION_DOWN){
-			switch(id){
+			switch(button_function){
 			//Browser Settings
-			case 0:
+			case browser_settings:
 				mFloatingCursor.setEventText("Browser Settings ");
 				break;
 				
 			//Set home page
-			case 1:
+			case set_homepage:
 				mFloatingCursor.setEventText("Set home page ");
 				break;
 				
 			//Resize hit area
-			case 2:
+			case resize_hitarea:
 				mFloatingCursor.setEventText("Resize hit area ");
 				break;
 				
 			//Gesture kit editor
-			case 3:
+			case gesture_kit_editor:
 				mFloatingCursor.setEventText("Gesture kit editor ");
 				break;
 					
 			//Miscellaneous
-			case 4:
+			case miscellaneous:
 				mFloatingCursor.setEventText("Miscellaneous ");
 				break;
 			
 			//Help online	
-			case 5:
+			case help_online:
 				mFloatingCursor.setEventText("Help online	");
 				break;
 			
 			//Practice gesture	
-			case 6:
+			case practice_gesture:
 				mFloatingCursor.setEventText("Practice gesture");
+				break;
+				
+			default:
+				mFloatingCursor.setEventText("No function defined for: " + b.getFunction());
 				break;
 		}
 		}
 		if(event.getAction() == MotionEvent.ACTION_UP){
-			switch(id){
+			switch(button_function){
 			
 			//Browser Settings
-			case 0:
-				
+			case browser_settings:
 				break;
 				
 			//Set home page
-			case 1:
+			case set_homepage:
 				break;
 				
 			//Resize hit area
-			case 2:
+			case resize_hitarea:
 				break;
 				
 			//Gesture kit editor
-			case 3:
+			case gesture_kit_editor:
 				Intent i = new Intent(mParent,GestureEditor.class);
 				mParent.startActivity(i);
-				break;			
+				break;
+
 			//Miscellaneous
-			case 4:
+			case miscellaneous:
 				i = new Intent(mParent,MiscListActivity.class);
 				mParent.startActivity(i);
 				break;
 			
 			//Help online	
-			case 5:
+			case help_online:
 				break;
 			
 			//Practice gesture	
-			case 6:				
+			case practice_gesture:				
+				break;
+
+			default:
+				// Nothing to be done
 				break;
 		}
 		}
 		return false;
 	}
-
 }

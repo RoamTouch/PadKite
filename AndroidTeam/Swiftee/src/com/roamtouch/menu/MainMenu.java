@@ -18,6 +18,18 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 
+enum MainMenuFunctions {
+	settings,
+	refresh,
+	stop,
+	zoom,
+	find_text,
+	windows,
+	custom_gesture,
+	history,
+	download
+}
+
 public class MainMenu extends CircularLayout implements OnTouchListener{
 
 	private FloatingCursor mFloatingCursor;
@@ -57,64 +69,69 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		eventViewer = ev;
 	}
 	public boolean onTouch(View v, MotionEvent event) {
-		int id=v.getId();
-		if(event.getAction() == MotionEvent.ACTION_DOWN){
-			switch(id){
+
+		if (!(v instanceof MenuButton))
+				return false;
+
+		MenuButton b = (MenuButton)v;
+		
+		MainMenuFunctions button_function = MainMenuFunctions.valueOf(b.getFunction());
+		
+		if(event.getAction() == MotionEvent.ACTION_DOWN) {
+			switch(button_function) {
 			//Settings
-			case 0:
+			case settings:
 				mFloatingCursor.setEventText("Settings ");
 				break;
 				
 			//Refresh
-			case 1:
+			case refresh:
 				mFloatingCursor.setEventText("Refresh ");
 				break;
 				
 			//Stop
-			case 2:
+			case stop:
 				mFloatingCursor.setEventText("Stop ");
 				break;
 				
 			//Zoom
-			case 3:
+			case zoom:
 				mFloatingCursor.setEventText("Circular zoom ");
 				break;
 					
 			//Find text
-			case 4:
+			case find_text:
 				mFloatingCursor.setEventText("Find Text ");
 				break;
 			
 			//Windows	
-			case 5:
+			case windows:
 				mFloatingCursor.setEventText("Windows");
 				break;
-			
-			//Bookmark	
-			case 6:
-				mFloatingCursor.setEventText("Bookmarks");
-				break;
-				
-			//forward	
-			case 7:
-				mFloatingCursor.setEventText("Forward");
-				break;
-				
+										
 			//Custom Gesture	
-			case 8:
+			case custom_gesture:
 				mFloatingCursor.setEventText("Custom Gesture");
 				break;	
-			
-		}
+
+			case download:
+				mFloatingCursor.setEventText("Download");
+				break;	
+
+			default:
+				mFloatingCursor.setEventText("No function defined for: " + b.getFunction());
+				break;
+			}
 		}
 		if(event.getAction() == MotionEvent.ACTION_UP){
 			mParent.setEventViewerMode(EventViewerArea.TEXT_ONLY_MODE);
-			switch(id){
+			switch(button_function){
 			
 			//Settings
-			case 0:
-				boolean b = database.checkUserRegistered();
-				if(b)
+			case settings:
+				boolean is_registered = database.checkUserRegistered();
+
+				if(is_registered)
 					mFloatingCursor.setCurrentMenu(1);
 				else{
 					Intent i = new Intent(mParent,RegisterActivity.class);
@@ -123,22 +140,22 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				break;
 				
 			//Refresh
-			case 1:
+			case refresh:
 				mParent.refreshWebView();
 				break;
 				
 			//Stop
-			case 2:
+			case stop:
 				mFloatingCursor.setEventText("Stop ");
 				break;
 				
 			//Zoom
-			case 3:
+			case zoom:
 				mFloatingCursor.enableCircularZoom();
 				break;
 					
 			//Find text
-			case 4:
+			case find_text:
 //				mParent.setTopBarMode(TopBarArea.SEARCH_BAR_MODE);
 				
 				InputMethodManager imm = (InputMethodManager)((Activity)getContext()).getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -146,30 +163,32 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				//imm.showSoftInput(eventViewer, InputMethodManager.SHOW_FORCED, new ResultReceiver(new Handler()));
 				this.setVisibility(INVISIBLE);
 				break;
-			
 			//Windows	
-			case 5:
+			case windows:
 				mFloatingCursor.setCurrentMenu(2);
 				mParent.setEventViewerMode(EventViewerArea.WINDOWS_MODE);
 				break;
 			
 			//Bookmark	
-			case 6:
+		/*	case 6:
 				this.setVisibility(INVISIBLE);
 				mParent.startGesture(SwifteeApplication.BOOKMARK_GESTURE);
-				break;
+				break;*/
 				
-			//forward	
-			case 7:
+			/*//forward	
+			case 6:
 				mFloatingCursor.setEventText("Forward");
-				break;
+				break;*/
 				
 			//Custom Gesture	
-			case 8:
+			case custom_gesture:
 				this.setVisibility(INVISIBLE);
 				mParent.startGesture(SwifteeApplication.CUSTOM_GESTURE);
-				break;	
-		}
+				break;
+			default:
+				/* Do nothing */
+				break;
+			}
 		}
 		return false;
 	}
