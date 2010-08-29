@@ -1609,7 +1609,7 @@ static void extendSelectionTo(WebCore::Frame* frame, const WebCore::HitTestResul
     }
 }
 
-static void StopSelection(WebCore::Frame* frame, const WebCore::HitTestResult& result) {
+static void stopSelection(WebCore::Frame* frame, const WebCore::HitTestResult& result) {
 
     frame->notifyRendererOfSelectionChange(true);
     frame->selection()->selectFrameElementInParentIfFullySelected();
@@ -1687,7 +1687,7 @@ void WebViewCore::executeSelectionCommand(int x, int y, int cmd)
         m_mainFrame->selection()->modify(SelectionController::EXTEND, SelectionController::FORWARD, LineGranularity, true);
         break;
     case 13://STOP_SELECTION
-        StopSelection(frame, result) ;
+        stopSelection(frame, result) ;
         break;
     case 14: //SELECT_OBJECT
         selectObjectAt(frame, result) ;
@@ -1695,6 +1695,9 @@ void WebViewCore::executeSelectionCommand(int x, int y, int cmd)
     case 15: //COPY_HTML_FRAGMENT_TO_CLIPBOARD
         copySelectedContentToClipboard(true) ;
         break;
+    case 16: //SELECT_ALL
+        m_mainFrame->selection()->selectAll();
+        break ;
 
     default:
         break ;
