@@ -85,6 +85,9 @@ bool canHaveChildrenForEditing(const Node* node)
            !node->hasTagName(appletTag) &&
            !node->hasTagName(selectTag) &&
            !node->hasTagName(datagridTag) &&
+#if ENABLE(VIDEO) //RoamTouch Change
+           !node->hasTagName(videoTag) &&
+#endif           
 #if ENABLE(WML)
            !node->hasTagName(WMLNames::doTag) &&
 #endif

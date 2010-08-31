@@ -33,6 +33,7 @@
 #include "CachedRoot.h"
 #include "ChromeClientAndroid.h"
 #include "Color.h"
+#include "CString.h"
 #include "DatabaseTracker.h"
 #include "Document.h"
 #include "DOMWindow.h"
@@ -1554,6 +1555,13 @@ static void selectObjectAt(WebCore::Frame* frame, const WebCore::HitTestResult& 
 {
     Node* innerNode = result.innerNode();
 
+#if DEBUG_NAV_UI
+    if (innerNode) {
+        String name = innerNode->nodeName();
+        String value = innerNode->nodeValue() ;
+        DBG_NAV_LOGD("name=%s, value=%s\n", name.latin1().data(), value.latin1().data());
+    }
+#endif    
     if (innerNode && innerNode->renderer() 
         && (innerNode->renderer()->isImage() || innerNode->renderer()->isVideo())) {
 
