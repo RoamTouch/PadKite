@@ -1999,7 +1999,7 @@ void RenderBlock::setSelectionState(SelectionState s)
 
 bool RenderBlock::shouldPaintSelectionGaps() const
 {
-    return selectionState() != SelectionNone && style()->visibility() == VISIBLE && isSelectionRoot();
+    return false; //selectionState() != SelectionNone && style()->visibility() == VISIBLE && isSelectionRoot(); - RoamTouch Change
 }
 
 bool RenderBlock::isSelectionRoot() const
