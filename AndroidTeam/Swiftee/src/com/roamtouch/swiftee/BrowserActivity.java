@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.api.blogger.BloggerActivity;
 import com.api.facebook.FacebookActivity;
+import com.api.twitter.TwitterActivity;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.view.EventViewerArea;
