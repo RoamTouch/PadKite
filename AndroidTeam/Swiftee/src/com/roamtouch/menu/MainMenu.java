@@ -41,6 +41,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 	public MainMenu(Context context) {
 		super(context);
 		
+		this.setName("Main Menu");
+		
 		//LayoutInflater.from(context).inflate(R.layout.main_menu, this);
 		MenuInflater.inflate("/sdcard/Swiftee/Default Theme/main_menu.xml", context, this);
 		

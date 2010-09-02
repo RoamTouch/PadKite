@@ -35,6 +35,7 @@ import android.widget.Scroller;
 
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.TopBarArea;
+import com.roamtouch.menu.CircularLayout;
 import com.roamtouch.menu.MainMenu;
 import com.roamtouch.menu.SettingsMenu;
 import com.roamtouch.menu.WindowTabs;
@@ -378,19 +379,7 @@ public class FloatingCursor extends FrameLayout {
 			zoomView.setFCRadius(RADIUS);
 			zoomView.setVisibility(INVISIBLE);
 			
-			// FIXME
-			Bitmap menuBG = BitmapFactory.decodeFile("/sdcard/Swiftee/Default Theme/circle.png");
-			Log.d("FormatTest","Resource32: " + menuBG.getConfig());
 
-			menuBackground = new ImageView(getContext());
-			menuBackground.setImageBitmap(menuBG);
-			
-			// Enable dithering when our 32-bit image gets drawn.
-			Drawable drawable32 = menuBackground.getDrawable();
-			drawable32.setDither(true);
-			
-			menuBackground.setScaleType(ImageView.ScaleType.CENTER); 
-			
 			addView(fcView);
 			addView(fcProgressBar);
 			addView(fcPointerView);
@@ -399,7 +388,6 @@ public class FloatingCursor extends FrameLayout {
 			addView(fcSettingsMenu);
 			addView(fcWindowTabs);
 			addView(zoomView);
-			addView(menuBackground);
 			
 			vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
 		}
@@ -503,6 +491,9 @@ public class FloatingCursor extends FrameLayout {
 		public void toggleMenuVisibility(){
 			eventViewer.setMode(EventViewerArea.TEXT_ONLY_MODE);
 			AlphaAnimation menuAnimation;
+			
+			// Reset FC
+			removeTouchPoint();
 
 			if(currentMenu.getVisibility() == INVISIBLE){
 				menuAnimation = new AlphaAnimation(0.0f, 1.0f);
@@ -519,7 +510,7 @@ public class FloatingCursor extends FrameLayout {
 				});
 				currentMenu.startAnimation(menuAnimation);
 				vibrator.vibrate(25);
-				eventViewer.setText("");
+				eventViewer.setText(((CircularLayout)currentMenu).getName());
 //				mParent.setTopBarVisibility(VISIBLE);
 //				mParent.setTopBarMode(TopBarArea.ADDR_BAR_MODE);
 			}

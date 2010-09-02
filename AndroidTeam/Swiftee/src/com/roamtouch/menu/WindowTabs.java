@@ -19,17 +19,18 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 	private BrowserActivity mParent;
 	private Context mContext;
 	//private TabControl tabControl;
-	private int currentTab = 1;
+	private int currentTab = 2;
 
 	public WindowTabs(Context context) {
 		super(context);
+				
 		mContext = context;
 		LayoutInflater.from(context).inflate(R.layout.window_tabs, this);
 		
 	
 		setMode(CircularLayout.DYNAMIC_MODE);
 		int count = getChildCount();
-		for(int i=0;i<count;i++ ){
+		for(int i=1;i<count;i++ ){
 			View v = getChildAt(i);
 			v.setOnClickListener(this);
 		}		
@@ -56,14 +57,14 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		int id = v.getId();
 		if(id == 33){
 			addWindow();
-			currentTab = 1;
+			currentTab = 2;
 			return;
 		}
 		else{
 			TabButton child = (TabButton)v;
 			mParent.setActiveWebViewIndex(id);
 			setActiveTabIndex(child);
-			currentTab = id+1;
+			currentTab = id+2;
 			return;
 		}
 	}
@@ -75,7 +76,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		but.setId(mParent.getActiveWebViewIndex()+1);
 		but.setWebView(createWebView());
 		but.setOnClickListener(this);
-		addView(but,1);
+		addView(but,2);
 		mParent.addWebView(but.getWebView());
 	}
 	public WebView createWebView(){
@@ -93,13 +94,14 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 	}
 	public void removeWindow(){
 		removeViewAt(currentTab);
-		if(currentTab>1)
+		if(currentTab>2)
 			currentTab--;
 		else
-			currentTab=1;
+			currentTab=2;
 		TabButton child = (TabButton)getChildAt(currentTab);
 		setActiveTabIndex(child);
 	}
+
 	// Extra saved information for displaying the tab in the picker.
     public static class PickerData {
         String  mUrl;

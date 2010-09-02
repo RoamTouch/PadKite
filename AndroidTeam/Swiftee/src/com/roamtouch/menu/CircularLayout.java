@@ -3,6 +3,9 @@ package com.roamtouch.menu;
 import com.roamtouch.swiftee.R;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -73,6 +76,37 @@ public class CircularLayout extends ViewGroup {
 	   
 		private int childEndPoint;
 		
+		private String m_name;
+		
+		public String getName()
+		{
+			return m_name;
+		}
+		
+		protected void setName(String name)
+		{
+			m_name = name;
+		}
+		
+		private void initBG()
+		{
+			// FIXME
+			Bitmap menuBG = BitmapFactory.decodeFile("/sdcard/Swiftee/Default Theme/circle.png");
+			//Log.d("FormatTest","Resource32: " + menuBG.getConfig());
+
+			ImageView menuBackground = new ImageView(context);
+			//menuBackground.setImageResource(R.drawable.circle);
+			menuBackground.setImageBitmap(menuBG);
+		
+			// Enable dithering when our 32-bit image gets drawn.
+			//Drawable drawable32 = menuBackground.getDrawable();
+			//drawable32.setDither(true);
+		
+			menuBackground.setScaleType(ImageView.ScaleType.CENTER); 
+		
+			addView(menuBackground);
+		}		
+		
 		public CircularLayout(Context context) {
 			super(context);
 			//setOnTouchListener(this);
@@ -87,7 +121,8 @@ public class CircularLayout extends ViewGroup {
 			mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
 			mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
 			//Log.d
-			this.context = context;			
+			this.context = context;		
+			initBG();
 		   }
 		
 		public CircularLayout(Context context, AttributeSet attrs) {
@@ -102,6 +137,7 @@ public class CircularLayout extends ViewGroup {
 			mTouchSlop = 3;
 			mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
 			mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
+			initBG();
 		}
 
 		@Override
@@ -130,7 +166,8 @@ public class CircularLayout extends ViewGroup {
 		   setMeasuredDimension(widthSpecSize, heightSpecSize);
 		   //Toast.makeText(context, ""+currentMode, 100).show();
 	   }
-	   @Override
+
+		@Override
 	   protected void onLayout(boolean changed, int left, int top, int right, int bot) {
 
 //		   Toast.makeText(context, ""+currentMode, 100).show();
@@ -158,8 +195,15 @@ public class CircularLayout extends ViewGroup {
 			   cone.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
 			   cone.setClickable(false);
 		   }
+
+		   ImageView bg = (ImageView)getChildAt(0);
 		   
-		   for (int i = 0; i < childEndPoint; i++) {
+		   if (bg.getVisibility() != GONE) {         
+			   bg.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
+			   bg.setClickable(false);
+		   }
+		   
+		   for (int i = 1; i < childEndPoint; i++) {
 			   MenuButton child = (MenuButton)getChildAt(i);
 			   if (child.getVisibility() != GONE) {            
             	// Calc coordinates around the circle at the center of cart. system
@@ -186,7 +230,7 @@ public class CircularLayout extends ViewGroup {
 	public void setMode(int mode){
 
 		ImageView coneSeparator = new ImageView(context);
-		coneSeparator.setBackgroundResource(R.drawable.cone);
+		coneSeparator.setBackgroundResource(R.drawable.circleround_cone);
 		addView(coneSeparator);
 		
 		currentMode = mode;
@@ -207,7 +251,7 @@ public class CircularLayout extends ViewGroup {
 	}
 */
 	public boolean canScroll(float angleDiff,int childCount) {
-		MenuButton first = (MenuButton)getChildAt(0);
+		MenuButton first = (MenuButton)getChildAt(1);
 		MenuButton last = (MenuButton)getChildAt(childEndPoint-1);
 		
 		if((first.getAngle()+angleDiff)>4)
@@ -220,7 +264,7 @@ public class CircularLayout extends ViewGroup {
 	 public void setfcRadius(int mfcRadius) {
 			this.mfcRadius = mfcRadius;
 			BUTTON_RADIUS = mfcRadius / 4;
-			inR = mfcRadius-BUTTON_RADIUS-5 ;
+			inR = mfcRadius-BUTTON_RADIUS - 2; //-5 ;
 			outR = 2*mfcRadius;
 		}
 
@@ -376,7 +420,7 @@ public class CircularLayout extends ViewGroup {
 	
 	 public void moveChilds(){
 		 //int count=getChildCount();
-		 for (int i = 0; i < childEndPoint; i++) {
+		 for (int i = 1; i < childEndPoint; i++) {
 				
 	            MenuButton child = (MenuButton)getChildAt(i);
 	            
@@ -615,7 +659,7 @@ public class CircularLayout extends ViewGroup {
 						angleChange = angleD;		// *** THIS IS SET FOR NO ANIMATION!!
 						angleD = angleD-angleChange;
 						//selectedAlphabets.get(highlightedIndex).setY(yPos-30);
-						for (int i = 0; i < count-2; i++) {
+						for (int i = 1; i < count-2; i++) {
 				            MenuButton child = (MenuButton)getChildAt(i);
 				            
 				            if (child.getVisibility() != GONE) {            

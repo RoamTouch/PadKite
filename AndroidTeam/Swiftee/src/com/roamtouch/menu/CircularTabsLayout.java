@@ -2,6 +2,8 @@ package com.roamtouch.menu;
 
 import com.roamtouch.swiftee.R;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -54,7 +56,26 @@ public class CircularTabsLayout extends ViewGroup {
 	   
 		private int childStartPoint;
 		
-		private int activetabIndex = 1;
+		private int activetabIndex = 2;
+		
+		private void initBG()
+		{
+			// FIXME
+			Bitmap menuBG = BitmapFactory.decodeFile("/sdcard/Swiftee/Default Theme/circle.png");
+			//Log.d("FormatTest","Resource32: " + menuBG.getConfig());
+
+			ImageView menuBackground = new ImageView(context);
+			//menuBackground.setImageResource(R.drawable.circle);
+			menuBackground.setImageBitmap(menuBG);
+		
+			// Enable dithering when our 32-bit image gets drawn.
+			//Drawable drawable32 = menuBackground.getDrawable();
+			//drawable32.setDither(true);
+		
+			menuBackground.setScaleType(ImageView.ScaleType.CENTER); 
+		
+			addView(menuBackground);
+		}	
 		
 		public CircularTabsLayout(Context context) {
 			super(context);
@@ -65,6 +86,8 @@ public class CircularTabsLayout extends ViewGroup {
 			mTouchSlop = 3;
 			
 			this.context = context;			
+
+			initBG();
 			
 			ImageView redCircle = new ImageView(context);
 			redCircle.setBackgroundResource(R.drawable.red_circle);
@@ -115,8 +138,20 @@ public class CircularTabsLayout extends ViewGroup {
 		    	cone.setClickable(false);
 		    }
 
-		    for (int i = 1; i < count-childStartPoint; i++) {
-		    	TabButton child = (TabButton)getChildAt(i);
+		    ImageView bg = (ImageView)getChildAt(0);
+			   
+			if (bg.getVisibility() != GONE) {         
+				bg.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
+				bg.setClickable(false);
+			}
+
+		    for (int i = 2; i < count-childStartPoint; i++) {
+		    	
+		    	View v = getChildAt(i);
+		    	if (!(v instanceof TabButton))
+		    		continue;
+		    	
+		    	TabButton child = (TabButton)v;
 		    	if (child.getVisibility() != GONE) { 
 
 		    		// Calculate coordinates around the circle at the centre of cart. system
@@ -135,7 +170,7 @@ public class CircularTabsLayout extends ViewGroup {
 		    		if(child.shouldDraw()) {
 		    			if(i == activetabIndex){
 
-		    				ImageView redCircle = (ImageView)getChildAt(0);
+		    				ImageView redCircle = (ImageView)getChildAt(1);
 		    				redCircle.setBackgroundResource(R.drawable.red_circle);
 		    				redCircle.layout(childLeft-4, childTop-4, lb+4, rb+4);   
 		    			}
@@ -145,9 +180,10 @@ public class CircularTabsLayout extends ViewGroup {
 		    }			   
 	   }
 	   public void setMode(int mode){
+		   
 		
 		 	ImageView coneSeparator = new ImageView(context);
-		 	coneSeparator.setBackgroundResource(R.drawable.cone);
+		 	coneSeparator.setBackgroundResource(R.drawable.circleround_cone);
 		 	addView(coneSeparator);
 
 		 	Button but = new Button(context);
@@ -158,7 +194,7 @@ public class CircularTabsLayout extends ViewGroup {
 	   }   
 
 	   public boolean canScroll(float angleDiff,int childCount) {
-		   	TabButton first = (TabButton)getChildAt(1);
+		   	TabButton first = (TabButton)getChildAt(2);
 		   	TabButton last = (TabButton)getChildAt(childCount-3);
 
 		   	if((first.getAngle()+angleDiff)>4)
@@ -175,7 +211,7 @@ public class CircularTabsLayout extends ViewGroup {
 		   	final int lb = child.getCenterX() + BUTTON_RADIUS;
 		   	final int rb = child.getCenterY() + BUTTON_RADIUS;
 
-		   	ImageView redCircle = (ImageView)getChildAt(0);
+		   	ImageView redCircle = (ImageView)getChildAt(1);
 		   	redCircle.setBackgroundResource(R.drawable.red_circle);
 		   	redCircle.layout(childLeft-3, childTop-3, lb+3, rb+3);   
 
@@ -185,8 +221,8 @@ public class CircularTabsLayout extends ViewGroup {
 		}
 		public void setfcRadius(int mfcRadius) {
 			this.mfcRadius = mfcRadius;
-			BUTTON_RADIUS = mfcRadius / 4;
-			inR = mfcRadius-BUTTON_RADIUS-5 ;
+			BUTTON_RADIUS = mfcRadius / 4 - 5;
+			inR = mfcRadius-BUTTON_RADIUS - 6;
 			outR = 2*mfcRadius;
 		}
 
@@ -330,7 +366,7 @@ public class CircularTabsLayout extends ViewGroup {
 	
 		public void moveChilds(){
 			int count=getChildCount();
-			for (int i = 1; i < count-childStartPoint; i++) {
+			for (int i = 2; i < count-childStartPoint; i++) {
 
 				TabButton child = (TabButton)getChildAt(i);
 
@@ -345,7 +381,7 @@ public class CircularTabsLayout extends ViewGroup {
 					final int lb = child.getCenterX() + BUTTON_RADIUS;
 					final int rb = child.getCenterY() + BUTTON_RADIUS;
 
-					ImageView redCircle = (ImageView)getChildAt(0);
+					ImageView redCircle = (ImageView)getChildAt(1);
 					//Button but1 = (Button)getChildAt(count-3);
 					if(child.shouldDraw()) {
 						child.setVisibility(View.VISIBLE);
