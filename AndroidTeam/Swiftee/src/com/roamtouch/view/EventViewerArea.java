@@ -40,7 +40,7 @@ public class EventViewerArea extends LinearLayout {
 		super(context, attrs);
 		
 		tv1=new TextView(getContext());
-		tv1.setText(Html.fromHtml("<font color=\"yellow\">Action |</font> <font color=\"white\">FloatingCursor (" + BrowserActivity.version + ") </font"));
+		tv1.setText(Html.fromHtml("<font style='font-family:Lucida Grande,Verdana' color=\"yellow\">Action |</font> <font color=\"white\">FloatingCursor (" + BrowserActivity.version + ") </font"));
 //		tv1.setInputType(InputType.TYPE_CLASS_TEXT);
 		
 		update=new Button(getContext());

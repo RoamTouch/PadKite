@@ -41,7 +41,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 
-	public static String version = "Version Beta-pre-v1.12 build #4adefc/bbd111";
+	public static String version = "Version Beta-pre-v1.14-auto-selection build #4adefc/bbd111";
 
 	private int activeWebViewIndex = 0;
 	
@@ -78,7 +78,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		    		floatingCursor.toggleMenuVisibility();
 	    		}
 	    		else if(mTutor.getVisibility() == View.VISIBLE){
-	    			cancelGesture();
+	    			cancelGesture(true);
 	    		}
 	    		else if(webView.canGoBack())
 	    			webView.goBack();
@@ -200,9 +200,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		eventViewer.setText("Please now make S or e gesture for: " + mSelection);
     }
     
-    public void cancelGesture()
+    public void cancelGesture(boolean show)
     {
-    	eventViewer.setText("Gesture cancelled.");
+    	if (show)
+    		eventViewer.setText("Gesture cancelled.");
     	stopGesture();
     }
     
@@ -268,7 +269,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	if (mCancelGesture)
     	{
     		mCancelGesture = false;
-    		cancelGesture();
+    		cancelGesture(floatingCursor.defaultCommand());
     	}
     	// eventViewer.setText("Gesture ended.");
     }

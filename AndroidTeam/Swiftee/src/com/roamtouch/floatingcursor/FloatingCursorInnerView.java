@@ -7,7 +7,7 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.view.View;
 
-public class FloatingCursorView extends View {
+public class FloatingCursorInnerView extends View {
 
 	private float x = 0;
 	private float y = 0;
@@ -27,15 +27,15 @@ public class FloatingCursorView extends View {
 		mPaints[0] = new Paint();
 		mPaints[0].setAntiAlias(true);
 		mPaints[0].setColor(0xFF000000); // 0xFFFF0000
-		mPaints[0].setStrokeWidth(2.0f);
-		mPaints[0].setPathEffect(new DashPathEffect(new float[] { 2.0f, 6 }, 0) ); 
+		mPaints[0].setStrokeWidth(3.5f);
+		mPaints[0].setPathEffect(new DashPathEffect(new float[] { 3.5f, 6 }, 0) ); 
 		mPaints[0].setStyle(Paint.Style.STROKE);
 		
 		mPaints[3] = new Paint();
 		mPaints[3].setAntiAlias(true);
 		mPaints[3].setColor(0xFFFFFFFF); // 0xFFFF0000
-		mPaints[3].setStrokeWidth(2.0f);
-		mPaints[3].setPathEffect(new DashPathEffect(new float[] { 2.0f, 6 }, 3) ); 
+		mPaints[3].setStrokeWidth(3.5f);
+		mPaints[3].setPathEffect(new DashPathEffect(new float[] { 3.5f, 6 }, 3) ); 
 		mPaints[3].setStyle(Paint.Style.STROKE);
 		
 		mPaints[1] = new Paint();
@@ -56,7 +56,7 @@ public class FloatingCursorView extends View {
 		updateBuffer();
 	}
 	
-	public FloatingCursorView(Context context) {
+	public FloatingCursorInnerView(Context context) {
 		super(context);
 		init();
 	}

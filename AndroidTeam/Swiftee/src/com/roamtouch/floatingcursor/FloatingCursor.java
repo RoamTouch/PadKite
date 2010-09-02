@@ -62,7 +62,8 @@ public class FloatingCursor extends FrameLayout {
 	/**
 	 * 	FloatingCursor child views
 	 */
-		private FloatingCursorView fcView,  fcPointerView = null;
+		private FloatingCursorView fcView = null;
+		private FloatingCursorInnerView fcPointerView = null;
 		private CircularProgressBar fcProgressBar;
 		private ImageView pointer;
 		private MainMenu fcMainMenu;
@@ -351,7 +352,7 @@ public class FloatingCursor extends FrameLayout {
 	
 			removeTouchPoint();
 		
-			fcPointerView = new FloatingCursorView(getContext());
+			fcPointerView = new FloatingCursorInnerView(getContext());
 			fcPointerView.setRadius((int)(RADIUS*0.3f));
 			fcPointerView.setQuality(0);
 			
@@ -742,31 +743,58 @@ public class FloatingCursor extends FrameLayout {
 			mWebView.executeSelectionCommand(fcX, fcY, WebView.STOP_SELECTION);
 			mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 		}
+		
+		public boolean defaultCommand()
+		{
+			if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
+			{
+				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
+				pointer.setImageResource(R.drawable.address_bar_cursor);
+				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);		
+				startHitTest(fcX,fcY);
+				return false;
+			}
+				// Gesture cancelled
+			return true;
+		}
 
 		protected void clickSelection(int X, int Y)
 		{
+			if (mWebHitTestResult == null)
+				return;
+			
 			//Toast.makeText(mContext, "Clicking sel ..." + mWebHitTestResult.getType(), Toast.LENGTH_LONG).show();
 
 			if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
 //				Toast.makeText(mContext, "Clicking link ...", Toast.LENGTH_LONG).show();
-
+/*
 				sendEvent(MotionEvent.ACTION_DOWN, X, Y);
 				pointer.setImageResource(R.drawable.address_bar_cursor);
 				sendEvent(MotionEvent.ACTION_UP, X, Y);		
-				startHitTest(X,Y);
+				startHitTest(X,Y);*/
+				
+				mWebView.focusNodeAt(X,Y);
+
+				mGesturesEnabled = true;
+				mWebView.executeSelectionCommand(X, Y, WebView.START_SELECTION);
+				mWebView.executeSelectionCommand(X, Y, WebView.STOP_SELECTION);
+				mWebView.executeSelectionCommand(X, Y, WebView.SELECT_WORD_OR_LINK);
+				mWebView.executeSelectionCommand(X, Y, WebView.COPY_TO_CLIPBOARD);				
 			}
 			if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE){
 				sendEvent(MotionEvent.ACTION_DOWN, X, Y);
-				pointer.setImageResource(R.drawable.address_bar_cursor);
+				//pointer.setImageResource(R.drawable.address_bar_cursor);
 				sendEvent(MotionEvent.ACTION_UP, X, Y);	
 			}
 			else if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE)
 			{
-				eventViewer.setText("Downloading image ...");
+				eventViewer.setText("Selecting image ...");
+				
+				mGesturesEnabled = true;
 				mWebView.executeSelectionCommand(X, Y, WebView.SELECT_OBJECT);
-				mWebView.executeSelectionCommand(X, Y, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);	
-				pointer.setImageResource(R.drawable.address_bar_cursor);
+				mWebView.executeSelectionCommand(X, Y, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
+				//pointer.setImageResource(R.drawable.address_bar_cursor);
 				//removeTouchPoint();
 
 			// FIXME: Add Downloading of image
