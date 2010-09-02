@@ -2,12 +2,14 @@ package com.roamtouch.floatingcursor;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.util.AttributeSet;
@@ -66,6 +68,7 @@ public class FloatingCursor extends FrameLayout {
 		private SettingsMenu fcSettingsMenu;
 		private WindowTabs fcWindowTabs;
 		private ZoomWebView zoomView;
+		private ImageView menuBackground;
 				
 	/**
 	 *  integer showing which menu among main,settings and tabs is currently displayed 
@@ -375,6 +378,19 @@ public class FloatingCursor extends FrameLayout {
 			zoomView.setFCRadius(RADIUS);
 			zoomView.setVisibility(INVISIBLE);
 			
+			// FIXME
+			Bitmap menuBG = BitmapFactory.decodeFile("/sdcard/Swiftee/Default Theme/circle.png");
+			Log.d("FormatTest","Resource32: " + menuBG.getConfig());
+
+			menuBackground = new ImageView(getContext());
+			menuBackground.setImageBitmap(menuBG);
+			
+			// Enable dithering when our 32-bit image gets drawn.
+			Drawable drawable32 = menuBackground.getDrawable();
+			drawable32.setDither(true);
+			
+			menuBackground.setScaleType(ImageView.ScaleType.CENTER); 
+			
 			addView(fcView);
 			addView(fcProgressBar);
 			addView(fcPointerView);
@@ -383,6 +399,7 @@ public class FloatingCursor extends FrameLayout {
 			addView(fcSettingsMenu);
 			addView(fcWindowTabs);
 			addView(zoomView);
+			addView(menuBackground);
 			
 			vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
 		}
@@ -942,7 +959,7 @@ public class FloatingCursor extends FrameLayout {
 					int scrollX = X - CircleX;
 					int scrollY = Y - CircleY;
 					
-					double length = Math.sqrt(scrollX*scrollX + scrollY*scrollY);
+					double length = Math.hypot(scrollX, scrollY);
 					
 					scrollX *= (radFact/length);
 					scrollY *= (radFact/length);
