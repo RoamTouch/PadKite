@@ -83,13 +83,17 @@ public class SelectionGestureView extends FrameLayout {
 	final int SEL_DIR_UP = 3;
 
 	int mSelectionDirection = -1;
+	int mSteps = 1;
+	int mDelay = 1;
 	
-	protected void startAutoSelection(int selectionDir)
+	protected void startAutoSelection(int selectionDir, int steps, int delay)
 	{
 		if (mAutoSelectionStarted)
 			return;
 		mAutoSelectionStarted = true;
 		mSelectionDirection = selectionDir;
+		mSteps = steps;
+		mDelay = delay;
 
 		mHandler.post(mRunnable);
 	}
@@ -113,13 +117,13 @@ public class SelectionGestureView extends FrameLayout {
 		}
 	}
 	
-	int mSteps = 1;
 	
 	protected int continueAutoSelection()
 	{
 		for (int i = 0; i < mSteps; i++)
 			runAutoSelection();
-		return 100;
+		
+		return mDelay;
 	}
 
 	protected void stopAutoSelection()
@@ -176,22 +180,26 @@ public class SelectionGestureView extends FrameLayout {
 				}
 				else if(deltaX >= TOUCH_TOLERANCE)
 				{
+					// FIXME: Use config variables
+					
 					// Text automatic selection
 					if (downX-X < 0)
-						startAutoSelection(SEL_DIR_RIGHT);
+						startAutoSelection(SEL_DIR_RIGHT, 10, 100);
 					else
-						startAutoSelection(SEL_DIR_LEFT);
+						startAutoSelection(SEL_DIR_LEFT, 10, 100);
 
 					selectionType = SelectionTypes.TextAutomatic;
 					mEventViewer.setText("Detected text automatic selection gesture ...");
 				}
 				else if(deltaY >= TOUCH_TOLERANCE)
 				{
+					// FIXME: Use config variables
+					
 					// Line automatic selection
 					if (downY-Y < 0)
-						startAutoSelection(SEL_DIR_DOWN);
+						startAutoSelection(SEL_DIR_DOWN, 1, 700);
 					else
-						startAutoSelection(SEL_DIR_UP);
+						startAutoSelection(SEL_DIR_UP, 1, 700);
 
 					selectionType = SelectionTypes.LineAutomatic;
 					mEventViewer.setText("Detected line automatic selection gesture ...");

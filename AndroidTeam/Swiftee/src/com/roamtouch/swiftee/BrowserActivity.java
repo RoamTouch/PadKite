@@ -168,10 +168,17 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		eventViewer.setText("Please make text selection gesture now.");
 
     	mSelectionGesture.setEnabled(true);
+    	//floatingCursor.gestureDisableFC();
     }
 
     public void stopTextGesture()
     {
+    	if (mSelectionGesture.isEnabled())
+    	{
+        	//floatingCursor.gestureEnableFC();
+    		eventViewer.setText("Text Selection Gesture cancelled.");
+    	}
+    	
     	mSelectionGesture.setEnabled(false);
     }
     
@@ -189,8 +196,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     public void startGesture(int gestureType)
     {
     	initGestureLibrary(gestureType);
-    	floatingCursor.gestureDisableFC();
 		stopTextGesture();
+    	floatingCursor.gestureDisableFC();
 		webLayout.setEnabled(false);
 
 		mSelection = (String) ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).getText();		

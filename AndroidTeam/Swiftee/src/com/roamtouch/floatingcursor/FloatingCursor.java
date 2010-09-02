@@ -402,11 +402,15 @@ public class FloatingCursor extends FrameLayout {
 		public void gestureDisableFC()
 		{
 			mCanBeDisabled  = true;
+			// Before that works, we need to make sure that the hit area is no longer clicked on
+			//fcView.setVisibility(View.INVISIBLE);
 		}
 		
 		public void gestureEnableFC()
 		{
 			mCanBeDisabled = false;
+			//fcView.setVisibility(View.VISIBLE);
+
 			if (mIsDisabled)
 			{
 				fcView.setVisibility(View.VISIBLE);
