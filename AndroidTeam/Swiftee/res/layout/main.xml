@@ -11,6 +11,11 @@
 		android:id="@+id/overlay"
     	android:layout_width="fill_parent"
     	android:layout_height="fill_parent">
+    	
+<com.roamtouch.view.SelectionGestureView android:id="@+id/selectionGesture"
+		 	android:layout_width="fill_parent" 
+			android:layout_height="fill_parent"
+			android:orientation="vertical">
 
 <com.roamtouch.view.SwifteeGestureView
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -21,7 +26,7 @@
     android:eventsInterceptionEnabled="true"
     android:orientation="vertical">
    		 			
-	<FrameLayout android:id="@+id/webviewLayout"
+	<com.roamtouch.view.WebLayoutView android:id="@+id/webviewLayout"
 		 	android:layout_width="fill_parent" 
 			android:layout_height="fill_parent"
 			android:orientation="vertical"
@@ -31,7 +36,7 @@
 		 		android:layout_width="fill_parent"
 		 		android:layout_height="fill_parent"/>-->	
 		 		
-	</FrameLayout>
+	</com.roamtouch.view.WebLayoutView>
 
 	<com.roamtouch.floatingcursor.FloatingCursor xmlns:android="http://schemas.android.com/apk/res/android"
 		android:id="@+id/floatingCursor"
@@ -41,6 +46,8 @@
 	</com.roamtouch.floatingcursor.FloatingCursor>
 
 </com.roamtouch.view.SwifteeGestureView>
+
+</com.roamtouch.view.SelectionGestureView>
 
 </com.roamtouch.view.SwifteeOverlayView>
 

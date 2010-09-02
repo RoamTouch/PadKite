@@ -8,6 +8,7 @@ import com.api.twitter.TwitterActivity;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.view.EventViewerArea;
+import com.roamtouch.view.SelectionGestureView;
 import com.roamtouch.view.SwifteeGestureView;
 import com.roamtouch.view.SwifteeOverlayView;
 //import com.roamtouch.view.TopBarArea;
@@ -46,6 +47,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	private WebView webView;
 	private SwifteeOverlayView overlay;
+	private SelectionGestureView mSelectionGesture;
+
 	private FloatingCursor floatingCursor;
 	private EventViewerArea eventViewer;
 	private GestureLibrary mLibrary;
@@ -128,10 +131,13 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		floatingCursor.setEventViewerArea(eventViewer);
 		floatingCursor.setParent(this);
 		//floatingCursor.setHandler(handler);
-
-		
 		
 		overlay.setFloatingCursor(floatingCursor);
+
+		mSelectionGesture = (SelectionGestureView) findViewById(R.id.selectionGesture);
+		mSelectionGesture.setEventViewer(eventViewer);
+		mSelectionGesture.setFloatingCursor(floatingCursor);
+		mSelectionGesture.setEnabled(false);
 		
 		mGestures = (SwifteeGestureView) findViewById(R.id.gestures);
 		mGestures.addOnGesturePerformedListener(this);
@@ -156,6 +162,19 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 //    	mTopBarArea.setWebView(wv);
     }
 */    
+    
+    public void startTextGesture()
+    {
+		eventViewer.setText("Please make text selection gesture now.");
+
+    	mSelectionGesture.setEnabled(true);
+    }
+
+    public void stopTextGesture()
+    {
+    	mSelectionGesture.setEnabled(false);
+    }
+    
     private String mSelection;
     
     public void initGestureLibrary(int id){
@@ -171,6 +190,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     {
     	initGestureLibrary(gestureType);
     	floatingCursor.gestureDisableFC();
+		stopTextGesture();
+		webLayout.setEnabled(false);
 
 		mSelection = (String) ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).getText();		
 		mGestures.setEnabled(true);
@@ -190,7 +211,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		mTutor.setVisibility(View.INVISIBLE);
 		mGestures.setEnabled(false);
     	floatingCursor.gestureEnableFC();
-        mSelection = null;
+    	floatingCursor.removeSelection();
+		webLayout.setEnabled(true);
+    	mSelection = null;
     }
     
     final int GESTURE_e = 1;
