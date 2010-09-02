@@ -45,10 +45,10 @@ public class TwitterActivity extends Activity {
     	
     	user = (EditText)findViewById(R.id.username);
     	pass = (EditText)findViewById(R.id.password);
-    	tweet = (EditText)findViewById(R.id.tweet);
+    	//tweet = (EditText)findViewById(R.id.tweet);
     	
     	String t = getIntent().getExtras().getString("Tweet");
-    	tweet.setText(t);
+    	//tweet.setText(t);
     	
     	progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
