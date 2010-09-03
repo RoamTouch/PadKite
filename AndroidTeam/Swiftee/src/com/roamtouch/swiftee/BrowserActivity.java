@@ -6,6 +6,8 @@ import com.api.blogger.BloggerActivity;
 import com.api.facebook.FacebookActivity;
 import com.api.twitter.TwitterActivity;
 import com.roamtouch.floatingcursor.FloatingCursor;
+import com.roamtouch.menu.TabButton;
+import com.roamtouch.menu.WindowTabs;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SelectionGestureView;
@@ -384,8 +386,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	}
 
 	public void setActiveWebViewIndex(int activeWebViewIndex) {
-		this.activeWebViewIndex = activeWebViewIndex;
 		int count = webLayout.getChildCount();
+		if(activeWebViewIndex > -1 && activeWebViewIndex <count){
+			this.activeWebViewIndex = activeWebViewIndex;
+		}
+		else
+			return;
 		for(int i=0;i<count;i++){
 			if(i == activeWebViewIndex){
 				WebView wv = (WebView)webLayout.getChildAt(i);
@@ -412,7 +418,22 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		floatingCursor.setWebView(wv,false);
 	}
 	public void removeWebView(){
-		
+		webLayout.removeViewAt(activeWebViewIndex);
+		setActiveWebViewIndex(activeWebViewIndex);
+		int count = webLayout.getChildCount();
+		for(int i= activeWebViewIndex;i<count;i++){
+			WebView wv = (WebView) webLayout.getChildAt(i);
+			wv.setId(wv.getId()-1);
+		}
+	}
+	public void adjustTabIndex(WindowTabs winTabs){
+		int count = winTabs.getChildCount() - 2;
+		int wvCount = webLayout.getChildCount();
+		for(int i= 2;i<count;i++){
+			TabButton child = (TabButton)winTabs.getChildAt(i);
+			wvCount--;
+			child.setId(wvCount);
+		}
 	}
 	public void setEventViewerMode(int mode){
 			eventViewer.setMode(mode);		

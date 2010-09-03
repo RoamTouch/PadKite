@@ -99,6 +99,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			//Zoom
 			case zoom:
 				mFloatingCursor.setEventText("Circular zoom ");
+				mFloatingCursor.enableCircularZoom();
 				break;
 					
 			//Find text
@@ -153,7 +154,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				
 			//Zoom
 			case zoom:
-				mFloatingCursor.enableCircularZoom();
+				mFloatingCursor.disableCircularZoom();
 				break;
 					
 			//Find text

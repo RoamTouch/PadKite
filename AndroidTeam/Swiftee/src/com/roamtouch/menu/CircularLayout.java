@@ -207,7 +207,7 @@ public class CircularLayout extends ViewGroup {
 			   MenuButton child = (MenuButton)getChildAt(i);
 			   if (child.getVisibility() != GONE) {            
             	// Calc coordinates around the circle at the center of cart. system
-            	double angle = i*t;
+            	double angle = (i-1)*t;
             	angle=angle-90 + 46;
             	child.setAngle(angle);
             	child.calculateCenter(a,b,inR,angle);

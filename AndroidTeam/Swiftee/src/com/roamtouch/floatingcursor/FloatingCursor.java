@@ -38,6 +38,7 @@ import com.roamtouch.view.TopBarArea;
 import com.roamtouch.menu.CircularLayout;
 import com.roamtouch.menu.MainMenu;
 import com.roamtouch.menu.SettingsMenu;
+import com.roamtouch.menu.TabButton;
 import com.roamtouch.menu.WindowTabs;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
@@ -126,6 +127,8 @@ public class FloatingCursor extends FrameLayout {
 		private int mMaximumVelocity;
 
 		private boolean mCanBeDisabled = false;
+		
+		private float mPrevX,mPrevY;
     
 	/**
 	 * Vibrator for device vibration	
@@ -784,7 +787,8 @@ public class FloatingCursor extends FrameLayout {
 				mWebView.executeSelectionCommand(X, Y, WebView.START_SELECTION);
 				mWebView.executeSelectionCommand(X, Y, WebView.STOP_SELECTION);
 				mWebView.executeSelectionCommand(X, Y, WebView.SELECT_WORD_OR_LINK);
-				mWebView.executeSelectionCommand(X, Y, WebView.COPY_TO_CLIPBOARD);				
+				mWebView.executeSelectionCommand(X, Y, WebView.COPY_TO_CLIPBOARD);		
+//				mParent.startGesture(SwifteeApplication.CURSOR_LINK_GESTURE);
 			}
 			if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE){
 				sendEvent(MotionEvent.ACTION_DOWN, X, Y);
@@ -814,7 +818,7 @@ public class FloatingCursor extends FrameLayout {
 				pointer.setImageResource(R.drawable.no_target_cursor);
 				// Re-start HitTest functionality
 				startHitTest(X,Y);
-
+//				mParent.startGesture(SwifteeApplication.CURSOR_TEXT_GESTURE);
 				//removeTouchPoint();
 
 				// This is called by onClipBoardUpdate changed if mGesturesEnabled is true
@@ -918,7 +922,7 @@ public class FloatingCursor extends FrameLayout {
 		int fcX = 0, fcY = 0;
 		
 		public boolean dispatchTouchEventFC(MotionEvent event) {
-				
+			
 			final int action = event.getAction() & MotionEvent.ACTION_MASK;
 			 
 			boolean status;
@@ -947,6 +951,8 @@ public class FloatingCursor extends FrameLayout {
 			
 			if (action == MotionEvent.ACTION_DOWN)
 			{
+				mPrevX = X;
+				mPrevY = Y;
 				mActivePointerId = event.getPointerId(0);
 				
 				//Toast.makeText(mContext, "mActivePointerId: " + mActivePointerId, 100).show();
@@ -977,6 +983,7 @@ public class FloatingCursor extends FrameLayout {
 					mHandleTouch = false; // FIXME: Change, do Let user drag and fling menu
 					//return true;
 				}
+				
 				else if ((X < CircleX-r || X > CircleX+r || Y < CircleY-r || Y > CircleY+r) && mScroller.isFinished())
 				{	
 					fcView.setVisibility(View.INVISIBLE);
@@ -985,7 +992,7 @@ public class FloatingCursor extends FrameLayout {
 					mHandleTouch = false;
 					startHitTest(fcX, fcY);	 // Also do the HitTest when the webview 
 								 // window is scrolled
-
+					
 					//return false;
 				}
 				else if(currentMenu.getVisibility() == VISIBLE)
@@ -1047,7 +1054,11 @@ public class FloatingCursor extends FrameLayout {
 						disableFC();
 				}
 			}
-			
+
+			if(isCircularZoomEnabled()){
+				zoomView.onTouchEvent(event);
+				return true;
+			}
 			if (action == MotionEvent.ACTION_CANCEL)
 			{
 				mActivePointerId = INVALID_POINTER_ID;
@@ -1056,6 +1067,15 @@ public class FloatingCursor extends FrameLayout {
 				
 			if (action == MotionEvent.ACTION_UP)
 			{
+				if(currentMenu == fcWindowTabs){
+					if(mPrevX > X+100)
+						nextWebPage();
+					else if(mPrevX < X+100){
+						if(fcWindowTabs.getCurrentTab()>2)
+							prevWebPage();
+					}
+					mPrevX = 0;
+				}
 				mActivePointerId = INVALID_POINTER_ID;
 
 				fcView.setVisibility(View.VISIBLE);
@@ -1096,7 +1116,8 @@ public class FloatingCursor extends FrameLayout {
 			}
 
 			if (action == MotionEvent.ACTION_MOVE)
-			{					
+			{	
+				
 				/*if (touchCount >= 2)
 				{
 					stopHitTest(fcX,fcY,false);
@@ -1153,8 +1174,16 @@ public class FloatingCursor extends FrameLayout {
 			public void enableCircularZoom(){
 				zoomView.setVisibility(VISIBLE);
 				zoomView.setClickable(true);
+			/*	long downTime = SystemClock.uptimeMillis();
+				long eventTime = SystemClock.uptimeMillis();
+
+				MotionEvent event = MotionEvent.obtain(downTime, eventTime,MotionEvent.ACTION_UP, 10, 10, 0);
+				fcMainMenu.onTouch(fcMainMenu.getChildAt(3), event);
+			*/	
+				fcMainMenu.getChildAt(3).invalidate();
+				
 				eventViewer.setText("Circular Zooming enabled.Click back to disable it");
-				//currentMenu.setVisibility(INVISIBLE);
+				currentMenu.setVisibility(INVISIBLE);
 			}
 			public void disableCircularZoom(){
 				//currentMenu.setVisibility(VISIBLE);
@@ -1177,6 +1206,19 @@ public class FloatingCursor extends FrameLayout {
 			eventViewer.setText(str);
 		}
 			
+		public void nextWebPage(){
+			mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()-1);
+			fcWindowTabs.setCurrentTab(fcWindowTabs.getCurrentTab()+1);
+			TabButton child = (TabButton) fcWindowTabs.findViewById(mParent.getActiveWebViewIndex());
+			fcWindowTabs.setActiveTabIndex(child);
+			
+		}
+		public void prevWebPage(){
+			mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()+1);
+			fcWindowTabs.setCurrentTab(fcWindowTabs.getCurrentTab()-1);
+			TabButton child = (TabButton) fcWindowTabs.findViewById(mParent.getActiveWebViewIndex());
+			fcWindowTabs.setActiveTabIndex(child);
+		}
 		/*
 		 * WebView scrolling with FloatingCursor
 		 */
@@ -1201,6 +1243,7 @@ public class FloatingCursor extends FrameLayout {
 			// @Override
 			public void onClipBoardUpdate (String type) {
 				if (mGesturesEnabled) {
+					Log.d("in onClickBoardUpdate-------------------------------", type);
 					mParent.startGesture(SwifteeApplication.CURSOR_TEXT_GESTURE);
 					mGesturesEnabled=false;
 				}

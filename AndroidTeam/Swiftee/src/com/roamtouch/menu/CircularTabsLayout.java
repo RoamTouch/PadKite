@@ -155,7 +155,7 @@ public class CircularTabsLayout extends ViewGroup {
 		    	if (child.getVisibility() != GONE) { 
 
 		    		// Calculate coordinates around the circle at the centre of cart. system
-		    		double angle = i*t;
+		    		double angle = (i-2)*t;
 		    		angle=angle-90 + 46;
 		    		child.setAngle(angle);
 		    		child.calculateCenter(a,b,inR,angle);

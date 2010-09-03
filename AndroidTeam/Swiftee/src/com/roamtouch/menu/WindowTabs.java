@@ -55,6 +55,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 	}
 	public void onClick(View v) {
 		int id = v.getId();
+		int count = getChildCount() - 4;
 		if(id == 33){
 			addWindow();
 			currentTab = 2;
@@ -63,17 +64,26 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		else{
 			TabButton child = (TabButton)v;
 			mParent.setActiveWebViewIndex(id);
-			setActiveTabIndex(child);
-			currentTab = id+2;
+			setActiveTabIndex(child);	
+			currentTab = count - id+1;
 			return;
 		}
 	}
 	
-	
+	public void setCurrentTab(int i){
+		int count = getChildCount()-4;
+		if(i > -1 && i < count){
+			currentTab = i;
+		}
+	}
+	public int getCurrentTab(){
+		return currentTab;
+	}
 	public void addWindow(){
 		TabButton but = new TabButton(mContext);
 		but.setBackgroundResource(R.drawable.settings_btn);
 		but.setId(mParent.getActiveWebViewIndex()+1);
+		mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()+1);
 		but.setWebView(createWebView());
 		but.setOnClickListener(this);
 		addView(but,2);
@@ -100,6 +110,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 			currentTab=2;
 		TabButton child = (TabButton)getChildAt(currentTab);
 		setActiveTabIndex(child);
+		mParent.adjustTabIndex(this);
 	}
 
 	// Extra saved information for displaying the tab in the picker.
