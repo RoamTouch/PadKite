@@ -13,12 +13,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 
 enum MainMenuFunctions {
+	none,
 	settings,
 	refresh,
 	stop,
@@ -77,7 +79,11 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 
 		MenuButton b = (MenuButton)v;
 		
-		MainMenuFunctions button_function = MainMenuFunctions.valueOf(b.getFunction());
+		String function = b.getFunction();
+		
+		Log.d("MainMenu", "Function = " + function);
+		
+		MainMenuFunctions button_function = MainMenuFunctions.valueOf(function);
 		
 		if(event.getAction() == MotionEvent.ACTION_DOWN) {
 			switch(button_function) {
@@ -188,6 +194,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				this.setVisibility(INVISIBLE);
 				mParent.startGesture(SwifteeApplication.CUSTOM_GESTURE);
 				break;
+			case none:
 			default:
 				/* Do nothing */
 				break;

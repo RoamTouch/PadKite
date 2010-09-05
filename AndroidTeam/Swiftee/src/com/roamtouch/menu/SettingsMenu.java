@@ -18,6 +18,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 
 enum SettingsMenuFunctions {
+	none,
 	browser_settings,
 	set_homepage,
 	resize_hitarea,
@@ -171,6 +172,7 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 			case practice_gesture:				
 				break;
 
+			case none:
 			default:
 				// Nothing to be done
 				break;

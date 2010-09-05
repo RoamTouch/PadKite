@@ -43,7 +43,7 @@ public class MenuButton extends Button{
 		
 		public String getFunction()
 		{
-			return m_button_function;
+			return (m_button_function==null)?"none":m_button_function;
 		}
 
 		public void setFunction(String button_function)
