@@ -305,15 +305,15 @@ public class FloatingCursor extends FrameLayout {
     	
 			/* ****************** CHANGED CODE *******************/
 			// FIXME: Remove touch point -> own function
-			removeTouchPoint();
-			pointer.setImageResource(R.drawable.no_target_cursor);
-			cancelSelection();
+			//removeTouchPoint();
+			//pointer.setImageResource(R.drawable.no_target_cursor);
+			//cancelSelection();
 			
 			// FIXME: Change so that Size of WebView is adjusted instead of being overlayed
-			int hd_1 = 40;
-			int hd_2 = 0;
-			if (currentMenu.getVisibility() == VISIBLE)
-				hd_2 = -80;
+			int hd_1 = 0;
+			int hd_2 = 40;
+//			if (currentMenu.getVisibility() == VISIBLE)
+	//			hd_2 = -80;
 
 			// FIXME
 			/* ****************** CHANGED CODE END *******************/
@@ -893,6 +893,7 @@ public class FloatingCursor extends FrameLayout {
 				mSelectionMode = true;
 				selX = X;
 				selY = Y;
+				eventViewer.setText("Start selection gesture now ...");
 			}
 		}
 	
