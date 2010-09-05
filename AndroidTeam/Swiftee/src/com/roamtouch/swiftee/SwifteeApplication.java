@@ -34,16 +34,18 @@ public class SwifteeApplication extends Application{
 		database = new DBConnector(this);
 		database.open();
 		
-		copyFilestoSdcard("Default Theme");
-		copyFilestoSdcard("Gesture Library");
+		// FIXME: For now force an update!
+		
+		copyFilestoSdcard("Default Theme", true);
+		copyFilestoSdcard("Gesture Library", false);
 	}
 	
-	public void copyFilestoSdcard(String dir){
+	public void copyFilestoSdcard(String dir, boolean force){
 		try{
 			String arr[] = getAssets().list(dir);
 			
 			File d = new File("/sdcard/Swiftee/"+dir);
-			if(!d.exists()){
+			if(!d.exists() || force == true){
 				d.mkdirs();
 
 				int count = arr.length;
