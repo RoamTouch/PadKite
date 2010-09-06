@@ -11,8 +11,8 @@ import java.io.InputStream;
 import com.roamtouch.database.DBConnector;
 
 import android.app.Application;
-import android.gesture.GestureLibraries;
-import android.gesture.GestureLibrary;
+import com.roamtouch.gestures.GestureLibraries;
+import com.roamtouch.gestures.GestureLibrary;
 //import android.os.Environment;
 
 public class SwifteeApplication extends Application{

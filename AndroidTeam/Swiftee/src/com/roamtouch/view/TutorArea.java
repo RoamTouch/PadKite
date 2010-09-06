@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import com.roamtouch.swiftee.BrowserActivity;
+import com.roamtouch.gestures.Gesture;
+import com.roamtouch.gestures.GestureLibrary;
 
 import android.content.Context;
-import android.gesture.Gesture;
-import android.gesture.GestureLibrary;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -42,7 +42,7 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 		LayoutParams params=new LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
 		for(int i=0;i<gestureCount;i++){
 			Button b=new Button(mContext);
-			b.setId(i+1);
+			b.setId(i);
 			b.setLayoutParams(params);
 			b.setText(str[i].toString());
 			ArrayList<Gesture> list = mLibrary.getGestures(str[i].toString());
@@ -54,8 +54,9 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 		}
 	}
 	public void onClick(View v) {
-			parent.gestureDone(v.getId());	
-			ArrayList<Gesture> list = mLibrary.getGestures(str[v.getId()-1].toString());
+			ArrayList<Gesture> list = mLibrary.getGestures(str[v.getId()].toString());			
+			parent.drawGestureToEducate(list);
+			
 	}
 	public void setParent(BrowserActivity parent) {
 		this.parent = parent;

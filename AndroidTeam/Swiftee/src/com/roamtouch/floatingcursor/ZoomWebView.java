@@ -2,6 +2,8 @@ package com.roamtouch.floatingcursor;
 
 
 
+import com.roamtouch.swiftee.R;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,8 +11,10 @@ import android.graphics.Paint;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 
-public class ZoomWebView extends View{
+public class ZoomWebView extends ViewGroup{
 
 		//Centre of the circular menu
 		private int a,b;
@@ -20,15 +24,24 @@ public class ZoomWebView extends View{
 		private FloatingCursor floatingCursor;
 		private Paint paint;
 		private int fcRadius;
+		private float mAngle = 55;
+		private int BUTTON_RADIUS;
+		private int inR;
 		
 		public ZoomWebView(Context context) {
 			super(context);
 			paint = new Paint();
 			paint.setColor(Color.argb(100, 125, 125, 125));
+			
+			Button b = new Button(context);
+			b.setBackgroundResource(R.drawable.zoom_pressed);
+			addView(b);
 		}
 		
 		public void setFCRadius(int r){
 			fcRadius = r;
+			BUTTON_RADIUS = fcRadius / 4;
+			inR = fcRadius-BUTTON_RADIUS - 2; //-5 ;
 		}
 		public void setFloatingCursor(FloatingCursor floatingCursor){
 			this.floatingCursor = floatingCursor;
@@ -111,10 +124,12 @@ public class ZoomWebView extends View{
 	            }
 	            		
 	           //if (yDiff > 3 || xDiff > 3) {
-	            
 	            if(Math.abs(angleDiff) > 25 && Math.abs(angleDiff) < 250)  {
 	            
 	            mAngleChange = angleDiff;
+            	mAngle+=mAngleChange;
+
+	            onLayout(true,0,0,0,0);
 	            if(mAngleChange<0)
 	            	floatingCursor.circularZoomOut();
 	            	//direction = -1;
@@ -134,6 +149,7 @@ public class ZoomWebView extends View{
 			    mLastMotionX =0;
 			    mLastMotionY =0;
 			    Log.d("inside mLastMotionAngle,"," resetting position!!----------------------");
+			    floatingCursor.disableCircularZoom();
 			}
 					
 			return true;
@@ -159,5 +175,22 @@ public class ZoomWebView extends View{
 		     super.onDraw(canvas);
 		     canvas.drawCircle(a, b, fcRadius, paint);
 		 }
+
+		@Override
+		protected void onLayout(boolean changed, int l, int t, int r, int b1) {
+			View v = getChildAt(0);
+			int centerX=a+(int) (inR*Math.cos(Math.toRadians(mAngle)));
+			int centerY=b+(int) (inR*Math.sin(Math.toRadians(mAngle)));
+			v.layout(centerX-BUTTON_RADIUS, centerY-BUTTON_RADIUS, centerX+BUTTON_RADIUS, centerY+BUTTON_RADIUS);
+		}
+
+		public void setAngle(float f) {
+			this.mAngle = f;
+			onLayout(true,0,0,0,0);
+		}
+
+		public float getAngle() {
+			return mAngle;
+		}
 		
 }

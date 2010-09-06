@@ -6,6 +6,11 @@ import com.api.blogger.BloggerActivity;
 import com.api.facebook.FacebookActivity;
 import com.api.twitter.TwitterActivity;
 import com.roamtouch.floatingcursor.FloatingCursor;
+import com.roamtouch.gestures.Gesture;
+import com.roamtouch.gestures.GestureLibrary;
+import com.roamtouch.gestures.GesturePoint;
+import com.roamtouch.gestures.GestureStroke;
+import com.roamtouch.gestures.Prediction;
 import com.roamtouch.menu.TabButton;
 import com.roamtouch.menu.WindowTabs;
 import com.roamtouch.swiftee.R;
@@ -17,12 +22,9 @@ import com.roamtouch.view.SwifteeOverlayView;
 import com.roamtouch.view.TutorArea;
 import android.app.Activity;
 import android.content.Intent;
-import android.gesture.Gesture;
-import android.gesture.GestureLibrary;
-import android.gesture.GestureOverlayView;
-import android.gesture.Prediction;
-import android.gesture.GestureOverlayView.OnGestureListener;
-import android.gesture.GestureOverlayView.OnGesturePerformedListener;
+import com.roamtouch.gestures.GestureOverlayView;
+import com.roamtouch.gestures.GestureOverlayView.OnGestureListener;
+import com.roamtouch.gestures.GestureOverlayView.OnGesturePerformedListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -315,7 +317,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
          else                                                                          
         	 eventViewer.setText("Unrecognized gesture. Please draw 'S', 'e' or 'c'.");
 	}
-	private void cursorGestures(String action){
+	public void cursorGestures(String action){
 		if ("Search".equals(action)) 
          	gestureDone(GESTURE_s);
         else if ("Email".equals(action))
@@ -369,6 +371,23 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		stopGesture();
 	}
 	
+	public void drawGestureToEducate(ArrayList<Gesture> list){
+		Gesture gesture = list.get(0);
+		
+		ArrayList<Prediction> predictions = mLibrary.recognize(gesture);
+         if (predictions.size() > 0) {
+        	 
+                 if (predictions.get(0).score > 1.5) {
+                         String action = predictions.get(0).name;
+                         ArrayList<GestureStroke> strokes = gesture.getStrokes();
+                         ArrayList<GesturePoint> points = strokes.get(0).getGesturePoints();
+                         mGestures.drawGesture(points);
+                        // mGestures.setGesture(gesture);
+                         cursorGestures(action);
+                 }
+         }
+		
+	}
 /*	
 	public void setTopBarVisibility(int visibility){
 			mTopBarArea.setVisibility(visibility);

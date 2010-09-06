@@ -2,8 +2,10 @@ package com.roamtouch.view;
 
 import java.util.ArrayList;
 import android.content.Context;
-import android.gesture.GestureOverlayView;
-import android.gesture.GesturePoint;
+import com.roamtouch.gestures.Gesture;
+import com.roamtouch.gestures.GestureOverlayView;
+import com.roamtouch.gestures.GesturePoint;
+import com.roamtouch.gestures.GestureStroke;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -20,7 +22,7 @@ public class SwifteeGestureView extends GestureOverlayView{
 	Path path;
 	Handler handler;
 	Runnable runnable,runnable2;
-	ArrayList<GesturePoint> list;
+	ArrayList<GesturePoint> gesturePoints;
 	int l;
 	int count=1;
 	String s;
@@ -32,7 +34,7 @@ public class SwifteeGestureView extends GestureOverlayView{
 		
 		paint.setAntiAlias(true);
 		paint.setDither(true);
-		paint.setColor(Color.BLACK);
+		paint.setColor(Color.YELLOW);
 		paint.setStrokeWidth(10);
 		paint.setStyle(Style.STROKE);
 		paint.setStrokeCap(Cap.ROUND);
@@ -40,8 +42,8 @@ public class SwifteeGestureView extends GestureOverlayView{
 		runnable =new Runnable(){
 			
 			public void run() {
-				 float x=list.get(count).x;
-				 float y=list.get(count).y;
+				 float x=gesturePoints.get(count).x;
+				 float y=gesturePoints.get(count).y;
 				 float dx = Math.abs(x - mX);
 		         float dy = Math.abs(y - mY);
 		         if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
@@ -50,7 +52,7 @@ public class SwifteeGestureView extends GestureOverlayView{
 		             mY = y;
 		         }
 				
-				 count++;
+				count++;
 				invalidate();
 				if(count<l){
 					handler.postDelayed(this ,100);
@@ -65,7 +67,6 @@ public class SwifteeGestureView extends GestureOverlayView{
 		runnable2=new Runnable(){
 
 			public void run() {
-				path.reset();
 				invalidate();
 				isfinished=true;
 			}
@@ -74,23 +75,20 @@ public class SwifteeGestureView extends GestureOverlayView{
 	}
 	public void onDraw(Canvas canvas){
 		canvas.drawPath(path, paint);
-		
+		canvas.drawLine(100, 100, 266, 300, paint);
 	}
 	 private float mX, mY;
      private static final float TOUCH_TOLERANCE = 4;
 
-	public void drawGesture(String s){
-		if(isfinished){
-		isfinished=false;
-		this.s=s;
+	public void drawGesture(ArrayList<GesturePoint>  gesturePoints){
 		
-		
+		this.gesturePoints = gesturePoints;
 		path.reset();
-		l=list.size();
+		l=this.gesturePoints.size();
 		count=0;
-		path.moveTo(list.get(0).x, list.get(0).y);
-        mX = list.get(0).x;
-        mY = list.get(0).y;
+		path.moveTo(this.gesturePoints.get(0).x, this.gesturePoints.get(0).y);
+        mX = this.gesturePoints.get(0).x;
+        mY = this.gesturePoints.get(0).y;
         
         try
 		{
@@ -101,7 +99,7 @@ public class SwifteeGestureView extends GestureOverlayView{
 		{
 			e.printStackTrace();
 		}
-		}
+		
 	}
 
 }

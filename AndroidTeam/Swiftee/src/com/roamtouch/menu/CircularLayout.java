@@ -227,6 +227,14 @@ public class CircularLayout extends ViewGroup {
             }
         }			   
 	}
+		
+	public void setAngleChange(float angleChange){
+		mAngleChange = angleChange;
+	}
+	public double getZoomAngle(){
+		MenuButton b = (MenuButton) getChildAt(4);
+		return b.getAngle();
+	}
 	public void setMode(int mode){
 
 		ImageView coneSeparator = new ImageView(context);

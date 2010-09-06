@@ -17,7 +17,7 @@
 		/>
 		
 		<MenuButton android:button_image="zoom_normal.png"
-					android:button_highlightImage="zoom_pressed.png"
+					android:button_highlightImage="zoom_normal.png"
                                         android:button_function="zoom" 
 		/>
 	

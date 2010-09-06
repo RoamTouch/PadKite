@@ -1181,8 +1181,7 @@ public class FloatingCursor extends FrameLayout {
 				MotionEvent event = MotionEvent.obtain(downTime, eventTime,MotionEvent.ACTION_UP, 10, 10, 0);
 				fcMainMenu.onTouch(fcMainMenu.getChildAt(3), event);
 			*/	
-				fcMainMenu.getChildAt(3).invalidate();
-				
+				zoomView.setAngle((float)fcMainMenu.getZoomAngle());
 				eventViewer.setText("Circular Zooming enabled.Click back to disable it");
 				currentMenu.setVisibility(INVISIBLE);
 			}
