@@ -5,7 +5,17 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-
+<com.roamtouch.view.WebLayoutView android:id="@+id/webviewLayout"
+		 	android:layout_width="fill_parent" 
+			android:layout_height="fill_parent"
+			android:orientation="vertical"
+			>
+	 
+		<!--  <roamtouch.webkit.WebView android:id="@+id/webview"
+		 		android:layout_width="fill_parent"
+		 		android:layout_height="fill_parent"/>-->	
+		 		
+	</com.roamtouch.view.WebLayoutView>
 <com.roamtouch.view.SwifteeOverlayView
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		android:id="@+id/overlay"
@@ -26,17 +36,7 @@
     android:eventsInterceptionEnabled="true"
     android:orientation="vertical">
    		 			
-	<com.roamtouch.view.WebLayoutView android:id="@+id/webviewLayout"
-		 	android:layout_width="fill_parent" 
-			android:layout_height="fill_parent"
-			android:orientation="vertical"
-			>
-	 
-		<!--  <roamtouch.webkit.WebView android:id="@+id/webview"
-		 		android:layout_width="fill_parent"
-		 		android:layout_height="fill_parent"/>-->	
-		 		
-	</com.roamtouch.view.WebLayoutView>
+	
 
 	<com.roamtouch.floatingcursor.FloatingCursor xmlns:android="http://schemas.android.com/apk/res/android"
 		android:id="@+id/floatingCursor"

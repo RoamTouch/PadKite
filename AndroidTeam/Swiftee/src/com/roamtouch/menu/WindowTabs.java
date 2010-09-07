@@ -48,14 +48,20 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		mParent = parent;		
 	}
 	
-	public void setCurrentThumbnail(BitmapDrawable bd){
-		TabButton tab = (TabButton) getChildAt(currentTab);
+	public void setCurrentThumbnail(BitmapDrawable bd,WebView wv){
+		int count = getChildCount();
+		for(int i =2;i<count-2;i++){
+			TabButton tab = (TabButton) getChildAt(i);
+			if(wv == tab.getWebView()){
+				tab.setImageDrawable(bd);
+			}
+		}
+	//	TabButton tab = (TabButton) getChildAt(currentTab);
 	//	tab.setBackgroundColor(Color.GRAY);
-		tab.setImageDrawable(bd);
+	//	tab.setImageDrawable(bd);
 	}
 	public void onClick(View v) {
 		int id = v.getId();
-		int count = getChildCount() - 4;
 		if(id == 33){
 			addWindow();
 			currentTab = 2;
@@ -65,14 +71,14 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 			TabButton child = (TabButton)v;
 			mParent.setActiveWebViewIndex(id);
 			setActiveTabIndex(child);	
-			currentTab = count - id+1;
+			currentTab = child.getTabIndex();
 			return;
 		}
 	}
 	
 	public void setCurrentTab(int i){
-		int count = getChildCount()-4;
-		if(i > -1 && i < count){
+		int count = getChildCount()-2;
+		if(i > 1 && i < count){
 			currentTab = i;
 		}
 	}
@@ -82,15 +88,22 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 	public void addWindow(){
 		TabButton but = new TabButton(mContext);
 		but.setBackgroundResource(R.drawable.settings_btn);
-		but.setId(mParent.getActiveWebViewIndex()+1);
-		mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()+1);
 		but.setWebView(createWebView());
 		but.setOnClickListener(this);
+		but.setTabIndex(2);
 		addView(but,2);
+		int count = getChildCount();
+		for(int i =3;i<count-2;i++){
+			TabButton tab = (TabButton) getChildAt(i);
+			tab.setTabIndex(i);
+		}
 		mParent.addWebView(but.getWebView());
+		but.setId(mParent.getActiveWebViewIndex()+1);
+		mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()+1);
 	}
 	public WebView createWebView(){
 		WebView webView = new WebView(mContext);
+		webView.setId(mParent.getActiveWebViewIndex()+1);
 		webView.setScrollbarFadingEnabled(true);
         webView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
         webView.setMapTrackballToArrowKeys(false); // use trackball directly
@@ -105,14 +118,16 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		return webView;
 	}
 	public void removeWindow(){
-		removeViewAt(currentTab);
-		if(currentTab>2)
-			currentTab--;
-		else
-			currentTab=2;
-		TabButton child = (TabButton)getChildAt(currentTab);
-		setActiveTabIndex(child);
-		mParent.adjustTabIndex(this);
+		if(getChildCount()>5){
+			removeViewAt(currentTab);
+			if(currentTab>2)
+				currentTab--;
+			else
+				currentTab=2;
+			TabButton child = (TabButton)getChildAt(currentTab);
+			setActiveTabIndex(child);
+			mParent.adjustTabIndex(this);
+		}
 	}
 
 	// Extra saved information for displaying the tab in the picker.

@@ -999,6 +999,7 @@ public class FloatingCursor extends FrameLayout {
 				else if(currentMenu.getVisibility() == VISIBLE)
 				{
 					mHandleTouch = false; // Don't let user drag at this stage
+					return false;
 				}
 				else
 				{			
@@ -1071,7 +1072,7 @@ public class FloatingCursor extends FrameLayout {
 				if(currentMenu == fcWindowTabs){
 					if(mPrevX > X+100)
 						nextWebPage();
-					else if(mPrevX < X+100){
+					else if(mPrevX+100 < X){
 						if(fcWindowTabs.getCurrentTab()>2)
 							prevWebPage();
 					}
@@ -1208,15 +1209,17 @@ public class FloatingCursor extends FrameLayout {
 			
 		public void nextWebPage(){
 			mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()-1);
-			fcWindowTabs.setCurrentTab(fcWindowTabs.getCurrentTab()+1);
+			//fcWindowTabs.setCurrentTab(fcWindowTabs.getCurrentTab()+1);
 			TabButton child = (TabButton) fcWindowTabs.findViewById(mParent.getActiveWebViewIndex());
+			fcWindowTabs.setCurrentTab(child.getTabIndex());
 			fcWindowTabs.setActiveTabIndex(child);
 			
 		}
 		public void prevWebPage(){
 			mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()+1);
-			fcWindowTabs.setCurrentTab(fcWindowTabs.getCurrentTab()-1);
+			//fcWindowTabs.setCurrentTab(fcWindowTabs.getCurrentTab()-1);
 			TabButton child = (TabButton) fcWindowTabs.findViewById(mParent.getActiveWebViewIndex());
+			fcWindowTabs.setCurrentTab(child.getTabIndex());
 			fcWindowTabs.setActiveTabIndex(child);
 		}
 		/*
@@ -1272,7 +1275,8 @@ public class FloatingCursor extends FrameLayout {
 				Bitmap b = mWebView.getDrawingCache();
 				Bitmap cb = Bitmap.createBitmap(b, 30, 30, 80, 80);				
 				BitmapDrawable bd = new BitmapDrawable(getCircleBitmap(cb));
-				fcWindowTabs.setCurrentThumbnail(bd);
+				fcWindowTabs.setCurrentThumbnail(bd,view);
+				cb.recycle();
 				//mWebView.clearCache(true);
 			}
 		
@@ -1318,6 +1322,7 @@ public class FloatingCursor extends FrameLayout {
 			        new Rect(0, 0, targetWidth-2, targetHeight-2),
 			        null);
 			    sourceBitmap.recycle();
+			    path.reset();
 			    return targetBitmap;
 			}
 			

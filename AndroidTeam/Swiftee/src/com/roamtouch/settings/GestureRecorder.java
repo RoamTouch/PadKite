@@ -2,7 +2,6 @@ package com.roamtouch.settings;
 
 import android.app.Activity;
 import com.roamtouch.gestures.Gesture;
-import com.roamtouch.gestures.GestureLibraries;
 import com.roamtouch.gestures.GestureLibrary;
 import com.roamtouch.gestures.GestureOverlayView;
 import android.os.Bundle;

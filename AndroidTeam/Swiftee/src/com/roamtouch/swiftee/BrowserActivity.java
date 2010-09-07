@@ -146,6 +146,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		mSelectionGesture.setEnabled(false);
 		
 		mGestures = (SwifteeGestureView) findViewById(R.id.gestures);
+		mGestures.setParent(this);
 		mGestures.addOnGesturePerformedListener(this);
 		mGestures.addOnGestureListener(this);
 		mGestures.setEnabled(false);
@@ -381,9 +382,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
                          String action = predictions.get(0).name;
                          ArrayList<GestureStroke> strokes = gesture.getStrokes();
                          ArrayList<GesturePoint> points = strokes.get(0).getGesturePoints();
-                         mGestures.drawGesture(points);
+                         mGestures.drawGesture(points,action);
                         // mGestures.setGesture(gesture);
-                         cursorGestures(action);
+                        // cursorGestures(action);
                  }
          }
 		
@@ -454,6 +455,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			TabButton child = (TabButton)winTabs.getChildAt(i);
 			wvCount--;
 			child.setId(wvCount);
+			child.setTabIndex(i);
 		}
 	}
 	public void setEventViewerMode(int mode){

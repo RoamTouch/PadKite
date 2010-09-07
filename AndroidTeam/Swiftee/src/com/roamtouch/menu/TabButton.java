@@ -10,8 +10,8 @@ public class TabButton extends ImageView{
 
 		private double angle;
 		private int centerX,centerY;
-//		private int closeButCenterX,closeButCenterY;
 		private WebView mWebView;
+		private int mTabIndex;
 		
 		public TabButton(Context context, AttributeSet attrs) {
 			super(context, attrs);					
@@ -30,6 +30,14 @@ public class TabButton extends ImageView{
 			return angle;
 		}
 
+		public void setTabIndex(int index) {
+			mTabIndex = index;
+		}
+
+		public int getTabIndex() {
+			return mTabIndex;
+		}
+		
 		public void calculateCenter(int h,int k,int r,double angle){
 			centerX=h+(int) (r*Math.cos(Math.toRadians(angle)));
 			centerY=k+(int) (r*Math.sin(Math.toRadians(angle)));

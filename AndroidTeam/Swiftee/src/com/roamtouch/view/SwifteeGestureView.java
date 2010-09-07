@@ -6,6 +6,8 @@ import com.roamtouch.gestures.Gesture;
 import com.roamtouch.gestures.GestureOverlayView;
 import com.roamtouch.gestures.GesturePoint;
 import com.roamtouch.gestures.GestureStroke;
+import com.roamtouch.swiftee.BrowserActivity;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 
 public class SwifteeGestureView extends GestureOverlayView{
 
+	BrowserActivity mParent;
 	Paint paint;
 	Path path;
 	Handler handler;
@@ -25,7 +28,7 @@ public class SwifteeGestureView extends GestureOverlayView{
 	ArrayList<GesturePoint> gesturePoints;
 	int l;
 	int count=1;
-	String s;
+	String s,action;
 	boolean isfinished=true; 
 	public SwifteeGestureView(final Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -55,10 +58,10 @@ public class SwifteeGestureView extends GestureOverlayView{
 				count++;
 				invalidate();
 				if(count<l){
-					handler.postDelayed(this ,100);
+					handler.postDelayed(this ,70);
 				}
 				else{
-					Toast.makeText(context, "Gesture "+s+" done" , Toast.LENGTH_SHORT).show();
+					//Toast.makeText(context, "Gesture "+s+" done" , Toast.LENGTH_SHORT).show();
 					handler.postDelayed(runnable2 ,1000);
 				}
 			
@@ -67,21 +70,27 @@ public class SwifteeGestureView extends GestureOverlayView{
 		runnable2=new Runnable(){
 
 			public void run() {
+				path.reset();
 				invalidate();
 				isfinished=true;
+				mParent.cursorGestures(action);
 			}
 			
 		};
 	}
+	public void setParent(BrowserActivity parent){
+		mParent = parent;
+	}
 	public void onDraw(Canvas canvas){
 		canvas.drawPath(path, paint);
-		canvas.drawLine(100, 100, 266, 300, paint);
+		//canvas.drawLine(100, 100, 266, 300, paint);
 	}
 	 private float mX, mY;
      private static final float TOUCH_TOLERANCE = 4;
 
-	public void drawGesture(ArrayList<GesturePoint>  gesturePoints){
+	public void drawGesture(ArrayList<GesturePoint>  gesturePoints,String action){
 		
+		this.action = action;
 		this.gesturePoints = gesturePoints;
 		path.reset();
 		l=this.gesturePoints.size();

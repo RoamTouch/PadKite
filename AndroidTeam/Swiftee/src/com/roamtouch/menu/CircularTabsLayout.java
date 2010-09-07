@@ -245,6 +245,9 @@ public class CircularTabsLayout extends ViewGroup {
 			if(Math.pow(x-a, 2)+Math.pow(y-b, 2)-Math.pow(inR-40, 2)<0 && Math.pow(x-a, 2)+Math.pow(y-b, 2)-Math.pow(outR, 2)>0)
 				return false;
 
+			if(x< a-outR && x> a+outR && y<b-outR && y>b+outR)
+				return false;
+			
 			if (event.getAction() == MotionEvent.ACTION_DOWN && event.getEdgeFlags() != 0) {
 				// Don't handle edge touches immediately -- they may actually belong to one of our
 				// descendants.
