@@ -113,7 +113,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
         LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
 		webView.setLayoutParams(params);
 	//	webView.loadUrl("file:///android_asset/loadPage.html");
-		webView.loadUrl("http://padkite.com/webkit");
+		webView.loadUrl("http://padkite.com/start");
 
 		return webView;
 	}
