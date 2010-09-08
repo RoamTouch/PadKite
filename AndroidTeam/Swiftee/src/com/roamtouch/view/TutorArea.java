@@ -9,7 +9,11 @@ import com.roamtouch.gestures.GestureLibrary;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -33,6 +37,47 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 		mLibrary = l;
 		initView();
 	}
+	
+    private static final float BITMAP_RENDERING_WIDTH = 4;
+
+    private static final boolean BITMAP_RENDERING_ANTIALIAS = true;
+    private static final boolean BITMAP_RENDERING_DITHER = true;
+	
+	private Bitmap toBitmap(Gesture gesture, int width, int height, int inset, int color)
+	{
+		final Bitmap bitmap = Bitmap.createBitmap(width, height,
+                Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(bitmap);
+
+        final Paint paint = new Paint();
+        paint.setAntiAlias(BITMAP_RENDERING_ANTIALIAS);
+        paint.setDither(BITMAP_RENDERING_DITHER);
+        paint.setColor(color);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setStrokeWidth(BITMAP_RENDERING_WIDTH);
+
+        final Path path = gesture.toPath();
+        final RectF bounds = new RectF();
+        path.computeBounds(bounds, true);
+
+        final float sx = (width - 2 * inset) / bounds.width();
+        final float sy = (height - 2 * inset) / bounds.height();
+        final float scale = sx > sy ? sy : sx;
+        paint.setStrokeWidth(BITMAP_RENDERING_WIDTH / scale);
+
+        path.offset(-bounds.left + (width - bounds.width() * scale) / 2.0f,
+                -bounds.top + (height - bounds.height() * scale) / 2.0f);
+
+        canvas.translate(inset, inset);
+        canvas.scale(scale, scale);
+
+        canvas.drawPath(path, paint);
+
+        return bitmap;	
+	}
+	
 	private void initView(){
 		this.removeAllViews();
 		Set<String> s=mLibrary.getGestureEntries();
@@ -46,7 +91,7 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 			b.setLayoutParams(params);
 			b.setText(str[i].toString());
 			ArrayList<Gesture> list = mLibrary.getGestures(str[i].toString());
-			Bitmap bit = list.get(0).toBitmap(50, 50, 0, Color.BLACK);
+			Bitmap bit = toBitmap(list.get(0), 50, 50, 0, Color.BLACK);
 			BitmapDrawable d = new BitmapDrawable(bit);
 			b.setCompoundDrawablesWithIntrinsicBounds(null,d, null, null);
 			b.setOnClickListener(this);
@@ -55,7 +100,7 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 	}
 	public void onClick(View v) {
 			ArrayList<Gesture> list = mLibrary.getGestures(str[v.getId()].toString());			
-			parent.drawGestureToEducate(list);
+			parent.drawGestureToEducate(list.get(0), str[v.getId()].toString());
 			
 	}
 	public void setParent(BrowserActivity parent) {

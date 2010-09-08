@@ -37,8 +37,10 @@ public class SwifteeGestureView extends GestureOverlayView{
 		
 		paint.setAntiAlias(true);
 		paint.setDither(true);
-		paint.setColor(Color.YELLOW);
-		paint.setStrokeWidth(10);
+
+		// FIXME: Dynamic
+		paint.setColor(Color.BLACK);
+		paint.setStrokeWidth(20);
 		paint.setStyle(Style.STROKE);
 		paint.setStrokeCap(Cap.ROUND);
 		handler=new Handler();

@@ -22,6 +22,8 @@ import com.roamtouch.view.SwifteeOverlayView;
 import com.roamtouch.view.TutorArea;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+
 import com.roamtouch.gestures.GestureOverlayView;
 import com.roamtouch.gestures.GestureOverlayView.OnGestureListener;
 import com.roamtouch.gestures.GestureOverlayView.OnGesturePerformedListener;
@@ -150,6 +152,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		mGestures.addOnGesturePerformedListener(this);
 		mGestures.addOnGestureListener(this);
 		mGestures.setEnabled(false);
+		
+		// FIXME: Change dynamically based on gesture library used
+		mGestures.setGestureColor(Color.BLACK);
+		mGestures.setGestureStrokeWidth(20.0f);
 		
 		mTutor = (HorizontalScrollView) findViewById(R.id.gestureScrollView);
 		
@@ -372,22 +378,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		stopGesture();
 	}
 	
-	public void drawGestureToEducate(ArrayList<Gesture> list){
-		Gesture gesture = list.get(0);
-		
-		ArrayList<Prediction> predictions = mLibrary.recognize(gesture);
-         if (predictions.size() > 0) {
-        	 
-                 if (predictions.get(0).score > 1.5) {
-                         String action = predictions.get(0).name;
-                         ArrayList<GestureStroke> strokes = gesture.getStrokes();
-                         ArrayList<GesturePoint> points = strokes.get(0).getGesturePoints();
-                         mGestures.drawGesture(points,action);
+	public void drawGestureToEducate(Gesture gesture, String action){
+		ArrayList<GestureStroke> strokes = gesture.getStrokes();
+        ArrayList<GesturePoint> points = strokes.get(0).getGesturePoints();
+        mGestures.drawGesture(points,action);
                         // mGestures.setGesture(gesture);
                         // cursorGestures(action);
-                 }
-         }
-		
 	}
 /*	
 	public void setTopBarVisibility(int visibility){
