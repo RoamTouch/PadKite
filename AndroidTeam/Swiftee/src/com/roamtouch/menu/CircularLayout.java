@@ -271,7 +271,7 @@ public class CircularLayout extends ViewGroup {
 	
 	 public void setfcRadius(int mfcRadius) {
 			this.mfcRadius = mfcRadius;
-			BUTTON_RADIUS = mfcRadius / 4;
+			BUTTON_RADIUS = (int)(mfcRadius / 3.25f);
 			inR = mfcRadius-BUTTON_RADIUS - 2; //-5 ;
 			outR = 2*mfcRadius;
 		}
