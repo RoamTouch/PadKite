@@ -2,10 +2,8 @@ package com.roamtouch.view;
 
 import java.util.ArrayList;
 import android.content.Context;
-import com.roamtouch.gestures.Gesture;
-import com.roamtouch.gestures.GestureOverlayView;
-import com.roamtouch.gestures.GesturePoint;
-import com.roamtouch.gestures.GestureStroke;
+import android.gesture.GestureOverlayView;
+import android.gesture.GesturePoint;
 import com.roamtouch.swiftee.BrowserActivity;
 
 import android.graphics.Canvas;
@@ -16,7 +14,6 @@ import android.graphics.Paint.Cap;
 import android.graphics.Paint.Style;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.widget.Toast;
 
 public class SwifteeGestureView extends GestureOverlayView{
 

@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import com.roamtouch.swiftee.BrowserActivity;
-import com.roamtouch.gestures.Gesture;
-import com.roamtouch.gestures.GestureLibrary;
+import com.roamtouch.swiftee.R;
+
+import android.gesture.Gesture;
+import android.gesture.GestureLibrary;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -84,10 +86,11 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 		str = s.toArray();
 		gestureCount = str.length;
 		
-		LayoutParams params=new LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+		LayoutParams params=new LayoutParams(125,LinearLayout.LayoutParams.FILL_PARENT);
 		for(int i=0;i<gestureCount;i++){
 			Button b=new Button(mContext);
 			b.setId(i);
+			b.setBackgroundResource(R.drawable.tutor);
 			b.setLayoutParams(params);
 			b.setText(str[i].toString());
 			ArrayList<Gesture> list = mLibrary.getGestures(str[i].toString());

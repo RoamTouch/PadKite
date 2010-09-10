@@ -6,11 +6,11 @@ import com.api.blogger.BloggerActivity;
 import com.api.facebook.FacebookActivity;
 import com.api.twitter.TwitterActivity;
 import com.roamtouch.floatingcursor.FloatingCursor;
-import com.roamtouch.gestures.Gesture;
-import com.roamtouch.gestures.GestureLibrary;
-import com.roamtouch.gestures.GesturePoint;
-import com.roamtouch.gestures.GestureStroke;
-import com.roamtouch.gestures.Prediction;
+import android.gesture.Gesture;
+import android.gesture.GestureLibrary;
+import android.gesture.GesturePoint;
+import android.gesture.GestureStroke;
+import android.gesture.Prediction;
 import com.roamtouch.menu.TabButton;
 import com.roamtouch.menu.WindowTabs;
 import com.roamtouch.swiftee.R;
@@ -24,9 +24,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 
-import com.roamtouch.gestures.GestureOverlayView;
-import com.roamtouch.gestures.GestureOverlayView.OnGestureListener;
-import com.roamtouch.gestures.GestureOverlayView.OnGesturePerformedListener;
+import android.gesture.GestureOverlayView;
+import android.gesture.GestureOverlayView.OnGestureListener;
+import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -380,10 +380,20 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	public void drawGestureToEducate(Gesture gesture, String action){
 		ArrayList<GestureStroke> strokes = gesture.getStrokes();
-        ArrayList<GesturePoint> points = strokes.get(0).getGesturePoints();
+		ArrayList<GesturePoint> points =generateGesturePoints(strokes.get(0).points);
+    //    ArrayList<GesturePoint> points = strokes.get(0).getGesturePoints();
         mGestures.drawGesture(points,action);
                         // mGestures.setGesture(gesture);
                         // cursorGestures(action);
+	}
+	private ArrayList<GesturePoint> generateGesturePoints(float p[]){
+		ArrayList<GesturePoint> points = new ArrayList<GesturePoint>();
+		int c = p.length;
+		for(int i=0;i<c;i=i+2){
+			GesturePoint gpoint = new GesturePoint(p[i], p[i+1], 0);
+			points.add(gpoint);
+		}
+		return points;
 	}
 /*	
 	public void setTopBarVisibility(int visibility){

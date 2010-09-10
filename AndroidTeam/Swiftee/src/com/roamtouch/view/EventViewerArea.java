@@ -111,12 +111,15 @@ public class EventViewerArea extends LinearLayout {
 			update.setText("");
 			update.setBackgroundResource(R.drawable.cross);
 			tv1.setWidth(windowEnabledWidth);
+			tv1.setPadding(15, 0, 0, 0);
 		}
 		else if(mode == UPDATE_MODE){
 			tv1.setWidth(updateEnabledWidth);
+			tv1.setPadding(0, 0, 0, 0);
 		}
 		else{
 			update.setVisibility(GONE);
+			tv1.setPadding(0, 0, 0, 0);
 		}
 	}
 	
