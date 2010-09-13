@@ -729,6 +729,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				pointer.scrollTo(0,0);
 				fcPointerView.scrollTo(0,0);
 				fcProgressBar.scrollTo(0,0);
+				pointer.setImageResource(R.drawable.no_target_cursor);
 			}
 
 			mTouchPointValid = false;
