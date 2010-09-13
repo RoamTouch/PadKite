@@ -1006,13 +1006,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				else if ((X < CircleX-r || X > CircleX+r || Y < CircleY-r || Y > CircleY+r) && mScroller.isFinished())
 				{	
 					fcView.setVisibility(View.INVISIBLE);
-					//removeTouchPoint();
+					removeTouchPoint();
 					
 					mHandleTouch = false;
-					startHitTest(fcX, fcY);	 // Also do the HitTest when the webview 
+					//startHitTest(fcX, fcY);	 // Also do the HitTest when the webview 
 								 // window is scrolled
 					
-					//return false;
+					return false;
 				}
 				else if(currentMenu.getVisibility() == VISIBLE)
 				{
@@ -1102,27 +1102,32 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 				stopSelection(fcX, fcY);
 				stopHitTest(fcX, fcY,false);
+				eventViewer.setText("Handling Touch on up ...");
 				
 				if (mHandleTouch == true && mWebHitTestResult != null)
 				{
 					//eventViewer.setText("Handling Touch on up ...");
 					
-					if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE)
+					/*
+					 * REMOVE TOUCH UP SELECTION
+					 * 
+					 * if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE)
 					{
 						mParent.startTextGesture();
 					}
 					else
 					{
 						clickSelection(fcX, fcY);
-					}
+					}*/
 					
 					mWebHitTestResult = null;
 				}
 				
-				//removeTouchPoint();
+				removeTouchPoint();
 
 				//fcTouchView.setVisibility(View.INVISIBLE);
-
+				fcView.setVisibility(View.VISIBLE);
+				
 				if (mHandleTouch == false)
 					return false;
 			
