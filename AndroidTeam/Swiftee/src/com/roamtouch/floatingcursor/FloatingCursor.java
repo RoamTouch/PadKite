@@ -775,8 +775,42 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				startHitTest(fcX,fcY);
 				return false;
 			}
-				// Gesture cancelled
+			else if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE){
+				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
+				//pointer.setImageResource(R.drawable.address_bar_cursor);
+				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
+				return false;
+			}
+			else if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE)
+			{
+				eventViewer.setText("Selecting image ...");
+				
+				mGesturesEnabled = true;
+				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
+				mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
+				//pointer.setImageResource(R.drawable.address_bar_cursor);
+				//removeTouchPoint();
+				return false;
+			}
+
+			// Gesture cancelled
 			return true;
+		}
+		
+		protected void triggerKeyboard(int X, int Y)
+		{
+			if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE){
+				sendEvent(MotionEvent.ACTION_DOWN, X, Y);
+				//pointer.setImageResource(R.drawable.address_bar_cursor);
+				sendEvent(MotionEvent.ACTION_UP, X, Y);	
+			}
+			
+			if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
+			{
+				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
+				pointer.setImageResource(R.drawable.address_bar_cursor);
+				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);
+			}
 		}
 
 		protected void clickSelection(int X, int Y)
