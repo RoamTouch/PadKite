@@ -289,7 +289,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	if (mCancelGesture)
     	{
     		mCancelGesture = false;
-    		cancelGesture(floatingCursor.defaultCommand());
+    		cancelGesture(true);
     	}
     	// eventViewer.setText("Gesture ended.");
     }

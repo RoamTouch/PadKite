@@ -970,6 +970,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 		int fcX = 0, fcY = 0;
 		
+		
 		public boolean dispatchTouchEventFC(MotionEvent event) {
 			
 			final int action = event.getAction() & MotionEvent.ACTION_MASK;
@@ -1141,7 +1142,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 				stopSelection(fcX, fcY);
 				stopHitTest(fcX, fcY,false);
-				eventViewer.setText("Handling Touch on up ...");
+				//eventViewer.setText("Handling Touch on up ...");
 				
 				if (mHandleTouch == true && mWebHitTestResult != null)
 				{
@@ -1158,6 +1159,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					{
 						clickSelection(fcX, fcY);
 					}*/
+					triggerKeyboard(fcX,fcY);
 					
 					mWebHitTestResult = null;
 				}
@@ -1181,7 +1183,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 			if (action == MotionEvent.ACTION_MOVE)
 			{	
-				
 				/*if (touchCount >= 2)
 				{
 					stopHitTest(fcX,fcY,false);
