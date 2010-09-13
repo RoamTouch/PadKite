@@ -108,9 +108,11 @@ public class SelectionGestureView extends FrameLayout {
 	
 	// Handle Touch Events
 	
-	protected float downX = -1, downY = -1;
+	protected float mDownX = -1, mDownY = -1;
 	
-	double TOUCH_TOLERANCE = 16.0;
+	protected long mStartEventTime = 0;
+	
+	double TOUCH_TOLERANCE = 32.0;
 
 	enum SelectionTypes { Paragraph, TextAutomatic, LineAutomatic };
 	
@@ -209,18 +211,19 @@ public class SelectionGestureView extends FrameLayout {
 		
 		if (action == MotionEvent.ACTION_DOWN)
 		{
-			downX = X;
-			downY = Y;
+			mDownX = X;
+			mDownY = Y;
+			mStartEventTime = eventTime;
 			selectionType = null;
 			mEventViewer.setText("Starting selection gesture ...");
 			mFloatingCursor.startSelectionCommand();
 		}
 		else if (action == MotionEvent.ACTION_MOVE)
-		{
+		{			
 			if (selectionType == null)
 			{
-				float deltaX = Math.abs(X - downX);
-				float deltaY = Math.abs(Y - downY);
+				float deltaX = Math.abs(X - mDownX);
+				float deltaY = Math.abs(Y - mDownY);
 
 				if (deltaX >= TOUCH_TOLERANCE && deltaY >= TOUCH_TOLERANCE)
 				{
@@ -233,7 +236,7 @@ public class SelectionGestureView extends FrameLayout {
 					// FIXME: Use config variables
 					
 					// Text automatic selection
-					if (downX-X < 0)
+					if (mDownX-X < 0)
 						startAutoSelection(SEL_DIR_RIGHT, 10, 100);
 					else
 						startAutoSelection(SEL_DIR_LEFT, 10, 100);
@@ -246,7 +249,7 @@ public class SelectionGestureView extends FrameLayout {
 					// FIXME: Use config variables
 					
 					// Line automatic selection
-					if (downY-Y < 0)
+					if (mDownY-Y < 0)
 						startAutoSelection(SEL_DIR_DOWN, 1, 700);
 					else
 						startAutoSelection(SEL_DIR_UP, 1, 700);
@@ -273,24 +276,44 @@ public class SelectionGestureView extends FrameLayout {
 		}
 		else if (action == MotionEvent.ACTION_UP)
 		{	
-			downX = -1;			
-			downY = -1;
+			mDownX = -1;			
+			mDownY = -1;
+			
+			boolean stop_selection = true;
+			
 			if (selectionType == null)
 			{
-				/* FIXME: Run default action */
 				mFloatingCursor.executeSelectionCommand(WebView.STOP_SELECTION);
-				mFloatingCursor.executeSelectionCommand(WebView.SELECT_WORD_OR_LINK);
+
+				if (eventTime-mStartEventTime >= 3000)
+				{
+					mEventViewer.setText("Long press detected.");
+					mFloatingCursor.executeSelectionCommand(WebView.SELECT_WORD_OR_LINK);
+				}
+				else
+				{
+					if (!mFloatingCursor.defaultCommand())
+					{
+						mEventViewer.setText("Executing link ...");
+						stop_selection = false;
+					}
+					else
+						mFloatingCursor.executeSelectionCommand(WebView.SELECT_WORD_OR_LINK);
+				}
 			}
 			else
 				stopAutoSelection();
 
-			mEventViewer.setText("Selection gesture done: Selecting ...");
-			mFloatingCursor.stopSelectionCommand();
+			if (stop_selection)
+			{
+				mEventViewer.setText("Selection gesture done: Selecting ...");
+				mFloatingCursor.stopSelectionCommand();
+			}
 		}
 		else if (action == MotionEvent.ACTION_CANCEL)
 		{
-			downX = -1;
-			downY = -1;
+			mDownX = -1;
+			mDownY = -1;
 		}
 
 		return true;
