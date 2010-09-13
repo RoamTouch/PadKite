@@ -520,7 +520,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 			if(currentMenu.getVisibility() == INVISIBLE){
 				menuAnimation = new AlphaAnimation(0.0f, 1.0f);
-				menuAnimation.setDuration(1000);
+				menuAnimation.setDuration(300);
 				menuAnimation.setAnimationListener(new AnimationListener(){
 
 					public void onAnimationEnd(Animation animation) {
@@ -539,7 +539,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 			else if(currentMenu.getVisibility() == VISIBLE){
 				menuAnimation = new AlphaAnimation(1.0f, 0.0f);
-				menuAnimation.setDuration(1000);
+				menuAnimation.setDuration(300);
 				menuAnimation.setAnimationListener(new AnimationListener(){
 
 					public void onAnimationEnd(Animation animation) {
