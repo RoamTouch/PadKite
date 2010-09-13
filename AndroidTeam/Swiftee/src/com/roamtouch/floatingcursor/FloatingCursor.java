@@ -1,5 +1,10 @@
 package com.roamtouch.floatingcursor;
 
+import org.metalev.multitouch.controller.MultiTouchController;
+import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCanvas;
+import org.metalev.multitouch.controller.MultiTouchController.PointInfo;
+import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,6 +39,7 @@ import android.widget.ImageView;
 import android.widget.Scroller;
 
 import com.roamtouch.view.EventViewerArea;
+import com.roamtouch.view.SelectionGestureView;
 import com.roamtouch.view.TopBarArea;
 import com.roamtouch.menu.CircularLayout;
 import com.roamtouch.menu.MainMenu;
@@ -45,9 +51,10 @@ import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
 
 
-public class FloatingCursor extends FrameLayout {
+public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanvas<FloatingCursor.FCObj> {
 	
 	
+
 	 	private BrowserActivity mParent;
 	 	
 		private int w = 0, h = 0;
@@ -927,7 +934,7 @@ public class FloatingCursor extends FrameLayout {
 		public boolean dispatchTouchEventFC(MotionEvent event) {
 			
 			final int action = event.getAction() & MotionEvent.ACTION_MASK;
-			 
+			
 			boolean status;
 		
 			int X,Y;		
@@ -948,9 +955,18 @@ public class FloatingCursor extends FrameLayout {
 				
 			if (mIsDisabled)
 				return false;  
-			
+
 			fcX = -(int)pointer.getScrollX() + -(int)getScrollX() + w/2;
 			fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;
+
+			// MT stuff
+			
+			status = multiTouchController.onTouchEvent(event);
+			
+			if (status)
+				return true; // Got handled by MT Controller
+			
+			// MT stuff end
 			
 			if (action == MotionEvent.ACTION_DOWN)
 			{
@@ -1138,7 +1154,9 @@ public class FloatingCursor extends FrameLayout {
 				if(fcX>BrowserActivity.DEVICE_WIDTH && fcX<mContentWidth)
 					scrollWebView(10, 0);
 			}
-			if(action == MotionEvent.ACTION_POINTER_DOWN){
+			/*
+			 
+			 if(action == MotionEvent.ACTION_POINTER_DOWN){
 				
 				stopHitTest(fcX,fcY,false);
 				startSelection(fcX, fcY);
@@ -1146,6 +1164,8 @@ public class FloatingCursor extends FrameLayout {
 			if(action == MotionEvent.ACTION_POINTER_UP){
 				checkClickSelection(fcX, fcY);
 			}
+			
+			*/
 			/* FC: Drag + Fling Support */
 			
 			/* If there is a second finger press, ignore */
@@ -1157,8 +1177,9 @@ public class FloatingCursor extends FrameLayout {
 				Toast.makeText(mContext, "0: " + event.getX(0) + "," + event.getY(0) + "- 1: " +  event.getX(1) + "," + event.getY(1), Toast.LENGTH_SHORT).show();
 			}*/
 			
+			
 			status = onInterceptTouchEventFC(event);
-		
+			
 			if (status == false)
 				return true;
 				
@@ -1332,4 +1353,60 @@ public class FloatingCursor extends FrameLayout {
 				fcProgressBar.enable();				
 			}
 		}
+		
+		/* MT Stuff */
+		
+		class FCObj {
+			
+		}
+		
+		private MultiTouchController<FCObj> multiTouchController = new MultiTouchController<FCObj>(this, false);
+
+		FCObj fc_obj = new FCObj();
+
+		public FCObj getDraggableObjectAtPoint(PointInfo touchPoint) {
+//			Log.w("FC-MT", "getDraggableObjectAtPoint");
+
+			// Dummy obj for now, as it can be done with full screen.
+			// Could later be used for different pinch zooms.
+			return fc_obj;
+		}
+
+		public void getPositionAndScale(FCObj obj,
+				PositionAndScale objPosAndScaleOut) {
+			//Log.w("FC-MT", "getPositionAndScale");
+			// We fill good data, but we don't need that.
+			objPosAndScaleOut.set(fcX, fcY, false, 1.0f, false, 1.0f, 1.0f, false, 0.0f);
+		}
+
+		public void selectObject(FCObj obj, PointInfo touchPoint) {
+			float[] xs = touchPoint.getXs();
+			float[] ys = touchPoint.getYs();
+
+			Log.w("FC-MT", "selectObject: " + touchPoint.getAction() + " -> " + xs[0] + "," + ys[0] + " " + xs[1] + "," + ys[1] + " = " + touchPoint.getEventTime());
+			
+			if (mSelectionGestures != null)
+				mSelectionGestures.dispatchTouchEventMT(touchPoint, touchPoint.isDown()?MotionEvent.ACTION_DOWN:MotionEvent.ACTION_UP);
+		}
+
+		public boolean setPositionAndScale(FCObj obj,
+				PositionAndScale newObjPosAndScale, PointInfo touchPoint) {
+			
+			float[] xs = touchPoint.getXs();
+			float[] ys = touchPoint.getYs();
+
+			Log.w("FC-MT", "setPositionAndScale: " + touchPoint.getAction() + " -> " + xs[0] + "," + ys[0] + " " + xs[1] + "," + ys[1] + " = " + touchPoint.getEventTime());
+
+			if (mSelectionGestures != null)
+				mSelectionGestures.dispatchTouchEventMT(touchPoint, MotionEvent.ACTION_MOVE);
+			
+			return false;
+		}
+		
+		SelectionGestureView mSelectionGestures = null;
+		
+		public void setSelectionGesture(SelectionGestureView v) {
+			mSelectionGestures = v;
+		}
+
 }

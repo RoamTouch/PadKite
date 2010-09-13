@@ -1,10 +1,16 @@
 package com.roamtouch.view;
 
+import org.metalev.multitouch.controller.MultiTouchController.PointInfo;
+
 import roamtouch.webkit.WebView;
 
 import com.roamtouch.floatingcursor.FloatingCursor;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -17,8 +23,13 @@ public class SelectionGestureView extends FrameLayout {
 
 	protected EventViewerArea mEventViewer;
 
-	Handler mHandler;
-	Runnable mRunnable;
+	private Handler mHandler;
+	private Runnable mRunnable;
+	
+	private Paint mLinePaintTouchPointCircle = new Paint();
+	
+	private boolean mShowDebugInfo = true;
+
 	
 	protected void init()
 	{
@@ -31,6 +42,11 @@ public class SelectionGestureView extends FrameLayout {
 					mHandler.postDelayed(this, delayMillis);
 			}
 		};
+		
+		mLinePaintTouchPointCircle.setColor(Color.YELLOW);
+		mLinePaintTouchPointCircle.setStrokeWidth(5);
+		mLinePaintTouchPointCircle.setStyle(Style.STROKE);
+		mLinePaintTouchPointCircle.setAntiAlias(true);
 	}
 	
 	public SelectionGestureView(Context context, AttributeSet attrs,
@@ -49,11 +65,35 @@ public class SelectionGestureView extends FrameLayout {
 		init();
 	}
 	
+	@Override
+	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
+	
+		if (mShowDebugInfo)
+			drawMultitouchDebugMarks(canvas);
+	}
+	
+	private PointInfo currTouchPoint = new PointInfo();
+	
+	private void drawMultitouchDebugMarks(Canvas canvas) {
+		if (currTouchPoint.isDown()) {
+			float[] xs = currTouchPoint.getXs();
+			float[] ys = currTouchPoint.getYs();
+			float[] pressures = currTouchPoint.getPressures();
+			int numPoints = Math.min(currTouchPoint.getNumTouchPoints(), 2);
+			for (int i = 0; i < numPoints; i++)
+				canvas.drawCircle(xs[i], ys[i], 50 + pressures[i] * 80, mLinePaintTouchPointCircle);
+			if (numPoints == 2)
+				canvas.drawLine(xs[0], ys[0], xs[1], ys[1], mLinePaintTouchPointCircle);
+		}
+	}
+	
 	// Getter / Setter functions
 	
 	public void setFloatingCursor(FloatingCursor floatingCursor)
 	{
 		mFloatingCursor = floatingCursor;
+		mFloatingCursor.setSelectionGesture(this);
 	}
 	
 	public FloatingCursor getFloatingCursor()
@@ -147,17 +187,27 @@ public class SelectionGestureView extends FrameLayout {
 		
 		if (!this.isEnabled())
 			return super.dispatchTouchEvent(event);
-
-		// We do assume that we are only enabled when we are over text
-
-		float X = event.getX();
-		float Y = event.getY();
 		
-		// FIXME: Check pointer count thingies ...
+		return dispatchTouchEventFC(event.getX(), event.getY(), event.getAction(), event.getEventTime());
+	}
+	
+	public boolean dispatchTouchEventMT(PointInfo touchPoint, int action) {
 		
+		float[] xs = touchPoint.getXs();
+		float[] ys = touchPoint.getYs();
+
+		currTouchPoint.set(touchPoint);
+		invalidate();
+		
+		return dispatchTouchEventFC(xs[1], ys[1], action, touchPoint.getEventTime());
+	}
+
+		
+	public boolean dispatchTouchEventFC(float X, float Y, int action, long eventTime) {
+
 		//mEventViewer.setText("downX:" + downX + " downY:" + downY + " X:" + event.getX() + " Y:" + event.getY() + " idx:" + event.getPointerCount());
 		
-		if (event.getAction() == MotionEvent.ACTION_DOWN)
+		if (action == MotionEvent.ACTION_DOWN)
 		{
 			downX = X;
 			downY = Y;
@@ -165,7 +215,7 @@ public class SelectionGestureView extends FrameLayout {
 			mEventViewer.setText("Starting selection gesture ...");
 			mFloatingCursor.startSelectionCommand();
 		}
-		else if (event.getAction() == MotionEvent.ACTION_MOVE)
+		else if (action == MotionEvent.ACTION_MOVE)
 		{
 			if (selectionType == null)
 			{
@@ -221,7 +271,7 @@ public class SelectionGestureView extends FrameLayout {
 				}
 			}
 		}
-		else if (event.getAction() == MotionEvent.ACTION_UP)
+		else if (action == MotionEvent.ACTION_UP)
 		{	
 			downX = -1;			
 			downY = -1;
@@ -237,7 +287,7 @@ public class SelectionGestureView extends FrameLayout {
 			mEventViewer.setText("Selection gesture done: Selecting ...");
 			mFloatingCursor.stopSelectionCommand();
 		}
-		else if (event.getAction() == MotionEvent.ACTION_CANCEL)
+		else if (action == MotionEvent.ACTION_CANCEL)
 		{
 			downX = -1;
 			downY = -1;
