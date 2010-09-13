@@ -305,19 +305,21 @@ public class FloatingCursor extends FrameLayout {
     	
 			/* ****************** CHANGED CODE *******************/
 			// FIXME: Remove touch point -> own function
-			//removeTouchPoint();
+			removeTouchPoint();
 			//pointer.setImageResource(R.drawable.no_target_cursor);
 			//cancelSelection();
 			
 			// FIXME: Change so that Size of WebView is adjusted instead of being overlayed
-			int hd_1 = 0;
-			int hd_2 = 40;
+			int r = fcPointerView.getRadius();
+			int hd_1 = r;
+			int hd_2 = 50 + r;
+
 //			if (currentMenu.getVisibility() == VISIBLE)
 	//			hd_2 = -80;
 
 			// FIXME
 			/* ****************** CHANGED CODE END *******************/
-			mScroller.fling(getScrollX(), getScrollY(), velocityX, velocityY, -w/2, w/2, -h/2 + hd_1, h/2 + hd_2);
+			mScroller.fling(getScrollX(), getScrollY(), velocityX, velocityY, -w/2 + r , w/2 - r, -h/2 + hd_1, h/2 - hd_2);
 			invalidate();
 		}
     
