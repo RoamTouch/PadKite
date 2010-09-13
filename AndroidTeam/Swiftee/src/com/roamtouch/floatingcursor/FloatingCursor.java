@@ -58,7 +58,7 @@ public class FloatingCursor extends FrameLayout {
 		private final float RADIUS_DIP = 120; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
 		private final float scale = getContext().getResources().getDisplayMetrics().density;
 		private final int RADIUS = (int) (RADIUS_DIP * scale + 0.5f); //Converting to Pixel
-		
+		private final int INNER_RADIUS = (int) (RADIUS*0.3f);
 			
 	/**
 	 * 	FloatingCursor child views
@@ -356,7 +356,7 @@ public class FloatingCursor extends FrameLayout {
 			removeTouchPoint();
 		
 			fcPointerView = new FloatingCursorInnerView(getContext());
-			fcPointerView.setRadius((int)(RADIUS*0.3f));
+			fcPointerView.setRadius(INNER_RADIUS);
 			fcPointerView.setQuality(0);
 			
 		
