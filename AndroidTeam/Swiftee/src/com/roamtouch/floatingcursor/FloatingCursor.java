@@ -84,6 +84,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	 *  integer showing which menu among main,settings and tabs is currently displayed 
 	 */
 		private ViewGroup currentMenu;
+
 		
 		private boolean mIsDisabled = false;
 		
@@ -152,7 +153,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
 			mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
 		}
-   
+		
 		public boolean onInterceptTouchEventFC(MotionEvent ev) {
 			/*
 			 * This method JUST determines whether we want to intercept the motion.
@@ -277,11 +278,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
                 final int deltaY = (int) (mLastMotionY - y);
                 final int deltaX = (int) (mLastMotionX - x);
 
-                mLastMotionY = y;
-                mLastMotionX = x;
+                if (Math.abs(deltaX) > 1 || Math.abs(deltaY) > 1)
+                {                	
+                	mLastMotionY = y;
+                	mLastMotionX = x;
  
-                scrollBy(deltaX, deltaY);
-
+                	scrollBy(deltaX, deltaY);
+                }
+                
                 break;
             case MotionEvent.ACTION_UP:
                 final VelocityTracker velocityTracker = mVelocityTracker;
