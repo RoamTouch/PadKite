@@ -1203,19 +1203,20 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				else if(X+r > BrowserActivity.DEVICE_WIDTH && X < mContentWidth)
 					scrollWebView(10, 0);
 				
-				/*
 				if((fcX-r) <= 0 && fcX > 0)
 					scrollWebView(-10, 0);
 				else if ((X-r) <= 0 && X > 0)
 					scrollWebView(-10, 0);
-*/
 				
 				if((fcY+r) > BrowserActivity.DEVICE_HEIGHT && fcY<mContentHeight)
 					scrollWebView(10, 1);
 				else if(Y+r > BrowserActivity.DEVICE_HEIGHT && X < mContentHeight)
 					scrollWebView(10, 1);
 
-				
+				if((fcY-r) <= 0 && fcY > 0)
+					scrollWebView(-10, 1);
+				else if ((Y-r) <= 0 && Y > 0)
+					scrollWebView(-10, 1);
 			}
 			/*
 			 
