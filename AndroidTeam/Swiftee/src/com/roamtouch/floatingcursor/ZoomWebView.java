@@ -40,7 +40,7 @@ public class ZoomWebView extends ViewGroup{
 		
 		public void setFCRadius(int r){
 			fcRadius = r;
-			BUTTON_RADIUS = fcRadius / 4;
+			BUTTON_RADIUS = fcRadius / 3;
 			inR = fcRadius-BUTTON_RADIUS - 2; //-5 ;
 		}
 		public void setFloatingCursor(FloatingCursor floatingCursor){
