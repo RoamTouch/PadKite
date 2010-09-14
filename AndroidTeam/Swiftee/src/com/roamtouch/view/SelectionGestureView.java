@@ -112,9 +112,9 @@ public class SelectionGestureView extends FrameLayout {
 	
 	protected long mStartEventTime = 0;
 	
-	double TOUCH_TOLERANCE = 32.0;
+	double TOUCH_TOLERANCE = 64.0;
 
-	enum SelectionTypes { Paragraph, TextAutomatic, LineAutomatic };
+	enum SelectionTypes { Paragraph, TextAutomatic, LineAutomatic, LongTouch };
 	
 	SelectionTypes selectionType = null;
 	
@@ -132,6 +132,8 @@ public class SelectionGestureView extends FrameLayout {
 	{
 		if (mAutoSelectionStarted)
 			return;
+		mFloatingCursor.onAutoSelectionStart();
+
 		mAutoSelectionStarted = true;
 		mSelectionDirection = selectionDir;
 		mSteps = steps;
@@ -182,6 +184,7 @@ public class SelectionGestureView extends FrameLayout {
 		{
 			; // Do nothing
 		}
+		mFloatingCursor.onAutoSelectionEnd();
 	}
 
 	@Override
@@ -224,6 +227,12 @@ public class SelectionGestureView extends FrameLayout {
 			{
 				float deltaX = Math.abs(X - mDownX);
 				float deltaY = Math.abs(Y - mDownY);
+				
+				if (eventTime-mStartEventTime >= 1000)
+				{
+					selectionType = SelectionTypes.LongTouch;
+					mFloatingCursor.onLongTouch();
+				}
 
 				if (deltaX >= TOUCH_TOLERANCE && deltaY >= TOUCH_TOLERANCE)
 				{
@@ -271,6 +280,7 @@ public class SelectionGestureView extends FrameLayout {
 					case LineAutomatic:
 						//mFloatingCursor.executeSelectionCommand(WebView.EXTEND_SELECTION_DOWN);
 						break;
+					case LongTouch:
 				}
 			}
 		}
@@ -279,36 +289,19 @@ public class SelectionGestureView extends FrameLayout {
 			mDownX = -1;			
 			mDownY = -1;
 			
-			boolean stop_selection = true;
-			
 			if (selectionType == null)
 			{
 				mFloatingCursor.executeSelectionCommand(WebView.STOP_SELECTION);
 
-				if (eventTime-mStartEventTime >= 3000)
-				{
-					mEventViewer.setText("Long press detected.");
-					mFloatingCursor.executeSelectionCommand(WebView.SELECT_WORD_OR_LINK);
-				}
-				else
-				{
-					if (!mFloatingCursor.defaultCommand())
-					{
-						mEventViewer.setText("Executing link ...");
-						stop_selection = false;
-					}
-					else
-						mFloatingCursor.executeSelectionCommand(WebView.SELECT_WORD_OR_LINK);
-				}
+				mFloatingCursor.onClick();
 			}
+			else if (selectionType == SelectionTypes.LongTouch)
+				mFloatingCursor.onLongTouchUp();
 			else
 				stopAutoSelection();
 
-			if (stop_selection)
-			{
-				mEventViewer.setText("Selection gesture done: Selecting ...");
-				mFloatingCursor.stopSelectionCommand();
-			}
+//				mEventViewer.setText("Selection gesture done: Selecting ...");
+//				mFloatingCursor.stopSelectionCommand();
 		}
 		else if (action == MotionEvent.ACTION_CANCEL)
 		{
