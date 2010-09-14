@@ -738,7 +738,17 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			pointer.setImageResource(R.drawable.no_target_cursor);
 			removeTouchPoint();
 		}
-		 
+		
+		public void enableGestures()
+		{
+			mGesturesEnabled = true;
+		}
+
+		public void disableGestures()
+		{
+			mGesturesEnabled = false;
+		}
+
 		/* public interface */
 		
 		public void removeSelection()
