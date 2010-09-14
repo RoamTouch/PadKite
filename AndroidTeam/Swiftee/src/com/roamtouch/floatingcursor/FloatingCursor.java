@@ -5,7 +5,10 @@ import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCa
 import org.metalev.multitouch.controller.MultiTouchController.PointInfo;
 import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -15,11 +18,13 @@ import android.graphics.Rect;
 import android.graphics.Region;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -34,9 +39,14 @@ import roamtouch.webkit.WebVideoInfo;
 import roamtouch.webkit.WebView;
 import roamtouch.webkit.WebViewClient;
 //import roamtouch.webkit.WebView.HitTestResult;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Scroller;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SelectionGestureView;
@@ -370,7 +380,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 			fcPointerView = new FloatingCursorInnerView(getContext());
 			fcPointerView.setRadius(INNER_RADIUS);
-			fcPointerView.setQuality(0);
+//			fcPointerView.setQuality(0);
 			
 		
 			fcProgressBar=new CircularProgressBar(getContext(),(int)(RADIUS*0.3f)+20);
@@ -854,17 +864,21 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 		public void onTouchUp()
 		{
-			if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE){
+/*			if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE){
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 				//pointer.setImageResource(R.drawable.address_bar_cursor);
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
 			}
-			
+*/			
 			if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 				pointer.setImageResource(R.drawable.address_bar_cursor);
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);
+			}
+			else{
+				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
+				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
 			}
 		}
 		
@@ -1403,6 +1417,234 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	
 		public class WebClient extends WebChromeClient
 		{
+			 // Class used to use a dropdown for a <select> element
+		    private class InvokeListBox implements Runnable {
+		        // Whether the listbox allows multiple selection.
+		        private boolean     mMultiple;
+		        // Passed in to a list with multiple selection to tell
+		        // which items are selected.
+		        private int[]       mSelectedArray;
+		        // Passed in to a list with single selection to tell
+		        // where the initial selection is.
+		        private int         mSelection;
+
+		        private Container[] mContainers;
+
+		        // Need these to provide stable ids to my ArrayAdapter,
+		        // which normally does not have stable ids. (Bug 1250098)
+		        private class Container extends Object {
+		            String  mString;
+		            boolean mEnabled;
+		            int     mId;
+
+		            public String toString() {
+		                return mString;
+		            }
+		        }
+
+		        /**
+		         *  Subclass ArrayAdapter so we can disable OptionGroupLabels,
+		         *  and allow filtering.
+		         */
+		        private class MyArrayListAdapter extends ArrayAdapter<Container> {
+		            public MyArrayListAdapter(Context context, Container[] objects, boolean multiple) {
+		                super(context,
+		                            multiple ? R.layout.select_dialog_multichoice :
+		                            R.layout.select_dialog_singlechoice,
+		                            objects);
+		            }
+
+		            @Override
+		            public boolean hasStableIds() {
+		                // AdapterView's onChanged method uses this to determine whether
+		                // to restore the old state.  Return false so that the old (out
+		                // of date) state does not replace the new, valid state.
+		                return false;
+		            }
+
+		            private Container item(int position) {
+		                if (position < 0 || position >= getCount()) {
+		                    return null;
+		                }
+		                return (Container) getItem(position);
+		            }
+
+		            @Override
+		            public long getItemId(int position) {
+		                Container item = item(position);
+		                if (item == null) {
+		                    return -1;
+		                }
+		                return item.mId;
+		            }
+
+		            @Override
+		            public boolean areAllItemsEnabled() {
+		                return false;
+		            }
+
+		            @Override
+		            public boolean isEnabled(int position) {
+		                Container item = item(position);
+		                if (item == null) {
+		                    return false;
+		                }
+		                return item.mEnabled;
+		            }
+		        }
+
+		        private InvokeListBox(String[] array,
+		                boolean[] enabled, int[] selected) {
+		            mMultiple = true;
+		            mSelectedArray = selected;
+
+		            int length = array.length;
+		            mContainers = new Container[length];
+		            for (int i = 0; i < length; i++) {
+		                mContainers[i] = new Container();
+		                mContainers[i].mString = array[i];
+		                mContainers[i].mEnabled = enabled[i];
+		                mContainers[i].mId = i;
+		            }
+		        }
+
+		        private InvokeListBox(String[] array, boolean[] enabled, int
+		                selection) {
+		            mSelection = selection;
+		            mMultiple = false;
+
+		            int length = array.length;
+		            mContainers = new Container[length];
+		            for (int i = 0; i < length; i++) {
+		                mContainers[i] = new Container();
+		                mContainers[i].mString = array[i];
+		                mContainers[i].mEnabled = enabled[i];
+		                mContainers[i].mId = i;
+		            }
+		        }
+
+		        /*
+		         * Whenever the data set changes due to filtering, this class ensures
+		         * that the checked item remains checked.
+		         */
+		        private class SingleDataSetObserver extends DataSetObserver {
+		            private long        mCheckedId;
+		            private ListView    mListView;
+		            private Adapter     mAdapter;
+
+		            /*
+		             * Create a new observer.
+		             * @param id The ID of the item to keep checked.
+		             * @param l ListView for getting and clearing the checked states
+		             * @param a Adapter for getting the IDs
+		             */
+		            public SingleDataSetObserver(long id, ListView l, Adapter a) {
+		                mCheckedId = id;
+		                mListView = l;
+		                mAdapter = a;
+		            }
+
+		            public void onChanged() {
+		                // The filter may have changed which item is checked.  Find the
+		                // item that the ListView thinks is checked.
+		                int position = mListView.getCheckedItemPosition();
+		                long id = mAdapter.getItemId(position);
+		                if (mCheckedId != id) {
+		                    // Clear the ListView's idea of the checked item, since
+		                    // it is incorrect
+		                    mListView.clearChoices();
+		                    // Search for mCheckedId.  If it is in the filtered list,
+		                    // mark it as checked
+		                    int count = mAdapter.getCount();
+		                    for (int i = 0; i < count; i++) {
+		                        if (mAdapter.getItemId(i) == mCheckedId) {
+		                            mListView.setItemChecked(i, true);
+		                            break;
+		                        }
+		                    }
+		                }
+		            }
+
+		            public void onInvalidate() {}
+		        }
+
+		        public void run() {
+		        	
+		            Looper.prepare();
+		        	
+		            final ListView listView = (ListView) LayoutInflater.from(mContext)
+		                    .inflate(R.layout.select_dialog, null);
+		            final MyArrayListAdapter adapter = new
+		                    MyArrayListAdapter(mContext, mContainers, mMultiple);
+		            AlertDialog.Builder b = new AlertDialog.Builder(mContext)
+		                    .setView(listView).setCancelable(true)
+		                    .setInverseBackgroundForced(true);
+
+		            if (mMultiple) {
+		                b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+		                    public void onClick(DialogInterface dialog, int which) {
+		                    	mWebView.setListBoxChoices(listView.getCheckedItemPositions(), adapter.getCount(), false);
+		                        /*mWebViewCore.sendMessage(
+		                                EventHub.LISTBOX_CHOICES,
+		                                adapter.getCount(), 0,
+		                                listView.getCheckedItemPositions());*/
+		                    }});
+		                b.setNegativeButton(android.R.string.cancel,
+		                        new DialogInterface.OnClickListener() {
+		                    public void onClick(DialogInterface dialog, int which) {
+		                    	mWebView.setListBoxChoice(-2, true);
+		                        /*mWebViewCore.sendMessage(
+		                                EventHub.SINGLE_LISTBOX_CHOICE, -2, 0);*/
+		                }});
+		            }
+		            final AlertDialog dialog = b.create();
+		            listView.setAdapter(adapter);
+		            listView.setFocusableInTouchMode(true);
+		            // There is a bug (1250103) where the checks in a ListView with
+		            // multiple items selected are associated with the positions, not
+		            // the ids, so the items do not properly retain their checks when
+		            // filtered.  Do not allow filtering on multiple lists until
+		            // that bug is fixed.
+
+		            listView.setTextFilterEnabled(!mMultiple);
+		            if (mMultiple) {
+		                listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		                int length = mSelectedArray.length;
+		                for (int i = 0; i < length; i++) {
+		                    listView.setItemChecked(mSelectedArray[i], true);
+		                }
+		            } else {
+		                listView.setOnItemClickListener(new OnItemClickListener() {
+		                    public void onItemClick(AdapterView parent, View v,
+		                            int position, long id) {
+		                    	mWebView.setListBoxChoice((int)id, false);
+		                        /*mWebViewCore.sendMessage(
+		                                EventHub.SINGLE_LISTBOX_CHOICE, (int)id, 0);*/
+		                        dialog.dismiss();
+		                    }
+		                });
+		                if (mSelection != -1) {
+		                    listView.setSelection(mSelection);
+		                    listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		                    listView.setItemChecked(mSelection, true);
+		                    DataSetObserver observer = new SingleDataSetObserver(
+		                            adapter.getItemId(mSelection), listView, adapter);
+		                    adapter.registerDataSetObserver(observer);
+		                }
+		            }
+		            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+		                public void onCancel(DialogInterface dialog) {
+	                    	mWebView.setListBoxChoice(-2, true);
+		                    /*mWebViewCore.sendMessage(
+		                                EventHub.SINGLE_LISTBOX_CHOICE, -2, 0);*/
+		                }
+		            });
+		            dialog.show();
+		            
+		            Looper.loop();
+		            
+		        }
+		    }
 			public void onProgressChanged  (WebView  view, int newProgress) {
 				fcProgressBar.setProgress(newProgress);
 			}
@@ -1420,6 +1662,15 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	        public void onRequestFocus(WebView view) {
 				Log.d("INSIDE ONREQUEST FOCUS","--------------------------");
 			}
+			
+			//@Override
+			void onListBoxRequest(String[] array, boolean[]enabledArray, int[] selectedArray){
+				new Thread(new InvokeListBox(array, enabledArray, selectedArray)).start();
+			}
+			// @Override
+		    void onListBoxRequest(String[] array, boolean[]enabledArray, int selection) {
+		    	new Thread(new InvokeListBox(array, enabledArray, selection)).start();
+		    }	
 		}
 		
 		private class GestureWebViewClient extends WebViewClient {

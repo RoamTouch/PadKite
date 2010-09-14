@@ -3,12 +3,15 @@ package com.roamtouch.view;
 import java.util.ArrayList;
 import java.util.Set;
 
+import com.roamtouch.menu.MenuButton;
+import com.roamtouch.settings.PracticeGesture;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 
 import android.gesture.Gesture;
 import android.gesture.GestureLibrary;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -28,6 +31,7 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 	private GestureLibrary mLibrary;
 	private Context mContext;
 	private BrowserActivity parent;
+	private PracticeGesture gParent;
 	private int gestureCount;
 	private Object str[];
 	
@@ -102,12 +106,20 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 		}
 	}
 	public void onClick(View v) {
+		if(parent!=null){
 			ArrayList<Gesture> list = mLibrary.getGestures(str[v.getId()].toString());			
 			parent.drawGestureToEducate(list.get(0), str[v.getId()].toString());
+			return;
+		}
+		if(gParent != null){
 			
+		}
 	}
-	public void setParent(BrowserActivity parent) {
-		this.parent = parent;
+	public void setParent(Activity parent) {
+		if (parent instanceof BrowserActivity)
+			this.parent = (BrowserActivity) parent;		
+		else if(parent instanceof PracticeGesture)	
+			this.gParent = (PracticeGesture)parent;
 	}
 	
 }
