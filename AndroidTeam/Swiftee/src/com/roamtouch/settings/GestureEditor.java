@@ -23,12 +23,15 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class GestureEditor extends Activity implements OnItemClickListener{
 
-
+	boolean isForPracticeGesture;
+	
 	  /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     	
+        isForPracticeGesture = getIntent().getBooleanExtra("isForPracticeGesture", false);
+        
         setContentView(R.layout.gesture_editor);
         ListView list = (ListView) this.findViewById(R.id.gesturesList);
         list.setOnItemClickListener(this);
@@ -116,9 +119,17 @@ public class GestureEditor extends Activity implements OnItemClickListener{
 
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		if(position!=0 && position!=6){
-			Intent i = new Intent(this,GesturesListActivity.class);
-			i.putExtra("Gesture_Category", position);
-			this.startActivity(i);
+			if(isForPracticeGesture){
+				Intent i = new Intent();
+				i.putExtra("Gesture_Category", position);
+				setResult(1, i);
+				finish();
+			}
+			else{
+				Intent i = new Intent(this,GesturesListActivity.class);
+				i.putExtra("Gesture_Category", position);
+				this.startActivity(i);
+			}
 		}
 	}
 

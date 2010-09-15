@@ -166,6 +166,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		mTopBarArea.setWebView(webView);
 */		
 		appState = ((SwifteeApplication)getApplicationContext());
+		
+		//This is a dummy user entry...neeed to remove after
+		appState.getDatabase().registerUser("dummy", "dummy", "dummy@example.com");
     }
     
 /*    public void setWebView(WebView wv){

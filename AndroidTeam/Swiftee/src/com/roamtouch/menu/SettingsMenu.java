@@ -3,6 +3,7 @@ package com.roamtouch.menu;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.settings.GestureEditor;
 import com.roamtouch.settings.MiscListActivity;
+import com.roamtouch.settings.PracticeGesture;
 import com.roamtouch.settings.RegisterActivity;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
@@ -169,7 +170,9 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 				break;
 			
 			//Practice gesture	
-			case practice_gesture:				
+			case practice_gesture:		
+				i = new Intent(mParent,PracticeGesture.class);
+				mParent.startActivity(i);
 				break;
 
 			case none:

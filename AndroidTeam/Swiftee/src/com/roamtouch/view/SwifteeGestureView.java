@@ -57,7 +57,7 @@ public class SwifteeGestureView extends GestureOverlayView{
 				count++;
 				invalidate();
 				if(count<l){
-					handler.postDelayed(this ,70);
+					handler.postDelayed(this ,40);
 				}
 				else{
 					//Toast.makeText(context, "Gesture "+s+" done" , Toast.LENGTH_SHORT).show();

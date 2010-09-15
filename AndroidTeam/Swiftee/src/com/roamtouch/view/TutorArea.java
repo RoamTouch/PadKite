@@ -92,6 +92,10 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 		
 		LayoutParams params=new LayoutParams(125,LinearLayout.LayoutParams.FILL_PARENT);
 		for(int i=0;i<gestureCount;i++){
+			
+			if(str[i].toString().equals("Buzz") || str[i].toString().equals("Information") || str[i].toString().equals("Related search"))
+				continue;
+			
 			Button b=new Button(mContext);
 			b.setId(i);
 			b.setBackgroundResource(R.drawable.tutor);

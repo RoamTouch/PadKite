@@ -23,7 +23,9 @@ enum MainMenuFunctions {
 	none,
 	settings,
 	refresh,
+	forward,
 	stop,
+	backward,
 	zoom,
 	find_text,
 	windows,
@@ -127,6 +129,13 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				mFloatingCursor.setEventText("Download");
 				break;	
 
+			case forward:
+				mFloatingCursor.setEventText("Forward");
+				break;	
+				
+			case backward:
+				mFloatingCursor.setEventText("Backward");
+				break;	
 			default:
 				mFloatingCursor.setEventText("No function defined for: " + b.getFunction());
 				break;
@@ -178,16 +187,15 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				mParent.setEventViewerMode(EventViewerArea.WINDOWS_MODE);
 				break;
 			
-			//Bookmark	
-		/*	case 6:
-				this.setVisibility(INVISIBLE);
-				mParent.startGesture(SwifteeApplication.BOOKMARK_GESTURE);
-				break;*/
+			//Backward	
+			case backward:
+				mFloatingCursor.goBackward();
+				break;
 				
-			/*//forward	
-			case 6:
-				mFloatingCursor.setEventText("Forward");
-				break;*/
+			//forward	
+			case forward:
+				mFloatingCursor.goForward();
+				break;
 				
 			//Custom Gesture	
 			case custom_gesture:

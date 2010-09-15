@@ -37,7 +37,7 @@ public class SwifteeApplication extends Application{
 		// FIXME: For now force an update!
 		
 		copyFilestoSdcard("Default Theme", true);
-		copyFilestoSdcard("Gesture Library", false);
+		copyFilestoSdcard("Gesture Library", true);
 	}
 	
 	public void copyFilestoSdcard(String dir, boolean force){

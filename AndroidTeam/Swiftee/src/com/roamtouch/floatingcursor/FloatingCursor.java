@@ -1347,6 +1347,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			return true;
 
 		}
+		public void goBackward(){
+			if(mWebView.canGoBack())
+				mWebView.goBack();
+		}
+		public void goForward(){
+			if(mWebView.canGoForward())
+				mWebView.goForward();
+		}
 		/*
 		 * Circular zoom functions 
 		 * 

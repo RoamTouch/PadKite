@@ -28,6 +28,9 @@ public class PracticeGesture extends Activity {
 		private GestureOverlayView overlay;
 		private String gestureName;
 		private int gestureType;
+		private TutorArea tArea;
+		private GestureLibrary mLibrary;
+		private SwifteeApplication appState;
 		
 		@Override
 		protected void onCreate(Bundle savedInstanceState) {
@@ -44,22 +47,23 @@ public class PracticeGesture extends Activity {
 
 				public void onClick(View v) {
 					Intent i = new Intent(PracticeGesture.this,GestureEditor.class);
-					PracticeGesture.this.startActivity(i);
+					i.putExtra("isForPracticeGesture", true);
+					PracticeGesture.this.startActivityForResult(i, 1);
 				}
 				
 			});
-			TextView t = (TextView) findViewById(R.id.gestureText);
+			TextView t = (TextView) findViewById(R.id.gestureTitle);
 			t.setText("Cursor text gesture");
 			
 			overlay = (GestureOverlayView) findViewById(R.id.gestures_overlay);
 			overlay.addOnGestureListener(new GesturesProcessor());
 
-			SwifteeApplication appState = ((SwifteeApplication)getApplicationContext());
-			GestureLibrary mLibrary = appState.getGestureLibrary(SwifteeApplication.CURSOR_TEXT_GESTURE);
+			appState = ((SwifteeApplication)getApplicationContext());
+			mLibrary = appState.getGestureLibrary(SwifteeApplication.CURSOR_TEXT_GESTURE);
 	    	
 	    	HorizontalScrollView mTutor = (HorizontalScrollView) findViewById(R.id.gestureScrollView);
 					
-	    	TutorArea tArea=(TutorArea)mTutor.getChildAt(0);
+	    	tArea=(TutorArea)mTutor.getChildAt(0);
 			tArea.setGestureLibrary(mLibrary);
 			tArea.setParent(this);
 		}
@@ -118,7 +122,11 @@ public class PracticeGesture extends Activity {
 		
 		@Override
 		 protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-			
+			if(resultCode == 1){
+				int i = data.getIntExtra("Gesture_Category", SwifteeApplication.CURSOR_TEXT_GESTURE);
+				mLibrary = appState.getGestureLibrary(i);
+				tArea.setGestureLibrary(mLibrary);
+			}
 		}
 		
 }

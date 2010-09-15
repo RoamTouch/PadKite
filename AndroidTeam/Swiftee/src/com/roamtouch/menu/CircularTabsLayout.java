@@ -221,8 +221,8 @@ public class CircularTabsLayout extends ViewGroup {
 		}
 		public void setfcRadius(int mfcRadius) {
 			this.mfcRadius = mfcRadius;
-			BUTTON_RADIUS = mfcRadius / 4 - 5;
-			inR = mfcRadius-BUTTON_RADIUS - 6;
+			BUTTON_RADIUS = (int)(mfcRadius / 3.5f);
+			inR = mfcRadius-BUTTON_RADIUS - 2; //-5 ;
 			outR = 2*mfcRadius;
 		}
 
