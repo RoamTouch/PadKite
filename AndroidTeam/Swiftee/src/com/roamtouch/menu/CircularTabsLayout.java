@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -99,8 +100,9 @@ public class CircularTabsLayout extends ViewGroup {
 			setFocusable(true);
 			setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
 			setWillNotDraw(false);
-			mTouchSlop = 3;
-			
+			final ViewConfiguration configuration = ViewConfiguration.get(context);
+			mTouchSlop = configuration.getScaledTouchSlop();
+			  
 			this.context = context;			
 
 			initBG();

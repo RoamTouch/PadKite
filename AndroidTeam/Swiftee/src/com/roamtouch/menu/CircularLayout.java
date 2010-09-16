@@ -120,7 +120,6 @@ public class CircularLayout extends ViewGroup {
 			setWillNotDraw(false);
 			final ViewConfiguration configuration = ViewConfiguration.get(context);
 			mTouchSlop = configuration.getScaledTouchSlop();
-			mTouchSlop = 3;
 			//Log.d("Touch slope", ""+mTouchSlop);
 			mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
 			mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
@@ -138,7 +137,6 @@ public class CircularLayout extends ViewGroup {
 			final ViewConfiguration configuration = ViewConfiguration.get(context);
 			mTouchSlop = configuration.getScaledTouchSlop();
 			//Log.d("Touch slope", ""+mTouchSlop);
-			mTouchSlop = 3;
 			mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
 			mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
 			initBG();
