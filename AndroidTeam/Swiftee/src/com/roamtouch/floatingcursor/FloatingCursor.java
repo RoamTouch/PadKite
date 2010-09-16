@@ -1222,11 +1222,16 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					//Toast.makeText(mContext, "Circular Menu", 100).show();
 					if(isCircularZoomEnabled())
 						disableCircularZoom();
-					toggleMenuVisibility();
+					else
+						toggleMenuVisibility();
+
 					mHandleTouch = false; // FIXME: Change, do Let user drag and fling menu
 					//return true;
 				}
-				
+				else if(isCircularZoomEnabled()){
+					zoomView.onTouchEvent(event);
+					return true;
+				}
 				else if ((X < CircleX-r || X > CircleX+r || Y < CircleY-r || Y > CircleY+r) && mScroller.isFinished())
 				{	
 					fcView.setVisibility(View.INVISIBLE);
@@ -1466,7 +1471,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				currentMenu.setVisibility(INVISIBLE);
 			}
 			public void disableCircularZoom(){
-				//currentMenu.setVisibility(VISIBLE);
+				currentMenu.setVisibility(VISIBLE);
 				zoomView.setVisibility(INVISIBLE);
 				eventViewer.setText("Circular Zooming disabled");
 			}
