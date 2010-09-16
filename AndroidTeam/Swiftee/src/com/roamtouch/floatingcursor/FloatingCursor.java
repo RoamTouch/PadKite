@@ -521,6 +521,28 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 			
 		}
+
+		protected void checkFCMenuBounds()
+		{
+			final int r = fcView.getRadius();
+
+			int dx = 0;
+			int dy = 0;
+						
+			if (fcX - r < 0)
+				dx = fcX - r;
+			else if (fcX + r > this.w)
+				dx = (fcX + r)-this.w;
+
+			if (fcY - (r + 50) < 0)
+				dy = fcY - (r + 50);
+			else if (fcY + r > this.h)
+				dy = (fcY + r) - this.h;
+			
+			// Abort fling animation
+			mScroller.forceFinished(true);
+			scrollBy(dx, dy);
+		}
 		
 		public boolean isMenuVisible()
 		{
@@ -535,6 +557,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			removeTouchPoint();
 
 			if(currentMenu.getVisibility() == INVISIBLE){
+
+				checkFCMenuBounds();
+				
 				menuAnimation = new AlphaAnimation(0.0f, 1.0f);
 				menuAnimation.setDuration(300);
 				menuAnimation.setAnimationListener(new AnimationListener(){
