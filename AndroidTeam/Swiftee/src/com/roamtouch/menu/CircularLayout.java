@@ -88,10 +88,12 @@ public class CircularLayout extends ViewGroup {
 			m_name = name;
 		}
 		
+		protected MenuBGView menuBackground= null;
+		
 		private void initBG()
 		{
 			// FIXME
-			Bitmap menuBG = BitmapFactory.decodeFile("/sdcard/Swiftee/Default Theme/circle.png");
+			/*Bitmap menuBG = BitmapFactory.decodeFile("/sdcard/Swiftee/Default Theme/circle.png");
 			//Log.d("FormatTest","Resource32: " + menuBG.getConfig());
 
 			ImageView menuBackground = new ImageView(context);
@@ -102,7 +104,9 @@ public class CircularLayout extends ViewGroup {
 			//Drawable drawable32 = menuBackground.getDrawable();
 			//drawable32.setDither(true);
 		
-			menuBackground.setScaleType(ImageView.ScaleType.CENTER); 
+			menuBackground.setScaleType(ImageView.ScaleType.CENTER);*/
+			menuBackground = new MenuBGView(this.context);
+			menuBackground.setRadius(INNER_RADIUS);
 		
 			addView(menuBackground);
 		}		
@@ -196,11 +200,11 @@ public class CircularLayout extends ViewGroup {
 			   cone.setClickable(false);
 		   }
 
-		   ImageView bg = (ImageView)getChildAt(0);
+		  // MenuBGView bg = (MenuBGView)getChildAt(0);
 		   
-		   if (bg.getVisibility() != GONE) {         
-			   bg.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
-			   bg.setClickable(false);
+		   if (menuBackground.getVisibility() != GONE) {         
+			   menuBackground.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
+			   menuBackground.setClickable(false);
 		   }
 		   
 		   for (int i = 1; i < childEndPoint; i++) {
@@ -274,6 +278,7 @@ public class CircularLayout extends ViewGroup {
 			BUTTON_RADIUS = (int)(mfcRadius / 3.25f);
 			inR = mfcRadius-BUTTON_RADIUS - 2; //-5 ;
 			outR = 2*mfcRadius;
+			menuBackground.setRadius(mfcRadius);
 		}
 
 	 public int getfcRadius() {

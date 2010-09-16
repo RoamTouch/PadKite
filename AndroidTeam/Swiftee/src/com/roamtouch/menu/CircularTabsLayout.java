@@ -58,10 +58,24 @@ public class CircularTabsLayout extends ViewGroup {
 		
 		private int activetabIndex = 2;
 		
+		protected MenuBGView menuBackground= null;
+		
+		private String m_name = "Windows";
+		
+		public String getName()
+		{
+			return m_name;
+		}
+		
+		protected void setName(String name)
+		{
+			m_name = name;
+		}
+		
 		private void initBG()
 		{
 			// FIXME
-			Bitmap menuBG = BitmapFactory.decodeFile("/sdcard/Swiftee/Default Theme/circle.png");
+			/*Bitmap menuBG = BitmapFactory.decodeFile("/sdcard/Swiftee/Default Theme/circle.png");
 			//Log.d("FormatTest","Resource32: " + menuBG.getConfig());
 
 			ImageView menuBackground = new ImageView(context);
@@ -72,10 +86,12 @@ public class CircularTabsLayout extends ViewGroup {
 			//Drawable drawable32 = menuBackground.getDrawable();
 			//drawable32.setDither(true);
 		
-			menuBackground.setScaleType(ImageView.ScaleType.CENTER); 
+			menuBackground.setScaleType(ImageView.ScaleType.CENTER);*/
+			menuBackground = new MenuBGView(this.context);
+			menuBackground.setRadius(INNER_RADIUS);
 		
 			addView(menuBackground);
-		}	
+		}		
 		
 		public CircularTabsLayout(Context context) {
 			super(context);
@@ -138,11 +154,9 @@ public class CircularTabsLayout extends ViewGroup {
 		    	cone.setClickable(false);
 		    }
 
-		    ImageView bg = (ImageView)getChildAt(0);
-			   
-			if (bg.getVisibility() != GONE) {         
-				bg.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
-				bg.setClickable(false);
+			if (menuBackground.getVisibility() != GONE) {         
+				menuBackground.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
+				menuBackground.setClickable(false);
 			}
 
 		    for (int i = 2; i < count-childStartPoint; i++) {
@@ -224,6 +238,8 @@ public class CircularTabsLayout extends ViewGroup {
 			BUTTON_RADIUS = (int)(mfcRadius / 3.5f);
 			inR = mfcRadius-BUTTON_RADIUS - 2; //-5 ;
 			outR = 2*mfcRadius;
+			menuBackground.setRadius(mfcRadius);
+
 		}
 
 		public int getfcRadius() {
