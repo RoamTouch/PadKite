@@ -368,7 +368,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         	webView.loadUrl("http://www.wikipedia.com");
         else if ("Picasa".equals(action))
         	webView.loadUrl("http://www.picasa.google.com");
-        else                
+        else if ("Cancel".equals(action))
+			eventViewer.setText("Gesture cancelled.");
+        else  
 			eventViewer.setText("Unrecognized gesture: " + action);
 		stopGesture();
 	}
