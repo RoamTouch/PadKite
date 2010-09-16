@@ -81,7 +81,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	    		}
 	    		else if (floatingCursor.isMenuVisible())
 	    		{
-		    		floatingCursor.toggleMenuVisibility();
+		    		floatingCursor.hideMenuFast();
 	    		}
 	    		else if(mTutor.getVisibility() == View.VISIBLE){
 	    			cancelGesture(true);

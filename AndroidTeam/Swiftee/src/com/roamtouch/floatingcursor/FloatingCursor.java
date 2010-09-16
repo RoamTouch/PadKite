@@ -549,7 +549,24 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			return (currentMenu.getVisibility() == VISIBLE);
 		}
 		
+		public void hideMenuFast() {
+			eventViewer.setMode(EventViewerArea.TEXT_ONLY_MODE);
+			currentMenu.setVisibility(INVISIBLE);
+			currentMenu = fcMainMenu;
+
+			// Reset FC
+			removeTouchPoint();
+		}
+		
+		protected boolean animationLock = false;
+		
 		public void toggleMenuVisibility(){
+			
+			if (animationLock)
+				return;
+			
+			animationLock = true;
+			
 			eventViewer.setMode(EventViewerArea.TEXT_ONLY_MODE);
 			AlphaAnimation menuAnimation;
 			
@@ -561,11 +578,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				checkFCMenuBounds();
 				
 				menuAnimation = new AlphaAnimation(0.0f, 1.0f);
-				menuAnimation.setDuration(300);
+				menuAnimation.setDuration(250);
 				menuAnimation.setAnimationListener(new AnimationListener(){
 
 					public void onAnimationEnd(Animation animation) {
 						currentMenu.setVisibility(VISIBLE);
+						animationLock = false;
 					}
 					public void onAnimationRepeat(Animation animation) {}
 
@@ -584,12 +602,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 			else if(currentMenu.getVisibility() == VISIBLE){
 				menuAnimation = new AlphaAnimation(1.0f, 0.0f);
-				menuAnimation.setDuration(300);
+				menuAnimation.setDuration(250);
 				menuAnimation.setAnimationListener(new AnimationListener(){
 
 					public void onAnimationEnd(Animation animation) {
 						currentMenu.setVisibility(INVISIBLE);
 						currentMenu = fcMainMenu;
+						animationLock = false;
 					}
 					public void onAnimationRepeat(Animation animation) {}
 
@@ -598,6 +617,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				});
 				currentMenu.startAnimation(menuAnimation);
 				vibrator.vibrate(25);
+				eventViewer.setText("");
+
 //				mParent.setTopBarVisibility(INVISIBLE);
 			}		
 		}
