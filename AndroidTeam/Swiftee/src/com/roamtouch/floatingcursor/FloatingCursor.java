@@ -1901,7 +1901,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			float[] xs = touchPoint.getXs();
 			float[] ys = touchPoint.getYs();
 
-			Log.w("FC-MT", "selectObject: " + touchPoint.getAction() + " -> " + xs[0] + "," + ys[0] + " " + xs[1] + "," + ys[1] + " = " + touchPoint.getEventTime());
+			//Log.w("FC-MT", "selectObject: " + touchPoint.getAction() + " -> " + xs[0] + "," + ys[0] + " " + xs[1] + "," + ys[1] + " = " + touchPoint.getEventTime());
 			
 			if (mSelectionGestures != null)
 				mSelectionGestures.dispatchTouchEventMT(touchPoint, touchPoint.isDown()?MotionEvent.ACTION_DOWN:MotionEvent.ACTION_UP);
@@ -1913,7 +1913,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			float[] xs = touchPoint.getXs();
 			float[] ys = touchPoint.getYs();
 
-			Log.w("FC-MT", "setPositionAndScale: " + touchPoint.getAction() + " -> " + xs[0] + "," + ys[0] + " " + xs[1] + "," + ys[1] + " = " + touchPoint.getEventTime());
+			//Log.w("FC-MT", "setPositionAndScale: " + touchPoint.getAction() + " -> " + xs[0] + "," + ys[0] + " " + xs[1] + "," + ys[1] + " = " + touchPoint.getEventTime());
 
 			if (mSelectionGestures != null)
 				mSelectionGestures.dispatchTouchEventMT(touchPoint, MotionEvent.ACTION_MOVE);
