@@ -373,6 +373,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
                         // mGestures.setGesture(gesture);
                         // cursorGestures(action);
 		mTutor.setVisibility(View.INVISIBLE);
+		mGestures.setEnabled(false);
 	}
 
 	private ArrayList<GesturePoint> generateGesturePoints(float p[]){
