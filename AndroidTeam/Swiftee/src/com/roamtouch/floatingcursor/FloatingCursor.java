@@ -1159,13 +1159,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 		int fcX = 0, fcY = 0;
 		
+		boolean mForwardTouch = false;
 		
 		public boolean dispatchTouchEventFC(MotionEvent event) {
 			
 			final int action = event.getAction() & MotionEvent.ACTION_MASK;
 			
 			boolean status;
-		
+
 			int X,Y;		
 			int touchCount = event.getPointerCount(); // touchCount == 2 means ACTION!			
 
@@ -1196,6 +1197,16 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				return true; // Got handled by MT Controller
 			
 			// MT stuff end
+		
+			// Hack Remove Me
+			
+			if (mForwardTouch)
+			{
+				sendEvent(action, X, Y);
+				
+				if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL)
+					mForwardTouch = false;
+			}
 			
 			if (action == MotionEvent.ACTION_DOWN)
 			{
@@ -1243,10 +1254,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					removeTouchPoint();
 					
 					mHandleTouch = false;
+					mForwardTouch = true;
+					
 					//startHitTest(fcX, fcY);	 // Also do the HitTest when the webview 
 								 // window is scrolled
+					sendEvent(MotionEvent.ACTION_DOWN, X, Y);
+					return true;
 					
-					return false;
+					//return false;
 				}
 				else if(currentMenu.getVisibility() == VISIBLE)
 				{
@@ -1317,7 +1332,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			{
 				mActivePointerId = INVALID_POINTER_ID;
 			}
-
 				
 			if (action == MotionEvent.ACTION_UP)
 			{
