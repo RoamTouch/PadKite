@@ -250,7 +250,22 @@ public class SelectionGestureView extends FrameLayout {
 		return dispatchTouchEventFC(event.getX(), event.getY(), event.getAction(), event.getEventTime());
 	}
 	
+	boolean initPointIsValid = true;
+	
 	public boolean dispatchTouchEventMT(PointInfo touchPoint, int action) {
+		
+		/* Wait for settlement code */
+		if (action == MotionEvent.ACTION_DOWN)
+		{
+			initPointIsValid = false;
+			return false;
+		}
+		
+		if (!initPointIsValid && touchPoint.isDown())
+		{
+			action = MotionEvent.ACTION_DOWN;
+			initPointIsValid = true;
+		}
 		
 		float[] xs = touchPoint.getXs();
 		float[] ys = touchPoint.getYs();
