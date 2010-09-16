@@ -275,21 +275,27 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	
     	//mGestures.drawGesture();
     }
+    
+    public void gestureDetected(String action)
+    {
+    	 eventViewer.setText("Detected " + action + " gesture.");
+         
+         if(currentGestureLibrary == SwifteeApplication.CURSOR_TEXT_GESTURE){
+        	 cursorGestures(action);
+         }
+         else if(currentGestureLibrary == SwifteeApplication.BOOKMARK_GESTURE){
+        	 bookmarkGestures(action);
+         }
+    }
+    
 	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
 		
 		 ArrayList<Prediction> predictions = mLibrary.recognize(gesture);
          if (predictions.size() > 0) {
                  if (predictions.get(0).score > 1.5) {
-                         String action = predictions.get(0).name;
+                	 String action = predictions.get(0).name;
        				     
-                         eventViewer.setText("Detected " + action + " gesture.");
-                         
-                         if(currentGestureLibrary == SwifteeApplication.CURSOR_TEXT_GESTURE){
-                        	 cursorGestures(action);
-                         }
-                         else if(currentGestureLibrary == SwifteeApplication.BOOKMARK_GESTURE){
-                        	 bookmarkGestures(action);
-                         }
+                	 gestureDetected(action);
                  }
                  else                
    				   eventViewer.setText("Unrecognized gesture.");

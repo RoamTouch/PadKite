@@ -81,7 +81,7 @@ public class SwifteeGestureView extends GestureOverlayView{
 				path.reset();
 				invalidate();
 				isfinished=true;
-				mParent.cursorGestures(action);
+				mParent.gestureDetected(action);
 			}
 			
 		};
