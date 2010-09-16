@@ -220,7 +220,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		mGestures.setEnabled(true);
 		mTutor.setVisibility(View.VISIBLE);
 		
-		eventViewer.setText("Please now make S or e gesture for: " + mSelection);
+		eventViewer.setText("Please now make gesture for: " + mSelection);
     }
     
     public void cancelGesture(boolean show)
@@ -238,42 +238,6 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	floatingCursor.removeSelection();
 		webLayout.setEnabled(true);
     	mSelection = null;
-    }
-    
-    final int GESTURE_e = 1;
-    final int GESTURE_t = 2;
-    final int GESTURE_s = 3;
-    final int GESTURE_c = 4;
-    
-    public void gestureDone(int gestureID)
-    {
-    	switch (gestureID)
-    	{
-    		case GESTURE_s:
-				eventViewer.setText("S (search) gesture done, searching for: " + mSelection);
-				webView.loadUrl("http://www.google.com/search?q=" + mSelection);
-//				setTopBarURL("http://www.google.com/search?q=" + mSelection);
-				break;
-    		case GESTURE_e:
-				eventViewer.setText("e (email) gesture done");
-				   
-				// Here we need to fire the intent to write an email with the content just pasted
-				   
-				//  This will not work in the emulator, because the emulator does not have gmail. 
-				Intent intent = new Intent(Intent.ACTION_SENDTO);
-	            intent.setData(Uri.parse("mailto:"));
-	            intent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
-	            intent.putExtra(Intent.EXTRA_TEXT, mSelection);
-	            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-	            startActivity(intent);
-	            break;
-    		case GESTURE_c:
-				eventViewer.setText("c (copy or cancel) gesture done");
-                break;
-    		
-    			// cancel
-    	}
-		//stopGesture();
     }
     
     private boolean mCancelGesture = false;
@@ -298,7 +262,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     }
 
     public void onGestureCancelled(GestureOverlayView overlay, MotionEvent event) {
-    	eventViewer.setText("Gesture cancelled. Please draw 'S', 'e' or 'c'.");
+    	eventViewer.setText("Gesture cancelled.");
 		stopGesture();
     }
 
@@ -312,6 +276,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
          if (predictions.size() > 0) {
                  if (predictions.get(0).score > 1.5) {
                          String action = predictions.get(0).name;
+       				     
+                         eventViewer.setText("Detected " + action + " gesture.");
                          
                          if(currentGestureLibrary == SwifteeApplication.CURSOR_TEXT_GESTURE){
                         	 cursorGestures(action);
@@ -319,19 +285,34 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
                          else if(currentGestureLibrary == SwifteeApplication.BOOKMARK_GESTURE){
                         	 bookmarkGestures(action);
                          }
-                        
                  }
                  else                
-   				   eventViewer.setText("Unrecognized gesture. Please draw 'S', 'e' or 'c'.");
+   				   eventViewer.setText("Unrecognized gesture.");
          }
          else                                                                          
-        	 eventViewer.setText("Unrecognized gesture. Please draw 'S', 'e' or 'c'.");
+        	 eventViewer.setText("Unrecognized gesture.");
 	}
 	public void cursorGestures(String action){
 		if ("Search".equals(action)) 
-         	gestureDone(GESTURE_s);
+		{
+			eventViewer.setText("S (search) gesture done, searching for: " + mSelection);
+			webView.loadUrl("http://www.google.com/search?q=" + mSelection);
+//			setTopBarURL("http://www.google.com/search?q=" + mSelection);
+		}
         else if ("Email".equals(action))
-         	gestureDone(GESTURE_e);
+        {
+			eventViewer.setText("e (email) gesture done");
+			   
+			// Here we need to fire the intent to write an email with the content just pasted
+			   
+			//  This will not work in the emulator, because the emulator does not have gmail. 
+			Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setData(Uri.parse("mailto:"));
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+            intent.putExtra(Intent.EXTRA_TEXT, mSelection);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
         else if("Calendar".equals(action)){
         	Intent intent = new Intent(Intent.ACTION_EDIT);
         	intent.setType("vnd.android.cursor.item/event");
@@ -363,7 +344,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         	eventViewer.setText("W (wikipedia) gesture done, wiki searching for: " + mSelection);
         }       	
         else                
-			eventViewer.setText("Unrecognized gesture. Please draw 'S', 'e' or 'c'.");
+			eventViewer.setText("Unrecognized gesture: " + action);
 		stopGesture();
 	}
 	private void bookmarkGestures(String action){
@@ -377,7 +358,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         else if ("Picasa".equals(action))
         	webView.loadUrl("http://www.picasa.google.com");
         else                
-			eventViewer.setText("Unrecognized gesture. Please draw 'g', 'y' 'p' or 'c'.");
+			eventViewer.setText("Unrecognized gesture: " + action);
 		stopGesture();
 	}
 	
@@ -385,10 +366,15 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		ArrayList<GestureStroke> strokes = gesture.getStrokes();
 		ArrayList<GesturePoint> points =generateGesturePoints(strokes.get(0).points);
     //    ArrayList<GesturePoint> points = strokes.get(0).getGesturePoints();
+		     
+        eventViewer.setText("Detected " + action + " gesture.");
+        
         mGestures.drawGesture(points,action);
                         // mGestures.setGesture(gesture);
                         // cursorGestures(action);
+		mTutor.setVisibility(View.INVISIBLE);
 	}
+
 	private ArrayList<GesturePoint> generateGesturePoints(float p[]){
 		ArrayList<GesturePoint> points = new ArrayList<GesturePoint>();
 		int c = p.length;
