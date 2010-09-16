@@ -166,7 +166,7 @@ public class SelectionGestureView extends FrameLayout {
 	
 	protected long mStartEventTime = 0;
 	
-	double TOUCH_TOLERANCE = 64.0;
+	double TOUCH_TOLERANCE = 150.0;
 
 	enum SelectionTypes { Paragraph, TextAutomatic, LineAutomatic, LongTouch };
 	
