@@ -696,11 +696,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 				case WebHitTestResult.TEXT_TYPE: {
 					cursorImage = R.drawable.text_cursor;
+					eventViewer.splitText(WebHitTestResult.TEXT_TYPE,"");
 					break;
 				}
 				case WebHitTestResult.VIDEO_TYPE: {
 					cursorImage = R.drawable.video_cursor;
 					WebVideoInfo videoInfo = mWebHitTestResult.getVideoInfo();
+					eventViewer.splitText(WebHitTestResult.VIDEO_TYPE,"");
 					break;
 				}
 				
@@ -735,6 +737,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				case WebHitTestResult.IMAGE_ANCHOR_TYPE: {
 					resultType = WebHitTestResult.IMAGE_TYPE;
 					cursorImage = R.drawable.image_cursor;
+					String tooltip = mWebHitTestResult.getToolTip();
+					eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
 					break;
 				}
 	
@@ -746,6 +750,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				default: {
 					resultType = -1;
 					cursorImage = R.drawable.no_target_cursor;
+
 					// FIXME
 					//eventViewer.splitText(-1,"");
 					break;
