@@ -52,6 +52,7 @@ import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SelectionGestureView;
 import com.roamtouch.view.TopBarArea;
 import com.roamtouch.menu.CircularLayout;
+import com.roamtouch.menu.CircularTabsLayout;
 import com.roamtouch.menu.MainMenu;
 import com.roamtouch.menu.SettingsMenu;
 import com.roamtouch.menu.TabButton;
@@ -543,8 +544,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				});
 				currentMenu.startAnimation(menuAnimation);
 				vibrator.vibrate(25);
-				eventViewer.setText(((CircularLayout)currentMenu).getName());
-//				mParent.setTopBarVisibility(VISIBLE);
+				if (currentMenu instanceof CircularLayout)
+					eventViewer.setText(((CircularLayout)currentMenu).getName());
+				else if (currentMenu instanceof CircularTabsLayout)
+					eventViewer.setText(((CircularTabsLayout)currentMenu).getName());
+				
+				//				mParent.setTopBarVisibility(VISIBLE);
 //				mParent.setTopBarMode(TopBarArea.ADDR_BAR_MODE);
 			}
 			else if(currentMenu.getVisibility() == VISIBLE){
