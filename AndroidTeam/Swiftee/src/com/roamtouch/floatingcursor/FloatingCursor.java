@@ -428,9 +428,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 		public void gestureDisableFC()
 		{
-			mCanBeDisabled  = true;
+			//mCanBeDisabled  = true;
 			// Before that works, we need to make sure that the hit area is no longer clicked on
 			//fcView.setVisibility(View.INVISIBLE);
+			//disableFC();
+
+			mIsDisabled = true;
+			stopHitTest(0,0, true);
+			this.setVisibility(View.INVISIBLE);	
 		}
 		
 		public void gestureEnableFC()
