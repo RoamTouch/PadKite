@@ -27,6 +27,9 @@ public class SwifteeGestureView extends GestureOverlayView{
 	int count=1;
 	String s,action;
 	boolean isfinished=true; 
+	
+	private int maxPoints = 10;
+	
 	public SwifteeGestureView(final Context context, AttributeSet attrs) {
 		super(context, attrs);
 		paint=new Paint();
@@ -44,20 +47,26 @@ public class SwifteeGestureView extends GestureOverlayView{
 		runnable =new Runnable(){
 			
 			public void run() {
-				 float x=gesturePoints.get(count).x;
-				 float y=gesturePoints.get(count).y;
-				 float dx = Math.abs(x - mX);
-		         float dy = Math.abs(y - mY);
-		         if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-		             path.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
-		             mX = x;
-		             mY = y;
-		         }
 				
-				count++;
+				 int num = 0;
+				 
+				 for (num = 0; num < maxPoints && count < l; num++)
+				 {
+					float x=gesturePoints.get(count).x;
+				 	float y=gesturePoints.get(count).y;
+				 	float dx = Math.abs(x - mX);
+		         	float dy = Math.abs(y - mY);
+		         	if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
+		             	path.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
+		             	mX = x;
+		             	mY = y;
+		         	}
+				
+		         	count++;
+				}
 				invalidate();
 				if(count<l){
-					handler.postDelayed(this ,40);
+					handler.postDelayed(this ,70);
 				}
 				else{
 					//Toast.makeText(context, "Gesture "+s+" done" , Toast.LENGTH_SHORT).show();
