@@ -1387,24 +1387,26 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 				int r = fcPointerView.getRadius();
 				
-				if((fcX+r) > BrowserActivity.DEVICE_WIDTH && fcX<mContentWidth)
+				
+				
+				if((fcX+r) > this.w)
 					scrollWebView(10, 0);
-				else if(X+r > BrowserActivity.DEVICE_WIDTH && X < mContentWidth)
+				else if(X+r > this.w)
 					scrollWebView(10, 0);
 				
-				if((fcX-r) <= 0 && fcX > 0)
+				if((fcX-r) <= 0)
 					scrollWebView(-10, 0);
-				else if ((X-r) <= 0 && X > 0)
+				else if ((X-r) <= 0)
 					scrollWebView(-10, 0);
 				
-				if((fcY+r) > BrowserActivity.DEVICE_HEIGHT && fcY<mContentHeight)
+				if((fcY+r) > this.h)
 					scrollWebView(10, 1);
-				else if(Y+r > BrowserActivity.DEVICE_HEIGHT && X < mContentHeight)
+				else if(Y+r > this.h)
 					scrollWebView(10, 1);
 
-				if((fcY-r) <= 0 && fcY > 0)
+				if((fcY-(r+50)) <= 0)
 					scrollWebView(-10, 1);
-				else if ((Y-r) <= 0 && Y > 0)
+				else if ((Y-(r+50)) <= 0)
 					scrollWebView(-10, 1);
 			}
 			/*
@@ -1515,10 +1517,28 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		 * direction = 0 if web view scrolls along X axis
 		 * direction = 1 if web view scrolls along Y axis
 		 */
+			int sx = mWebView.getScrollX();
+			int sy = mWebView.getScrollY();
+
 			if(direction==0)
-				mWebView.scrollBy(value, 0);
+			{
+				sx += value;
+				if (sx >= mWebView.getContentWidth())
+					sx =  mWebView.getContentWidth();
+				if (sx < 0)
+					sx = 0;
+				mWebView.scrollTo(sx, sy);
+			}
 			else
-				mWebView.scrollBy(0, value);
+			{
+				sy += value;
+				if (sy >= mWebView.getContentHeight())
+					sy = mWebView.getContentHeight();
+				if (sy < 0)
+					sy = 0;
+
+				mWebView.scrollTo(sx, sy);
+			}
 		}
 	
 		public class WebClient extends WebChromeClient
