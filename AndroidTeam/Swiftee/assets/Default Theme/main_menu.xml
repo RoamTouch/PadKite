@@ -28,10 +28,10 @@
                                         android:button_function="zoom" 
 		/>
 	
-<!--		<MenuButton android:button_image="find_text_normal.png"
+		<MenuButton android:button_image="find_text_normal.png"
 					android:button_highlightImage="find_text_pressed.png" 
                                         android:button_function="find_text" 
-		/>-->
+		/>
 	
 		<MenuButton android:button_image="windows_normal.png"
 					android:button_highlightImage="windows_pressed.png"
