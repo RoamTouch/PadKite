@@ -632,6 +632,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			fcMainMenu.setPosition(w/2, h/2);
 			this.w=w;
 			this.h=h;
+			scrollTo(0,0);
 			Log.d("OnSizeChanged:(w,h)","("+w+","+h+")" );
 		}
 
