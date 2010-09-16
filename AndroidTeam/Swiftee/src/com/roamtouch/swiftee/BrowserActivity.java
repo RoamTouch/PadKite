@@ -209,19 +209,24 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		tArea.setParent(this);
     }
     
-    public void startGesture(int gestureType)
+    public void startGesture(int gestureType, boolean useSelection)
     {
     	initGestureLibrary(gestureType);
 		stopTextGesture();
     	floatingCursor.gestureDisableFC();
 		webLayout.setEnabled(false);
-
-		mSelection = (String) ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).getText();		
+		
+		mSelection = "";
+		
+		if (useSelection)
+		{
+			mSelection = (String) ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).getText();		
+			eventViewer.setText("Please now make gesture for: " + mSelection);
+		}
+		
 		mGestures.setEnabled(true);
 		mTutor.setVisibility(View.VISIBLE);
-		
-		eventViewer.setText("Please now make gesture for: " + mSelection);
-    }
+	}
     
     public void cancelGesture(boolean show)
     {

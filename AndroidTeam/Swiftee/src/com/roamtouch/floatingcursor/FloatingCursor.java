@@ -1784,7 +1784,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			public void onClipBoardUpdate (String type) {
 				if (mGesturesEnabled) {
 					Log.d("in onClickBoardUpdate-------------------------------", type);
-					mParent.startGesture(SwifteeApplication.CURSOR_TEXT_GESTURE);
+					mParent.startGesture(SwifteeApplication.CURSOR_TEXT_GESTURE, true);
 					mGesturesEnabled=false;
 				}
 			}
