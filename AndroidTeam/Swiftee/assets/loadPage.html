@@ -2,31 +2,40 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>PadKite Start Page</title>
 <script type="text/javascript">
-function load(f){
-    var theUrl = f.url.value ;
+function load(){
+    var theUrl = document.getElementById('urlform').url.value ;
     if (theUrl != ""){
             //location.href = theUrl ;
             //window.navigate(theUrl);
             var i = theUrl.search("http://")
             if(i == -1)
-            	window.document.location.href="http://"+theUrl;
+	    {
+            	var i = theUrl.search("\\.");
+		if (i != -1)
+	            	window.document.location.href="http://"+theUrl;
+		else
+	            	window.document.location.href="http://www.google.com/search?q="+theUrl;
+            }
             else
             	window.document.location.href=theUrl;
     }
+	return false;
 }
 //-->
 </script>
 </head>
 <body>
 <br><br><br><br><br>
-<form action="no_value">
 <div align="center">
+<form id="urlform" action="#" onsubmit="return load();">
 <label>Enter address</label><br>
 <input type="text" name="url"></input><br>
-<input type="button" value="Load Webpage" onclick="load(this.form)"></input>
-</div>
+<input type="button" value="Load Webpage" onclick="load()"></input>
 </form>
+<br />
+<a href="http://padkite.com/start">PadKite Homepage</a>
+</div>
 </body>
 </html>
