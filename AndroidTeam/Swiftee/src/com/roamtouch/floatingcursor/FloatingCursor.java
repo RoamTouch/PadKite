@@ -670,9 +670,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				// FIXME: ?
 				//sendEvent(MotionEvent.ACTION_MOVE, X, Y);
 				//sendEvent(MotionEvent.ACTION_UP, 0, 0);
+				
 				sendEvent(MotionEvent.ACTION_CANCEL, X, Y);
 				if (setIcon)
 					pointer.setImageResource(R.drawable.no_target_cursor);
+
+				mWebHitTestResultIdentifer = -1;
 				mHitTestMode = false;
 			}
 		}
