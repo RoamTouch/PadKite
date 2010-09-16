@@ -179,7 +179,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				InputMethodManager imm = (InputMethodManager)((Activity)getContext()).getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.showSoftInput(eventViewer.getTextView(), InputMethodManager.SHOW_IMPLICIT);
 				//imm.showSoftInput(eventViewer, InputMethodManager.SHOW_FORCED, new ResultReceiver(new Handler()));
-				this.setVisibility(INVISIBLE);
+				// FIXME: Remove
+				//this.setVisibility(INVISIBLE);
 				break;
 			//Windows	
 			case windows:
