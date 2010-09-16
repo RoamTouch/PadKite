@@ -226,6 +226,8 @@ public class SelectionGestureView extends FrameLayout {
 
 	protected void stopAutoSelection()
 	{
+		mFloatingCursor.onAutoSelectionEnd();
+
 		if (!mAutoSelectionStarted)
 			return;
 
@@ -238,7 +240,6 @@ public class SelectionGestureView extends FrameLayout {
 		{
 			; // Do nothing
 		}
-		mFloatingCursor.onAutoSelectionEnd();
 	}
 
 	@Override
