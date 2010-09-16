@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.FrameLayout;
 
 public class SelectionGestureView extends FrameLayout {
@@ -26,12 +27,90 @@ public class SelectionGestureView extends FrameLayout {
 	private Handler mHandler;
 	private Runnable mRunnable;
 	
-	private Paint mLinePaintTouchPointCircle = new Paint();
-	
-	private boolean mShowDebugInfo = true;
+	public class DebugView extends View {
 
+		public DebugView(Context context) {
+			super(context);
+			init();
+		}
+		
+		public DebugView(Context context, AttributeSet attrs) {
+			super(context, attrs);
+			init();
+		}
+
+		public DebugView(Context context, AttributeSet attrs, int defStyle) {
+			super(context, attrs, defStyle);
+			init();
+		}
+
+		private Paint mLinePaintTouchPointCircle = new Paint();			
+
+		
+		protected void init()
+		{
+			mLinePaintTouchPointCircle.setColor(Color.BLACK);
+			mLinePaintTouchPointCircle.setStrokeWidth(20.0f);
+			mLinePaintTouchPointCircle.setStyle(Style.STROKE);
+			mLinePaintTouchPointCircle.setAntiAlias(true);
+			mLinePaintTouchPointCircle.setStrokeJoin(Paint.Join.ROUND);
+			mLinePaintTouchPointCircle.setStrokeCap(Paint.Cap.ROUND);
+			mLinePaintTouchPointCircle.setDither(true);
+		}
+		
+		private boolean mShowDebugInfo = true;
+
+		@Override
+		protected void onDraw(Canvas canvas) {
+			super.onDraw(canvas);
+		
+			if (mShowDebugInfo)
+				drawMultitouchDebugMarks(canvas);
+		}
+		
+		public void setCurrTouchPoint(PointInfo p, int action)
+		{
+
+			if (action == MotionEvent.ACTION_DOWN)
+				initTouchPoint.set(p);
+			
+			currTouchPoint.set(p);
+			invalidate();
+		}
+		
+		private PointInfo initTouchPoint = new PointInfo();
+		private PointInfo currTouchPoint = new PointInfo();
+				
+		private void drawMultitouchDebugMarks(Canvas canvas) {
+			/*if (currTouchPoint.isDown()) {
+				float[] xs = currTouchPoint.getXs();
+				float[] ys = currTouchPoint.getYs();
+				float[] pressures = currTouchPoint.getPressures();
+				int numPoints = Math.min(currTouchPoint.getNumTouchPoints(), 2);
+				for (int i = 0; i < numPoints; i++)
+					canvas.drawCircle(xs[i], ys[i], 50 + pressures[i] * 80, mLinePaintTouchPointCircle);
+				if (numPoints == 2)
+					canvas.drawLine(xs[0], ys[0], xs[1], ys[1], mLinePaintTouchPointCircle);
+			}*/
+			if (currTouchPoint.isDown())
+			{
+				float[] xsI = initTouchPoint.getXs();
+				float[] ysI = initTouchPoint.getYs();
+				
+				float[] xs = currTouchPoint.getXs();
+				float[] ys = currTouchPoint.getYs();
+
+				//canvas.drawCircle(xs[1], ys[1], 50, mLinePaintTouchPointCircle);
+				//canvas.drawCircle(xsI[1], ysI[1], 50, mLinePaintTouchPointCircle);
+
+				canvas.drawLine(xsI[1], ysI[1], xs[1], ys[1], mLinePaintTouchPointCircle);
+			}
+		}		
+	}
 	
-	protected void init()
+	private DebugView mDebugView;
+	
+	protected void init(Context context)
 	{
 		mHandler = new Handler();
 		mRunnable = new Runnable() {
@@ -42,51 +121,26 @@ public class SelectionGestureView extends FrameLayout {
 					mHandler.postDelayed(this, delayMillis);
 			}
 		};
-		
-		mLinePaintTouchPointCircle.setColor(Color.YELLOW);
-		mLinePaintTouchPointCircle.setStrokeWidth(5);
-		mLinePaintTouchPointCircle.setStyle(Style.STROKE);
-		mLinePaintTouchPointCircle.setAntiAlias(true);
+		mDebugView = new DebugView(context);
+		addView(mDebugView);
 	}
 	
 	public SelectionGestureView(Context context, AttributeSet attrs,
 			int defStyle) {
 		super(context, attrs, defStyle);
-		init();
+		init(context);
 	}
 	
 	public SelectionGestureView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		init();
+		init(context);
 	}
 	
 	public SelectionGestureView(Context context) {
 		super(context);
-		init();
+		init(context);
 	}
 	
-	@Override
-	protected void onDraw(Canvas canvas) {
-		super.onDraw(canvas);
-	
-		if (mShowDebugInfo)
-			drawMultitouchDebugMarks(canvas);
-	}
-	
-	private PointInfo currTouchPoint = new PointInfo();
-	
-	private void drawMultitouchDebugMarks(Canvas canvas) {
-		if (currTouchPoint.isDown()) {
-			float[] xs = currTouchPoint.getXs();
-			float[] ys = currTouchPoint.getYs();
-			float[] pressures = currTouchPoint.getPressures();
-			int numPoints = Math.min(currTouchPoint.getNumTouchPoints(), 2);
-			for (int i = 0; i < numPoints; i++)
-				canvas.drawCircle(xs[i], ys[i], 50 + pressures[i] * 80, mLinePaintTouchPointCircle);
-			if (numPoints == 2)
-				canvas.drawLine(xs[0], ys[0], xs[1], ys[1], mLinePaintTouchPointCircle);
-		}
-	}
 	
 	// Getter / Setter functions
 	
@@ -201,8 +255,7 @@ public class SelectionGestureView extends FrameLayout {
 		float[] xs = touchPoint.getXs();
 		float[] ys = touchPoint.getYs();
 
-		currTouchPoint.set(touchPoint);
-		invalidate();
+		mDebugView.setCurrTouchPoint(touchPoint, action);
 		
 		return dispatchTouchEventFC(xs[1], ys[1], action, touchPoint.getEventTime());
 	}
