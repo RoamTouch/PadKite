@@ -91,27 +91,27 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			switch(button_function) {
 			//Settings
 			case settings:
-				mFloatingCursor.setEventText("Settings ");
+				mFloatingCursor.setEventText("Settings");
 				break;
 				
 			//Refresh
 			case refresh:
-				mFloatingCursor.setEventText("Refresh ");
+				mFloatingCursor.setEventText("Refresh");
 				break;
 				
 			//Stop
 			case stop:
-				mFloatingCursor.setEventText("Stop ");
+				mFloatingCursor.setEventText("Stop");
 				break;
 				
 			//Zoom
 			case zoom:
-				mFloatingCursor.setEventText("Circular zoom ");
+				mFloatingCursor.setEventText("Circular Zoom");
 				break;
 					
 			//Find text
 			case find_text:
-				mFloatingCursor.setEventText("Find Text ");
+				mFloatingCursor.setEventText("Find Text");
 				break;
 			
 			//Windows	
@@ -121,7 +121,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 										
 			//Custom Gesture	
 			case custom_gesture:
-				mFloatingCursor.setEventText("Custom Gesture");
+				mFloatingCursor.setEventText("Custom and Bookmark Gestures");
 				break;	
 
 			case download:
