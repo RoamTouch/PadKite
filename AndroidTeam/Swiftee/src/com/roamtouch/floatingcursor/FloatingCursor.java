@@ -835,8 +835,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	
 		public void stopSelectionCommand()
 		{
-			enableGestures();
-			
 			mWebView.executeSelectionCommand(fcX, fcY, WebView.STOP_SELECTION);
 			mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 		}
@@ -845,19 +843,21 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		{
 			if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
+				eventViewer.setText("Executing link ...");
+
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 				pointer.setImageResource(R.drawable.address_bar_cursor);
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);		
 				startHitTest(fcX,fcY);
 			}
 			else if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE || mWebHitTestResult.getType() == WebHitTestResult.UNKNOWN_TYPE || mWebHitTestResult.getType() == -1){
+				eventViewer.setText("Clicking ...");
+
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 				//pointer.setImageResource(R.drawable.address_bar_cursor);
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
 			}
 			else {
-				
-				enableGestures();
 				
 				if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE)
 				{
@@ -868,9 +868,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}
 				else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE)
 				{
+					eventViewer.setText("Selecting word ...");
+
 					mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD_OR_LINK);
 					mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 				}
+				
+				startSelection(false);
 			}
 		}
 		
@@ -883,6 +887,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		{
 			// Copy selection to clipboard and such activate gestures
 			stopSelectionCommand();
+			startSelection(false);
 		}
 
 
@@ -890,33 +895,32 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		{			
 			if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE)
 			{
-				eventViewer.setText("Selecting image ...");
+				eventViewer.setText("Detected Long-Touch. Selecting image ...");
 			
 				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
 				//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
 			}
 			else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE)
 			{
-				eventViewer.setText("Selecting word ...");
+				eventViewer.setText("Detected Long-Touch. Selecting word ...");
 				
 				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD_OR_LINK);
 				//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 			}
 			else if ( mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
-				eventViewer.setText("Selecting link ...");
+				eventViewer.setText("Detected Long-Touch. Selecting link ...");
 
 				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD_OR_LINK);
 	
 			}
-			
-			startSelection();
 		}
 		
 		public void onLongTouchUp() 
 		{
-			stopSelection();
 			stopSelectionCommand();
+			eventViewer.setText("Please select now more text with the FC ...");
+			startSelection(true);
 		}
 		
 		public void onTouchUp()
@@ -929,34 +933,66 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 */			
 			if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
-				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
+			/*	sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 				pointer.setImageResource(R.drawable.address_bar_cursor);
-				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);
+				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);*/
 			}
-			else{
+			else {
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
 			}
+			pointer.setImageResource(R.drawable.no_target_cursor);
 		}
 		
-		protected void startSelection()
+		protected boolean mMovableSelection = false;
+		protected boolean mSelectionActive = false;
+		
+		protected void startSelection(boolean movable)
 		{
-			
+			mMovableSelection = movable;
+			mSelectionActive = true;
+			if (movable)
+				stopHitTest(0,0,true);
+			pointer.setImageResource(R.drawable.text_cursor);
 		}
 
 		protected void stopSelection()
 		{
-			
+			if (!mSelectionActive)
+				return;
+
+			mSelectionActive = false;
+   			mMovableSelection = false;
+
+			enableGestures();
+
+			mWebView.executeSelectionCommand(fcX, fcY, WebView.STOP_SELECTION);
+			mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 		}
 
+		protected void stopSelectionMovable()
+		{
+			if (!mSelectionActive)
+				return;
+
+			mMovableSelection = false;
+		}
+
+		
 		protected void moveSelection()
 		{
-			
+			if (!mMovableSelection)
+				return;
+			mWebView.executeSelectionCommand(fcX, fcY, WebView.EXTEND_SELECTION);
 		}
 		
 		protected void cancelSelection()
 		{
-			
+			if (!mSelectionActive)
+				return;
+		
+			mSelectionActive = false;
+			mWebView.executeSelectionCommand(fcX, fcY, WebView.CLEAR_SELECTION);
 		}
 		
 		/*
