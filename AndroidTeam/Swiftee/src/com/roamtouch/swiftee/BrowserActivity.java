@@ -123,10 +123,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 		//webView.setDragTracker(tracker);	
 		webLayout.addView(webView);
-		webView.loadUrl("http://padkite.com/start");
+		//webView.loadUrl("http://padkite.com/start");
 
 		//		webView.loadUrl("http://www.google.com");
-		//webView.loadUrl("file:///android_asset/loadPage.html");
+		webView.loadUrl("file:///android_asset/loadPage.html");
 		eventViewer= (EventViewerArea) findViewById(R.id.eventViewer);
 		eventViewer.setParent(this);
 		
