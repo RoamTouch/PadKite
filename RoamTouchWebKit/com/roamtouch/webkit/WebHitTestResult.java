@@ -132,6 +132,15 @@ public class WebHitTestResult {
         return mVideoInfo;
     }
 
+    @Override
+    public String toString() {
+        return "WebHitTestResult mType=" + mType
+            + ", mExtra=" + mExtra
+            + ", mToolTip=" + mToolTip
+            + ", mIdentifier=" + mIdentifier
+            + ", mRect=" + mRect;
+    }
+
     public void dump() {
         Log.v(LOGTAG, "WebHitTestResult mType=" + mType
             + ", mExtra=" + mExtra

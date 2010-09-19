@@ -387,8 +387,12 @@ public class WebSettings {
             buffer.append(" Build/");
             buffer.append(id);
         }
-        final String base = mContext.getResources().getText(
-                com.android.internal.R.string.web_user_agent).toString();
+//ROAMTOUCH CHANGE >>
+        /*final String base = mContext.getResources().getText(
+                com.android.internal.R.string.web_user_agent).toString();*/
+        //Hardcoding the default useragent string base to avoid string format exceptions  in Motorola Milestone       
+        final String base = "Mozilla/5.0 (Linux; U; Android %s) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17";
+//ROAMTOUCH CHANGE <<        
         return String.format(base, buffer);
     }
     
