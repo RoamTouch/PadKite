@@ -838,6 +838,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 		public void startSelectionCommand()
 		{
+			startHitTest(fcX,fcY);
 			mWebView.executeSelectionCommand(fcX, fcY, WebView.START_SELECTION);		
 		}
 		
@@ -960,14 +961,18 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 		protected boolean mMovableSelection = false;
 		protected boolean mSelectionActive = false;
+		protected boolean mSelectionMoved = false; 
 		
 		protected void startSelection(boolean movable)
 		{
 			mMovableSelection = movable;
 			mSelectionActive = true;
 			if (movable)
-				stopHitTest(0,0,true);
-			pointer.setImageResource(R.drawable.text_cursor);
+			{
+				mSelectionStarted = false;
+				selX = fcX;
+				selY = fcY;
+			}
 		}
 
 		protected void stopSelection()
@@ -977,6 +982,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 			mSelectionActive = false;
    			mMovableSelection = false;
+			mSelectionStarted = false;
 
 			enableGestures();
 
@@ -990,14 +996,29 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				return;
 
 			mMovableSelection = false;
+			mSelectionStarted = false;
 		}
-
 		
+				
 		protected void moveSelection()
 		{
 			if (!mMovableSelection)
 				return;
-			mWebView.executeSelectionCommand(fcX, fcY, WebView.EXTEND_SELECTION);
+
+			if (!mSelectionStarted)
+			{
+                final int yDiff = (int) Math.abs(fcY - selY);
+                final int xDiff = (int) Math.abs(fcX - selX);
+
+				if (yDiff > mTouchSlop || xDiff > mTouchSlop)
+				{
+					mSelectionStarted = true;
+					stopHitTest(fcX,fcY,true);
+					pointer.setImageResource(R.drawable.text_cursor);
+				}
+			}
+			else
+				mWebView.executeSelectionCommand(fcX, fcY, WebView.EXTEND_SELECTION);
 		}
 		
 		protected void cancelSelection()
@@ -1006,6 +1027,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				return;
 		
 			mSelectionActive = false;
+			mSelectionStarted = false;
+			
 			mWebView.executeSelectionCommand(fcX, fcY, WebView.CLEAR_SELECTION);
 		}
 		
