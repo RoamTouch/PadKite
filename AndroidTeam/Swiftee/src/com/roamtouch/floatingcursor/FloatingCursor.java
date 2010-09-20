@@ -575,6 +575,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 			if(currentMenu.getVisibility() == INVISIBLE){
 
+				mMenuDown = true;
+				fcView.setVisibility(View.INVISIBLE);
 				checkFCMenuBounds();
 				
 				menuAnimation = new AlphaAnimation(0.0f, 1.0f);
@@ -601,10 +603,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 //				mParent.setTopBarMode(TopBarArea.ADDR_BAR_MODE);
 			}
 			else if(currentMenu.getVisibility() == VISIBLE){
+
+				mMenuDown = false;
+
 				menuAnimation = new AlphaAnimation(1.0f, 0.0f);
 				menuAnimation.setDuration(250);
 				menuAnimation.setAnimationListener(new AnimationListener(){
-
+					
 					public void onAnimationEnd(Animation animation) {
 						currentMenu.setVisibility(INVISIBLE);
 						currentMenu = fcMainMenu;
@@ -1164,6 +1169,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		int fcX = 0, fcY = 0;
 		
 		boolean mForwardTouch = false;
+		boolean mMenuDown = false;
 		
 		public boolean dispatchTouchEventFC(MotionEvent event) {
 			
@@ -1355,7 +1361,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}
 				mActivePointerId = INVALID_POINTER_ID;
 
-				fcView.setVisibility(View.VISIBLE);
+				if (!mMenuDown)
+					fcView.setVisibility(View.VISIBLE);
 
 				stopSelection();
 				stopHitTest(fcX, fcY,false);
@@ -1384,8 +1391,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				removeTouchPoint();
 
 				//fcTouchView.setVisibility(View.INVISIBLE);
-				fcView.setVisibility(View.VISIBLE);
-				
+
 				if (mHandleTouch == false)
 					return false;
 			
