@@ -938,17 +938,18 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				//pointer.setImageResource(R.drawable.address_bar_cursor);
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
 			}
-*/			
+		
 			if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
 			/*	sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 				pointer.setImageResource(R.drawable.address_bar_cursor);
-				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);*/
+				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);/
 			}
 			else {
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
-			}
+			}*/
+			
 			pointer.setImageResource(R.drawable.no_target_cursor);
 		}
 		
