@@ -1274,12 +1274,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					
 				if(X > innerCircleX-innerCirRad && X < innerCircleX+innerCirRad && Y > innerCircleY-innerCirRad && Y < innerCircleY+innerCirRad){
 					//Toast.makeText(mContext, "Circular Menu", 100).show();
-					if(isCircularZoomEnabled())
+					if (isCircularZoomEnabled())
 						disableCircularZoom();
 					else
 						toggleMenuVisibility();
 
-					mHandleTouch = false; // FIXME: Change, do Let user drag and fling menu
+					mHandleTouch = false; // FIXME: Change, do let user drag and fling menu
 					//return true;
 				}
 				else if(isCircularZoomEnabled()){
