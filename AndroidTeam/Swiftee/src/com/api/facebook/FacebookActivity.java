@@ -1,254 +1,368 @@
-/*
- * Copyright 2009 Codecarpet
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.api.facebook;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import org.json.JSONArray;
-import org.json.JSONException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URLEncoder;
+
 import org.json.JSONObject;
-import com.api.facebook.FBLoginButton.FBLoginButtonStyle;
-import com.api.facebook.FBRequest.FBRequestDelegate;
-import com.api.facebook.FBSession.FBSessionDelegate;
+
+import com.api.facebook.AsyncFacebookRunner;
+import com.api.facebook.DialogError;
+import com.api.facebook.Facebook;
+import com.api.facebook.FacebookError;
+import com.api.facebook.Util;
+import com.api.facebook.AsyncFacebookRunner.RequestListener;
+import com.api.facebook.Facebook.DialogListener;
 import com.roamtouch.swiftee.R;
+
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
 public class FacebookActivity extends Activity {
-    private static final String LOG = "FBConnectSample";
-    private String textToPost;
-    // /////////////////////////////////////////////////////////////////////////////////////////////////
-    // This application will not work until you enter your Facebook application's API key here:
-    Runnable syncRunnable,runnable;
-	boolean uploadFinished=false;
-    private static final String API_KEY = "807397dfee15c3684a64d10a2b22fd1d";
+    
+    // Your Facebook Application ID must be set before running this example
+    // See http://www.facebook.com/developers/createapp.php
+    public static final String APP_ID = "153137761374284";
+    
+    private static final String[] PERMISSIONS =
+        new String[] {"publish_stream", "read_stream", "offline_access"};
+    
+    TextView publicTestsText;
+    TextView publicErrorsText;
+    Button loginButton;
 
-    // Enter either your API secret or a callback URL (as described in documentation):
-    private static final String API_SECRET = "e72b72af175491ad454188ed5ae34c40";
-    private static final String GET_SESSION_PROXY = null; // "<YOUR SESSION CALLBACK)>";
-    private static final int PERMISSIONREQUESTCODE = 1;
-    //private static final int MESSAGEPUBLISHED = 2;
-    // /////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private FBSession mSession;
-    private FBLoginButton mLoginButton;
-    private TextView mLabel;
-    private Button mPermissionButton;
-    private Button mFeedButton;
-    private Handler mHandler;
+    Button postButton;
+    TextView wallPostText;
+    Button logoutButton;
+    TextView logoutText;
+    
+    String tweet;
+    
+    Facebook authenticatedFacebook = new Facebook();
+    
+    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         
-        Bundle b = this.getIntent().getExtras();
-        textToPost = b.getString("Post"); 
+        Intent i = getIntent();
+        tweet = i.getStringExtra("Post");
         
-        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-    	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
-                WindowManager.LayoutParams.FLAG_FULLSCREEN); 
-    	
-    	
-        mHandler = new Handler();
-
-        if (GET_SESSION_PROXY != null) {
-            mSession = FBSession.getSessionForApplication_getSessionProxy(API_KEY, GET_SESSION_PROXY, new FBSessionDelegateImpl());
-        } else {
-            mSession = FBSession.getSessionForApplication_secret(API_KEY, API_SECRET, new FBSessionDelegateImpl());
-        }
-
         setContentView(R.layout.facebook);
-
-        mLabel = (TextView) findViewById(R.id.label);
-        mPermissionButton = (Button) findViewById(R.id.permissionButton);
-        mPermissionButton.setOnClickListener(new OnClickListener() {
-
-            
-            public void onClick(View v) {
-                askPermission();
-            }
-        });
-        mFeedButton = (Button) findViewById(R.id.feedButton);
-        mFeedButton.setOnClickListener(new OnClickListener() {
-
-            public void onClick(View arg0) {
-                publishFeed();
-            	
-            }
-        });
-
-        mLoginButton = (FBLoginButton) findViewById(R.id.login);
-        mLoginButton.setStyle(FBLoginButtonStyle.FBLoginButtonStyleWide);
-        mLoginButton.setSession(mSession);
-
-        mSession.resume(this);
-
-    }
-
-    // /////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private void askPermission() {
-        Intent intent = new Intent(this, FBPermissionActivity.class);
-        intent.putExtra("permissions", new String[]{"publish_stream"});
-        this.startActivityForResult(intent, PERMISSIONREQUESTCODE );
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode){
-        case PERMISSIONREQUESTCODE:
-            if (resultCode == 1) 
-                mPermissionButton.setVisibility(View.INVISIBLE);
-        default:
-            return;
-        }
-
-    }
-
-    private void publishFeed() {
-
-        Log.d("facebook-uploaded","sadawd...........................$$$$$$$$$$$$$$");
-  
-         Map<String, String> args = new HashMap<String, String>(); 
-        args.put("message", textToPost);
-       
-         FBRequest uploadPhotoRequest = FBRequest.requestWithSession(mSession,new FBRequestDelegateImpl());
-      
-        uploadPhotoRequest.call("stream.publish",args);
         
+        publicTestsText = (TextView) findViewById(R.id.publicTests);
+        publicErrorsText = (TextView) findViewById(R.id.publicErrors);
+        loginButton = (Button) findViewById(R.id.login);
+
+        postButton = (Button) findViewById(R.id.post);
+        wallPostText = (TextView) findViewById(R.id.wallPost);
+        logoutButton = (Button) findViewById(R.id.logout);
+        logoutText = (TextView) findViewById(R.id.logoutTest);
+               
+        // button to test UI Server login method
+        loginButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                authenticatedFacebook.authorize(FacebookActivity.this, 
+                        APP_ID, PERMISSIONS, new TestLoginListener());
+            }
+        });
+        
+        // button for testing UI server publish stream dialog
+        postButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+              //  authenticatedFacebook.dialog(Tests.this, "stream.publish", 
+               //         new TestUiServerListener());
+            	Bundle b = new Bundle();
+            	b.putString("message", tweet);
+                authenticatedFacebook.dialog(FacebookActivity.this, "stream.publish", b,
+                        new TestUiServerListener());
+                
+            }
+        });
+        
+        // enable logout test button
+        logoutButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                runTestLogout();
+            }
+        });
+        
+//        runTestPublicApi();
+    }
     
-       
-    }
 
-    // /////////////////////////////////////////////////////////////////////////////////////////////////
+    public class TestLoginListener implements DialogListener {
 
-  /*  private class FBDialogDelegateImpl extends FBDialogDelegate {
-
-        @Override
-        public void dialogDidFailWithError(FBDialog dialog, Throwable error) {
-            mLabel.setText(error.toString());
-        }
-
-    }*/
-
-    private void checkPermission() {
-        String fql = "select publish_stream from permissions where uid == " + String.valueOf(mSession.getUid());
-        Map<String, String> params = Collections.singletonMap("query", fql);
-        FBRequest.requestWithDelegate(new FBHasPermissionRD()).call("facebook.fql.query", params);
-    }    
-
-    private class FBSessionDelegateImpl extends FBSessionDelegate {
-
-        @Override
-        public void sessionDidLogin(FBSession session, Long uid) {
-            // we check if the user already has the permissions before displaying permission button
-            checkPermission();
-
-            mHandler.post(new Runnable() {
-                public void run() {
-                    mFeedButton.setVisibility(View.VISIBLE);
-                }
-            });
-
-            String fql = "select uid,name from user where uid == " + session.getUid();
-
-            Map<String, String> params = Collections.singletonMap("query", fql);
-            FBRequest.requestWithDelegate(new FBRequestDelegateImpl()).call("facebook.fql.query", params);
-        }
-
-
-
-        @Override
-        public void sessionDidLogout(FBSession session) {
-            mHandler.post(new Runnable() {
-                public void run() {
-                   // mLabel.setText("");
-                    mPermissionButton.setVisibility(View.INVISIBLE);
-                    mFeedButton.setVisibility(View.INVISIBLE);
-                }
-            });
-        }
-
-    }
-
-    private class FBRequestDelegateImpl extends FBRequestDelegate {
-
-        @Override
-        public void requestDidLoad(FBRequest request, Object result) {
-
-            String name = null;
-
-            if (result instanceof JSONArray) {
-                JSONArray jsonArray = (JSONArray) result;
-                try {
-                    JSONObject jo = jsonArray.getJSONObject(0);
-                    name = jo.getString("name");
-                } catch (JSONException e) {
-                    Log.e(LOG, "Login response error", e);
-                }
+        public void onComplete(Bundle values) {
+            if (testAuthenticatedApi()) {
+            	publicTestsText.setText(
+                        "Log in successfull");
+            	logoutButton.setVisibility(View.VISIBLE);
+            	loginButton.setVisibility(View.INVISIBLE);
+            	publicTestsText.setTextColor(Color.GREEN);
+            } else {
+            	publicTestsText.setText(
+                        "Log in  failed");
+                publicTestsText.setTextColor(Color.RED);
             }
-            mLabel.setText("Logged in as " + name);
+           
         }
 
-        @Override
-        public void requestDidFailWithError(FBRequest request, Throwable error) {
-           // mLabel.setText(error.toString());
+        public void onCancel() {
+        }
+
+        public void onError(DialogError e) {
+            e.printStackTrace();
+        }
+
+        public void onFacebookError(FacebookError e) {
+            e.printStackTrace();
         }
     }
-
-    private class FBHasPermissionRD extends FBRequestDelegate {
-
-        @Override
-        public void requestDidFailWithError(FBRequest request, Throwable error) {
-            super.requestDidFailWithError(request, error);
+    
+    public boolean testAuthenticatedApi() {
+        if (!authenticatedFacebook.isSessionValid()) return false;
+        try {
+            Log.d("Tests", "Testing request for 'me'");
+            String response = authenticatedFacebook.request("me");
+            JSONObject obj = Util.parseJson(response);
+            if (obj.getString("name") == null || 
+                    obj.getString("name").equals("")) {
+                return false;
+            }
+            
+            Log.d("Tests", "Testing graph API wall post");
+            Bundle parameters = new Bundle();
+            parameters.putString("message", URLEncoder.encode("hello world"));
+            parameters.putString("description", 
+                    URLEncoder.encode("test test test"));
+            response = authenticatedFacebook.request("me/feed", parameters, 
+                    "POST");
+            Log.d("Tests", "got response: " + response);
+            if (response == null || response.equals("") || 
+                    response.equals("false")) {
+                return false;
+            }
+            
+            Log.d("Tests", "Testing graph API delete");
+            response = response.replaceAll("\\{\"id\":\"", "");
+            response = response.replaceAll("\"\\}", "");
+            response = authenticatedFacebook.request(response, new Bundle(), 
+                    "DELETE");
+            if (!response.equals("true")) return false;
+            
+            Log.d("Tests", "Testing old API wall post");
+            parameters = new Bundle();
+            parameters.putString("method", "stream.publish");
+            String attachments = 
+                URLEncoder.encode("{\"name\":\"Name=Title\"," +
+                		"\"href\":\"http://www.google.fr/\",\"" +
+                		"caption\":\"Caption\",\"description\":\"Description" +
+                		"\",\"media\":[{\"type\":\"image\",\"src\":" +
+                		"\"http://www.kratiroff.com/logo-facebook.jpg\"," +
+                		"\"href\":\"http://developers.facebook.com/\"}]," +
+                		"\"properties\":{\"another link\":{\"text\":\"" +
+                		"Facebook homepage\",\"href\":\"http://www.facebook." +
+                		"com\"}}}");
+            parameters.putString("attachment", attachments);
+            response = authenticatedFacebook.request(parameters);
+            Log.d("Tests", "got response: " + response);
+            if (response == null || response.equals("") || 
+                    response.equals("false")) {
+                return false;
+            }
+            
+           
+            
+            Log.d("Tests", "All Authenticated Tests Passed");
+            return true;
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return false;
         }
+    }
+    
+    public boolean testAuthenticatedErrors() {
+        if (!authenticatedFacebook.isSessionValid()) return false;
+        
+        Log.d("Tests", "Testing that request for 'me/invalid' is rejected");
+        try {
+            Util.parseJson(authenticatedFacebook.request("me/invalid"));
+            return false;
+        } catch (Throwable e) {
+            Log.d("Tests", "*" + e.getMessage() + "*");
+            if (!e.getMessage().equals("Unknown path components: /invalid")) {
+                return false;
+            }
+        }
+        
+        Log.d("Tests", "Testing that old API call with invalid method fails");
+        Bundle params = new Bundle();
+        params.putString("method", "something_invalid");
+        try {
+            Util.parseJson(authenticatedFacebook.request(params));
+            return false;
+        } catch (Throwable e) {
+            Log.d("Tests", "*" + e.getMessage() + "*");
+            if (!e.getMessage().equals("Unknown method") ) {
+                return false;
+            }
+        }
+        
+        Log.d("Tests", "All Authenticated Error Tests Passed");
+        return true;
+    }
+    
+    public class TestUiServerListener implements DialogListener {
 
-        @Override
-        public void requestDidLoad(FBRequest request, Object result) {
-            int hasPermission = 0;
-
-            if (result instanceof JSONArray) {
-                JSONArray jsonArray = (JSONArray) result;
-                try {
-                    JSONObject jo = jsonArray.getJSONObject(0);
-                    hasPermission = jo.getInt("publish_stream");
-                    if (hasPermission == 0) {
-                        mHandler.post(new Runnable() {
-                            public void run() {
-                                mPermissionButton.setVisibility(View.VISIBLE);
-                            }
-                        });
+        public void onComplete(Bundle values) {
+            final String postId = values.getString("post_id");
+            if (postId != null) {
+                Log.d("Facebook-Example", "Dialog Success! post_id=" + postId);
+                new AsyncFacebookRunner(authenticatedFacebook).request(postId, 
+                        new TestPostRequestListener());
+            } else {
+                FacebookActivity.this.runOnUiThread(new Runnable() {
+                    public void run() {
+                        wallPostText.setText("Wall Post Failure");
+                        wallPostText.setTextColor(Color.RED);
                     }
-                } catch (JSONException e) {
-                    Log.e(LOG, "Permission response error", e);
-                }
+                });
             }
         }
+
+        public void onCancel() { }
+
+        public void onError(DialogError e) {
+            e.printStackTrace();
+        }
+
+        public void onFacebookError(FacebookError e) {
+            e.printStackTrace();
+        }
     }
+    
+    public class TestPostRequestListener implements RequestListener {
+        
+        public void onComplete(final String response) {
+            Log.d("Tests", "Got response: " + response);
+            try {
+                JSONObject json = Util.parseJson(response);
+                //final String message = json.getString("message");
+                String postId = json.getString("id");
+                FacebookActivity.this.runOnUiThread(new Runnable() {
+                    public void run() {
+                        wallPostText.setText("Wall Post Success");
+                        wallPostText.setTextColor(Color.GREEN);
+                    }
+                });
+                
+               
+            } catch (Throwable e) {
+                e.printStackTrace();
+                FacebookActivity.this.runOnUiThread(new Runnable() {
+                    public void run() {
+                        wallPostText.setText("Wall Post Failure");
+                        wallPostText.setTextColor(Color.RED);
+                    }
+                });
+            }
+        }
+
+        public void onFacebookError(FacebookError e) {
+            e.printStackTrace();
+        }
+
+        public void onFileNotFoundException(FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        public void onIOException(IOException e) {
+            e.printStackTrace();
+        }
+
+        public void onMalformedURLException(MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+   
+    public void runTestLogout() {
+        if (testLogout()) {
+            logoutText.setText("Logout successfull");
+            logoutText.setTextColor(Color.GREEN);
+            logoutButton.setVisibility(View.INVISIBLE);
+        	loginButton.setVisibility(View.VISIBLE);
+        	publicTestsText.setText("");
+        	publicErrorsText.setText("");
+        	wallPostText.setText("");
+        } else {
+            logoutText.setText("Logout  Failed");
+            logoutText.setTextColor(Color.RED);
+        }
+    }
+    
+    public boolean testLogout() {
+        try {
+            String oldAccessToken = authenticatedFacebook.getAccessToken();
+            
+            Log.d("Tests", "Testing logout");
+            String response = authenticatedFacebook.logout(this);
+            Log.d("Tests", "Got logout response: *" + response + "*");
+            if (!response.equals("true")) {
+                return false;
+            }
+            
+            Log.d("Tests", "Testing logout on logged out facebook session");
+            try {
+                Util.parseJson(authenticatedFacebook.logout(this));
+                return false;
+            } catch (FacebookError e) {
+                if (e.getErrorCode() != 101 || 
+                        !e.getMessage().equals("Invalid API key") ) {
+                    return false;
+                }
+            }
+            
+            Log.d("Tests", "Testing logout on unauthenticated object");
+            try {
+                Util.parseJson(new Facebook().logout(this));
+                return false;
+            } catch (FacebookError e) {
+                if (e.getErrorCode() != 101 || 
+                        !e.getMessage().equals("Invalid API key") ) {
+                    return false;
+                }
+            }
+            
+            Log.d("Tests", "Testing that old access token no longer works");
+            Facebook invalidFb = new Facebook();
+            invalidFb.setAccessToken(oldAccessToken);
+            try {
+                Util.parseJson(invalidFb.request("me"));
+                return false;
+            } catch (FacebookError e) {
+                if (!e.getMessage().equals("Error processing access token.")) {
+                    return false;
+                }
+            }
+            
+            Log.d("Tests", "All Logout Tests Passed");
+            return true;
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    // test bad UI server method?
+    
+    // test invalid permission? <-- UI server test
 }

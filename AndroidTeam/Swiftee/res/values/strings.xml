@@ -21,7 +21,7 @@
  <!--  Twitter OAuth credentials
        register your app to twitter and put consumer key and consumer secrete here -->   	
        
-    <string name="consumer_key">mDxIhC0kAFVmCsMUAAnDNQ</string>
-    <string name="consumer_secret">vnCxvNQOnu0JQVIDjr3cHJpRWPmgw1bVfuzLt80Y</string>
+    <string name="consumer_key">1YGRCBARMUzbZlsJYuxnQ</string>
+    <string name="consumer_secret">0I1AwFGbnR0vtUORhqVV0PUhgOpc1Z2IuX07YRZ79DE</string>
     	
 </resources>

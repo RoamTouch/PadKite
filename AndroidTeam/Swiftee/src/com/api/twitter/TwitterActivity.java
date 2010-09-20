@@ -1,6 +1,8 @@
 package com.api.twitter;
 
 
+
+
 import com.roamtouch.swiftee.R;
 
 import twitter4j.Status;
@@ -18,19 +20,23 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class TwitterActivity extends Activity {
 
 	
 	private WebView wv;
-	private EditText pinText;
-	private Button okBut;
+	private EditText pinText,tweetText;
+	private TextView msgText;
+	private Button okBut,tweetBut;
 	private RequestToken requestToken;
 	private AccessToken accessToken;
 	private Twitter twitter;
 	private String tweet;
 	private TextView errorText;
+	private LinearLayout tweetLayout;
+	
 	
 	/** Called when the activity is first created. */
     @Override
@@ -44,6 +50,41 @@ public class TwitterActivity extends Activity {
         wv = (WebView) findViewById(R.id.webview);
         wv.getSettings().setJavaScriptEnabled(true);
         wv.getSettings().setBuiltInZoomControls(true);
+        
+        tweetLayout = (LinearLayout) findViewById(R.id.tweetLayout);
+        
+      
+        msgText = (TextView) findViewById(R.id.msgText);
+        tweetText = (EditText) findViewById(R.id.tweetText);
+        tweetText.setText(tweet);
+        tweetBut = (Button) findViewById(R.id.tweetBut);
+        tweetBut.setOnClickListener(new OnClickListener(){
+
+			public void onClick(View v) {
+				 Status status;
+				try {
+					String t = tweetText.getText().toString();
+					if(t!=null && t!=""){
+						status = twitter.updateStatus(t);
+						msgText.setText("Successfully updated the status to [" + status.getText() + "].");
+					}
+					else
+						msgText.setText("Please enter some text");
+				} catch (TwitterException te) {
+		            if(401 == te.getStatusCode()){
+		            	//tweetLayout.setVisibility(View.INVISIBLE);
+		            	msgText.setText("Unable to get the access token.");
+		            }
+		           
+		            else{
+		            	//tweetLayout.setVisibility(View.INVISIBLE);
+		            	msgText.setText("Sorry! There was some error in tweeting or your message is duplicate.Try again later");
+		              te.printStackTrace();
+		            }
+		          }
+			}
+        	
+        });
         
         pinText = (EditText) findViewById(R.id.pin);
         okBut = (Button) findViewById(R.id.ok);
@@ -62,16 +103,19 @@ public class TwitterActivity extends Activity {
 		             }else{
 		               accessToken = twitter.getOAuthAccessToken();
 		             }
+		             tweetLayout.setVisibility(View.VISIBLE);
 		             
-		             Status status = twitter.updateStatus(tweet);
-		             errorText.setText("Successfully updated the status to [" + status.getText() + "].");
+		      //       Status status = twitter.updateStatus(tweet);
+		      //       errorText.setText("Successfully updated the status to [" + status.getText() + "].");
 		             
 		          } catch (TwitterException te) {
 		            if(401 == te.getStatusCode()){
+		            	//tweetLayout.setVisibility(View.INVISIBLE);
 		            	errorText.setText("Unable to get the access token.");
 		            }
 		           
 		            else{
+		            	tweetLayout.setVisibility(View.INVISIBLE);
 		            	errorText.setText("Sorry! There was some error in tweeting.Try again later");
 		              te.printStackTrace();
 		            }

@@ -34,8 +34,7 @@
        <activity android:name="com.api.twitter.TwitterActivity" />   
        <activity android:name="com.api.blogger.BloggerActivity" />      
        <activity android:name="com.api.facebook.FacebookActivity" />   
-       <activity android:name="com.api.facebook.FBLoginActivity"
-			android:theme="@android:style/Theme.Translucent.NoTitleBar"/>         
+           
          
     </application>
 
