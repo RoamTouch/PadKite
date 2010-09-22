@@ -712,7 +712,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				case WebHitTestResult.VIDEO_TYPE: {
 					cursorImage = R.drawable.video_cursor;
 					WebVideoInfo videoInfo = mWebHitTestResult.getVideoInfo();
-					eventViewer.splitText(WebHitTestResult.VIDEO_TYPE,"");
+					eventViewer.splitText(WebHitTestResult.VIDEO_TYPE, "");
 					break;
 				}
 				

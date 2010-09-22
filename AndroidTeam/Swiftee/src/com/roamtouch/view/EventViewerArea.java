@@ -89,6 +89,9 @@ public class EventViewerArea extends LinearLayout {
 		case WebHitTestResult.ANCHOR_TYPE:
 				tv1.setText(Html.fromHtml("<font color=\"white\">FloatingCursor over link |</font> <font color=\"yellow\">"+extra+"</font>"));
 				break;
+		case WebHitTestResult.VIDEO_TYPE:
+			tv1.setText(Html.fromHtml("<font color=\"white\">FloatingCursor over video |</font> <font color=\"yellow\">"+extra+"</font>"));
+			break;
 		case WebHitTestResult.IMAGE_TYPE:
 				Spanned s = Html.fromHtml("<font color=\"white\">Protocol:</font> <font color=\"yellow\">Markup Language</font><br>" +
 						"<font color=\"white\">Type:</font><font color=\"yellow\">Image JPEG</font><br>" +
