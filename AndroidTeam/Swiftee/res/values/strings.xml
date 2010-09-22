@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Swiftee</string>
+    <string name="app_name">PadKite</string>
     
     <!-- Miscellaneous Activity Preferences -->
     	
@@ -8,7 +8,7 @@
     	<string name="Miscellaneous">Miscellaneous</string>
     	<string name="About">About</string>
     	<string name="version">Software Version</string>
-    	<string name="version_code">1.0.1</string>
+    	<string name="version_code">1.30</string>
     	<string name="dialog_title_language_preference">Choose Language</string>
     	
     <!-- Gesture Editor Activity Strings -->	
