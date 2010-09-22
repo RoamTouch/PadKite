@@ -552,6 +552,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		public void hideMenuFast() {
 			eventViewer.setMode(EventViewerArea.TEXT_ONLY_MODE);
 			currentMenu.setVisibility(INVISIBLE);
+			fcView.setVisibility(View.VISIBLE);
+
 			currentMenu = fcMainMenu;
 
 			// Reset FC
@@ -1236,15 +1238,15 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 
 			// MT stuff
+			if (!mMenuDown)
+			{
+				status = multiTouchController.onTouchEvent(event);
 			
-			status = multiTouchController.onTouchEvent(event);
-			
-			if (status)
-				return true; // Got handled by MT Controller
+				if (status)
+					return true; // Got handled by MT Controller
+			}
 			
 			// MT stuff end
-		
-
 			
 			if (action == MotionEvent.ACTION_DOWN)
 			{
@@ -1278,9 +1280,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						disableCircularZoom();
 					else
 						toggleMenuVisibility();
-
+					
 					mHandleTouch = false; // FIXME: Change, do let user drag and fling menu
-					//return true;
 				}
 				else if(isCircularZoomEnabled()){
 					zoomView.onTouchEvent(event);
@@ -1292,14 +1293,17 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					removeTouchPoint();
 					
 					mHandleTouch = false;
-					mForwardTouch = true;
 					
 					//startHitTest(fcX, fcY);	 // Also do the HitTest when the webview 
 								 // window is scrolled
-					mWebView.dispatchTouchEvent(event);
-					return true;
-					
-					//return false;
+					if (!mMenuDown)
+					{
+						mForwardTouch = true;
+						mWebView.dispatchTouchEvent(event);
+						return true;
+					}
+										
+					return false;
 				}
 				else if(currentMenu.getVisibility() == VISIBLE)
 				{
@@ -1528,9 +1532,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				zoomView.setAngle((float)fcMainMenu.getZoomAngle());
 				eventViewer.setText("Circular Zooming enabled.Click back to disable it");
 				currentMenu.setVisibility(INVISIBLE);
+				fcView.setVisibility(View.VISIBLE);
 			}
 			public void disableCircularZoom(){
 				currentMenu.setVisibility(VISIBLE);
+				fcView.setVisibility(View.INVISIBLE);
 				zoomView.setVisibility(INVISIBLE);
 				eventViewer.setText("Circular Zooming disabled");
 			}
