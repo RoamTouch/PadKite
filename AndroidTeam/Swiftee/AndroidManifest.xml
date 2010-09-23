@@ -35,6 +35,14 @@
        <activity android:name="com.api.blogger.BloggerActivity" />      
        <activity android:name="com.api.facebook.FacebookActivity" />   
            
+       <activity android:name="com.api.twitter.OAUTH" android:label="@string/oauth_name">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="myapp" android:host="twitt" />
+			</intent-filter>
+		</activity>    
          
     </application>
 
