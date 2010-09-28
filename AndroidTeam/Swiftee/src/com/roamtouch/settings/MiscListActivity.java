@@ -6,6 +6,7 @@ import com.roamtouch.swiftee.R;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -33,7 +34,8 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    	
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        
     	setContentView(R.layout.misc_list);
     	mMiscList = (ListView)findViewById(R.id.miscList);
     	mMiscList.setAdapter(new MiscListAdapter());
@@ -66,6 +68,12 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 					});
 					list.setAdapter(new ArrayAdapter<String>(this,R.layout.simple_list_item_1,langs));
 					d.show();
+					break;
+				
+				case 5:
+					Intent i= new Intent(MiscListActivity.this,Contacts.class);
+					startActivity(i);
+					break;
 			}
 	}
 	
@@ -90,16 +98,28 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 	}
 	public class MiscView extends LinearLayout{
 		String arr[] = {"Enable Tutor Menu","Tell a contact"};
+		CheckBox cb;
 		public MiscView(Context context,int position) {
 			super(context);
 			
 			LayoutInflater.from(context).inflate(R.layout.misc_adapter, this);
-
+			cb= (CheckBox) findViewById(R.id.checkbox);
 			TextView v1= (TextView) findViewById(R.id.tv1);
 			v1.setText(arr[position-4]);
-		
+			if(position == 4 ){
+				this.setOnClickListener(new OnClickListener(){
+
+					public void onClick(View v) {
+						if(cb.isChecked())
+							cb.setChecked(false);
+						else
+							cb.setChecked(true);
+					}
+					
+				});
+			}
 			if(position == 5){
-				CheckBox cb= (CheckBox) findViewById(R.id.checkbox);
+				
 				cb.setVisibility(GONE);
 				
 				ImageView image = (ImageView)findViewById(R.id.image);

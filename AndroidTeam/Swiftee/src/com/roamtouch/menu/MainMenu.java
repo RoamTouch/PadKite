@@ -2,22 +2,19 @@ package com.roamtouch.menu;
 
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.floatingcursor.FloatingCursor;
+import com.roamtouch.settings.GestureRecorder;
 import com.roamtouch.settings.RegisterActivity;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.SwifteeApplication;
 import com.roamtouch.view.EventViewerArea;
-import com.roamtouch.view.TopBarArea;
+import com.roamtouch.view.WebPage;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.ResultReceiver;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.inputmethod.InputMethodManager;
 
 enum MainMenuFunctions {
 	none,
@@ -27,11 +24,14 @@ enum MainMenuFunctions {
 	stop,
 	backward,
 	zoom,
-	find_text,
+	homepage,
 	windows,
 	custom_gesture,
 	history,
-	download
+	download,
+	close,
+	new_window,
+	bookmark
 }
 
 public class MainMenu extends CircularLayout implements OnTouchListener{
@@ -40,7 +40,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 	private BrowserActivity mParent;
 	public static boolean USER_REGISTERED = true;
 	private DBConnector database;
-	private EventViewerArea eventViewer;
+	private SwifteeApplication appState;
+//	private EventViewerArea eventViewer;
 	 
 	public MainMenu(Context context) {
 		super(context);
@@ -50,7 +51,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		//LayoutInflater.from(context).inflate(R.layout.main_menu, this);
 		MenuInflater.inflate("/sdcard/Swiftee/Default Theme/main_menu.xml", context, this);
 		
-		SwifteeApplication appState = ((SwifteeApplication)context.getApplicationContext());
+		appState = ((SwifteeApplication)context.getApplicationContext());
     	database = appState.getDatabase();
     	
 		setMode(CircularLayout.STATIC_MODE);
@@ -72,7 +73,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		mParent = parent;
 	}
 	public void setEventViewer(EventViewerArea ev){
-		eventViewer = ev;
+//		eventViewer = ev;
 	}
 	public boolean onTouch(View v, MotionEvent event) {
 
@@ -110,8 +111,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				break;
 					
 			//Find text
-			case find_text:
-				mFloatingCursor.setEventText("Find Text");
+			case homepage:
+				mFloatingCursor.setEventText("Go to Home");
 				break;
 			
 			//Windows	
@@ -134,7 +135,15 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				
 			case backward:
 				mFloatingCursor.setEventText("Backward");
-				break;	
+				break;
+				
+			case close:
+				mFloatingCursor.setEventText("Close Application");
+				break;
+				
+			case bookmark:
+				mFloatingCursor.setEventText("Bookmark");
+				break;
 			default:
 				mFloatingCursor.setEventText("No function defined for: " + b.getFunction());
 				break;
@@ -173,11 +182,10 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				break;
 					
 			//Find text
-			case find_text:
-//				mParent.setTopBarMode(TopBarArea.SEARCH_BAR_MODE);
-				
-				InputMethodManager imm = (InputMethodManager)((Activity)getContext()).getSystemService(Context.INPUT_METHOD_SERVICE);
-				imm.showSoftInput(eventViewer.getTextView(), InputMethodManager.SHOW_IMPLICIT);
+			case homepage:
+				mFloatingCursor.loadHomePage();
+				//InputMethodManager imm = (InputMethodManager)((Activity)getContext()).getSystemService(Context.INPUT_METHOD_SERVICE);
+				//imm.showSoftInput(eventViewer.getTextView(), InputMethodManager.SHOW_IMPLICIT);
 				//imm.showSoftInput(eventViewer, InputMethodManager.SHOW_FORCED, new ResultReceiver(new Handler()));
 				// FIXME: Remove
 				//this.setVisibility(INVISIBLE);
@@ -203,7 +211,23 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				this.setVisibility(INVISIBLE);
 				mParent.startGesture(SwifteeApplication.BOOKMARK_GESTURE, false);
 				break;
-			case none:
+				
+			case download:
+				Intent i = new Intent(mParent,WebPage.class);
+				i.putExtra("webUrl", "http://www.padkite.com/downloads");
+				mParent.startActivity(i);
+				break;
+			
+			case bookmark:
+				i = new Intent(mParent,GestureRecorder.class);
+				i.putExtra("Gesture_Name", "Android");
+				i.putExtra("isNewBookmark", true);
+				i.putExtra("Gesture_Type", SwifteeApplication.BOOKMARK_GESTURE);
+				mParent.startActivity(i);
+				break;
+			case close:
+				System.exit(1);
+				break;
 			default:
 				/* Do nothing */
 				break;

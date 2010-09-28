@@ -1,21 +1,16 @@
 package com.roamtouch.menu;
 
 import com.roamtouch.floatingcursor.FloatingCursor;
+import com.roamtouch.settings.BrowserSettingActivity;
 import com.roamtouch.settings.GestureEditor;
 import com.roamtouch.settings.MiscListActivity;
-import com.roamtouch.settings.PracticeGesture;
-import com.roamtouch.settings.RegisterActivity;
 import com.roamtouch.swiftee.BrowserActivity;
-import com.roamtouch.swiftee.R;
-import com.roamtouch.swiftee.SwifteeApplication;
-import com.roamtouch.view.TopBarArea;
+import com.roamtouch.view.WebPage;
 
 import android.content.Context;
 import android.content.Intent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 
 enum SettingsMenuFunctions {
@@ -26,7 +21,7 @@ enum SettingsMenuFunctions {
 	gesture_kit_editor,
 	miscellaneous,
 	help_online,
-	practice_gesture,
+	history,
 }
 
 public class SettingsMenu extends CircularLayout implements OnTouchListener{
@@ -128,9 +123,9 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 				mFloatingCursor.setEventText("Help online	");
 				break;
 			
-			//Practice gesture	
-			case practice_gesture:
-				mFloatingCursor.setEventText("Practice gesture");
+			//History	
+			case history:
+				mFloatingCursor.setEventText("History");
 				break;
 				
 			default:
@@ -143,6 +138,8 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 			
 			//Browser Settings
 			case browser_settings:
+				Intent i = new Intent(mParent,BrowserSettingActivity.class);
+				mParent.startActivity(i);
 				break;
 				
 			//Set home page
@@ -155,7 +152,7 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 				
 			//Gesture kit editor
 			case gesture_kit_editor:
-				Intent i = new Intent(mParent,GestureEditor.class);
+				i = new Intent(mParent,GestureEditor.class);
 				mParent.startActivity(i);
 				break;
 
@@ -167,11 +164,15 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 			
 			//Help online	
 			case help_online:
+				i = new Intent(mParent,WebPage.class);
+				i.putExtra("webUrl", "http://www.padkite.com/help");
+				mParent.startActivity(i);
 				break;
 			
 			//Practice gesture	
-			case practice_gesture:		
-				i = new Intent(mParent,PracticeGesture.class);
+			case history:		
+				i = new Intent(mParent,WebPage.class);
+				i.putExtra("webUrl", "http://www.padkite.com/history");
 				mParent.startActivity(i);
 				break;
 

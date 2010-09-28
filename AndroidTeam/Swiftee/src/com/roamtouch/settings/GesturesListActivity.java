@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.Window;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,6 +21,8 @@ public class GesturesListActivity extends Activity{
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
   	
+			 getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+			 
 			gestureCategory = getIntent().getIntExtra("Gesture_Category", -1);		
 			setContentView(R.layout.gesture_editor);
       

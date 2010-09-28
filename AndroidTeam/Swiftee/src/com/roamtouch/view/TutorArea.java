@@ -2,15 +2,11 @@ package com.roamtouch.view;
 
 import java.util.ArrayList;
 import java.util.Set;
-
-import com.roamtouch.menu.MenuButton;
 import com.roamtouch.settings.PracticeGesture;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
-
 import android.gesture.Gesture;
 import android.gesture.GestureLibrary;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;

@@ -47,6 +47,11 @@ public class MenuInflater {
 					
 					b.setFunction(attrs.get("button_function"));
 					
+					String s = attrs.get("hotkey");
+					if(s!=null)
+						if(s.equals("true"))
+							b.setHotkey(true);
+					
 					view.addView(b);	
 				}	
 			}

@@ -99,8 +99,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-    	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//    	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
     	
     	DEVICE_WIDTH  =  getWindow().getWindowManager().getDefaultDisplay().getWidth();
     	DEVICE_HEIGHT =  getWindow().getWindowManager().getDefaultDisplay().getHeight();

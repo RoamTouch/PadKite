@@ -14,7 +14,7 @@ public class MenuButton extends Button{
 		private Drawable m_drawable;
 		private Drawable m_selectDrawable;
 		private String m_button_function = null;
-		
+		private boolean isHotkey = false;
 		private void init(Context context)
 		{
 			m_drawable = context.getResources().getDrawable(R.drawable.default_normal);
@@ -90,6 +90,14 @@ public class MenuButton extends Button{
 				setBackgroundDrawable(m_drawable);
 			}
 
+		}
+
+		public void setHotkey(boolean isHotkey) {
+			this.isHotkey = isHotkey;
+		}
+
+		public boolean isHotkey() {
+			return isHotkey;
 		}
 
 }

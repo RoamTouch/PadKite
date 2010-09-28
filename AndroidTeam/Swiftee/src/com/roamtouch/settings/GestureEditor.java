@@ -13,6 +13,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -29,7 +30,7 @@ public class GestureEditor extends Activity implements OnItemClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    	
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         isForPracticeGesture = getIntent().getBooleanExtra("isForPracticeGesture", false);
         
         setContentView(R.layout.gesture_editor);

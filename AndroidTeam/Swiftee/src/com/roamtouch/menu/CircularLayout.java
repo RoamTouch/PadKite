@@ -1,11 +1,7 @@
 package com.roamtouch.menu;
 
 import com.roamtouch.swiftee.R;
-
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -15,7 +11,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 /**
  * Circular layout containing menu items and performing circular wheel animation
@@ -182,20 +177,25 @@ public class CircularLayout extends ViewGroup {
 		   t=55;
         
 		   if(currentMode == CircularLayout.DYNAMIC_MODE){
-			   childEndPoint = count - 2;
+/*			   childEndPoint = count - 2;
 			   Button but = (Button)getChildAt(count-1);
 			   int diff = BUTTON_RADIUS/2;
 			   but.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
-			
+*/			
 		   }
 		   else
-			   childEndPoint = count - 1;
+			   childEndPoint = count - 2;
 
 		   ImageView cone = (ImageView)getChildAt(childEndPoint);
 		   
 		   if (cone.getVisibility() != GONE) {         
 			   cone.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
-			   cone.setClickable(false);
+			   //cone.setClickable(false);
+		   }
+		   MenuButton child = (MenuButton)getChildAt(childEndPoint+1);
+		   if(child.isHotkey()){
+			   int diff = BUTTON_RADIUS/2;
+			   child.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
 		   }
 
 		  // MenuBGView bg = (MenuBGView)getChildAt(0);
@@ -206,8 +206,14 @@ public class CircularLayout extends ViewGroup {
 		   }
 		   
 		   for (int i = 1; i < childEndPoint; i++) {
-			   MenuButton child = (MenuButton)getChildAt(i);
-			   if (child.getVisibility() != GONE) {            
+			   child = (MenuButton)getChildAt(i);
+			   if (child.getVisibility() != GONE) {    
+				   if(child.isHotkey()){
+					   int diff = BUTTON_RADIUS/2;
+					   child.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
+					   continue;
+				   }
+					   
             	// Calc coordinates around the circle at the center of cart. system
             	double angle = (i-1)*t;
             	angle=angle-90 + 46;
@@ -241,13 +247,13 @@ public class CircularLayout extends ViewGroup {
 
 		ImageView coneSeparator = new ImageView(context);
 		coneSeparator.setBackgroundResource(R.drawable.circleround_cone);
-		addView(coneSeparator);
+		addView(coneSeparator,getChildCount()-1);
 		
 		currentMode = mode;
 		if(currentMode == CircularLayout.DYNAMIC_MODE){
 			Button but = new Button(context);
 			but.setBackgroundResource(R.drawable.add_tab);
-			addView(but);
+//			addView(but);
 		}
 	}   
 /*
@@ -262,11 +268,11 @@ public class CircularLayout extends ViewGroup {
 */
 	public boolean canScroll(float angleDiff,int childCount) {
 		MenuButton first = (MenuButton)getChildAt(1);
-		MenuButton last = (MenuButton)getChildAt(childEndPoint-1);
+		MenuButton last = (MenuButton)getChildAt(childEndPoint-2);
 		
 		if((first.getAngle()+angleDiff)>4)
 			return false;
-		else if(last.getAngle()+angleDiff < 174)
+		else if(last.getAngle()+angleDiff < 164)
 			return false;
 		return true;
 	}
@@ -435,7 +441,14 @@ public class CircularLayout extends ViewGroup {
 				
 	            MenuButton child = (MenuButton)getChildAt(i);
 	            
-	            if (child.getVisibility() != GONE) {            
+	            if (child.getVisibility() != GONE) {         
+	            	
+	            	if(child.isHotkey()){
+						   int diff = BUTTON_RADIUS/2;
+						   child.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
+						   continue;
+					   }
+	            	
 	            	//child.setClickable(false);
 	            	double angle=child.getAngle();
 	            	angle+=mAngleChange;

@@ -2,8 +2,6 @@ package com.roamtouch.menu;
 
 import com.roamtouch.swiftee.R;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;

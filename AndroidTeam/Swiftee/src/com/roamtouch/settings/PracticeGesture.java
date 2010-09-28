@@ -5,28 +5,28 @@ import android.content.Intent;
 import android.gesture.Gesture;
 import android.gesture.GestureLibrary;
 import android.gesture.GestureOverlayView;
+import android.gesture.GestureOverlayView.OnGestureListener;
+import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
 import com.roamtouch.view.TutorArea;
 
-public class PracticeGesture extends Activity {
+public class PracticeGesture extends Activity implements OnGesturePerformedListener, OnGestureListener {
 
 		private static final float LENGTH_THRESHOLD = 120.0f;
 
 		private Gesture mGesture;
 		private Button mTypeButton;
 		private GestureOverlayView overlay;
-		private String gestureName;
+		private TextView gestureName;
 		private int gestureType;
 		private TutorArea tArea;
 		private GestureLibrary mLibrary;
@@ -36,8 +36,8 @@ public class PracticeGesture extends Activity {
 		protected void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
 			
-			gestureName = getIntent().getStringExtra("Gesture_Name");
-			gestureType = getIntent().getIntExtra("Gesture_Type", -1);
+			String gesName = getIntent().getStringExtra("Gesture_Name");
+			int gesType = getIntent().getIntExtra("Gesture_Type", -1);
 			
 			setContentView(R.layout.practice_gesture);
 
@@ -127,6 +127,34 @@ public class PracticeGesture extends Activity {
 				mLibrary = appState.getGestureLibrary(i);
 				tArea.setGestureLibrary(mLibrary);
 			}
+		}
+
+		public void onGesturePerformed(GestureOverlayView overlay,
+				Gesture gesture) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void onGesture(GestureOverlayView overlay, MotionEvent event) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void onGestureCancelled(GestureOverlayView overlay,
+				MotionEvent event) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void onGestureEnded(GestureOverlayView overlay, MotionEvent event) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void onGestureStarted(GestureOverlayView overlay,
+				MotionEvent event) {
+			// TODO Auto-generated method stub
+			
 		}
 		
 }

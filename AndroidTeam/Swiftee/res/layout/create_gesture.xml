@@ -21,7 +21,7 @@
             />
   
     
-    <com.roamtouch.gestures.GestureOverlayView
+    <android.gesture.GestureOverlayView
         android:id="@+id/gestures_overlay"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

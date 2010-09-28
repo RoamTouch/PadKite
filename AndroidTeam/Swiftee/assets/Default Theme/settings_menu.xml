@@ -5,31 +5,31 @@
 					android:button_function="browser_settings"
 		/>  
 		
+		<MenuButton android:button_image="miscellaneous_sans.png"
+					android:button_highlightImage="miscellaneous.png"
+					android:button_function="miscellaneous"
+		/>
+		
 		<MenuButton android:button_image="sethomepage_sans.png"
 					android:button_highlightImage="sethomepage.png"
 					android:button_function="set_homepage"
 		/>  
 
-		<MenuButton android:button_image="resize_sans.png"
-					android:button_highlightImage="resize.png"
-					android:button_function="resize_hitarea"
-		/>  
-		
 		<MenuButton android:button_image="gesturekiteditor_sans.png"
 					android:button_highlightImage="gesturekiteditor.png"
 					android:button_function="gesture_kit_editor"
 		/>  
-	
-		<MenuButton android:button_image="miscellaneous_sans.png"
-					android:button_highlightImage="miscellaneouss.png"
-					android:button_function="miscellaneous"
-		/>
 	
 		<MenuButton android:button_image="help_sans.png"
 					android:button_highlightImage="help.png"
 					android:button_function="help_online"
 		/>
 	
+		<MenuButton android:button_image="practicegesture_sans.png"
+					android:button_highlightImage="practicegesture.png"
+					android:button_function="history"
+		/>
+		
 		<MenuButton android:button_image="practicegesture_sans.png"
 					android:button_highlightImage="practicegesture.png"
 					android:button_function="practice_gesture"

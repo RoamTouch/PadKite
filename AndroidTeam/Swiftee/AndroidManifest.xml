@@ -30,10 +30,13 @@
        <activity android:name="com.roamtouch.settings.GestureEditor" /> 
        <activity android:name="com.roamtouch.settings.PracticeGesture" />        
        <activity android:name="com.roamtouch.settings.GesturesListActivity" />        
-       <activity android:name="com.roamtouch.settings.GestureRecorder" />          
+       <activity android:name="com.roamtouch.settings.GestureRecorder" />       
+       <activity android:name="com.roamtouch.settings.Contacts" />          
        <activity android:name="com.api.twitter.TwitterActivity" />   
        <activity android:name="com.api.blogger.BloggerActivity" />      
        <activity android:name="com.api.facebook.FacebookActivity" />   
+       <activity android:name="com.roamtouch.settings.BrowserSettingActivity" />
+       <activity android:name="com.roamtouch.view.WebPage" />   
            
        <activity android:name="com.api.twitter.OAUTH" android:label="@string/oauth_name">
 			<intent-filter>
@@ -52,4 +55,5 @@
 <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
  
+<uses-permission android:name="android.permission.READ_CONTACTS"></uses-permission>
 </manifest> 

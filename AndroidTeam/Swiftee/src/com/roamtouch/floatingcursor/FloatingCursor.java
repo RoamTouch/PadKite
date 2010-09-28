@@ -10,14 +10,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.os.Vibrator;
@@ -50,7 +47,6 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SelectionGestureView;
-import com.roamtouch.view.TopBarArea;
 import com.roamtouch.menu.CircularLayout;
 import com.roamtouch.menu.CircularTabsLayout;
 import com.roamtouch.menu.MainMenu;
@@ -1556,7 +1552,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		public void setEventText(String str){
 			eventViewer.setText(str);
 		}
-			
+		
+		public void loadHomePage(){
+			//need to change to stored home page
+			mWebView.loadUrl("http://www.padkite.com");
+		}
 		public void nextWebPage(){
 			mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()-1);
 			//fcWindowTabs.setCurrentTab(fcWindowTabs.getCurrentTab()+1);
