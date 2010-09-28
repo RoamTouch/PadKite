@@ -50,10 +50,10 @@ public class FloatingCursorInnerView extends View {
 	 protected void onDraw(Canvas canvas) {
 	     super.onDraw(canvas);
 	     //Toast.makeText(getContext(), "Hello Draw", Toast.LENGTH_SHORT).show();
-	     rect = new Rect((int)x-r,(int)y-r,(int)x+r,(int)y+r);
-	     if (bitmap != null)
+	     //rect = new Rect((int)x-r,(int)y-r,(int)x+r,(int)y+r);
+	     //if (bitmap != null)
 	    //	 canvas.drawBitmap(bitmap, x-r, y-r, null);
-	     canvas.drawBitmap(bitmap, null, rect, null);
+	    	// canvas.drawBitmap(bitmap, null, rect, null);
         //canvas.drawCircle(x, y, r, mPaint);
 	 }
 }
