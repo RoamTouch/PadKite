@@ -54,10 +54,16 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		appState = ((SwifteeApplication)context.getApplicationContext());
     	database = appState.getDatabase();
     	
-		setMode(CircularLayout.STATIC_MODE);
+		init();
+		OnClickListener listener = new OnClickListener(){
+			public void onClick(View v) {
+				System.exit(1);
+			}			
+		};
 		
 		int count = getChildCount();
-		for(int i=0;i<count-1;i++ ){
+		for(int i=0;i<count;i++ ){
+			
 			View v = getChildAt(i);
 			v.setId(i);
 			v.setOnTouchListener(this);
@@ -144,6 +150,11 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			case bookmark:
 				mFloatingCursor.setEventText("Bookmark");
 				break;
+				
+			case new_window:
+				mFloatingCursor.setEventText("New Window");
+				break;
+					
 			default:
 				mFloatingCursor.setEventText("No function defined for: " + b.getFunction());
 				break;
@@ -193,7 +204,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			//Windows	
 			case windows:
 				mFloatingCursor.setCurrentMenu(2);
-				mParent.setEventViewerMode(EventViewerArea.WINDOWS_MODE);
+				//mParent.setEventViewerMode(EventViewerArea.WINDOWS_MODE);
 				break;
 			
 			//Backward	
@@ -220,11 +231,16 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			
 			case bookmark:
 				i = new Intent(mParent,GestureRecorder.class);
-				i.putExtra("Gesture_Name", "Android");
+				i.putExtra("Gesture_Name", "");
 				i.putExtra("isNewBookmark", true);
 				i.putExtra("Gesture_Type", SwifteeApplication.BOOKMARK_GESTURE);
 				mParent.startActivity(i);
 				break;
+			
+			case new_window:
+				mFloatingCursor.addNewWindow();
+				break;
+				
 			case close:
 				System.exit(1);
 				break;

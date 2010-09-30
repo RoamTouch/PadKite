@@ -193,7 +193,7 @@ public class CircularTabsLayout extends ViewGroup {
 		    	}
 		    }			   
 	   }
-	   public void setMode(int mode){
+	   public void init(){
 		   
 		
 		 	ImageView coneSeparator = new ImageView(context);
@@ -202,7 +202,7 @@ public class CircularTabsLayout extends ViewGroup {
 
 		 	Button but = new Button(context);
 		 	but.setId(33);
-		 	but.setBackgroundResource(R.drawable.add_tab);
+		 	but.setBackgroundResource(R.drawable.cross);
 		 	addView(but);
 
 	   }   

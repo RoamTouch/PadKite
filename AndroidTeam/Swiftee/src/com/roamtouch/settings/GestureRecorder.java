@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.roamtouch.swiftee.R;
@@ -25,7 +26,7 @@ public class GestureRecorder extends Activity {
 		private String gestureName;
 		private int gestureType;
 		private boolean isNewBookmark = false;
-		
+		private EditText t;
 		@Override
 		protected void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
@@ -40,9 +41,15 @@ public class GestureRecorder extends Activity {
 
 			mDoneButton = (Button)findViewById(R.id.startRecording);
 
-			TextView t = (TextView) findViewById(R.id.gestureText);
+			t = (EditText) findViewById(R.id.gestureText);		
 			t.setText(gestureName);
-			
+			if(gestureName.equals(""))
+				t.setHint("Enter name for this bookmark");
+			else{
+				t.setClickable(false);
+				t.setEnabled(false);
+				t.setFocusable(false);
+			}
 			overlay = (GestureOverlayView) findViewById(R.id.gestures_overlay);
 			overlay.addOnGestureListener(new GesturesProcessor());
 
@@ -57,9 +64,11 @@ public class GestureRecorder extends Activity {
 						if(mGesture!=null){
 							if(!isNewBookmark)
 								mLibrary.removeGesture(gestureName, mLibrary.getGestures(gestureName).get(0));
-							mLibrary.addGesture(gestureName, mGesture);
+							String s = t.getText().toString();
+							mLibrary.addGesture(s, mGesture);
 							boolean bool = mLibrary.save();
-							//Log.d("","");
+							
+								
 						}
 						finish();
 					}

@@ -359,7 +359,11 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		stopGesture();
 	}
 	private void bookmarkGestures(String action){
-		if ("Google".equals(action))
+		
+		String url = appState.getDatabase().getBookmark(action);
+		if(url!= null && !url.equals("Gesture cancelled"))
+			webView.loadUrl(url);
+/*		if ("Google".equals(action))
 			
 			webView.loadUrl("http://www.google.com");
         else if ("Yahoo".equals(action))
@@ -368,9 +372,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         	webView.loadUrl("http://www.wikipedia.com");
         else if ("Picasa".equals(action))
         	webView.loadUrl("http://www.picasa.google.com");
-        else if ("Cancel".equals(action))
+*/      else if ("Cancel".equals(action))
 			eventViewer.setText("Gesture cancelled.");
-        else  
+	    else  
 			eventViewer.setText("Unrecognized gesture: " + action);
 		stopGesture();
 	}

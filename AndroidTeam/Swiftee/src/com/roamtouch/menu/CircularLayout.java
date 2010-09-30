@@ -9,7 +9,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 
 /**
@@ -17,17 +16,6 @@ import android.widget.ImageView;
  * 
  */
 public class CircularLayout extends ViewGroup {
-	
-	/**
-	 *   CircularLayout Mode dynamic or static 
-	 *   Dynamic mode enables add menu button on separator and assigns first child from xml to it
-	 *   Static mode can not add buttons dynamically
-	 */
-	   public static final int STATIC_MODE = 0;
-	   public static final int DYNAMIC_MODE = 1;
-	   
-	   private int currentMode = STATIC_MODE;
-	
 	
 	   
 	/**
@@ -167,24 +155,12 @@ public class CircularLayout extends ViewGroup {
 		@Override
 	   protected void onLayout(boolean changed, int left, int top, int right, int bot) {
 
-//		   Toast.makeText(context, ""+currentMode, 100).show();
 		   final int count = getChildCount();
 		   double t = 0;
-		   int x = 0, y = 0;
 
-		   //t = (360 / (count-1));
-		   //t = 360 / 7;
 		   t=55;
-        
-		   if(currentMode == CircularLayout.DYNAMIC_MODE){
-/*			   childEndPoint = count - 2;
-			   Button but = (Button)getChildAt(count-1);
-			   int diff = BUTTON_RADIUS/2;
-			   but.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
-*/			
-		   }
-		   else
-			   childEndPoint = count - 2;
+  
+		   childEndPoint = count - 2;
 
 		   ImageView cone = (ImageView)getChildAt(childEndPoint);
 		   
@@ -192,10 +168,10 @@ public class CircularLayout extends ViewGroup {
 			   cone.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
 			   //cone.setClickable(false);
 		   }
-		   MenuButton child = (MenuButton)getChildAt(childEndPoint+1);
-		   if(child.isHotkey()){
+		   MenuButton hotKey = (MenuButton)getChildAt(childEndPoint+1);
+		   if(hotKey.getVisibility() != GONE){
 			   int diff = BUTTON_RADIUS/2;
-			   child.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
+			   hotKey.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
 		   }
 
 		  // MenuBGView bg = (MenuBGView)getChildAt(0);
@@ -206,14 +182,9 @@ public class CircularLayout extends ViewGroup {
 		   }
 		   
 		   for (int i = 1; i < childEndPoint; i++) {
-			   child = (MenuButton)getChildAt(i);
+			   MenuButton child = (MenuButton)getChildAt(i);
 			   if (child.getVisibility() != GONE) {    
-				   if(child.isHotkey()){
-					   int diff = BUTTON_RADIUS/2;
-					   child.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
-					   continue;
-				   }
-					   
+				   					   
             	// Calc coordinates around the circle at the center of cart. system
             	double angle = (i-1)*t;
             	angle=angle-90 + 46;
@@ -243,18 +214,17 @@ public class CircularLayout extends ViewGroup {
 		MenuButton b = (MenuButton) getChildAt(4);
 		return b.getAngle();
 	}
-	public void setMode(int mode){
+	public void init(){
 
 		ImageView coneSeparator = new ImageView(context);
 		coneSeparator.setBackgroundResource(R.drawable.circleround_cone);
-		addView(coneSeparator,getChildCount()-1);
-		
-		currentMode = mode;
-		if(currentMode == CircularLayout.DYNAMIC_MODE){
-			Button but = new Button(context);
-			but.setBackgroundResource(R.drawable.add_tab);
-//			addView(but);
-		}
+		addView(coneSeparator);
+			
+		MenuButton but = new MenuButton(context);
+		but.setDrawables(MenuInflater.hotkey_image,MenuInflater.hotkey_highlight);	
+		but.setFunction(MenuInflater.hotkey_function);		
+		but.setHotkey(true);
+		addView(but);
 	}   
 /*
 	@Override

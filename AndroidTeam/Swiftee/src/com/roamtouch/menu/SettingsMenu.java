@@ -37,7 +37,7 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 		//LayoutInflater.from(context).inflate(R.layout.settings_menu, this);
 		MenuInflater.inflate("/sdcard/Swiftee/Default Theme/settings_menu.xml", context, this);
 		
-		setMode(CircularLayout.STATIC_MODE);
+		init();
 		
 		int count = getChildCount();
 		for(int i=0;i<count-1;i++ ){

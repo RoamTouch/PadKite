@@ -1,24 +1,21 @@
 package com.roamtouch.view;
 
 import roamtouch.webkit.WebHitTestResult;
-
 import com.roamtouch.menu.WindowTabs;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
-
 import android.content.Context;
+import android.os.Handler;
 import android.text.Html;
-import android.text.InputType;
 import android.text.Spanned;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class EventViewerArea extends LinearLayout {
+public class EventViewerArea extends LinearLayout implements Runnable{
 	
 	
 	private final float scale = getContext().getResources().getDisplayMetrics().density;
@@ -35,9 +32,18 @@ public class EventViewerArea extends LinearLayout {
 	public static final int UPDATE_MODE = 1;
 	public static final int TEXT_ONLY_MODE = -1;
 	private int mode = WINDOWS_MODE;
-
-	public EventViewerArea(Context context, AttributeSet attrs) {
+	private static final int TIME_TO_WAIT = 2000;
+	private int timeToWait = TIME_TO_WAIT;//ms
+	
+	
+	private Handler handler;
+	private Runnable runnable;
+	
+	public EventViewerArea(Context context, AttributeSet attrs)  {
 		super(context, attrs);
+		
+		handler = new Handler();
+		
 		
 		tv1=new TextView(getContext());
 		tv1.setText(Html.fromHtml("<font style='font-family:Lucida Grande,Verdana' color=\"yellow\">Action |</font> <font color=\"white\">FloatingCursor (" + BrowserActivity.version + ") </font"));
@@ -64,6 +70,8 @@ public class EventViewerArea extends LinearLayout {
 			}
 			
 		});
+		
+		handler.post(this);
 	}
 	public TextView getTextView(){
 		return tv1;
@@ -76,14 +84,19 @@ public class EventViewerArea extends LinearLayout {
 	}
 	public void setText(String txt)
 	{
+		this.setVisibility(View.VISIBLE);
 		tv1.setText(Html.fromHtml("<font color=\"yellow\">" + txt + "</font>"));
+		timeToWait = TIME_TO_WAIT;
 	}
 	public void setSplitedText(String txt,String txt2)
 	{
+		this.setVisibility(View.VISIBLE);
 		tv1.setText(Html.fromHtml("<font color=\"yellow\">" + txt + "</font><font color=\"white\">" + txt2 + "</font>"));
+		timeToWait = TIME_TO_WAIT;
 	}
 	public void splitText(int type, String extra){
-		
+		this.setVisibility(View.VISIBLE);
+		timeToWait = TIME_TO_WAIT;
 		switch(type){
 		
 		case WebHitTestResult.ANCHOR_TYPE:
@@ -124,6 +137,19 @@ public class EventViewerArea extends LinearLayout {
 			update.setVisibility(GONE);
 			tv1.setPadding(0, 0, 0, 0);
 		}
+	}
+	
+	
+	public void run() {
+		if(timeToWait==0){
+			this.setVisibility(View.INVISIBLE);
+			handler.post(this);
+		}
+		else{
+			timeToWait-=100;
+			handler.postDelayed(this, 100);
+		}
+			
 	}
 	
 }

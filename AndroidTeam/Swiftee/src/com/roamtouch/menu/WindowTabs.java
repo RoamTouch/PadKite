@@ -7,7 +7,6 @@ import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +27,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		LayoutInflater.from(context).inflate(R.layout.window_tabs, this);
 		
 	
-		setMode(CircularLayout.DYNAMIC_MODE);
+		init();
 		int count = getChildCount();
 		for(int i=1;i<count;i++ ){
 			View v = getChildAt(i);
@@ -63,8 +62,9 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 	public void onClick(View v) {
 		int id = v.getId();
 		if(id == 33){
-			addWindow();
-			currentTab = 2;
+			//addWindow();
+			mParent.removeWebView();
+			removeWindow();
 			return;
 		}
 		else{
@@ -100,6 +100,8 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		mParent.addWebView(but.getWebView());
 		but.setId(mParent.getActiveWebViewIndex()+1);
 		mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()+1);
+		
+		currentTab = 2;
 	}
 	public WebView createWebView(){
 		WebView webView = new WebView(mContext);

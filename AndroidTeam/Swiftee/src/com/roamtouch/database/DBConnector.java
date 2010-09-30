@@ -16,10 +16,15 @@ public class DBConnector {
 		private DatabaseHelper mDbHelper;
 		private SQLiteDatabase mDatabase;
 
-		private static final String DATABASE_CREATE = "create table user_profiles (_id integer primary key autoincrement, "+
+		private static final String DATABASE_CREATE1 = "create table user_profiles (_id integer primary key autoincrement, "+
 													  "email text not null ," +
 													  "username text not null ," +
-													  "password text not null);";
+													  "password text not null);" ;
+		
+		private static final String DATABASE_CREATE2 = "create table bookmarks (name text not null ," +
+													  "url text not null);" ;
+		
+	
 
 		private static final String DATABASE_NAME = "swifteeDB";
 		private static final int DATABASE_VERSION = 1;
@@ -35,7 +40,13 @@ public class DBConnector {
 			@Override
 			public void onCreate(SQLiteDatabase db) {
 
-				db.execSQL(DATABASE_CREATE);
+				db.execSQL(DATABASE_CREATE1);
+				db.execSQL(DATABASE_CREATE2);
+				db.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Google','http://www.google.com')");
+				db.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Yahoo','http://www.yahoo.com')");
+				db.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Wikipedia','http://www.wikipedia.com')");
+				db.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Picasa','http://www.picasa.google.com')");
+				db.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Cancel','Gesture cancelled')");
 			}
 
 			@Override
@@ -84,6 +95,49 @@ public class DBConnector {
 			catch(Exception e){
 				e.printStackTrace();
 				return false;
+			}
+		}
+		
+		public boolean checkIfBookmarkAdded(){
+			try{
+				Cursor c = mDatabase.rawQuery("SELECT count(*) FROM bookmarks", null);
+				if(c!=null){
+					c.moveToFirst();
+					int count = c.getInt(0);
+					if(count<2)
+						return true;
+				}
+				return false;
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				return false;
+			}		}
+
+		public void addBookmark(String name,String url){
+			try
+			{
+//				mDatabase.execSQL("INSERT INTO user_profiles(email,username,password) VALUES('"+name+"','"+username+"','"+password+"')");
+				
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		public String getBookmark(String name){
+			try{
+				Cursor c = mDatabase.rawQuery("SELECT * FROM bookmarks WHERE name='"+name+"'", null);
+				if(c!=null){
+					c.moveToFirst();
+					String url = c.getColumnName(1);
+					return url;
+				}
+				return null;
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				return null;
 			}
 		}
 }

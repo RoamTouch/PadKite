@@ -518,6 +518,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 		}
 
+		public void addNewWindow(){
+			fcWindowTabs.addWindow();
+		}
 		protected void checkFCMenuBounds()
 		{
 			final int r = fcView.getRadius();
