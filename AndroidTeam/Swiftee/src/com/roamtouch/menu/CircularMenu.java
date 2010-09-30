@@ -26,7 +26,7 @@ public class CircularMenu extends CircularLayout implements OnTouchListener{
 		
 		LayoutInflater.from(context).inflate(R.layout.main_menu, this);
 		
-		setMode(CircularLayout.STATIC_MODE);
+		//setMode(CircularLayout.STATIC_MODE);
 		
 		int count = getChildCount();
 		for(int i=0;i<count-1;i++ ){
