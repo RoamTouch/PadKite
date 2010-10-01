@@ -1,7 +1,6 @@
 package com.roamtouch.swiftee;
 
 import java.util.ArrayList;
-
 import com.api.blogger.BloggerActivity;
 import com.api.facebook.FacebookActivity;
 import com.api.twitter.TwitterActivity;
@@ -22,8 +21,8 @@ import com.roamtouch.view.SwifteeOverlayView;
 import com.roamtouch.view.TutorArea;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
-
 import android.gesture.GestureOverlayView;
 import android.gesture.GestureOverlayView.OnGestureListener;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
@@ -35,7 +34,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import roamtouch.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
@@ -47,7 +45,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 
-	public static String version = "Version Beta-v1.34-eclair build #b033bc/a36d10";
+	public static String version = "Version Beta-v1.32-eclair build #b033bc/a36d10";
 
 	private int activeWebViewIndex = 0;
 	
@@ -64,11 +62,11 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	private SwifteeGestureView mGestures;
 	private HorizontalScrollView mTutor;
 	
-	private final Handler mHandler = new Handler();
 		
 	private int currentGestureLibrary;
 	
 	private SwifteeApplication appState;
+    private SharedPreferences sharedPreferences;
     
 	 public boolean onKeyDown(int keyCode, android.view.KeyEvent event){
 	        
@@ -105,6 +103,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	DEVICE_WIDTH  =  getWindow().getWindowManager().getDefaultDisplay().getWidth();
     	DEVICE_HEIGHT =  getWindow().getWindowManager().getDefaultDisplay().getHeight();
     	
+		sharedPreferences = getApplicationContext().getSharedPreferences("Shared_Pref_AppSettings", MODE_WORLD_READABLE);
+
+		
         setContentView(R.layout.main);
         
         webLayout = (FrameLayout) findViewById(R.id.webviewLayout);
@@ -170,7 +171,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		//This is a dummy user entry...neeed to remove after
 		appState.getDatabase().registerUser("dummy", "dummy", "dummy@example.com");
     }
-    
+   
 /*    public void setWebView(WebView wv){
     	webLayout.removeViewAt(0);
     	webLayout.addView(wv);
@@ -225,7 +226,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		}
 		
 		mGestures.setEnabled(true);
-		mTutor.setVisibility(View.VISIBLE);
+		if(sharedPreferences.getBoolean("enable_tutor", false))
+			mTutor.setVisibility(View.VISIBLE);
 	}
     
     public void cancelGesture(boolean show)

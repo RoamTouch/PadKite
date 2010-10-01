@@ -30,8 +30,4 @@
 					android:button_function="history"
 		/>
 		
-		<MenuButton android:button_image="practicegesture_sans.png"
-					android:button_highlightImage="practicegesture.png"
-					android:button_function="practice_gesture"
-		/>
 </merge>
