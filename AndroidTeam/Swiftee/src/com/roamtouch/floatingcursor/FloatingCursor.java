@@ -65,6 +65,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	 	private BrowserActivity mParent;
 	 	
 		private int w = 0, h = 0;
+		
+		/* Maximum jump that is tolerated */
+		private final int MAX_JUMP = 128;
 	
 	/**
 	 * Calculate the touching radius for FP 
@@ -1192,13 +1195,16 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		}
 
 		int fcX = 0, fcY = 0;
+
+		int mPrevMoveX = 0, mPrevMoveY = 0;
+		boolean mMoveFrozen = true;
 		
 		boolean mForwardTouch = false;
 		boolean mMenuDown = false;
 		
 		public boolean dispatchTouchEventFC(MotionEvent event) {
 			
-			final int action = event.getAction() & MotionEvent.ACTION_MASK;
+			int action = event.getAction() & MotionEvent.ACTION_MASK;
 			
 			boolean status;
 
@@ -1252,6 +1258,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			{
 				mPrevX = X;
 				mPrevY = Y;
+				mPrevMoveX = X;
+				mPrevMoveY = Y;
+				mMoveFrozen = false;
+
 				mActivePointerId = event.getPointerId(0);
 				
 				//Toast.makeText(mContext, "mActivePointerId: " + mActivePointerId, 100).show();
@@ -1374,7 +1384,26 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			{
 				mActivePointerId = INVALID_POINTER_ID;
 			}
+
+			if (action == MotionEvent.ACTION_MOVE)
+			{	
+				if (mMoveFrozen)
+					return false;
 				
+				int dMX = Math.abs(X-mPrevMoveX);
+				int dMY = Math.abs(Y-mPrevMoveY);
+
+				if (dMX >= MAX_JUMP || dMY >= MAX_JUMP)
+				{
+					action = MotionEvent.ACTION_UP;
+					mMoveFrozen = true;
+					mHandleTouch = false; // Don't let user drag at this stage
+				}
+				
+				mPrevMoveX = X;
+				mPrevMoveY = Y;
+			}
+			
 			if (action == MotionEvent.ACTION_UP)
 			{
 				if(currentMenu == fcWindowTabs){
@@ -1433,6 +1462,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 			if (action == MotionEvent.ACTION_MOVE)
 			{	
+				
 				/*if (touchCount >= 2)
 				{
 					stopHitTest(fcX,fcY,false);
