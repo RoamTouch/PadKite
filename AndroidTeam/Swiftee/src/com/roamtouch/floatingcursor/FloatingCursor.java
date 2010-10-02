@@ -864,6 +864,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 		public void onClick()
 		{
+			mLongTouchEnabled = false;
+
 			if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
 				eventViewer.setText("Executing link ...");
@@ -913,6 +915,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			startSelection(false);
 		}
 
+		boolean mLongTouchEnabled = false;
 
 		public void onLongTouch() 
 		{			
@@ -922,6 +925,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
 				//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
+				mLongTouchEnabled = true;
 			}
 			else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE)
 			{
@@ -929,25 +933,32 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD_OR_LINK);
 				//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
+				mLongTouchEnabled = true;
 			}
 			else if ( mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
 				eventViewer.setText("Detected Long-Touch. Selecting link ...");
 
 				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD_OR_LINK);
+				mLongTouchEnabled = true;
 	
 			}
 		}
 		
 		public void onLongTouchUp() 
 		{
+			if (!mLongTouchEnabled)
+				return;
+			
+			mLongTouchEnabled = false;
+
 			stopSelectionCommand();
-			eventViewer.setText("Please select now more text with the FC ...");
 			startSelection(true);
 		}
 		
 		public void onTouchUp()
 		{
+
 /*			if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE){
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 				//pointer.setImageResource(R.drawable.address_bar_cursor);
@@ -1021,6 +1032,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 				if (yDiff > mTouchSlop || xDiff > mTouchSlop)
 				{
+					eventViewer.setText("Please select now more text with the FC ...");
 					mSelectionStarted = true;
 					stopHitTest(fcX,fcY,true);
 					pointer.setImageResource(R.drawable.text_cursor);
