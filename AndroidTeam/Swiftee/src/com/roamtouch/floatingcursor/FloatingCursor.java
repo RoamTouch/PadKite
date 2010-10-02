@@ -709,13 +709,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 				case WebHitTestResult.TEXT_TYPE: {
 					cursorImage = R.drawable.text_cursor;
-					eventViewer.splitText(WebHitTestResult.TEXT_TYPE,"");
+					//eventViewer.splitText(WebHitTestResult.TEXT_TYPE,"");
 					break;
 				}
 				case WebHitTestResult.VIDEO_TYPE: {
 					cursorImage = R.drawable.video_cursor;
 					WebVideoInfo videoInfo = mWebHitTestResult.getVideoInfo();
-					eventViewer.splitText(WebHitTestResult.VIDEO_TYPE, "");
+					//eventViewer.splitText(WebHitTestResult.VIDEO_TYPE, "");
 					break;
 				}
 				
@@ -723,7 +723,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
 					String tooltip = mWebHitTestResult.getToolTip();
-					eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
+					if (tooltip != "")
+						eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
 	/*				if(shouldLinkExec){
 						mWebView.loadUrl(extra);
 						shouldLinkExec = false; 
@@ -742,7 +743,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
 					String tooltip = mWebHitTestResult.getToolTip();
-					eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
+					if (tooltip != "")
+						eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
 	
 					break;
 				}
@@ -750,14 +752,16 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				case WebHitTestResult.IMAGE_ANCHOR_TYPE: {
 					resultType = WebHitTestResult.IMAGE_TYPE;
 					cursorImage = R.drawable.image_cursor;
+
 					String tooltip = mWebHitTestResult.getToolTip();
-					eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
+					if (tooltip != "")
+						eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
 					break;
 				}
 	
 				case WebHitTestResult.IMAGE_TYPE: {
 					cursorImage = R.drawable.image_cursor;
-					eventViewer.splitText(WebHitTestResult.IMAGE_TYPE,"");
+		//			eventViewer.splitText(WebHitTestResult.IMAGE_TYPE,"");
 					break;
 				}
 				default: {
