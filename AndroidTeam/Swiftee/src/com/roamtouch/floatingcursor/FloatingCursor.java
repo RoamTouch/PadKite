@@ -1291,7 +1291,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				final int r = fcView.getRadius();
 				
 				// Check for inner circle click and show Circular menu
-				final int innerCirRad = fcPointerView.getRadius();
+				final int innerCirRad = (int)(fcPointerView.getRadius() * 0.6f);
 				
 				// We need to factor the inner circle relocation so
 				// it does not get out of the outer circle
@@ -1302,6 +1302,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 				final int innerCircleX = -(int)fcPointerView.getScrollX() + CircleX;
 				final int innerCircleY = -(int)fcPointerView.getScrollY() + CircleY;
+
+				int scrollX = X - CircleX;
+				int scrollY = Y - CircleY;
+				double length = Math.hypot(scrollX, scrollY);
 					
 				if(X > innerCircleX-innerCirRad && X < innerCircleX+innerCirRad && Y > innerCircleY-innerCirRad && Y < innerCircleY+innerCirRad){
 					//Toast.makeText(mContext, "Circular Menu", 100).show();
@@ -1316,8 +1320,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					zoomView.onTouchEvent(event);
 					return true;
 				}
-				else if ((X < CircleX-r || X > CircleX+r || Y < CircleY-r || Y > CircleY+r) && mScroller.isFinished())
-				{	
+				/*else if ((X < CircleX-r || X > CircleX+r || Y < CircleY-r || Y > CircleY+r) && mScroller.isFinished())*/
+				else if ((length >= (r*0.9f)) && mScroller.isFinished())
+				{		
 					fcView.setVisibility(View.INVISIBLE);
 					removeTouchPoint();
 					
@@ -1351,11 +1356,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					//				mLastTouchY = Y;
 					mTouchPointValid = true;
 			
-					int scrollX = X - CircleX;
-					int scrollY = Y - CircleY;
-					
-					double length = Math.hypot(scrollX, scrollY);
-					
 					scrollX *= (radFact/length);
 					scrollY *= (radFact/length);
 					
