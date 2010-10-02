@@ -560,6 +560,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			currentMenu = fcMainMenu;
 
 			// Reset FC
+			pointer.setImageResource(R.drawable.no_target_cursor);
 			removeTouchPoint();
 		}
 		
@@ -580,6 +581,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 			if(currentMenu.getVisibility() == INVISIBLE){
 
+				pointer.setImageResource(R.drawable.kite_cursor);
 				mMenuDown = true;
 				fcView.setVisibility(View.INVISIBLE);
 				checkFCMenuBounds();
@@ -610,6 +612,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			else if(currentMenu.getVisibility() == VISIBLE){
 
 				mMenuDown = false;
+				pointer.setImageResource(R.drawable.no_target_cursor);
 
 				menuAnimation = new AlphaAnimation(1.0f, 0.0f);
 				menuAnimation.setDuration(250);
