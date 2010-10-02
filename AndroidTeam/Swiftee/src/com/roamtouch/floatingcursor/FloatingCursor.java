@@ -723,7 +723,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
 					String tooltip = mWebHitTestResult.getToolTip();
-					if (tooltip != "")
+					if (tooltip.length() > 5)
 						eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
 	/*				if(shouldLinkExec){
 						mWebView.loadUrl(extra);
@@ -743,7 +743,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
 					String tooltip = mWebHitTestResult.getToolTip();
-					if (tooltip != "")
+					if (tooltip.length() > 5)
 						eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
 	
 					break;
@@ -754,7 +754,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					cursorImage = R.drawable.image_cursor;
 
 					String tooltip = mWebHitTestResult.getToolTip();
-					if (tooltip != "")
+					if (tooltip.length() > 5)
 						eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
 					break;
 				}
