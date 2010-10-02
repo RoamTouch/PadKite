@@ -25,8 +25,9 @@
                     android:button_function="windows"/>
 	
 	     <MenuButton android:button_image="new_window.png"
-					android:button_highlightImage="new_window.png"
-                    android:button_function="new_window"/>  
+		    android:button_highlightImage="new_window.png"
+                    android:button_function="new_window"
+                    android:hotkey="true" />
 
 		<MenuButton android:button_image="download_normal.png"
 					android:button_highlightImage="download_pressed.png"
@@ -53,7 +54,7 @@
 		<MenuButton android:button_image="cross.png"
 					android:button_highlightImage="cross.png" 
 					android:button_function="close"
-					android:hotkey="true"/> 			 
+					/> 			 
 		
 </merge>
     	
