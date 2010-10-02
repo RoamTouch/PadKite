@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -184,8 +185,16 @@ public class SelectionGestureView extends FrameLayout {
 	
 	protected void startAutoSelection(int selectionDir, int steps, int delay)
 	{
+		//Log.i("startAutoSelection", "Params: " + selectionDir + "," + steps + "," + delay);
+
 		if (mAutoSelectionStarted)
+		{
+			mSelectionDirection = selectionDir;
+			mSteps = steps;
+			mDelay = delay;
+			
 			return;
+		}
 		mFloatingCursor.onAutoSelectionStart();
 
 		mAutoSelectionStarted = true;
@@ -194,6 +203,60 @@ public class SelectionGestureView extends FrameLayout {
 		mDelay = delay;
 
 		mHandler.post(mRunnable);
+	}
+	
+	final int MAX_DELAY_X = 300;
+	final int MAX_DELAY_Y = 500;
+
+	final int MIN_DELAY = 100;
+	
+	final int radius = 250;
+	
+	protected void updateAutoSelection(float X, float Y)
+	{
+		float deltaX = Math.abs(X - mDownX);
+		float deltaY = Math.abs(Y - mDownY);
+		
+		int direction;
+		float speed;
+		
+		if (deltaX > deltaY)
+		{
+			if (mDownX-X < 0)
+				direction=SEL_DIR_RIGHT;
+			else
+				direction=SEL_DIR_LEFT;
+			if (deltaX > radius)
+				deltaX = radius;
+			speed = deltaX / radius;
+			mDelay = (int)(MAX_DELAY_X * (1-speed));
+		}
+		else
+		{
+			if (mDownY-Y < 0)
+				direction=SEL_DIR_DOWN;
+			else
+				direction=SEL_DIR_UP;
+			
+			if (deltaY > radius)
+				deltaY = radius;
+			speed = deltaY / radius;
+			mDelay = (int)(MAX_DELAY_Y * (1-speed));
+		}
+		
+		mSelectionDirection = direction;
+
+		mSteps = 1;
+		
+		if (mDelay < MIN_DELAY)
+		{
+			mSteps = MIN_DELAY / mDelay;
+
+			if (mSteps > 10)
+				mSteps = 10;
+			
+			mDelay = MIN_DELAY;
+		}
 	}
 
 	protected void runAutoSelection()
@@ -297,28 +360,30 @@ public class SelectionGestureView extends FrameLayout {
 				float deltaX = Math.abs(X - mDownX);
 				float deltaY = Math.abs(Y - mDownY);
 				
-				if (eventTime-mStartEventTime >= 250 && selectionType != SelectionTypes.LongTouch)
+				if (eventTime-mStartEventTime >= 250 && selectionType == null)
 				{
 					selectionType = SelectionTypes.LongTouch;
 					mFloatingCursor.onLongTouch();
 				}
 
-				if (deltaX >= TOUCH_TOLERANCE && deltaY >= TOUCH_TOLERANCE)
+				/*if (deltaX >= TOUCH_TOLERANCE && deltaY >= TOUCH_TOLERANCE)
 				{
 					// Paragraph selection
 					selectionType = SelectionTypes.Paragraph;
 					mEventViewer.setText("Detected paragraph selection gesture ...");
 				}
-				else if(deltaX >= TOUCH_TOLERANCE)
+				else*/ if(deltaX >= TOUCH_TOLERANCE)
 				{
 					// FIXME: Use config variables
 					
 					// Text automatic selection
 					if (mDownX-X < 0)
-						startAutoSelection(SEL_DIR_RIGHT, 10, 100);
+						startAutoSelection(SEL_DIR_RIGHT, 1, 700);
 					else
-						startAutoSelection(SEL_DIR_LEFT, 10, 100);
+						startAutoSelection(SEL_DIR_LEFT, 1, 700);
 
+					updateAutoSelection(X,Y);
+					
 					selectionType = SelectionTypes.TextAutomatic;
 					mEventViewer.setText("Detected text automatic selection gesture ...");
 				}
@@ -331,22 +396,27 @@ public class SelectionGestureView extends FrameLayout {
 						startAutoSelection(SEL_DIR_DOWN, 1, 700);
 					else
 						startAutoSelection(SEL_DIR_UP, 1, 700);
+					
+					updateAutoSelection(X,Y);
 
 					selectionType = SelectionTypes.LineAutomatic;
 					mEventViewer.setText("Detected line automatic selection gesture ...");
 				}
 			}
 			if (selectionType != null)
-			{
+			{				
 				switch (selectionType)
 				{
 					case Paragraph:
 						mFloatingCursor.executeSelectionCommand(WebView.SELECT_PARAGRAPH);
 						break;
 					case TextAutomatic:
+						updateAutoSelection(X, Y);
 						//mFloatingCursor.executeSelectionCommand(WebView.EXTEND_SELECTION_RIGHT);
 						break;
 					case LineAutomatic:
+						updateAutoSelection(X, Y);
+
 						//mFloatingCursor.executeSelectionCommand(WebView.EXTEND_SELECTION_DOWN);
 						break;
 					case LongTouch:
