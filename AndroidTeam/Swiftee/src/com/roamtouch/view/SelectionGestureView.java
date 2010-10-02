@@ -297,7 +297,7 @@ public class SelectionGestureView extends FrameLayout {
 				float deltaX = Math.abs(X - mDownX);
 				float deltaY = Math.abs(Y - mDownY);
 				
-				if (eventTime-mStartEventTime >= 100 && selectionType != SelectionTypes.LongTouch)
+				if (eventTime-mStartEventTime >= 250 && selectionType != SelectionTypes.LongTouch)
 				{
 					selectionType = SelectionTypes.LongTouch;
 					mFloatingCursor.onLongTouch();

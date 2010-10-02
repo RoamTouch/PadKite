@@ -948,7 +948,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		public void onLongTouchUp() 
 		{
 			if (!mLongTouchEnabled)
+			{
+				onClick();
 				return;
+			}
 			
 			mLongTouchEnabled = false;
 
