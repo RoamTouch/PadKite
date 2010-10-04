@@ -247,6 +247,9 @@ public class SelectionGestureView extends FrameLayout {
 		mSelectionDirection = direction;
 
 		mSteps = 1;
+
+		if (mDelay == 0)
+			mDelay = MIN_DELAY;
 		
 		if (mDelay < MIN_DELAY)
 		{
