@@ -367,7 +367,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 			// Setup FC Views
 			pointer = new ImageView(getContext());
-			pointer.setImageResource(R.drawable.no_target_cursor);
+			pointer.setImageResource(R.drawable.kite_cursor);
 			pointer.setScaleType(ImageView.ScaleType.CENTER); 
 		
 			//pointer.setPadding(140, 140, 0, 0);
@@ -560,7 +560,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			currentMenu = fcMainMenu;
 
 			// Reset FC
-			pointer.setImageResource(R.drawable.no_target_cursor);
+			pointer.setImageResource(R.drawable.kite_cursor);
 			removeTouchPoint();
 		}
 		
@@ -612,7 +612,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			else if(currentMenu.getVisibility() == VISIBLE){
 
 				mMenuDown = false;
-				pointer.setImageResource(R.drawable.no_target_cursor);
+				pointer.setImageResource(R.drawable.kite_cursor);
 
 				menuAnimation = new AlphaAnimation(1.0f, 0.0f);
 				menuAnimation.setDuration(250);
@@ -686,7 +686,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 				sendEvent(MotionEvent.ACTION_CANCEL, X, Y);
 				if (setIcon)
-					pointer.setImageResource(R.drawable.no_target_cursor);
+					pointer.setImageResource(R.drawable.kite_cursor);
 
 				mWebHitTestResultIdentifer = -1;
 				mHitTestMode = false;
@@ -827,7 +827,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		}
 	
 		public void onPageFinished() {
-			pointer.setImageResource(R.drawable.no_target_cursor);
+			pointer.setImageResource(R.drawable.kite_cursor);
 			removeTouchPoint();
 		}
 		
@@ -982,7 +982,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
 			}*/
 			
-			pointer.setImageResource(R.drawable.no_target_cursor);
+			pointer.setImageResource(R.drawable.kite_cursor);
 		}
 		
 		protected boolean mMovableSelection = false;
