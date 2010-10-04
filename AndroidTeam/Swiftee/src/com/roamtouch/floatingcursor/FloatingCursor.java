@@ -1377,7 +1377,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					return true;
 				}
 				/*else if ((X < CircleX-r || X > CircleX+r || Y < CircleY-r || Y > CircleY+r) && mScroller.isFinished())*/
-				else if ((length >= (r*0.9f)) && mScroller.isFinished())
+				else if ((length >= (r*1.1f)) && mScroller.isFinished())
 				{		
 					fcView.setVisibility(View.INVISIBLE);
 					removeTouchPoint();
