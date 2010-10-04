@@ -1219,7 +1219,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		int fcX = 0, fcY = 0;
 
 		int mPrevMoveX = 0, mPrevMoveY = 0;
-		boolean mMoveFrozen = true;
+		boolean mMoveFrozen = false;
 		
 		boolean mForwardTouch = false;
 		boolean mMenuDown = false;
@@ -1263,6 +1263,59 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				mWebView.dispatchTouchEvent(event);
 
 				return true;
+			}
+
+			if (mMoveFrozen)
+			{
+				// We continue the movement from MT
+				if (action == MotionEvent.ACTION_MOVE || action == MotionEvent.ACTION_UP)
+				{
+					float xs[] = new float[2];
+					float ys[] = new float[2];
+					float pressure[] = new float[2];
+					int ptIdxs[] = new int[2];
+					
+					xs[0] = X;
+					xs[1] = X;
+
+					ys[0] = Y;
+					ys[1] = Y;
+					
+					ptIdxs[0] = 0;
+					ptIdxs[1] = 0;
+					
+					pressure[0] = pressure[1] = event.getPressure();
+ 
+					// FIXME: Performance
+					PointInfo pt = new PointInfo();
+
+					pt.set(2, xs, ys, pressure, ptIdxs, action, action!=MotionEvent.ACTION_UP, event.getEventTime());
+					mSelectionGestures.dispatchTouchEventMT(pt, action);
+				}
+
+				if (action == MotionEvent.ACTION_UP)
+					mMoveFrozen = false;
+								
+				if (action == MotionEvent.ACTION_MOVE)
+					return true;
+			}
+			
+			if (action == MotionEvent.ACTION_MOVE)
+			{		
+				int dMX = Math.abs(X-mPrevMoveX);
+				int dMY = Math.abs(Y-mPrevMoveY);
+
+				if (dMX >= MAX_JUMP || dMY >= MAX_JUMP)
+				{
+					action = MotionEvent.ACTION_UP;
+					mMoveFrozen = true;
+					this.setVisibility(View.INVISIBLE);	
+					mHandleTouch = false; // Don't let user drag at this stage
+					return true;
+				}
+				
+				mPrevMoveX = X;
+				mPrevMoveY = Y;
 			}
 
 			// MT stuff
@@ -1407,7 +1460,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				mActivePointerId = INVALID_POINTER_ID;
 			}
 
-			if (action == MotionEvent.ACTION_MOVE)
+			/*if (action == MotionEvent.ACTION_MOVE)
 			{	
 				if (mMoveFrozen)
 					return false;
@@ -1424,7 +1477,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 				mPrevMoveX = X;
 				mPrevMoveY = Y;
-			}
+			}*/
 			
 			if (action == MotionEvent.ACTION_UP)
 			{
@@ -2017,24 +2070,24 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		}
 
 		public void selectObject(FCObj obj, PointInfo touchPoint) {
-			float[] xs = touchPoint.getXs();
-			float[] ys = touchPoint.getYs();
+			//float[] xs = touchPoint.getXs();
+			//float[] ys = touchPoint.getYs();
 
 			//Log.w("FC-MT", "selectObject: " + touchPoint.getAction() + " -> " + xs[0] + "," + ys[0] + " " + xs[1] + "," + ys[1] + " = " + touchPoint.getEventTime());
 			
-			if (mSelectionGestures != null)
+			if (mSelectionGestures != null && !mMoveFrozen)
 				mSelectionGestures.dispatchTouchEventMT(touchPoint, touchPoint.isDown()?MotionEvent.ACTION_DOWN:MotionEvent.ACTION_UP);
 		}
 
 		public boolean setPositionAndScale(FCObj obj,
 				PositionAndScale newObjPosAndScale, PointInfo touchPoint) {
 			
-			float[] xs = touchPoint.getXs();
-			float[] ys = touchPoint.getYs();
+			//float[] xs = touchPoint.getXs();
+			//float[] ys = touchPoint.getYs();
 
 			//Log.w("FC-MT", "setPositionAndScale: " + touchPoint.getAction() + " -> " + xs[0] + "," + ys[0] + " " + xs[1] + "," + ys[1] + " = " + touchPoint.getEventTime());
 
-			if (mSelectionGestures != null)
+			if (mSelectionGestures != null && !mMoveFrozen)
 				mSelectionGestures.dispatchTouchEventMT(touchPoint, MotionEvent.ACTION_MOVE);
 			
 			return false;
