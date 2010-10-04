@@ -486,7 +486,7 @@ public class MultiTouchController<T> {
 		// -------------------------------------------------------------------------------------------------------------------------------------------
 
 		/** Set all point info */
-		private void set(int numPoints, float[] x, float[] y, float[] pressure, int[] pointerIdxs, int action, boolean isDown, long eventTime) {
+		public void set(int numPoints, float[] x, float[] y, float[] pressure, int[] pointerIdxs, int action, boolean isDown, long eventTime) {
 			if (DEBUG)
 				Log.i("MultiTouch", "Got here 8 - " + +numPoints + " " + x[0] + " " + y[0] + " " + (numPoints > 1 ? x[1] : x[0]) + " "
 						+ (numPoints > 1 ? y[1] : y[0]) + " " + action + " " + isDown);
