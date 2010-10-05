@@ -183,7 +183,7 @@ public class SelectionGestureView extends FrameLayout {
 	int mSteps = 1;
 	int mDelay = 1;
 	
-	protected void startAutoSelection(int selectionDir, int steps, int delay)
+	protected void startAutoSelection(int selectionDir, int steps, int delay, boolean restart)
 	{
 		//Log.i("startAutoSelection", "Params: " + selectionDir + "," + steps + "," + delay);
 
@@ -195,7 +195,7 @@ public class SelectionGestureView extends FrameLayout {
 			
 			return;
 		}
-		mFloatingCursor.onAutoSelectionStart();
+		mFloatingCursor.onAutoSelectionStart(restart);
 
 		mAutoSelectionStarted = true;
 		mSelectionDirection = selectionDir;
@@ -260,6 +260,9 @@ public class SelectionGestureView extends FrameLayout {
 			
 			mDelay = MIN_DELAY;
 		}
+
+		if (!mAutoSelectionStarted)
+			startAutoSelection(mSelectionDirection, mSteps, mDelay, true);
 	}
 
 	protected void runAutoSelection()
@@ -339,10 +342,11 @@ public class SelectionGestureView extends FrameLayout {
 
 		mDebugView.setCurrTouchPoint(touchPoint, action);
 		
+		//Log.d("dispatchTouchEventMT", "X,Y,action: " + xs[1] + "," + ys[1] + "," + action);
+
 		return dispatchTouchEventFC(xs[1], ys[1], action, touchPoint.getEventTime());
 	}
 
-		
 	public boolean dispatchTouchEventFC(float X, float Y, int action, long eventTime) {
 
 		//mEventViewer.setText("downX:" + downX + " downY:" + downY + " X:" + event.getX() + " Y:" + event.getY() + " idx:" + event.getPointerCount());
@@ -381,9 +385,9 @@ public class SelectionGestureView extends FrameLayout {
 					
 					// Text automatic selection
 					if (mDownX-X < 0)
-						startAutoSelection(SEL_DIR_RIGHT, 1, 700);
+						startAutoSelection(SEL_DIR_RIGHT, 1, 700, false);
 					else
-						startAutoSelection(SEL_DIR_LEFT, 1, 700);
+						startAutoSelection(SEL_DIR_LEFT, 1, 700, false);
 
 					updateAutoSelection(X,Y);
 					
@@ -396,9 +400,9 @@ public class SelectionGestureView extends FrameLayout {
 					
 					// Line automatic selection
 					if (mDownY-Y < 0)
-						startAutoSelection(SEL_DIR_DOWN, 1, 700);
+						startAutoSelection(SEL_DIR_DOWN, 1, 700, false);
 					else
-						startAutoSelection(SEL_DIR_UP, 1, 700);
+						startAutoSelection(SEL_DIR_UP, 1, 700, false);
 					
 					updateAutoSelection(X,Y);
 
@@ -428,13 +432,11 @@ public class SelectionGestureView extends FrameLayout {
 		}
 		else if (action == MotionEvent.ACTION_UP)
 		{	
-			mDownX = -1;			
-			mDownY = -1;
+/*			mDownX = -1;
+			mDownY = -1;*/
 			
 			if (selectionType == null)
 			{
-				mFloatingCursor.executeSelectionCommand(WebView.STOP_SELECTION);
-
 				mFloatingCursor.onClick();
 			}
 			else if (selectionType == SelectionTypes.LongTouch)

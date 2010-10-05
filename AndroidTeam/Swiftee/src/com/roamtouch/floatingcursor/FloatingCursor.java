@@ -868,6 +868,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		public void onClick()
 		{
 			mLongTouchEnabled = false;
+			executeSelectionCommand(WebView.STOP_SELECTION);
 
 			if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
@@ -906,7 +907,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 		}
 		
-		public void onAutoSelectionStart()
+		public void onAutoSelectionStart(boolean restart)
 		{
 			// Nothing for now
 		}
@@ -1223,6 +1224,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 		boolean mForwardTouch = false;
 		boolean mMenuDown = false;
+		int mOldTouchCount = 0;
 		
 		public boolean dispatchTouchEventFC(MotionEvent event) {
 			
@@ -1265,6 +1267,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				return true;
 			}
 
+			//Log.d("dispatchTouchEventFC", "X,Y,action" + X + "," + Y + "," + action);
+
 			if (mMoveFrozen)
 			{
 				// We continue the movement from MT
@@ -1300,7 +1304,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					return true;
 			}
 			
-			if (action == MotionEvent.ACTION_MOVE)
+			if (action == MotionEvent.ACTION_MOVE && mOldTouchCount == 2 && touchCount == 1)
 			{		
 				int dMX = Math.abs(X-mPrevMoveX);
 				int dMY = Math.abs(Y-mPrevMoveY);
@@ -1313,6 +1317,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					mHandleTouch = false; // Don't let user drag at this stage
 					return true;
 				}
+			}
+
+			if (action == MotionEvent.ACTION_MOVE)
+			{
+				mOldTouchCount = touchCount;
 				
 				mPrevMoveX = X;
 				mPrevMoveY = Y;
