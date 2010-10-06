@@ -49,7 +49,7 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 		handler = new Handler();
 		
 		sharedPreferences = mContext.getApplicationContext().getSharedPreferences("Shared_Pref_AppSettings", Context.MODE_WORLD_READABLE);;
-		isEnabled = sharedPreferences.getBoolean("enable_event_viewer", false);
+		isEnabled = sharedPreferences.getBoolean("enable_event_viewer", true);
 		tv1=new TextView(getContext());
 		tv1.setText(Html.fromHtml("<font style='font-family:Lucida Grande,Verdana' color=\"yellow\">Action |</font> <font color=\"white\">FloatingCursor (" + BrowserActivity.version + ") </font"));
 //		tv1.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -91,7 +91,7 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 	public void setText(String txt)
 	{
 		sharedPreferences = mContext.getApplicationContext().getSharedPreferences("Shared_Pref_AppSettings", Context.MODE_WORLD_READABLE);
-		isEnabled = sharedPreferences.getBoolean("enable_event_viewer", false);
+		isEnabled = sharedPreferences.getBoolean("enable_event_viewer", true);
 		if(isEnabled){
 			this.setVisibility(View.VISIBLE);
 			tv1.setText(Html.fromHtml("<font color=\"yellow\">" + txt + "</font>"));
@@ -101,7 +101,7 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 	public void setSplitedText(String txt,String txt2)
 	{
 		sharedPreferences = mContext.getApplicationContext().getSharedPreferences("Shared_Pref_AppSettings", Context.MODE_WORLD_READABLE);;
-		isEnabled = sharedPreferences.getBoolean("enable_event_viewer", false);
+		isEnabled = sharedPreferences.getBoolean("enable_event_viewer", true);
 		if(isEnabled){
 			this.setVisibility(View.VISIBLE);
 			tv1.setText(Html.fromHtml("<font color=\"yellow\">" + txt + "</font><font color=\"white\">" + txt2 + "</font>"));
@@ -110,7 +110,7 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 	}
 	public void splitText(int type, String extra){
 		sharedPreferences = mContext.getApplicationContext().getSharedPreferences("Shared_Pref_AppSettings", Context.MODE_WORLD_READABLE);;
-		isEnabled = sharedPreferences.getBoolean("enable_event_viewer", false);
+		isEnabled = sharedPreferences.getBoolean("enable_event_viewer", true);
 		if(isEnabled){
 			this.setVisibility(View.VISIBLE);
 			timeToWait = TIME_TO_WAIT;

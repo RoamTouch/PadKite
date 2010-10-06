@@ -9,6 +9,7 @@ import com.roamtouch.view.WebPage;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -54,33 +55,7 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 	public void setParent(BrowserActivity parent){
 		mParent = parent;
 	}
-	/*public void onClick(View v) {
-		int id=v.getId();
-		switch(id){
 
-			case R.id.browsersettings:break;
-			case R.id.setHome:break;
-			case R.id.resizeHit:break;
-			case R.id.gestureEditor:{
-				
-			}
-			case R.id.misc:{
-				Intent i = new Intent(mParent,MiscListActivity.class);
-				mParent.startActivity(i);
-				break;
-			}
-			case R.id.onlineHelp:{
-				
-				break;
-			}
-			case R.id.practiceGesture:{
-						
-				break;
-			}
-			
-		}
-		
-	}*/
 
 	public boolean onTouch(View v, MotionEvent event) {
 		
@@ -144,6 +119,10 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 				
 			//Set home page
 			case set_homepage:
+				SharedPreferences sharedPreferences = mParent.getApplicationContext().getSharedPreferences("Shared_Pref_AppSettings", Context.MODE_WORLD_READABLE);
+				SharedPreferences.Editor editor = sharedPreferences.edit();
+				editor.putString("home_page",mFloatingCursor.getCurrentURL());
+				editor.commit();
 				break;
 				
 			//Resize hit area
@@ -164,16 +143,12 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 			
 			//Help online	
 			case help_online:
-				i = new Intent(mParent,WebPage.class);
-				i.putExtra("webUrl", "http://www.padkite.com/help");
-				mParent.startActivity(i);
+				mFloatingCursor.loadPage("file:///android_asset/Web Pages/help.html");
 				break;
 			
 			//Practice gesture	
 			case history:		
-				i = new Intent(mParent,WebPage.class);
-				i.putExtra("webUrl", "http://www.padkite.com/history");
-				mParent.startActivity(i);
+				mFloatingCursor.loadPage("file:///android_asset/Web Pages/history.html");
 				break;
 
 			case none:

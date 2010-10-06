@@ -7,10 +7,6 @@
 		<MenuButton android:button_image="forward_normal.png"
 					android:button_highlightImage="forward_pressed.png" 
                     android:button_function="forward"/>
-                    
-		<MenuButton android:button_image="stop_normal.png"
-					android:button_highlightImage="stop_pressed.png" 
-                    android:button_function="stop"/>
 	
 		<MenuButton android:button_image="refresh_normal.png"
 					android:button_highlightImage="refresh_pressed.png"
@@ -25,7 +21,7 @@
                     android:button_function="windows"/>
 	
 	     <MenuButton android:button_image="new_window.png"
-		    android:button_highlightImage="new_window.png"
+		    		android:button_highlightImage="new_window.png"
                     android:button_function="new_window"
                     android:hotkey="true" />
 
@@ -35,10 +31,8 @@
             
 		<MenuButton android:button_image="sethomepage_sans.png"
 					android:button_highlightImage="sethomepage.png"
-					android:button_function="homepage"
-		/>  
-	
-		             
+					android:button_function="homepage"/>  
+			             
 		<MenuButton android:button_image="zoom_normal.png"
 					android:button_highlightImage="zoom_normal.png"
                     android:button_function="zoom"/>
@@ -49,17 +43,14 @@
 
 		<MenuButton android:button_image="history_normal.png"
 					android:button_highlightImage="history_pressed.png"
-                    android:button_function="bookmark"/>
-
-                    
+                    android:button_function="history"/>
+                  
    		<MenuButton android:button_image="settings_normal.png"
 					android:button_highlightImage="settings_pressed.png" 
 					android:button_function="settings"/> 
 					
 		<MenuButton android:button_image="cross.png"
 					android:button_highlightImage="cross.png" 
-					android:button_function="close"
-					/> 			 
-		
+					android:button_function="close"/> 			 		
 </merge>
     	

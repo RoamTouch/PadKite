@@ -1,8 +1,11 @@
 package com.roamtouch.menu;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 import android.content.Context;
 import android.view.ViewGroup;
@@ -63,7 +66,13 @@ public class MenuInflater {
 
 	}
 		
-	catch(Exception e){
+	catch(XmlPullParserException e){
+		e.printStackTrace();
+	} 
+	catch (FileNotFoundException e) {
+		e.printStackTrace();
+	}
+	catch (IOException e) {
 		e.printStackTrace();
 	}
 	}

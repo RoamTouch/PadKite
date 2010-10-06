@@ -11,6 +11,7 @@ import com.roamtouch.view.WebPage;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -41,6 +42,9 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 	public static boolean USER_REGISTERED = true;
 	private DBConnector database;
 	private SwifteeApplication appState;
+	private MenuButton button;
+	public static String PATH = "/sdcard/Swiftee/Default Theme/";
+	
 //	private EventViewerArea eventViewer;
 	 
 	public MainMenu(Context context) {
@@ -55,11 +59,6 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
     	database = appState.getDatabase();
     	
 		init();
-		OnClickListener listener = new OnClickListener(){
-			public void onClick(View v) {
-				System.exit(1);
-			}			
-		};
 		
 		int count = getChildCount();
 		for(int i=0;i<count;i++ ){
@@ -67,6 +66,12 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			View v = getChildAt(i);
 			v.setId(i);
 			v.setOnTouchListener(this);
+			
+			if ((v instanceof MenuButton)){
+				MenuButton b = (MenuButton) v;
+				if(b.getFunction().equals("refresh"))
+					button = b;
+			}
 		}
 	}
 
@@ -80,6 +85,16 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 	}
 	public void setEventViewer(EventViewerArea ev){
 //		eventViewer = ev;
+	}
+	public void toggleCloseORRefresh(boolean isRefresh){
+		if(isRefresh){
+			button.setDrawables(PATH+"refresh_normal.png",PATH+"refresh_pressed.png");
+			button.setFunction("refresh");
+		}
+		else{
+			button.setDrawables(PATH+"stop_normal.png",PATH+"stop_pressed.png");
+			button.setFunction("stop");
+		}
 	}
 	public boolean onTouch(View v, MotionEvent event) {
 
@@ -194,12 +209,9 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 					
 			//Find text
 			case homepage:
-				mFloatingCursor.loadHomePage();
-				//InputMethodManager imm = (InputMethodManager)((Activity)getContext()).getSystemService(Context.INPUT_METHOD_SERVICE);
-				//imm.showSoftInput(eventViewer.getTextView(), InputMethodManager.SHOW_IMPLICIT);
-				//imm.showSoftInput(eventViewer, InputMethodManager.SHOW_FORCED, new ResultReceiver(new Handler()));
-				// FIXME: Remove
-				//this.setVisibility(INVISIBLE);
+				SharedPreferences sharedPreferences = mParent.getApplicationContext().getSharedPreferences("Shared_Pref_AppSettings", Context.MODE_WORLD_READABLE);
+				String url = sharedPreferences.getString("home_page","http://www.padkite.com");
+				mFloatingCursor.loadPage(url);				
 				break;
 			//Windows	
 			case windows:
@@ -224,13 +236,14 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				break;
 				
 			case download:
-				Intent i = new Intent(mParent,WebPage.class);
-				i.putExtra("webUrl", "http://www.padkite.com/downloads");
-				mParent.startActivity(i);
+				//Intent i = new Intent(mParent,WebPage.class);
+				//i.putExtra("webUrl", "http://www.padkite.com/downloads");
+				//mParent.startActivity(i);
+				mFloatingCursor.loadPage("file:///android_asset/Web Pages/download.html");
 				break;
 			
 			case bookmark:
-				i = new Intent(mParent,GestureRecorder.class);
+				Intent i = new Intent(mParent,GestureRecorder.class);
 				i.putExtra("Gesture_Name", "");
 				i.putExtra("isNewBookmark", true);
 				i.putExtra("Gesture_Type", SwifteeApplication.BOOKMARK_GESTURE);

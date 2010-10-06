@@ -28,7 +28,6 @@ import android.gesture.GestureOverlayView.OnGestureListener;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.ClipboardManager;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -226,7 +225,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		}
 		
 		mGestures.setEnabled(true);
-		if(sharedPreferences.getBoolean("enable_tutor", false))
+		if(sharedPreferences.getBoolean("enable_tutor", true))
 			mTutor.setVisibility(View.VISIBLE);
 	}
     
@@ -349,8 +348,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         	startActivity(intent);
         }
         else if("Translate".equals(action)){
-        	String translated = Translater.text(mSelection, "ENGLISH", "ITALIAN");
-        	eventViewer.setSplitedText("Translated from ENGLISH to ITALIAN:",translated);
+        	String languageTo = sharedPreferences.getString("language_to", "ENGLISH");
+        	String translated = Translater.text(mSelection, "ENGLISH", languageTo);
+        	eventViewer.setSplitedText("Translated from ENGLISH to"+ languageTo+":",translated);
         }
         else if("Wikipedia".equals(action)){
         	webView.loadUrl("http://en.wikipedia.org/wiki/"+mSelection);

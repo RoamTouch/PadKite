@@ -198,7 +198,7 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 				image.setVisibility(VISIBLE);
 			}
 			else if(position == 5){
-				if(sharedPreferences.getBoolean("enable_tutor", false)){
+				if(sharedPreferences.getBoolean("enable_tutor", true)){
 					cb.setChecked(true);
 				}
 				else{
@@ -208,7 +208,7 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 				cb.setOnCheckedChangeListener(chk_lsnr);
 			}
 			else if(position == 6){
-				if(sharedPreferences.getBoolean("enable_event_viewer", false)){
+				if(sharedPreferences.getBoolean("enable_event_viewer", true)){
 					cb.setChecked(true);
 				}
 				else{

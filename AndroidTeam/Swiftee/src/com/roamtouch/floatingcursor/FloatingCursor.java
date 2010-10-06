@@ -4,10 +4,10 @@ import org.metalev.multitouch.controller.MultiTouchController;
 import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCanvas;
 import org.metalev.multitouch.controller.MultiTouchController.PointInfo;
 import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -61,7 +61,6 @@ import com.roamtouch.swiftee.SwifteeApplication;
 public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanvas<FloatingCursor.FCObj> {
 	
 	
-
 	 	private BrowserActivity mParent;
 	 	
 		private int w = 0, h = 0;
@@ -88,7 +87,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		private SettingsMenu fcSettingsMenu;
 		private WindowTabs fcWindowTabs;
 		private ZoomWebView zoomView;
-		private ImageView menuBackground;
+//		private ImageView menuBackground;
 				
 	/**
 	 *  integer showing which menu among main,settings and tabs is currently displayed 
@@ -112,7 +111,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 		static final int ANIMATED_SCROLL_GAP = 250;
 		static final float MAX_SCROLL_FACTOR = 0.5f;
-
 	
 		private Scroller mScroller;
 	
@@ -424,7 +422,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			super(context, attrs);
 			init(context);
 		}
-
+        public String getCurrentURL(){
+        	return mWebView.getUrl();
+        }
 		public void gestureDisableFC()
 		{
 			//mCanBeDisabled  = true;
@@ -653,7 +653,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	
 	
 		// FIXME: TODO: Put this into their own classes
-		private boolean mSelectionMode = false;
+//		private boolean mSelectionMode = false;
 		private boolean mHitTestMode = false;
 	
 		private boolean mSelectionStarted = false;
@@ -1670,9 +1670,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			eventViewer.setText(str);
 		}
 		
-		public void loadHomePage(){
-			//need to change to stored home page
-			mWebView.loadUrl("http://www.padkite.com");
+		public void loadPage(String url){
+			
+			mWebView.loadUrl(url);
 		}
 		public void nextWebPage(){
 			mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()-1);
@@ -1992,6 +1992,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			@Override
 			public void onPageFinished(WebView view, String url) {
 				fcProgressBar.disable();
+				fcMainMenu.toggleCloseORRefresh(true);
 				mContentWidth = view.getContentWidth();
 				mContentHeight = view.getContentHeight();
 				Bitmap b = mWebView.getDrawingCache();
@@ -2049,7 +2050,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 			
 			public void onPageStarted(WebView view, String url,Bitmap b) {
-				fcProgressBar.enable();				
+				fcProgressBar.enable();		
+				fcMainMenu.toggleCloseORRefresh(false);
 			}
 		}
 		

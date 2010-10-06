@@ -10,7 +10,7 @@ public class Translater {
 		
 	    try {
 	    	GoogleAPI.setHttpReferrer("http://code.google.com/p/google-api-translate-java/");
-			String translatedText = Translate.execute(text, Language.ENGLISH, Language.ITALIAN);
+			String translatedText = Translate.execute(text, Language.fromString(fromLanguage), Language.fromString(toLanguage));
 			return translatedText;	
 		} catch (Exception e) {
 			e.printStackTrace();
