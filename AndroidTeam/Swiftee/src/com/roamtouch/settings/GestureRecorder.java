@@ -11,7 +11,6 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
@@ -26,6 +25,7 @@ public class GestureRecorder extends Activity {
 		private String gestureName;
 		private int gestureType;
 		private boolean isNewBookmark = false;
+		private String url;
 		private EditText t;
 		@Override
 		protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +36,7 @@ public class GestureRecorder extends Activity {
 			gestureName = getIntent().getStringExtra("Gesture_Name");
 			gestureType = getIntent().getIntExtra("Gesture_Type", -1);
 			isNewBookmark = getIntent().getBooleanExtra("isNewBookmark", false);
+			url = getIntent().getStringExtra("url");
 			
 			setContentView(R.layout.create_gesture);
 
@@ -58,17 +59,20 @@ public class GestureRecorder extends Activity {
 				public void onClick(View v) {
 					Button b = (Button) v;
 					if(b.getText().toString().equals("Save Gesture")){
+						if(gestureName.equals(""))
+							gestureName = t.getText().toString();
 						SwifteeApplication appState = ((SwifteeApplication)getApplicationContext());
 						GestureLibrary mLibrary = appState.getGestureLibrary(gestureType);
 						
 						if(mGesture!=null){
 							if(!isNewBookmark)
 								mLibrary.removeGesture(gestureName, mLibrary.getGestures(gestureName).get(0));
+							else{
+								appState.getDatabase().addBookmark(gestureName,url);
+							}
 							String s = t.getText().toString();
 							mLibrary.addGesture(s, mGesture);
-							boolean bool = mLibrary.save();
-							
-								
+							mLibrary.save();							
 						}
 						finish();
 					}

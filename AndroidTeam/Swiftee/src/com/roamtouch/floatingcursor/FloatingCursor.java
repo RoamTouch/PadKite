@@ -7,7 +7,6 @@ import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -15,6 +14,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.os.Vibrator;
@@ -146,6 +146,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 		private float mPrevX,mPrevY;
     
+		private Handler handler;
+		private Runnable runnable;
+		private boolean timerStarted = false;//ms
+
 	/**
 	 * Vibrator for device vibration	
 	 */
@@ -415,6 +419,22 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			addView(zoomView);
 			
 			vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
+			
+			handler = new Handler();
+			runnable = new Runnable(){
+
+				public void run() {
+					if(currentMenu.getVisibility() == VISIBLE && timerStarted){
+						currentMenu.setVisibility(INVISIBLE);	
+						timerStarted = false;
+					}
+					else {
+						timerStarted = true;
+						handler.postDelayed(this,10000);
+					}
+				}
+				
+			};
 		}
 
 
@@ -484,6 +504,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			this.eventViewer = eventViewer;
 			eventViewer.setWindowTabs(fcWindowTabs);
 			fcMainMenu.setEventViewer(eventViewer);
+			fcWindowTabs.setEventViewer(eventViewer);
 		}
 
 		public void setParent(BrowserActivity p){
@@ -522,7 +543,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		}
 
 		public void addNewWindow(){
-			fcWindowTabs.addWindow();
+			fcWindowTabs.addWindow(selectedLink);
+			selectedLink = "";
 		}
 		protected void checkFCMenuBounds()
 		{
@@ -593,6 +615,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					public void onAnimationEnd(Animation animation) {
 						currentMenu.setVisibility(VISIBLE);
 						animationLock = false;
+						handler.post(runnable);
 					}
 					public void onAnimationRepeat(Animation animation) {}
 
@@ -622,6 +645,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						currentMenu.setVisibility(INVISIBLE);
 						currentMenu = fcMainMenu;
 						animationLock = false;
+						timerStarted = false;
+						handler.removeCallbacks(runnable);
 					}
 					public void onAnimationRepeat(Animation animation) {}
 
@@ -920,7 +945,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		}
 
 		boolean mLongTouchEnabled = false;
-
+		private String selectedLink = "";
+		
 		public void onLongTouch() 
 		{			
 			if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE)
@@ -928,7 +954,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				eventViewer.setText("Detected Long-Touch. Selecting image ...");
 			
 				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
-				//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
+				mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
 				mLongTouchEnabled = true;
 			}
 			else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE)
@@ -936,14 +962,15 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				eventViewer.setText("Detected Long-Touch. Selecting word ...");
 				
 				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD_OR_LINK);
-				//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
+				mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 				mLongTouchEnabled = true;
 			}
 			else if ( mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
 				eventViewer.setText("Detected Long-Touch. Selecting link ...");
-
+				selectedLink = mWebHitTestResult.getExtra();
 				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD_OR_LINK);
+				mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 				mLongTouchEnabled = true;
 	
 			}
@@ -961,6 +988,18 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 			stopSelectionCommand();
 			startSelection(true);
+//Added for distinguishing various selection
+			
+			if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE)
+				mParent.startGesture(SwifteeApplication.CURSOR_IMAGE_GESTURE, true);
+			
+			else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE)
+				mParent.startGesture(SwifteeApplication.CURSOR_TEXT_GESTURE, true);
+		
+			else if ( mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
+				mParent.startGesture(SwifteeApplication.CURSOR_LINK_GESTURE, true);
+
+			
 		}
 		
 		public void onTouchUp()
@@ -1674,6 +1713,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 			mWebView.loadUrl(url);
 		}
+		
 		public void nextWebPage(){
 			mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()-1);
 			//fcWindowTabs.setCurrentTab(fcWindowTabs.getCurrentTab()+1);

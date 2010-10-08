@@ -173,7 +173,7 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 				editor.commit();
 			}
 			else
-				v2.setText("Italian");
+				v2.setText(sharedPreferences.getString("language_to", "Hindi"));
 				editor.putString("language_from", phoneLanguage);
 				editor.commit();
 		}

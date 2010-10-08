@@ -12,6 +12,7 @@ import android.gesture.GestureStroke;
 import android.gesture.Prediction;
 import com.roamtouch.menu.TabButton;
 import com.roamtouch.menu.WindowTabs;
+import com.roamtouch.settings.GestureRecorder;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SelectionGestureView;
@@ -20,12 +21,17 @@ import com.roamtouch.view.SwifteeOverlayView;
 //import com.roamtouch.view.TopBarArea;
 import com.roamtouch.view.TutorArea;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.gesture.GestureOverlayView;
 import android.gesture.GestureOverlayView.OnGestureListener;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.ClipboardManager;
@@ -91,6 +97,16 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	   		return false;
 	  }
 	 
+	 public boolean isOnline() {
+		 ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		 NetworkInfo ni = cm.getActiveNetworkInfo();
+		 if(ni == null)
+			 return false;
+		 //boolean b = ni.isConnectedOrConnecting();
+		 return true;
+
+		}
+	 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,6 +122,20 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 
 		
         setContentView(R.layout.main);
+        
+        if(!isOnline()){
+        	AlertDialog.Builder dialog= new AlertDialog.Builder(this);
+        	dialog.setMessage("Network not available");
+        	dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        			public void onClick(DialogInterface dialog, int id) {
+        		
+        			}
+        		
+        	});
+
+        	dialog.show();
+        
+        }
         
         webLayout = (FrameLayout) findViewById(R.id.webviewLayout);
         
@@ -280,13 +310,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     public void gestureDetected(String action)
     {
     	 eventViewer.setText("Detected " + action + " gesture.");
-         
-         if(currentGestureLibrary == SwifteeApplication.CURSOR_TEXT_GESTURE){
-        	 cursorGestures(action);
-         }
-         else if(currentGestureLibrary == SwifteeApplication.BOOKMARK_GESTURE){
+       
+         if(currentGestureLibrary == SwifteeApplication.BOOKMARK_GESTURE){
         	 bookmarkGestures(action);
          }
+         else
+        	 cursorGestures(action);
     }
     
 	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
@@ -348,14 +377,25 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         	startActivity(intent);
         }
         else if("Translate".equals(action)){
-        	String languageTo = sharedPreferences.getString("language_to", "ENGLISH");
+        	String languageTo = sharedPreferences.getString("language_to", "ENGLISH").toUpperCase();
         	String translated = Translater.text(mSelection, "ENGLISH", languageTo);
         	eventViewer.setSplitedText("Translated from ENGLISH to"+ languageTo+":",translated);
         }
         else if("Wikipedia".equals(action)){
         	webView.loadUrl("http://en.wikipedia.org/wiki/"+mSelection);
         	eventViewer.setText("W (wikipedia) gesture done, wiki searching for: " + mSelection);
-        }       	
+        }     
+        else if("Add Link".equals(action)){
+        	Intent i = new Intent(this,GestureRecorder.class);
+			i.putExtra("Gesture_Name", "");
+			i.putExtra("isNewBookmark", true);
+			i.putExtra("url", floatingCursor.getCurrentURL());
+			i.putExtra("Gesture_Type", SwifteeApplication.BOOKMARK_GESTURE);
+			startActivity(i);
+        }     
+        else if("Open Link".equals(action)){
+        	floatingCursor.addNewWindow();
+        }     
         else                
 			eventViewer.setText("Unrecognized gesture: " + action);
 		stopGesture();
@@ -365,16 +405,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		String url = appState.getDatabase().getBookmark(action);
 		if(url!= null && !url.equals("Gesture cancelled"))
 			webView.loadUrl(url);
-/*		if ("Google".equals(action))
-			
-			webView.loadUrl("http://www.google.com");
-        else if ("Yahoo".equals(action))
-        	webView.loadUrl("http://www.yahoo.com");
-        else if ("Wikipedia".equals(action))
-        	webView.loadUrl("http://www.wikipedia.com");
-        else if ("Picasa".equals(action))
-        	webView.loadUrl("http://www.picasa.google.com");
-*/      else if ("Cancel".equals(action))
+		else if ("Cancel".equals(action))
 			eventViewer.setText("Gesture cancelled.");
 	    else  
 			eventViewer.setText("Unrecognized gesture: " + action);

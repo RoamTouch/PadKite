@@ -5,6 +5,8 @@ import roamtouch.webkit.WebView;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
+import com.roamtouch.view.EventViewerArea;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -14,10 +16,10 @@ import android.view.View.OnClickListener;
 
 public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 
-	private FloatingCursor mFloatingCursor;
+//	private FloatingCursor mFloatingCursor;
 	private BrowserActivity mParent;
 	private Context mContext;
-	//private TabControl tabControl;
+	private EventViewerArea eventViewer;;
 	private int currentTab = 2;
 
 	public WindowTabs(Context context) {
@@ -41,7 +43,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		tab1.setWebView(wv);
 	}
 	public void setFloatingCursor(FloatingCursor mFloatingCursor) {
-		this.mFloatingCursor = mFloatingCursor;
+//		this.mFloatingCursor = mFloatingCursor;
 	}
 	public void setParent(BrowserActivity parent){
 		mParent = parent;		
@@ -72,6 +74,8 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 			mParent.setActiveWebViewIndex(id);
 			setActiveTabIndex(child);	
 			currentTab = child.getTabIndex();
+			String url = child.getWebView().getUrl();
+			eventViewer.setText(url);
 			return;
 		}
 	}
@@ -85,10 +89,10 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 	public int getCurrentTab(){
 		return currentTab;
 	}
-	public void addWindow(){
+	public void addWindow(String url){
 		TabButton but = new TabButton(mContext);
 		but.setBackgroundResource(R.drawable.settings_btn);
-		but.setWebView(createWebView());
+		but.setWebView(createWebView(url));
 		but.setOnClickListener(this);
 		but.setTabIndex(2);
 		addView(but,2);
@@ -103,7 +107,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		
 		currentTab = 2;
 	}
-	public WebView createWebView(){
+	public WebView createWebView(String url){
 		WebView webView = new WebView(mContext);
 		webView.setId(mParent.getActiveWebViewIndex()+1);
 		webView.setScrollbarFadingEnabled(true);
@@ -114,7 +118,11 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
         webView.getSettings().setJavaScriptEnabled(true);
         LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
 		webView.setLayoutParams(params);
-		webView.loadUrl("file:///android_asset/loadPage.html");
+		if(url.equals(""))
+			webView.loadUrl("file:///android_asset/loadPage.html");
+		else
+			webView.loadUrl(url);
+		
 		//webView.loadUrl("http://padkite.com/start");
 
 		return webView;
@@ -131,6 +139,11 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 			mParent.adjustTabIndex(this);
 		}
 	}
+
+	public void setEventViewer(EventViewerArea eventViewer) {
+		this.eventViewer = eventViewer;
+	}
+
 
 	// Extra saved information for displaying the tab in the picker.
     public static class PickerData {

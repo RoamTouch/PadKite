@@ -155,6 +155,7 @@ public class CircularLayout extends ViewGroup {
 		@Override
 	   protected void onLayout(boolean changed, int left, int top, int right, int bot) {
 
+		
 		   final int count = getChildCount();
 		   double t = 0;
 
@@ -181,13 +182,19 @@ public class CircularLayout extends ViewGroup {
 			   menuBackground.setClickable(false);
 		   }
 		   
+			if(mAngleChange!=0){
+				moveChilds();
+				return;
+			}
+			
 		   for (int i = 1; i < childEndPoint; i++) {
 			   MenuButton child = (MenuButton)getChildAt(i);
 			   if (child.getVisibility() != GONE) {    
-				   					   
+			   double angle;				   
             	// Calc coordinates around the circle at the center of cart. system
-            	double angle = (i-1)*t;
-            	angle=angle-90 + 46;
+			    angle = (i-1)*t;
+                angle=angle-90 + 46;
+            
             	child.setAngle(angle);
             	child.calculateCenter(a,b,inR,angle);
             	
@@ -297,7 +304,7 @@ public class CircularLayout extends ViewGroup {
 			    mLastMotionAngle = -999;
 			    mLastMotionX =0;
 			    mLastMotionY =0;
-			    Log.d("inside mLastMotionAngle touch Down"," resetting position!!----------------------");
+///			    Log.d("inside mLastMotionAngle touch Down"," resetting position!!----------------------");
             break;
 		}
 		case MotionEvent.ACTION_OUTSIDE:{
@@ -305,7 +312,7 @@ public class CircularLayout extends ViewGroup {
 			    mLastMotionAngle = -999;
 			    mLastMotionX =0;
 			    mLastMotionY =0;
-			    Log.d("inside mLastMotionAngle touch outside"," resetting position!!----------------------");
+///			    Log.d("inside mLastMotionAngle touch outside"," resetting position!!----------------------");
 		}
 		case MotionEvent.ACTION_MOVE:{
 			 
@@ -339,7 +346,7 @@ public class CircularLayout extends ViewGroup {
            			if((mLastMotionAngle < 90) && (currentAngle > 270)) {
             				angleDiff = mLastMotionAngle + (360 - currentAngle);
             				angleDiff = -1*angleDiff;
-            				Log.d("Angle diff adjusted---------------",""+angleDiff);
+///            				Log.d("Angle diff adjusted---------------",""+angleDiff);
            			}
            		}
             }
@@ -381,7 +388,7 @@ public class CircularLayout extends ViewGroup {
             velocityTracker.computeCurrentVelocity(1000);
             float initialVelocityY =  velocityTracker.getYVelocity();
             float initialVelocityX =  velocityTracker.getXVelocity();
-            Log.d("X and Y velocity","x:"+initialVelocityX+"y:"+initialVelocityY);
+///            Log.d("X and Y velocity","x:"+initialVelocityX+"y:"+initialVelocityY);
         	//Toast.makeText(mContext, "fling: " + 
         		//	getScrollX() + "," + getScrollY() + "-" + initialVelocityX + "," + initialVelocityY + "-" + 
         			//getWidth() + "," + getHeight(), Toast.LENGTH_SHORT).show();
@@ -398,7 +405,7 @@ public class CircularLayout extends ViewGroup {
 		    mLastMotionAngle = -999;
 		    mLastMotionX =0;
 		    mLastMotionY =0;
-		    Log.d("inside mLastMotionAngle,"," resetting position!!----------------------");
+///		    Log.d("inside mLastMotionAngle,"," resetting position!!----------------------");
 		}
 		
 		
@@ -441,7 +448,7 @@ public class CircularLayout extends ViewGroup {
 	 }
 	public void fling(float velocityX, float velocityY) 
 	{
-		Log.d("Scroll X,Y",getScrollX()+","+getScrollY());
+///		Log.d("Scroll X,Y",getScrollX()+","+getScrollY());
 		mScroller.fling(getScrollX(), getScrollY(), velocityX, velocityY, 0,320, 0, 320);
 		
 		invalidate();
@@ -449,7 +456,7 @@ public class CircularLayout extends ViewGroup {
 
 	@Override
 	public void computeScroll() {
-		Log.d("INSIDE computeScroll","-----------------------------");
+///		Log.d("INSIDE computeScroll","-----------------------------");
 		if (mScroller.computeScrollOffset()) {
 			Log.d("INSIDE computeScrolloffset","-----------------------------");
 			mAngleChange = mScroller.getAngle();
@@ -485,7 +492,7 @@ public class CircularLayout extends ViewGroup {
 	        switch (action) {
             case MotionEvent.ACTION_MOVE:
               
-            	 Log.i("inside ACTION_MOVE mLastMotionX,mLastMotionY" , "("+ mLastMotionX +","+ mLastMotionY +")");
+///            	 Log.i("inside ACTION_MOVE mLastMotionX,mLastMotionY" , "("+ mLastMotionX +","+ mLastMotionY +")");
                 final int yDiff = (int) Math.abs(y - mLastMotionY);
                 final int xDiff = (int) Math.abs(x - mLastMotionX);
                 
@@ -589,7 +596,7 @@ public class CircularLayout extends ViewGroup {
 		   prevRadius = Math.sqrt((mLastMotionX - a)*(mLastMotionX - a) + (mLastMotionY - b)*(mLastMotionY - b));
 		   currentRadius = Math.sqrt((x-a)*(x-a)+(y-b)+(y-b));
 		   
-		   Log.d("prev rad, curr radius", prevRadius+","+currentRadius);
+///		   Log.d("prev rad, curr radius", prevRadius+","+currentRadius);
 		   
 		   //prevRadius = currentRadius = inR;
 		  // float r=distanceFromCenter(x, y);
@@ -601,7 +608,7 @@ public class CircularLayout extends ViewGroup {
 		   
 		   float lastAngle=(float) Math.toDegrees(Math.acos(d1));
 		   float currAngle=(float) Math.toDegrees(Math.acos(d2));
-		   Log.d("Before:: CurrentAngle,LastAngle  :: x, y:", currAngle+","+lastAngle+"("+x+","+y+")");
+///		   Log.d("Before:: CurrentAngle,LastAngle  :: x, y:", currAngle+","+lastAngle+"("+x+","+y+")");
 		/*   if(y>160)
 			   mAngleChange=currAngle-lastAngle;
 		   else
@@ -614,9 +621,9 @@ public class CircularLayout extends ViewGroup {
 		   if(mLastMotionY < b) {
 			   lastAngle = 180 + (180 - lastAngle);
 		   }
-		   Log.d("After:: CurrentAngle,LastAngle", currAngle+","+lastAngle);
+///		   Log.d("After:: CurrentAngle,LastAngle", currAngle+","+lastAngle);
 		   mAngleChange = currAngle - lastAngle;
-		   Log.d("Difference:: (a,b) ", ""+mAngleChange+"("+a+","+b+")");
+///		   Log.d("Difference:: (a,b) ", ""+mAngleChange+"("+a+","+b+")");
 		   //Log.d("ComputeAngle", ""+mAngleChange);
 	   }
 	

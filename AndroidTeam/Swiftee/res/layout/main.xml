@@ -61,7 +61,7 @@
     android:gravity="top|center_horizontal"
     android:layout_weight="1" 
     >
-     <com.roamtouch.view.EventViewerArea android:id="@+id/eventViewer" android:layout_width="fill_parent" android:layout_height="35dip" android:background="#000000">
+     <com.roamtouch.view.EventViewerArea android:id="@+id/eventViewer" android:layout_width="fill_parent" android:layout_height="wrap_content" android:background="#000000">
     </com.roamtouch.view.EventViewerArea>
 	
 <!--  	<com.roamtouch.view.TopBarArea android:id="@+id/topbararea"  android:layout_width="wrap_content" 

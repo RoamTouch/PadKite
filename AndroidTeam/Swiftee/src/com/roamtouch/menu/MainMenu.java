@@ -246,6 +246,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				Intent i = new Intent(mParent,GestureRecorder.class);
 				i.putExtra("Gesture_Name", "");
 				i.putExtra("isNewBookmark", true);
+				i.putExtra("url", mFloatingCursor.getCurrentURL());
 				i.putExtra("Gesture_Type", SwifteeApplication.BOOKMARK_GESTURE);
 				mParent.startActivity(i);
 				break;

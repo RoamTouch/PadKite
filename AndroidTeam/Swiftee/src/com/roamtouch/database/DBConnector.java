@@ -42,11 +42,6 @@ public class DBConnector {
 
 				db.execSQL(DATABASE_CREATE1);
 				db.execSQL(DATABASE_CREATE2);
-				db.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Google','http://www.google.com')");
-				db.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Yahoo','http://www.yahoo.com')");
-				db.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Wikipedia','http://www.wikipedia.com')");
-				db.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Picasa','http://www.picasa.google.com')");
-				db.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Cancel','Gesture cancelled')");
 			}
 
 			@Override
@@ -114,10 +109,26 @@ public class DBConnector {
 				return false;
 			}		}
 
+		public void addBookmark(){
+			try
+			{
+				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Google','http://www.google.com')");
+				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Yahoo','http://www.yahoo.com')");
+				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Wikipedia','http://www.wikipedia.com')");
+				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Picasa','http://www.picasa.google.com')");
+				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Cancel','Gesture cancelled')");
+				
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
 		public void addBookmark(String name,String url){
 			try
 			{
-//				mDatabase.execSQL("INSERT INTO user_profiles(email,username,password) VALUES('"+name+"','"+username+"','"+password+"')");
+				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES('"+name+"','"+url+"')");
 				
 			}
 			catch(Exception e)
@@ -130,7 +141,7 @@ public class DBConnector {
 				Cursor c = mDatabase.rawQuery("SELECT * FROM bookmarks WHERE name='"+name+"'", null);
 				if(c!=null){
 					c.moveToFirst();
-					String url = c.getColumnName(1);
+					String url = c.getString(1);
 					return url;
 				}
 				return null;

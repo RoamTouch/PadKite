@@ -11,7 +11,6 @@ import java.io.InputStream;
 import com.roamtouch.database.DBConnector;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 //import android.os.Environment;
@@ -38,9 +37,10 @@ public class SwifteeApplication extends Application{
 		// FIXME: For now force an update!
 		
 		copyFilestoSdcard("Default Theme", true);
-		copyFilestoSdcard("Gesture Library", true);
+		copyFilestoSdcard("Gesture Library", false);
 		
-		
+		if(database.checkIfBookmarkAdded())
+			database.addBookmark();
 	}
 	
 	public void copyFilestoSdcard(String dir, boolean force){

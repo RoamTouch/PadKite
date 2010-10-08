@@ -71,9 +71,11 @@ public class BloggerActivity extends Activity {
 						//user.getText().clear();
 						//pass.getText().clear();
 						postContent.getText().clear();
+						
 					}
 					isFinished=false;
 					progressBar.setVisibility(View.INVISIBLE);
+					BloggerActivity.this.finish();
 				}
 			}
 
@@ -147,7 +149,7 @@ public class BloggerActivity extends Activity {
 		blogapi.setInstanceConfig("");
 		
 		try {
-			String auth_id = blogapi.getAuthId("judibale1983@gmail.com","iauro1000");
+			String auth_id = blogapi.getAuthId(email,pass);
 			Log.d("reply...............", auth_id);
 			String postUri = blogapi.getPostUrl();
 			boolean publishOk = blogapi.createPost(
@@ -158,8 +160,8 @@ public class BloggerActivity extends Activity {
 					"Blog title",
 					null,
 					post,
-					"Judy",
-					"judibale1983@gmail.com",
+					"Padkite",
+					email,
 					false);
 			if(publishOk)
 				return "Post published successfully";
