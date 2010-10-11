@@ -1747,6 +1747,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			if(direction==0)
 			{
 				sx += value;
+				
+				if (mWebView.getContentWidth() <= this.getWidth() )
+					return;
+				
+				//Log.i("scrollX","sx,gCW,gSX,tgW"+sx+","+mWebView.getContentWidth() + "," + mWebView.getScrollX() + "," + "," + this.getWidth());
+				
 				if (sx >= mWebView.getContentWidth())
 					sx =  mWebView.getContentWidth();
 				if (sx < 0)
@@ -1755,6 +1761,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 			else
 			{
+				if (mWebView.getContentHeight() <= this.getHeight() )
+					return;
+				
 				sy += value;
 				if (sy >= mWebView.getContentHeight())
 					sy = mWebView.getContentHeight();
