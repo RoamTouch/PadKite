@@ -13,7 +13,7 @@
     />    
 <TextView 
 	android:id="@+id/gestureText"
-    android:layout_width="230dip"
+    android:layout_width="200dip"
     android:layout_height="wrap_content"
     android:textSize="25sp"
     android:paddingLeft="10dip"
@@ -21,8 +21,8 @@
    />
 <Button 
 	android:id="@+id/recordButton"
-	android:layout_width="50dip"
+	android:layout_width="80dip"
     android:layout_height="60dip"
-    android:text="REC"
+    android:text="Change"
     android:drawableTop="@drawable/red_dot"/>       
 </LinearLayout>
