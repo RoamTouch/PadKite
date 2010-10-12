@@ -124,21 +124,22 @@ public class ContactAdapter extends BaseAdapter{
 		if(!number[position].equals(" ")){
 			btn_call.setTag("call:"+number[position]);
 			btn_call.setOnClickListener(btn_lsnr);
+			btn_call.setEnabled(true);
 		}
 		else{
-			btn_call.setClickable(false);
-			btn_call.setTextColor(Color.GRAY);
+//			btn_call.setClickable(false);
+			btn_call.setEnabled(false);
 		}
 
 		btn_mail = (Button) v.findViewById(R.id.btn_mail);
 		if(!mail[position].equals(" ")){
 			btn_mail.setTag("mail:"+mail[position]);
 			btn_mail.setOnClickListener(btn_lsnr);
+			btn_mail.setEnabled(true);
 		}
 		else{
-			btn_mail.setClickable(false);
-			btn_mail.setTextColor(Color.GRAY);
-		}
+//			btn_mail.setClickable(false);
+			btn_mail.setEnabled(false);		}
 
 		return v;
 	}

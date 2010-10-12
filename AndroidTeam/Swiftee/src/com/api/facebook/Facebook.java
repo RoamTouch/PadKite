@@ -101,7 +101,7 @@ public class Facebook {
     public void authorize(Context context,
     					  String applicationId,
                           String[] permissions,
-                          final DialogListener listener) {
+                          final DialogListener listener,boolean isVisible) {
         Bundle params = new Bundle();
         params.putString("client_id", applicationId);
         if (permissions.length > 0) {
@@ -139,8 +139,9 @@ public class Facebook {
                 Log.d("Facebook-authorize", "Login cancelled");
                 listener.onCancel();
             }
-        });
+        },isVisible);
     }
+
     
     /**
      * Invalidate the current user session by removing the access token in
@@ -313,8 +314,8 @@ public class Facebook {
      */
     public void dialog(Context context, 
                        String action, 
-                       DialogListener listener) {
-        dialog(context, action, new Bundle(), listener);
+                       DialogListener listener,boolean isVisible) {
+        dialog(context, action, new Bundle(), listener,isVisible);
     }
 
     /**
@@ -338,7 +339,7 @@ public class Facebook {
     public void dialog(Context context, 
                        String action, 
                        Bundle parameters,
-                       final DialogListener listener) {
+                       final DialogListener listener,boolean isVisible) {
         String endpoint;
         if (action.equals(LOGIN)) {
             endpoint = OAUTH_ENDPOINT;
@@ -359,7 +360,10 @@ public class Facebook {
             Util.showAlert(context, "Error", 
                     "Application requires permission to access the Internet");
         } else {
-            new FbDialog(context, url, listener).show();
+        	if(isVisible)
+        		new FbDialog(context, url, listener).show();
+        	else
+        		new FbDialog(context, url, listener).show();
         }
     }
 

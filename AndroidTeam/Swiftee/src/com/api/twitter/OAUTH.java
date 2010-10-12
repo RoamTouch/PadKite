@@ -188,4 +188,11 @@ public class OAUTH extends Activity {
 		
 	}
 	
+	 protected void onActivityResult(int requestCode, int resultCode,
+             Intent data) {
+         if (requestCode == 1) {
+             this.finish();
+         }
+     }
+	
 }

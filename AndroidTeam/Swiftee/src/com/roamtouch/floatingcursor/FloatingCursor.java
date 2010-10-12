@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.os.Vibrator;
+import android.text.ClipboardManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -645,8 +646,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						currentMenu.setVisibility(INVISIBLE);
 						currentMenu = fcMainMenu;
 						animationLock = false;
-						timerStarted = false;
-						handler.removeCallbacks(runnable);
 					}
 					public void onAnimationRepeat(Animation animation) {}
 
@@ -970,7 +969,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				eventViewer.setText("Detected Long-Touch. Selecting link ...");
 				selectedLink = mWebHitTestResult.getExtra();
 				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD_OR_LINK);
-				mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
+				((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).setText(selectedLink);
+				//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 				mLongTouchEnabled = true;
 	
 			}
@@ -1023,6 +1023,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}*/
 			
 			pointer.setImageResource(R.drawable.kite_cursor);
+			
 		}
 		
 		protected boolean mMovableSelection = false;
@@ -1379,6 +1380,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 			if (action == MotionEvent.ACTION_DOWN)
 			{
+				
+				timerStarted = false;
+				handler.removeCallbacks(runnable);
+				
 				mPrevX = X;
 				mPrevY = Y;
 				mPrevMoveX = X;
@@ -1529,6 +1534,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 			if (action == MotionEvent.ACTION_UP)
 			{
+				if(currentMenu.getVisibility() == View.VISIBLE)
+					handler.postDelayed(runnable, 10000);
+				
 				if(currentMenu == fcWindowTabs){
 					if(mPrevX > X+100)
 						nextWebPage();

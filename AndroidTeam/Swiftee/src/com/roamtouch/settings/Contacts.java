@@ -2,7 +2,6 @@ package com.roamtouch.settings;
 
 
 import com.roamtouch.swiftee.R;
-
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;

@@ -303,6 +303,11 @@ public class TwitterActivity extends Activity  {
 								// contains the user information
 				mEditor.setText("");
 				mLast.setText("Successfully posted");
+				Intent i = new Intent();
+				i.putExtra("Finish", "YES");
+				TwitterActivity.this.setResult(1);
+				TwitterActivity.this.finish();
+				
 			} else {
 				mLast.setText(getText(R.string.tweet_error));
 			}

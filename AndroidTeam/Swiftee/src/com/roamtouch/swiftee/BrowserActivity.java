@@ -1,6 +1,22 @@
 package com.roamtouch.swiftee;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
+
+import org.apache.http.HeaderElement;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
+
 import com.api.blogger.BloggerActivity;
 import com.api.facebook.FacebookActivity;
 import com.api.twitter.TwitterActivity;
@@ -51,6 +67,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 
 	public static String version = "Version Beta-v1.38-eclair build #b033bc/a36d10";
+	public static String version_code = "Version Beta-v1.38";
 
 	private int activeWebViewIndex = 0;
 	
@@ -156,7 +173,11 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		//webView.loadUrl("http://padkite.com/start");
 
 		//		webView.loadUrl("http://www.google.com");
-		webView.loadUrl("file:///android_asset/loadPage.html");
+		String data = getIntent().getDataString();
+		if(data!=null)
+			webView.loadUrl(data);
+		else
+			webView.loadUrl("file:///android_asset/loadPage.html");
 		eventViewer= (EventViewerArea) findViewById(R.id.eventViewer);
 		eventViewer.setParent(this);
 		
@@ -363,12 +384,18 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         }
         else if("Facebook".equals(action)){
         	Intent intent = new Intent(this,FacebookActivity.class);
-        	intent.putExtra("Post", mSelection);
+        	if(mSelection.startsWith("http://"))
+        		intent.putExtra("Post", getShortLink(mSelection));
+        	else
+        		intent.putExtra("Post", mSelection);
         	startActivity(intent);
         }
         else if("Twitter".equals(action)){
         	Intent intent = new Intent(this,TwitterActivity.class);
-        	intent.putExtra("Tweet", mSelection);
+        	if(mSelection.startsWith("http://"))
+        		intent.putExtra("Tweet", getShortLink(mSelection));
+        	else
+        		intent.putExtra("Tweet", mSelection);
         	startActivity(intent);
         }
         else if("Blog".equals(action)){
@@ -411,7 +438,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			eventViewer.setText("Unrecognized gesture: " + action);
 		stopGesture();
 	}
-	
+
 	public void drawGestureToEducate(Gesture gesture, String action){
 		ArrayList<GestureStroke> strokes = gesture.getStrokes();
 		ArrayList<GesturePoint> points =generateGesturePoints(strokes.get(0).points);
@@ -507,4 +534,76 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	public void setEventViewerMode(int mode){
 			eventViewer.setMode(mode);		
 	}
+	
+	/*Get short link from server*/	
+	private String getShortLink(String longUrl) {
+		
+		String responseString = "";
+		try {
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpPost httppost = new HttpPost("http://padkite.com/shurly/api/shorten?longUrl="+longUrl+"&format=txt");
+			HttpResponse response = httpclient.execute(httppost);
+			HttpEntity entity = response.getEntity();
+			responseString = getResponseBody(entity);
+			httppost.abort();
+			//Log.d("Connection successful.......", "-----------");
+		} catch (MalformedURLException e) {
+		} catch (IOException e) {
+		} catch (Exception e) {
+		}
+		return responseString;
+	}
+	private String getResponseBody(final HttpEntity entity) throws IOException, ParseException {
+
+		if (entity == null) 
+			throw new IllegalArgumentException("HTTP entity may not be null"); 
+	
+		InputStream instream = entity.getContent();
+
+		if (instream == null) 
+			return ""; 
+
+		if (entity.getContentLength() > Integer.MAX_VALUE) 
+			throw new IllegalArgumentException("HTTP entity too large to be buffered in memory");
+
+		String charset = getContentCharSet(entity);
+
+		if (charset == null) 
+			charset = HTTP.DEFAULT_CONTENT_CHARSET;
+
+		Reader reader = new InputStreamReader(instream, charset);
+		StringBuilder buffer = new StringBuilder();
+
+		try {
+				char[] tmp = new char[1024];
+				int l;
+				while ((l = reader.read(tmp)) != -1) {
+					buffer.append(tmp, 0, l);
+				}
+
+		} finally {
+			reader.close();
+		}
+		return buffer.toString();
+	}
+
+	private String getContentCharSet(final HttpEntity entity) throws ParseException {
+
+		if (entity == null) { throw new IllegalArgumentException("HTTP entity may not be null"); }
+
+		String charset = null;
+
+		if (entity.getContentType() != null) {
+			HeaderElement values[] = entity.getContentType().getElements();
+
+			if (values.length > 0) {
+				NameValuePair param = values[0].getParameterByName("charset");
+				if (param != null) 
+					charset = param.getValue();
+			}
+		}
+		return charset;
+	}
+	
+	
 }

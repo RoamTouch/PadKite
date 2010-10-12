@@ -3,6 +3,8 @@ package com.roamtouch.settings;
 
 import java.io.File;
 import java.util.Locale;
+
+import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import android.app.Activity;
 import android.app.Dialog;
@@ -250,6 +252,8 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 		public AboutView(Context context) {
 			super(context);
 			LayoutInflater.from(context).inflate(R.layout.about_text, this);		
+			TextView v1= (TextView) findViewById(R.id.version);
+			v1.setText(BrowserActivity.version_code);
 		}
 
 	}

@@ -55,8 +55,9 @@ public class FacebookActivity extends Activity {
         
         Intent i = getIntent();
         tweet = i.getStringExtra("Post");
-        
+       
         setContentView(R.layout.facebook);
+        
         
         publicTestsText = (TextView) findViewById(R.id.publicTests);
         publicErrorsText = (TextView) findViewById(R.id.publicErrors);
@@ -70,8 +71,9 @@ public class FacebookActivity extends Activity {
         // button to test UI Server login method
         loginButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
+            	  logoutText.setText("");
                 authenticatedFacebook.authorize(FacebookActivity.this, 
-                        APP_ID, PERMISSIONS, new TestLoginListener());
+                        APP_ID, PERMISSIONS, new TestLoginListener(),true);
             }
         });
         
@@ -83,7 +85,7 @@ public class FacebookActivity extends Activity {
             	Bundle b = new Bundle();
             	b.putString("message", tweet);
                 authenticatedFacebook.dialog(FacebookActivity.this, "stream.publish", b,
-                        new TestUiServerListener());
+                        new TestUiServerListener(),true);
                 
             }
         });
@@ -107,6 +109,8 @@ public class FacebookActivity extends Activity {
                         "Log in successfull");
             	logoutButton.setVisibility(View.VISIBLE);
             	loginButton.setVisibility(View.INVISIBLE);
+            	postButton.setVisibility(View.VISIBLE);
+            	
             	publicTestsText.setTextColor(Color.GREEN);
             } else {
             	publicTestsText.setText(
@@ -260,8 +264,9 @@ public class FacebookActivity extends Activity {
                 String postId = json.getString("id");
                 FacebookActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
-                        wallPostText.setText("Wall Post Success");
+                        wallPostText.setText("Posted Successfully");
                         wallPostText.setTextColor(Color.GREEN);
+                        FacebookActivity.this.finish();
                     }
                 });
                 
@@ -300,6 +305,7 @@ public class FacebookActivity extends Activity {
             logoutText.setTextColor(Color.GREEN);
             logoutButton.setVisibility(View.INVISIBLE);
         	loginButton.setVisibility(View.VISIBLE);
+        	postButton.setVisibility(View.INVISIBLE);
         	publicTestsText.setText("");
         	publicErrorsText.setText("");
         	wallPostText.setText("");
@@ -319,7 +325,7 @@ public class FacebookActivity extends Activity {
             if (!response.equals("true")) {
                 return false;
             }
-            
+/*            
             Log.d("Tests", "Testing logout on logged out facebook session");
             try {
                 Util.parseJson(authenticatedFacebook.logout(this));
@@ -353,7 +359,7 @@ public class FacebookActivity extends Activity {
                     return false;
                 }
             }
-            
+ */           
             Log.d("Tests", "All Logout Tests Passed");
             return true;
         } catch (Throwable e) {
