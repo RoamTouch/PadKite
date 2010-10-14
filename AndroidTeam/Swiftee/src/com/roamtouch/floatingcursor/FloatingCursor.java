@@ -11,7 +11,7 @@ import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Path;
-import android.graphics.Rect;
+import android.graphics.Picture;
 import android.graphics.Region;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
@@ -426,7 +426,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 				public void run() {
 					if(currentMenu.getVisibility() == VISIBLE && timerStarted){
-						currentMenu.setVisibility(INVISIBLE);	
+						toggleMenuVisibility();	
 						timerStarted = false;
 					}
 					else {
@@ -2055,26 +2055,40 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				fcMainMenu.toggleCloseORRefresh(true);
 				mContentWidth = view.getContentWidth();
 				mContentHeight = view.getContentHeight();
-				Bitmap b = mWebView.getDrawingCache();
-				Bitmap cb = Bitmap.createBitmap(b, 30, 30, 80, 80);				
-				BitmapDrawable bd = new BitmapDrawable(getCircleBitmap(cb));
+			
+				BitmapDrawable bd = new BitmapDrawable(getCircleBitmap(view));
 				fcWindowTabs.setCurrentThumbnail(bd,view);
-				cb.recycle();
-				//mWebView.clearCache(true);
-			}
-		
-			public Bitmap getCircleBitmap(Bitmap sourceBitmap){
 				
-				/*			Paint mPaint = new Paint();
-				mPaint.setAntiAlias(true);
-				mPaint.setColor(0xFFAAAAAA); // 0xFFFF0000
-				mPaint.setStrokeWidth(2.0f);
-					
-				Bitmap buffer=Bitmap.createBitmap(25, 25,Bitmap.Config.ARGB_8888);
-				Canvas bufferCanvas = new Canvas();
-				bufferCanvas.setBitmap(buffer);
-				bufferCanvas.drawCircle(25, 25, 25, mPaint);
-		*/
+			}
+			public Bitmap getCircleBitmap(WebView view){
+				Picture thumbnail = view.capturePicture();
+		        if (thumbnail == null) {
+		            return null;
+		        }
+		        Bitmap bm = Bitmap.createBitmap(50,
+		                50, Bitmap.Config.ARGB_4444);
+		        Canvas canvas = new Canvas(bm);
+		        Path path = new Path();
+			    
+				path.addCircle(25,25,25,Path.Direction.CCW);
+				canvas.clipPath(path,Region.Op.INTERSECT);
+				    
+		        // May need to tweak these values to determine what is the
+		        // best scale factor
+		        int thumbnailWidth = thumbnail.getWidth();
+		        if (thumbnailWidth > 0) {
+		            float scaleFactor = (float) 50 /
+		                    (float)thumbnailWidth;
+		            canvas.scale(scaleFactor, scaleFactor);
+		        }
+		        thumbnail.draw(canvas);
+		       
+		        return bm;
+			}
+			
+/*			public Bitmap getCircleBitmap(Bitmap sourceBitmap){
+				
+				
 				int targetWidth = 50;
 			    int targetHeight = 50;
 			    Bitmap targetBitmap = Bitmap.createBitmap(
@@ -2083,13 +2097,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			        Bitmap.Config.ARGB_8888);
 			    Canvas canvas = new Canvas(targetBitmap);
 			    Path path = new Path();
-			    
-			   /* path.addCircle(
-			        ((float)targetWidth - 1) / 2,
-			        ((float)targetHeight - 1) / 2,
-			        (Math.min(((float)targetWidth), ((float)targetHeight)) / 2),
-			        Path.Direction.CW);
-			    */
+			
 			    path.addCircle(
 			    		25,
 			    		25,
@@ -2108,7 +2116,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			    path.reset();
 			    return targetBitmap;
 			}
-			
+*/			
 			public void onPageStarted(WebView view, String url,Bitmap b) {
 				fcProgressBar.enable();		
 				fcMainMenu.toggleCloseORRefresh(false);
