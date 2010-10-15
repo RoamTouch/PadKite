@@ -19,6 +19,7 @@ package roamtouch.webkit;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.graphics.Color; //RoamTouch Change
 import android.graphics.DrawFilter;
 import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
@@ -823,6 +824,8 @@ final class WebViewCore {
 
         //ROAMTOUCH CHANGE >>
         static final int EXECUTE_SELECTION_COMMAND = 182;
+
+        static final int SET_SELECTION_COLOR = 183; 
         //ROAMTOUCH CHANGE <<        
 
         // private message ids
@@ -1257,6 +1260,10 @@ final class WebViewCore {
                         case EXECUTE_SELECTION_COMMAND:
                             Point pos = (Point)msg.obj;
                             nativeExecuteSelectionCommand(pos.x, pos.y, (int)msg.arg1);
+                            break;
+                        case SET_SELECTION_COLOR:
+                            int color = (int)msg.arg1;
+                            nativeSetSelectionColor(Color.red(color), Color.green(color), Color.blue(color),  Color.alpha(color)) ;
                             break;
                         //ROAMTOUCH CHANGE <<    
                     }
@@ -2251,6 +2258,7 @@ final class WebViewCore {
     private native void nativeFreeMemory();
     //ROAMTOUCH CHANGE >>
     private native void     nativeExecuteSelectionCommand(int x, int y, int command);
+    private native void     nativeSetSelectionColor(int r, int g, int b, int a) ;    
     //ROAMTOUCH CHANGE <<
     
 }

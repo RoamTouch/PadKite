@@ -421,6 +421,14 @@ Color RenderTheme::inactiveSelectionForegroundColor() const
     return m_inactiveSelectionForegroundColor;
 }
 
+//ROAMTOUCH CHANGE - begin
+void RenderTheme::setSelectionColors(const Color& activeBGColor, const Color& inactiveBGColor) 
+{
+    m_activeSelectionBackgroundColor = activeBGColor ;
+    m_inactiveSelectionBackgroundColor = inactiveBGColor ;
+}
+//ROAMTOUCH CHANGE - end
+
 Color RenderTheme::activeListBoxSelectionBackgroundColor() const
 {
     if (!m_activeListBoxSelectionBackgroundColor.isValid())

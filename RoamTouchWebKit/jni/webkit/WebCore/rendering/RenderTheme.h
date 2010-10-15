@@ -127,6 +127,10 @@ public:
     Color activeSelectionForegroundColor() const;
     Color inactiveSelectionForegroundColor() const;
 
+    //ROAMTOUCH CHANGE - begin
+    void setSelectionColors(const Color& activeBGColor, const Color& inactiveBGColor); 
+    //ROAMTOUCH CHANGE - end
+
     // List box selection colors
     Color activeListBoxSelectionBackgroundColor() const;
     Color activeListBoxSelectionForegroundColor() const;

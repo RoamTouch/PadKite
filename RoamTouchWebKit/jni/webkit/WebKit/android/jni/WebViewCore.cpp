@@ -3237,6 +3237,25 @@ static void nativeExecuteSelectionCommand(JNIEnv* env, jobject obj, jint x, jint
     LOG_ASSERT(viewImpl, "viewImpl not set in nativeUpdatePluginState");
     viewImpl->executeSelectionCommand((int)x, (int)y, (int)cmd);
 }
+
+static void nativeSetSelectionColor(JNIEnv *env, jobject obj,
+                                int r, int g, int b, int alpha)
+{
+#ifdef ANDROID_INSTRUMENT
+    TimeCounterAuto counter(TimeCounter::WebViewCoreTimeCounter);
+#endif
+    WebViewCore* viewImpl = GET_NATIVE_VIEW(env, obj);
+    LOG_ASSERT(viewImpl, "viewImpl not set in nativeUpdatePluginState");
+
+    WebCore::Frame* frame = viewImpl->mainFrame();
+    WebCore::Page* page = frame ? frame->page() : 0 ;
+    if (page) {
+        WebCore::Color c(r, g, b, alpha) ;
+        WebCore::RenderTheme* theme = page->theme();
+        theme->setSelectionColors(c, c);
+    }
+
+}
 //ROAMTOUCH CHANGE <<
 
 
@@ -3401,6 +3420,7 @@ static JNINativeMethod gJavaWebViewCoreMethods[] = {
         (void*) ProvideVisitedHistory },
     //ROAMTOUCH CHANGE >>    
     { "nativeExecuteSelectionCommand", "(III)V", (void*) nativeExecuteSelectionCommand },
+    { "nativeSetSelectionColor", "(IIII)V",(void*) nativeSetSelectionColor },
     //ROAMTOUCH CHANGE <<
 };
 

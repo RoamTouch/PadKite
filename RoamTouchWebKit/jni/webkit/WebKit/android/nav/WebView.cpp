@@ -185,6 +185,7 @@ WebView(JNIEnv* env, jobject javaWebView, int viewImpl)
                                     // variable should be set directly, all
                                     // other changes should be made through
                                     // setPluginReceivesEvents(bool)
+    m_findHighlightColor = SkColorSetARGB(255, 255, 146, 0);
 }
 
 ~WebView()
@@ -316,7 +317,7 @@ void setUpFindPaint()
     SkCornerPathEffect* cornerEffect = new SkCornerPathEffect(roundiness);
     m_findPaint.setPathEffect(cornerEffect);
     //m_findPaint.setARGB(255, 132, 190, 0);
-    m_findPaint.setARGB(255, 255, 146, 0); //RoamTouch Change
+    m_findPaint.setColor(m_findHighlightColor); //RoamTouch Change
 
     // Set up the background blur paint.
     m_findBlurPaint.setAntiAlias(true);
@@ -933,6 +934,12 @@ void selectBestAt(const WebCore::IntRect& rect)
     viewInvalidate();
 }
 
+void setSelectionColor(int r, int g, int b, int alpha)
+{
+    DBG_NAV_LOGD("Selection Color r=%d, g=%d, b=%d, alpha=%d", r, g, b, alpha);
+    m_findHighlightColor = SkColorSetARGB(alpha, r, g, b);
+}
+
 WebCore::IntRect getNavBounds()
 {
     CachedRoot* root = getFrameCache(DontAllowNewer);
@@ -1480,6 +1487,7 @@ private: // local state for WebView
     // Paint used for the background of our Find matches.
     SkPaint m_findBlurPaint;
     unsigned m_findIndex;
+    SkColor m_findHighlightColor; //RoamTouch Change
 }; // end of WebView class
 
 /*
@@ -1965,6 +1973,16 @@ static void nativeSetCursorAtPoint(JNIEnv *env, jobject obj,
 
     view->selectBestAt(rect) ;
 }
+
+static void nativeSetSelectionColor(JNIEnv *env, jobject obj,
+                                int r, int g, int b, int alpha)
+{
+    WebView* view = GET_NATIVE_VIEW(env, obj);
+    LOG_ASSERT(view, "view not set in %s", __FUNCTION__);
+
+    view->setSelectionColor(r, g, b, alpha);
+}
+
 //ROAMTOUCH CHANGE <<
 
 static bool nativeHasCursorNode(JNIEnv *env, jobject obj)
@@ -2356,6 +2374,8 @@ static JNINativeMethod gJavaWebViewMethods[] = {
         (void*) nativeGetHitTestResultAtPoint }
     ,{ "nativeSetCursorAtPoint", "(III)V",
         (void*) nativeSetCursorAtPoint }
+    ,{ "nativeSetSelectionColor", "(IIII)V",
+        (void*) nativeSetSelectionColor },
     //ROAMTOUCH CHANGE <<    
 };
 

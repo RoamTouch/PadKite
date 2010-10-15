@@ -1805,12 +1805,24 @@ public class WebView extends AbsoluteLayout
       * @param y Y coordinate with respect to webview relative coordinate
       *       
       */
-	public void focusNodeAt(int x, int y) {
-		int contentX = viewToContentX(x + mScrollX);
-		int contentY = viewToContentY(y + mScrollY);
-		
-		nativeSetCursorAtPoint(contentX, contentY, mNavSlop) ;
-	}
+    public void focusNodeAt(int x, int y) {
+        int contentX = viewToContentX(x + mScrollX);
+        int contentY = viewToContentY(y + mScrollY);
+
+        nativeSetCursorAtPoint(contentX, contentY, mNavSlop) ;
+    }
+
+    /**
+      * Sets the selection color of WebKit.
+      *
+      * @param c Selection color
+      *       
+      */
+    public void setSelectionColor(int color) {
+        mWebViewCore.sendMessage(EventHub.SET_SELECTION_COLOR,
+                                    color, 0, 0);
+        //nativeSetSelectionColor(Color.red(color), Color.green(color), Color.blue(color),  Color.alpha(color)) ;
+    }
     //ROAMTOUCH CHANGE <<
 
     /**
@@ -6248,6 +6260,7 @@ public class WebView extends AbsoluteLayout
     private native int      nativeGetBlockLeftEdge(int x, int y, float scale);
     //ROAMTOUCH CHANGE >>
     private native WebHitTestResult  nativeGetHitTestResultAtPoint(int x, int y, int slop);
-    private native void  	nativeSetCursorAtPoint(int x, int y, int slop);
+    private native void     nativeSetCursorAtPoint(int x, int y, int slop);
+    private native void     nativeSetSelectionColor(int r, int g, int b, int a) ;    
     //ROAMTOUCH CHANGE <<
 }
