@@ -178,6 +178,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			webView.loadUrl(data);
 		else
 			webView.loadUrl("file:///android_asset/loadPage.html");
+		
+		webView.setSelectionColor(0xAAb4d5fe);
+
 		eventViewer= (EventViewerArea) findViewById(R.id.eventViewer);
 		eventViewer.setParent(this);
 		
