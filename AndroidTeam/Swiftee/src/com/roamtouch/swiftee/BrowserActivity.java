@@ -123,7 +123,26 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		 return true;
 
 		}
-	 
+
+    /** Called when the activity is resumed. */
+    @Override
+    protected void onResume() {
+    	super.onResume();
+    }
+
+    @Override
+	 protected void onNewIntent(Intent intent) {
+    	super.onNewIntent(intent);
+    	String data = null;
+    	
+    	if (intent != null)
+    		data = intent.getDataString();
+		
+    	if(data!=null)
+			webView.loadUrl(data);
+	}
+
+    
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
