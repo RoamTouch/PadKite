@@ -94,7 +94,7 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 			
 			Button b=new Button(mContext);
 			b.setId(i);
-			b.setBackgroundResource(R.drawable.tutor);
+			b.setBackgroundResource(R.drawable.tutor_button_1);
 			b.setLayoutParams(params);
 			b.setText(str[i].toString());
 			ArrayList<Gesture> list = mLibrary.getGestures(str[i].toString());

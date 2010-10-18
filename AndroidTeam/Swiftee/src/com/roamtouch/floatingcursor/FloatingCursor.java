@@ -997,11 +997,32 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				mParent.startGesture(SwifteeApplication.CURSOR_TEXT_GESTURE, true);
 		
 			else if ( mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
-				mParent.startGesture(SwifteeApplication.CURSOR_LINK_GESTURE, true);
-
+			{
+				int type = getLinkType();
+				if(type == 0)
+					mParent.startGesture(SwifteeApplication.CURSOR_LINK_GESTURE, true);
+				else if(type == 1)
+					mParent.startGesture(SwifteeApplication.CURSOR_IMAGE_GESTURE, true);
+				else 
+					mParent.startGesture(SwifteeApplication.CURSOR_VIDEO_GESTURE, true);
+			}
 			
 		}
-		
+		/**
+		 * checks for link type and returns whether it is of type image or video
+		 * return 1 for image type 
+		 * return 2 for video type
+		 * else return 0
+		 * @return
+		 */
+		private int getLinkType(){
+			if(selectedLink.contains("www.youtube.com/watch?") || 
+					selectedLink.endsWith(".mp4") || 
+					selectedLink.endsWith(".flv") || 
+					selectedLink.endsWith(".mpeg"))
+				return 2;
+			return 0;
+		}
 		public void onTouchUp()
 		{
 

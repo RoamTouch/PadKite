@@ -6,6 +6,7 @@ import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Handler;
 import android.text.Html;
 import android.text.Spanned;
@@ -51,7 +52,9 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 		sharedPreferences = mContext.getApplicationContext().getSharedPreferences("Shared_Pref_AppSettings", Context.MODE_WORLD_READABLE);;
 		isEnabled = sharedPreferences.getBoolean("enable_event_viewer", true);
 		tv1=new TextView(getContext());
-		tv1.setText(Html.fromHtml("<font style='font-family:Lucida Grande,Verdana' color=\"yellow\">Action |</font> <font color=\"white\">FloatingCursor (" + BrowserActivity.version + ") </font"));
+		tv1.setTextColor(Color.BLACK);
+		
+		tv1.setText(Html.fromHtml("<font style='font-family:Lucida Grande,Verdana' color=\"black\">Action |</font> <font color=\"black\">FloatingCursor (" + BrowserActivity.version + ") </font"));
 //		tv1.setInputType(InputType.TYPE_CLASS_TEXT);
 		
 		update=new Button(getContext());
@@ -94,7 +97,7 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 		isEnabled = sharedPreferences.getBoolean("enable_event_viewer", true);
 		if(isEnabled){
 			this.setVisibility(View.VISIBLE);
-			tv1.setText(Html.fromHtml("<font color=\"yellow\">" + txt + "</font>"));
+			tv1.setText(Html.fromHtml("<font color=\"black\">" + txt + "</font>"));
 			timeToWait = TIME_TO_WAIT;
 		}
 	}
@@ -104,7 +107,7 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 		isEnabled = sharedPreferences.getBoolean("enable_event_viewer", true);
 		if(isEnabled){
 			this.setVisibility(View.VISIBLE);
-			tv1.setText(Html.fromHtml("<font color=\"yellow\">" + txt + "</font><font color=\"white\">" + txt2 + "</font>"));
+			tv1.setText(Html.fromHtml("<font color=\"black\">" + txt + "</font><font color=\"white\">" + txt2 + "</font>"));
 			timeToWait = TIME_TO_WAIT;
 		}
 	}
@@ -117,21 +120,21 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 			switch(type){
 
 			case WebHitTestResult.ANCHOR_TYPE:
-				tv1.setText(Html.fromHtml("<font color=\"white\">FloatingCursor over link |</font> <font color=\"yellow\">"+extra+"</font>"));
+				tv1.setText(Html.fromHtml("<font color=\"white\">FloatingCursor over link |</font> <font color=\"black\">"+extra+"</font>"));
 				break;
 			case WebHitTestResult.VIDEO_TYPE:
-				tv1.setText(Html.fromHtml("<font color=\"white\">FloatingCursor over video |</font> <font color=\"yellow\">"+extra+"</font>"));
+				tv1.setText(Html.fromHtml("<font color=\"white\">FloatingCursor over video |</font> <font color=\"black\">"+extra+"</font>"));
 				break;
 			case WebHitTestResult.IMAGE_TYPE:
-				Spanned s = Html.fromHtml("<font color=\"white\">Protocol:</font> <font color=\"yellow\">Markup Language</font><br>" +
-						"<font color=\"white\">Type:</font><font color=\"yellow\">Image JPEG</font><br>" +
-						"<font color=\"white\">Address:(URL):</font>    <font color=\"yellow\">http://www.images.com/1.jpeg</font><br>" +
-						"<font color=\"white\">Size:</font>  <font color=\"yellow\">43395 bytes</font><br>"+ 
-				"<font color=\"white\">Dimensions:</font> <font color=\"yellow\">300 x 170 pixels</font>");
+				Spanned s = Html.fromHtml("<font color=\"white\">Protocol:</font> <font color=\"black\">Markup Language</font><br>" +
+						"<font color=\"white\">Type:</font><font color=\"black\">Image JPEG</font><br>" +
+						"<font color=\"white\">Address:(URL):</font>    <font color=\"black\">http://www.images.com/1.jpeg</font><br>" +
+						"<font color=\"white\">Size:</font>  <font color=\"black\">43395 bytes</font><br>"+ 
+				"<font color=\"white\">Dimensions:</font> <font color=\"black\">300 x 170 pixels</font>");
 				tv1.setText(s);
 				break;
 			case WebHitTestResult.TEXT_TYPE:
-				tv1.setText(Html.fromHtml("<font color=\"white\">FloatingCursor over text |</font> <font color=\"yellow\">"+extra+"</font>"));
+				tv1.setText(Html.fromHtml("<font color=\"white\">FloatingCursor over text |</font> <font color=\"black\">"+extra+"</font>"));
 				break;
 			case -1:
 				tv1.setText("");

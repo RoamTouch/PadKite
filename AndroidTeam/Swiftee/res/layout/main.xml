@@ -61,7 +61,7 @@
     android:gravity="top|center_horizontal"
     android:layout_weight="1" 
     >
-     <com.roamtouch.view.EventViewerArea android:id="@+id/eventViewer" android:layout_width="fill_parent" android:layout_height="wrap_content" android:background="#000000">
+     <com.roamtouch.view.EventViewerArea android:id="@+id/eventViewer" android:layout_width="fill_parent" android:layout_height="wrap_content" android:background="@drawable/event_viewer_1">
     </com.roamtouch.view.EventViewerArea>
 	
 <!--  	<com.roamtouch.view.TopBarArea android:id="@+id/topbararea"  android:layout_width="wrap_content" 
@@ -84,7 +84,8 @@
 	>
 	<HorizontalScrollView android:id="@+id/gestureScrollView" android:layout_width="wrap_content" android:layout_height="wrap_content" 
 					   android:scrollbars="none" android:visibility="visible">	  
- 			<com.roamtouch.view.TutorArea android:layout_width="wrap_content" android:layout_height="75dip" >
+ 			<com.roamtouch.view.TutorArea android:layout_width="wrap_content" android:layout_height="75dip" 
+ 										android:background="@drawable/tutor_button_1"	>
  			</com.roamtouch.view.TutorArea>
     </HorizontalScrollView>    
    
