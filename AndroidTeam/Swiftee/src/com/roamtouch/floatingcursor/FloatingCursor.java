@@ -427,6 +427,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				public void run() {
 					if(currentMenu.getVisibility() == VISIBLE && timerStarted){
 						toggleMenuVisibility();	
+						fcView.setVisibility(View.VISIBLE);
 						timerStarted = false;
 					}
 					else {
