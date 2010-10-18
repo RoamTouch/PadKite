@@ -227,8 +227,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		mGestures.setEnabled(false);
 		
 		// FIXME: Change dynamically based on gesture library used
+		mGestures.setUncertainGestureColor(0xAA000000);
 		mGestures.setGestureColor(Color.BLACK);
-		mGestures.setGestureStrokeWidth(20.0f);
+		mGestures.setGestureStrokeWidth(15.0f);
 		
 		mTutor = (HorizontalScrollView) findViewById(R.id.gestureScrollView);
 		

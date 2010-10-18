@@ -51,7 +51,7 @@ public class SelectionGestureView extends FrameLayout {
 		protected void init()
 		{
 			mLinePaintTouchPointCircle.setColor(Color.BLACK);
-			mLinePaintTouchPointCircle.setStrokeWidth(20.0f);
+			mLinePaintTouchPointCircle.setStrokeWidth(15.0f);
 			mLinePaintTouchPointCircle.setStyle(Style.STROKE);
 			mLinePaintTouchPointCircle.setAntiAlias(true);
 			mLinePaintTouchPointCircle.setStrokeJoin(Paint.Join.ROUND);
