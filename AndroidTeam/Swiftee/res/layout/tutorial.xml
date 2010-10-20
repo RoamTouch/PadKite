@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+    
+    <ViewFlipper 
+    android:id="@+id/flipper"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+		<ImageView android:id="@+id/simple_anim" android:layout_width="fill_parent"
+    		android:layout_height="fill_parent" 
+    		android:background="@drawable/slide1"/>
+    
+	</ViewFlipper>
+
+    
+    <RelativeLayout android:layout_width="wrap_content"
+		android:layout_alignParentBottom="true" android:layout_height="wrap_content"
+		android:background="#777777">
+		<CheckBox android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="Don't Show Again"
+			android:textSize="15dp"
+			android:layout_alignParentLeft="true" android:id="@+id/dont_show_again" />
+			
+		<Button android:layout_width="80px"
+			android:layout_height="wrap_content" android:id="@+id/skip"
+			android:layout_alignParentRight="true" android:text="Skip"
+			android:drawablePadding="10dp" />	
+		
+	</RelativeLayout>
+
+</RelativeLayout>

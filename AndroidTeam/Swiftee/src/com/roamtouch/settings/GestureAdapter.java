@@ -2,6 +2,8 @@ package com.roamtouch.settings;
 
 import java.util.ArrayList;
 import java.util.Set;
+
+import com.roamtouch.database.DBConnector;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
 import android.content.Context;
@@ -28,6 +30,7 @@ public class GestureAdapter extends BaseAdapter{
 		private Object str[];
 		private OnClickListener listener;
 		private int gestureType;
+		private DBConnector database;
 		
 		public GestureAdapter(Context context,int type){
 			mContext=context;
@@ -35,7 +38,7 @@ public class GestureAdapter extends BaseAdapter{
 			
 			SwifteeApplication appState = ((SwifteeApplication)context.getApplicationContext());
 			mLibrary = appState.getGestureLibrary(gestureType);
-			
+			database = appState.getDatabase();
 			Set<String> s=mLibrary.getGestureEntries();
 			str = s.toArray();
 			gestureCount = str.length;
@@ -57,7 +60,7 @@ public class GestureAdapter extends BaseAdapter{
 			return gestureCount ;
 		}
 
-		public Object getItem(int position) {
+		public Object getItem(int position) { 
 			return position;
 		}
 
@@ -71,7 +74,10 @@ public class GestureAdapter extends BaseAdapter{
 			
             if (v == null) {
             	LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.gesture_list_item, null);           
+            	if(gestureType==SwifteeApplication.BOOKMARK_GESTURE)
+            		v = vi.inflate(R.layout.gesture_list_item2, null);
+            	else
+            		v = vi.inflate(R.layout.gesture_list_item, null);
             }
         	
             ImageView gestureImage = (ImageView)v.findViewById(R.id.gestureImage);
@@ -87,6 +93,12 @@ public class GestureAdapter extends BaseAdapter{
 			rec.setTag(str[position].toString());
 			//rec.setId(position);
 			rec.setOnClickListener(listener);
+			
+			if(gestureType==SwifteeApplication.BOOKMARK_GESTURE){
+				TextView url= (TextView) v.findViewById(R.id.url);			
+				url.setText(database.getBookmark(str[position].toString()));
+			}
+				
 			return v;
 		}
 		

@@ -63,14 +63,17 @@ public class GestureRecorder extends Activity {
 							gestureName = t.getText().toString();
 						SwifteeApplication appState = ((SwifteeApplication)getApplicationContext());
 						GestureLibrary mLibrary = appState.getGestureLibrary(gestureType);
-						
+						String s = t.getText().toString();
+						if(s.length()>9)
+							s = s.substring(0, 8);
 						if(mGesture!=null){
 							if(!isNewBookmark)
 								mLibrary.removeGesture(gestureName, mLibrary.getGestures(gestureName).get(0));
 							else{
-								appState.getDatabase().addBookmark(gestureName,url);
+								appState.getDatabase().addBookmark(s,url);
+								
 							}
-							String s = t.getText().toString();
+							
 							mLibrary.addGesture(s, mGesture);
 							mLibrary.save();							
 						}

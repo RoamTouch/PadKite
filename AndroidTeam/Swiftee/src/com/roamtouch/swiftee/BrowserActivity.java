@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.apache.http.HeaderElement;
@@ -49,6 +50,7 @@ import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.ClipboardManager;
 import android.view.KeyEvent;
@@ -446,6 +448,15 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         else if("Open Link".equals(action)){
         	floatingCursor.addNewWindow();
         }     
+        else if("Download".equals(action)){
+        	eventViewer.setText("Downloading:"+mSelection);
+        	try {
+				new DownloadFilesTask().execute(new URL(mSelection), null, null);
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }     
         else                
 			eventViewer.setText("Unrecognized gesture: " + action);
 		stopGesture();
@@ -454,7 +465,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 		String url = appState.getDatabase().getBookmark(action);
 		if(url!= null && !url.equals("Gesture cancelled"))
-			webView.loadUrl(url);
+			floatingCursor.loadPage(url);
 		else if ("Cancel".equals(action))
 			eventViewer.setText("Gesture cancelled.");
 	    else  
@@ -628,5 +639,26 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		return charset;
 	}
 	
+	
+	private class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
+	     protected Long doInBackground(URL... urls) {
+	         int count = urls.length;
+	         long totalSize = 0;
+	         for (int i = 0; i < count; i++) {
+	             Downloader.downloadFile(urls[i]);
+	             publishProgress((int) ((i / (float) count) * 100));
+	         }
+	         return totalSize;
+	     }
+
+	     protected void onProgressUpdate(Integer... progress) {
+	         //setProgressPercent(progress[0]);
+	     }
+
+	     protected void onPostExecute(Long result) {
+	    	 eventViewer.setText("Download Complete");
+	         //showDialog("Downloaded " + result + " bytes");
+	     }
+	 }
 	
 }

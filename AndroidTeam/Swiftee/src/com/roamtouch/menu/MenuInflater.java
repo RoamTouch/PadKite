@@ -25,9 +25,10 @@ public class MenuInflater {
 		FileInputStream is = new FileInputStream(xmlfile); 
 
 		parser.setInput(is,null);
-		
-		while(true){
-			int eventType = parser.getEventType();
+	    final int depth = parser.getDepth();
+		int eventType; 
+		while (((eventType = parser.next()) != XmlPullParser.END_TAG ||
+                parser.getDepth() > depth) && eventType != XmlPullParser.END_DOCUMENT) {
 			
 			if(eventType == XmlPullParser.START_TAG) {
 				String tag = parser.getName();
@@ -60,8 +61,8 @@ public class MenuInflater {
 					
 				}	
 			}
-			parser.nextTag();
-			
+			//	parser.nextTag();
+		
 		}
 
 	}

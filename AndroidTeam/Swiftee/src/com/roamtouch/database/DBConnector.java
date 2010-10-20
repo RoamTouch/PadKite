@@ -128,25 +128,29 @@ public class DBConnector {
 		public void addBookmark(String name,String url){
 			try
 			{
+//				System.out.println("-------------I am here in for adding gesture "+name+"and" + url +" in database------------");
 				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES('"+name+"','"+url+"')");
 				
 			}
 			catch(Exception e)
 			{
+//				System.out.println("-------------exception while adding bookmarks ------------");
 				e.printStackTrace();
 			}
 		}
 		public String getBookmark(String name){
 			try{
-				Cursor c = mDatabase.rawQuery("SELECT * FROM bookmarks WHERE name='"+name+"'", null);
+				Cursor c = mDatabase.rawQuery("SELECT url FROM bookmarks WHERE name='"+name+"'", null);
 				if(c!=null){
 					c.moveToFirst();
-					String url = c.getString(1);
+//					System.out.println("-------------inside dbconector "+c.getCount()+" get bookmark ------------");
+					String url = c.getString(c.getColumnIndex("url"));
 					return url;
 				}
 				return null;
 			}
 			catch(Exception e){
+//				System.out.println("-------------exception "+  e  +" while getting bookmarks ------------");
 				e.printStackTrace();
 				return null;
 			}

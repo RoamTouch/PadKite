@@ -447,6 +447,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
         public String getCurrentURL(){
         	return mWebView.getUrl();
         }
+        public String getCurrentTitle(){
+        	return mWebView.getTitle();
+        }
 		public void gestureDisableFC()
 		{
 			//mCanBeDisabled  = true;
@@ -742,7 +745,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}
 				case WebHitTestResult.VIDEO_TYPE: {
 					cursorImage = R.drawable.video_cursor;
-					WebVideoInfo videoInfo = mWebHitTestResult.getVideoInfo();
+					WebVideoInfo videoInfo = mWebHitTestResult.getVideoInfo();					
 					//eventViewer.splitText(WebHitTestResult.VIDEO_TYPE, "");
 					break;
 				}
@@ -1017,11 +1020,22 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		 * @return
 		 */
 		private int getLinkType(){
-			if(selectedLink.contains("www.youtube.com/watch?") || 
+				if(
 					selectedLink.endsWith(".mp4") || 
 					selectedLink.endsWith(".flv") || 
-					selectedLink.endsWith(".mpeg"))
+					selectedLink.endsWith(".mpeg")||
+					selectedLink.endsWith(".wmv")||
+					selectedLink.endsWith(".mpg")||
+					selectedLink.endsWith(".rm")||
+					selectedLink.endsWith(".mov"))
 				return 2;
+				if(
+					selectedLink.endsWith(".jpg") || 
+					selectedLink.endsWith(".jpeg") || 
+					selectedLink.endsWith(".png")||
+					selectedLink.endsWith(".gif")||
+					selectedLink.endsWith(".bmp"))
+				return 1;
 			return 0;
 		}
 		public void onTouchUp()
@@ -2089,6 +2103,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		        }
 		        Bitmap bm = Bitmap.createBitmap(50,
 		                50, Bitmap.Config.ARGB_4444);
+		        
 		        Canvas canvas = new Canvas(bm);
 		        Path path = new Path();
 			    
@@ -2104,7 +2119,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		            canvas.scale(scaleFactor, scaleFactor);
 		        }
 		        thumbnail.draw(canvas);
-		       
+		        System.gc();
 		        return bm;
 			}
 			
