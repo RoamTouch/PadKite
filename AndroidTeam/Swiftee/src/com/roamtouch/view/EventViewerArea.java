@@ -41,6 +41,7 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 	private Handler handler;
 	private Runnable runnable;
 	private boolean isEnabled;
+	private boolean isForceEnabled = false;
 	
 	public EventViewerArea(Context context, AttributeSet attrs)  {
 		super(context, attrs);
@@ -53,7 +54,7 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 		isEnabled = sharedPreferences.getBoolean("enable_event_viewer", true);
 		tv1=new TextView(getContext());
 		tv1.setTextColor(Color.BLACK);
-		tv1.setPadding(10, 0, 0, 0);
+		tv1.setPadding(15, 10, 10, 10);
 		tv1.setText(Html.fromHtml("<font style='font-family:Lucida Grande,Verdana' color=\"black\">Action |</font> <font color=\"black\">FloatingCursor (" + BrowserActivity.version + ") </font"));
 //		tv1.setInputType(InputType.TYPE_CLASS_TEXT);
 		
@@ -101,6 +102,24 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 			timeToWait = TIME_TO_WAIT;
 		}
 	}
+	
+	public void setTimedText(String txt, int myTimeToWait, boolean force)
+	{
+		isForceEnabled = force;
+		setText(txt);
+		timeToWait = myTimeToWait;
+		isForceEnabled = false;
+	}
+	
+	public void setTimedSplittedText(String txt, String txt2, int myTimeToWait, boolean force)
+	{
+		isForceEnabled = force;
+		setSplitedText(txt, txt2);
+		timeToWait = myTimeToWait;
+		isForceEnabled = false;
+	}
+
+	
 	public void setSplitedText(String txt,String txt2)
 	{
 		sharedPreferences = mContext.getApplicationContext().getSharedPreferences("Shared_Pref_AppSettings", Context.MODE_WORLD_READABLE);;
@@ -148,29 +167,35 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 			update.setText("");
 			update.setBackgroundResource(R.drawable.cross);
 			tv1.setWidth(windowEnabledWidth);
-			tv1.setPadding(15, 0, 0, 0);
+			//tv1.setPadding(20, 0, 0, 0);
 		}
 		else if(mode == UPDATE_MODE){
 			tv1.setWidth(updateEnabledWidth);
-			tv1.setPadding(0, 0, 0, 0);
+			//tv1.setPadding(20, 0, 0, 0);
 		}
 		else{
 			update.setVisibility(GONE);
-			tv1.setPadding(0, 0, 0, 0);
+			//tv1.setPadding(20, 0, 0, 0);
 		}
 	}
 	
 	
 	public void run() {
-		if(timeToWait==0){
+		if(timeToWait < 0){
+			; // Stub
+		}
+		else if(timeToWait==0){
 			this.setVisibility(View.INVISIBLE);
-			handler.post(this);
+			timeToWait = -1;
 		}
 		else{
 			timeToWait-=100;
-			handler.postDelayed(this, 100);
+			if (timeToWait < 0)
+				timeToWait = 0;
 		}
-			
+		
+		// FIXME: This can be handled better ...
+		handler.postDelayed(this, 100);	
 	}
 	
 }

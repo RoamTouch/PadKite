@@ -9,7 +9,6 @@ import com.api.facebook.FacebookActivity;
 import com.api.twitter.TwitterActivity;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.settings.GestureRecorder;
-import com.roamtouch.swiftee.BrowserActivity.DownloadFilesTask;
 
 import roamtouch.webkit.WebView;
 

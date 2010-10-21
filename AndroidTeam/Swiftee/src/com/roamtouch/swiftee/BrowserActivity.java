@@ -52,6 +52,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.ClipboardManager;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -379,8 +380,11 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
          else                                                                          
         	 eventViewer.setText("Unrecognized gesture.");
 	}
+	
+	private Handler mHandler = new Handler();
+	
 	public void cursorGestures(String action){
-		GestureActions actions = new GestureActions(this, mSelection);
+		final GestureActions actions = new GestureActions(this, mSelection);
 		
 		if ("Search".equals(action)) 
 		{
@@ -406,10 +410,19 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         	actions.blog();
         }
         else if("Translate".equals(action)) {
-        	String languageTo = sharedPreferences.getString("language_to", "ENGLISH").toUpperCase();
-        	eventViewer.setText("Translating from ENGLISH to"+languageTo+". Please wait ...");
-        	String translated = actions.translate(languageTo);
-        	eventViewer.setSplitedText("Translated from ENGLISH to"+languageTo+":",translated);
+        	final String languageTo = sharedPreferences.getString("language_to", "ENGLISH").toUpperCase();
+        	eventViewer.setTimedText("Translating from ENGLISH to "+languageTo+". Please wait ...", -1, true);
+        	eventViewer.invalidate();       
+        	
+        	mHandler.postDelayed(new Runnable() {
+			
+        		public void run()
+        		{
+        			String translated = actions.translate(languageTo);
+        			eventViewer.setTimedSplittedText("Translated from ENGLISH to "+languageTo+": ",translated, 10000, true);			
+        		}
+			
+        	}, 100);
         }
         else if("Wikipedia".equals(action)){
         	eventViewer.setText("W (wikipedia) gesture done, wiki searching for: " + mSelection);
@@ -432,7 +445,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         }     
         else 
         {
-			eventViewer.setText("Unrecognized gesture: " + action);
+			eventViewer.setText("Unrecognized gesture (HACK: Displays send field for the moment for testing): " + action);
 			actions.send();
         }
 		stopGesture();
