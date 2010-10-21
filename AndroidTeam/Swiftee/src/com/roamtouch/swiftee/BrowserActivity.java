@@ -380,73 +380,46 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         	 eventViewer.setText("Unrecognized gesture.");
 	}
 	public void cursorGestures(String action){
+		GestureActions actions = new GestureActions(this, mSelection);
+		
 		if ("Search".equals(action)) 
 		{
 			eventViewer.setText("S (search) gesture done, searching for: " + mSelection);
-			webView.loadUrl("http://www.google.com/search?q=" + mSelection);
-//			setTopBarURL("http://www.google.com/search?q=" + mSelection);
+			actions.search(webView);
 		}
         else if ("Email".equals(action))
         {
 			eventViewer.setText("e (email) gesture done");
-			   
-			// Here we need to fire the intent to write an email with the content just pasted
-			   
-			//  This will not work in the emulator, because the emulator does not have gmail. 
-			Intent intent = new Intent(Intent.ACTION_SENDTO);
-            intent.setData(Uri.parse("mailto:"));
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
-            intent.putExtra(Intent.EXTRA_TEXT, mSelection);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+			actions.email();
         }
         else if("Calendar".equals(action)){
-        	Intent intent = new Intent(Intent.ACTION_EDIT);
-        	intent.setType("vnd.android.cursor.item/event");
-        	intent.putExtra("title", "Some title");
-        	intent.putExtra("description", "Some description");
-        	startActivity(intent);
+
+			actions.calendar();
         }
         else if("Facebook".equals(action)){
-        	Intent intent = new Intent(this,FacebookActivity.class);
-        	if(mSelection.startsWith("http://"))
-        		intent.putExtra("Post", getShortLink(mSelection));
-        	else
-        		intent.putExtra("Post", mSelection);
-        	startActivity(intent);
+        	actions.facebook();
         }
         else if("Twitter".equals(action)){
-        	Intent intent = new Intent(this,TwitterActivity.class);
-        	if(mSelection.startsWith("http://"))
-        		intent.putExtra("Tweet", getShortLink(mSelection));
-        	else
-        		intent.putExtra("Tweet", mSelection);
-        	startActivity(intent);
+        	actions.twitter();
         }
-        else if("Blog".equals(action)){
-        	Intent intent = new Intent(this,BloggerActivity.class);
-        	intent.putExtra("PostContent", mSelection);
-        	startActivity(intent);
+        else if("Blog".equals(action)) {
+        	actions.blog();
         }
-        else if("Translate".equals(action)){
+        else if("Translate".equals(action)) {
         	String languageTo = sharedPreferences.getString("language_to", "ENGLISH").toUpperCase();
-        	String translated = Translater.text(mSelection, "ENGLISH", languageTo);
-        	eventViewer.setSplitedText("Translated from ENGLISH to"+ languageTo+":",translated);
+        	eventViewer.setText("Translating from ENGLISH to"+languageTo+". Please wait ...");
+        	String translated = actions.translate(languageTo);
+        	eventViewer.setSplitedText("Translated from ENGLISH to"+languageTo+":",translated);
         }
         else if("Wikipedia".equals(action)){
-        	webView.loadUrl("http://en.wikipedia.org/wiki/"+mSelection);
         	eventViewer.setText("W (wikipedia) gesture done, wiki searching for: " + mSelection);
+			actions.wikipedia(webView);
         }     
         else if("Add Link".equals(action)){
-        	Intent i = new Intent(this,GestureRecorder.class);
-			i.putExtra("Gesture_Name", "");
-			i.putExtra("isNewBookmark", true);
-			i.putExtra("url", floatingCursor.getCurrentURL());
-			i.putExtra("Gesture_Type", SwifteeApplication.BOOKMARK_GESTURE);
-			startActivity(i);
+        	actions.addLink(floatingCursor.getCurrentURL());
         }     
         else if("Open Link".equals(action)){
-        	floatingCursor.addNewWindow();
+        	actions.openLink(floatingCursor);
         }     
         else if("Download".equals(action)){
         	eventViewer.setText("Downloading:"+mSelection);
@@ -457,8 +430,11 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 				e.printStackTrace();
 			}
         }     
-        else                
+        else 
+        {
 			eventViewer.setText("Unrecognized gesture: " + action);
+			actions.send();
+        }
 		stopGesture();
 	}
 	private void bookmarkGestures(String action){
@@ -570,7 +546,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	}
 	
 	/*Get short link from server*/	
-	private String getShortLink(String longUrl) {
+	public String getShortLink(String longUrl) {
 		
 		String responseString = "";
 		try {
@@ -640,7 +616,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	}
 	
 	
-	private class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
+	public class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
 	     protected Long doInBackground(URL... urls) {
 	         int count = urls.length;
 	         long totalSize = 0;
