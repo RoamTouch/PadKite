@@ -197,6 +197,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			//Stop
 			case stop:
 				mFloatingCursor.setEventText("Stop ");
+				mFloatingCursor.stopLoading();
 				break;
 				
 			//Zoom
