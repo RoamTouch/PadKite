@@ -25,6 +25,7 @@ public class GestureRecorder extends Activity {
 		private String gestureName;
 		private int gestureType;
 		private boolean isNewBookmark = false;
+		private boolean isStoredBookmark = false;
 		private String url;
 		private EditText t;
 		@Override
@@ -36,21 +37,29 @@ public class GestureRecorder extends Activity {
 			gestureName = getIntent().getStringExtra("Gesture_Name");
 			gestureType = getIntent().getIntExtra("Gesture_Type", -1);
 			isNewBookmark = getIntent().getBooleanExtra("isNewBookmark", false);
+			isStoredBookmark =getIntent().getBooleanExtra("isStoredBookmark", false);
+			
 			url = getIntent().getStringExtra("url");
 			
 			setContentView(R.layout.create_gesture);
 
 			mDoneButton = (Button)findViewById(R.id.startRecording);
 
-			t = (EditText) findViewById(R.id.gestureText);		
+			t = (EditText) findViewById(R.id.gestureText);	
+			if(gestureName.length()>10)
+				gestureName = gestureName.substring(0, 9);
 			t.setText(gestureName);
-			if(gestureName.equals(""))
-				t.setHint("Enter name for this bookmark");
-			else{
+			if(!isStoredBookmark){
 				t.setClickable(false);
 				t.setEnabled(false);
 				t.setFocusable(false);
 			}
+			else{
+				t.setClickable(true);
+				t.setEnabled(true);
+				t.setFocusable(true);
+			}
+				
 			overlay = (GestureOverlayView) findViewById(R.id.gestures_overlay);
 			overlay.addOnGestureListener(new GesturesProcessor());
 
@@ -58,23 +67,32 @@ public class GestureRecorder extends Activity {
 
 				public void onClick(View v) {
 					Button b = (Button) v;
+					String s=gestureName;
 					if(b.getText().toString().equals("Save Gesture")){
-						if(gestureName.equals(""))
-							gestureName = t.getText().toString();
+						
+						if(isStoredBookmark){
+							s = t.getText().toString();
+							if(s.length()>10)
+								s = s.substring(0, 9);
+						}
 						SwifteeApplication appState = ((SwifteeApplication)getApplicationContext());
 						GestureLibrary mLibrary = appState.getGestureLibrary(gestureType);
-						String s = t.getText().toString();
-						if(s.length()>9)
-							s = s.substring(0, 8);
+						
 						if(mGesture!=null){
-							if(!isNewBookmark)
+							if(isNewBookmark){
+								mLibrary.addGesture(gestureName, mGesture);
+								appState.getDatabase().addBookmark(gestureName,url);			
+							}							
+							if(isStoredBookmark){
 								mLibrary.removeGesture(gestureName, mLibrary.getGestures(gestureName).get(0));
+								mLibrary.addGesture(s, mGesture);
+								appState.getDatabase().addBookmark(s,url);								
+							}
 							else{
-								appState.getDatabase().addBookmark(s,url);
-								
+								mLibrary.removeGesture(gestureName, mLibrary.getGestures(gestureName).get(0));
+								mLibrary.addGesture(gestureName, mGesture);
 							}
 							
-							mLibrary.addGesture(s, mGesture);
 							mLibrary.save();							
 						}
 						finish();

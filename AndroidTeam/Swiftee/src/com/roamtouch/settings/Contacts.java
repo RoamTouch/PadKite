@@ -66,7 +66,10 @@ public class Contacts extends Activity {
 								pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DATA));
 						String numType = pCur.getString(
 								pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE)); 
-						if(numType.equals(""+ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)){
+						if(numType.equals(""+ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)||
+								numType.equals(""+ContactsContract.CommonDataKinds.Phone.TYPE_HOME)||
+								numType.equals(""+ContactsContract.CommonDataKinds.Phone.TYPE_OTHER)||
+								numType.equals(""+ContactsContract.CommonDataKinds.Phone.TYPE_WORK)){
 							num_arr[cur.getPosition()] = num;
 						}
 					} 
@@ -83,7 +86,9 @@ public class Contacts extends Activity {
 							emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
 					String emailType = emailCur.getString(
 							emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE)); 
-					if(emailType.equals(""+ContactsContract.CommonDataKinds.Email.TYPE_HOME)){
+					if(emailType.equals(""+ContactsContract.CommonDataKinds.Email.TYPE_HOME)||
+							emailType.equals(""+ContactsContract.CommonDataKinds.Email.TYPE_WORK)||
+							emailType.equals(""+ContactsContract.CommonDataKinds.Email.TYPE_OTHER)){
 						email_arr[cur.getPosition()] = email;
 					}
 				} 

@@ -138,6 +138,19 @@ public class DBConnector {
 				e.printStackTrace();
 			}
 		}
+		public void deleteBookmark(String name){
+			try
+			{
+//				System.out.println("-------------I am here in for deleting gesture "+name+" from database------------");				
+				mDatabase.execSQL("DELETE from bookmarks WHERE name = '"+name+"'");
+			}
+			catch(Exception e)
+			{
+//				System.out.println("-------------exception while deleting bookmarks ------------");
+				e.printStackTrace();
+			}
+		}
+		
 		public String getBookmark(String name){
 			try{
 				Cursor c = mDatabase.rawQuery("SELECT url FROM bookmarks WHERE name='"+name+"'", null);

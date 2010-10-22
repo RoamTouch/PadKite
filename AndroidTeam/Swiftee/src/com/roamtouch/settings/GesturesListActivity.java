@@ -12,6 +12,7 @@ import com.roamtouch.swiftee.R;
 
 public class GesturesListActivity extends Activity{
 
+		private GestureAdapter adapter;
 		private TextView tv;
 		private int gestureCategory;
 		private ListView list;
@@ -38,17 +39,21 @@ public class GesturesListActivity extends Activity{
 			setTitle(gestureCategory);
 			
 			list.addHeaderView(tv);
-			//list.setAdapter(new GestureAdapter(this,gestureCategory));
 			
+						
 		}
 		
 		@Override
 	    protected void onResume() {
 	        super.onResume();
-	        list.setAdapter(new GestureAdapter(this,gestureCategory));
+	        adapter = new GestureAdapter(this,gestureCategory,this);
+	        list.setAdapter(adapter);
 	    }
 		
 		
+		public void refrshList(){
+			adapter.notifyDataSetChanged();
+		}
 		public void setTitle(int gestureType){
 			
 			switch(gestureType){
