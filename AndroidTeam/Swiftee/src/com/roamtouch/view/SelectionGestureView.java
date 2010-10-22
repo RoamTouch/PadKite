@@ -249,14 +249,14 @@ public class SelectionGestureView extends FrameLayout {
 		mSteps = 1;
 
 		if (mDelay == 0)
-			mDelay = MIN_DELAY;
+			mDelay = 1;
 		
 		if (mDelay < MIN_DELAY)
 		{
 			mSteps = MIN_DELAY / mDelay;
 
 			if (mSteps > 10)
-				mSteps = 10;
+				mSteps = 10; 
 			
 			mDelay = MIN_DELAY;
 		}

@@ -992,25 +992,27 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 			stopSelectionCommand();
 			startSelection(true);
+			
 //Added for distinguishing various selection
 			
 			if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE)
-				mParent.startGesture(SwifteeApplication.CURSOR_IMAGE_GESTURE, true);
-			
+				mParent.setGestureType(SwifteeApplication.CURSOR_IMAGE_GESTURE);
 			else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE)
-				mParent.startGesture(SwifteeApplication.CURSOR_TEXT_GESTURE, true);
-		
+				mParent.setGestureType(SwifteeApplication.CURSOR_TEXT_GESTURE);
 			else if ( mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
 				int type = getLinkType();
 				if(type == 0)
-					mParent.startGesture(SwifteeApplication.CURSOR_LINK_GESTURE, true);
+					mParent.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);
 				else if(type == 1)
-					mParent.startGesture(SwifteeApplication.CURSOR_IMAGE_GESTURE, true);
+					mParent.setGestureType(SwifteeApplication.CURSOR_IMAGE_GESTURE);
 				else 
-					mParent.startGesture(SwifteeApplication.CURSOR_VIDEO_GESTURE, true);
+					mParent.setGestureType(SwifteeApplication.CURSOR_VIDEO_GESTURE);
+				
+				stopSelection();
+				//mParent.setSelection(mWebHitTestResult.getExtra());
+				mParent.startGesture(true);
 			}
-			
 		}
 		/**
 		 * checks for link type and returns whether it is of type image or video
@@ -2061,7 +2063,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			public void onClipBoardUpdate (String type) {
 				if (mGesturesEnabled) {
 					Log.d("in onClickBoardUpdate-------------------------------", type);
-					mParent.startGesture(SwifteeApplication.CURSOR_TEXT_GESTURE, true);
+					mParent.startGesture(true);
 					mGesturesEnabled=false;
 				}
 			}

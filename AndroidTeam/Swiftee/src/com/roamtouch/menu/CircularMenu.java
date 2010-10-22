@@ -75,13 +75,14 @@ public class CircularMenu extends CircularLayout implements OnTouchListener{
 				break;
 			case R.id.bookmark:
 				this.setVisibility(INVISIBLE);
-				mParent.startGesture(SwifteeApplication.BOOKMARK_GESTURE, false);
+				mParent.setGestureType(SwifteeApplication.BOOKMARK_GESTURE);
+				mParent.startGesture(false);
 				break;
 			case R.id.customGesture:
 				this.setVisibility(INVISIBLE);
-				mParent.startGesture(SwifteeApplication.CUSTOM_GESTURE, false);
+				mParent.setGestureType(SwifteeApplication.CUSTOM_GESTURE);
+				mParent.startGesture(false);
 				break;	
-			
 		}
 		
 	}
@@ -161,13 +162,14 @@ public class CircularMenu extends CircularLayout implements OnTouchListener{
 				break;
 			case R.id.bookmark:
 				this.setVisibility(INVISIBLE);
-				mParent.startGesture(SwifteeApplication.BOOKMARK_GESTURE, false);
+				mParent.setGestureType(SwifteeApplication.BOOKMARK_GESTURE);
+				mParent.startGesture(false);
 				break;
 			case R.id.customGesture:
 				this.setVisibility(INVISIBLE);
-				mParent.startGesture(SwifteeApplication.CUSTOM_GESTURE, false);
-				break;	
-			
+				mParent.setGestureType(SwifteeApplication.CUSTOM_GESTURE);
+				mParent.startGesture(false);
+				break;				
 		}
 		}
 		return false;

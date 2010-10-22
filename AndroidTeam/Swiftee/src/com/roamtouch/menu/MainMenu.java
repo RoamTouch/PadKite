@@ -231,7 +231,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			//Custom Gesture	
 			case custom_gesture:
 				this.setVisibility(INVISIBLE);
-				mParent.startGesture(SwifteeApplication.BOOKMARK_GESTURE, false);
+				mParent.setGestureType(SwifteeApplication.BOOKMARK_GESTURE);
+				mParent.startGesture(false);
 				break;
 				
 			case download:

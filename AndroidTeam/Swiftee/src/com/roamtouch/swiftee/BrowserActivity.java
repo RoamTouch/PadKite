@@ -89,6 +89,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 		
 	private int currentGestureLibrary;
+	private int mGestureType = SwifteeApplication.CURSOR_TEXT_GESTURE;
+;
 	
 	private SwifteeApplication appState;
     private SharedPreferences sharedPreferences;
@@ -286,9 +288,20 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		tArea.setParent(this);
     }
     
-    public void startGesture(int gestureType, boolean useSelection)
+    public void setGestureType(int gestureType)
     {
-    	initGestureLibrary(gestureType);
+    	mGestureType = gestureType;
+    }
+
+    public void setSelection(String selection)
+    {
+    	mSelection = selection;
+    }
+
+    
+    public void startGesture(boolean useSelection)
+    {
+    	initGestureLibrary(mGestureType);
 		stopTextGesture();
     	floatingCursor.gestureDisableFC();
 		webLayout.setEnabled(false);
@@ -317,6 +330,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     {
 		mTutor.setVisibility(View.INVISIBLE);
 		mGestures.setEnabled(false);
+		mGestureType = SwifteeApplication.CURSOR_TEXT_GESTURE;
     	floatingCursor.gestureEnableFC();
     	floatingCursor.removeSelection();
 		webLayout.setEnabled(true);
