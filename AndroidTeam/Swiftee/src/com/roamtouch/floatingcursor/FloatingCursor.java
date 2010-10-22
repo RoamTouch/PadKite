@@ -30,6 +30,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.view.animation.Animation.AnimationListener;
 import roamtouch.webkit.WebChromeClient;
 import roamtouch.webkit.WebHitTestResult;
@@ -82,7 +83,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	 */
 		private FloatingCursorView fcView = null;
 		private FloatingCursorInnerView fcPointerView = null;
-		private CircularProgressBar fcProgressBar;
+		//private CircularProgressBar fcProgressBar;
 		private ImageView pointer;
 		private MainMenu fcMainMenu;
 		private SettingsMenu fcSettingsMenu;
@@ -386,7 +387,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 //			fcPointerView.setQuality(0);
 			
 		
-			fcProgressBar=new CircularProgressBar(getContext(),(int)(RADIUS*0.3f)+20);
+			//fcProgressBar=new CircularProgressBar(getContext(),(int)(RADIUS*0.3f)+20);
 
 			fcMainMenu = new MainMenu(context);
 			fcMainMenu.setfcRadius(RADIUS);
@@ -411,7 +412,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 
 			addView(fcView);
-			addView(fcProgressBar);
+			//addView(fcProgressBar);
 			addView(fcPointerView);
 			addView(pointer);
 			addView(fcMainMenu);
@@ -669,7 +670,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			super.onSizeChanged(w, h, oldw, oldh);
 			fcView.setPosition(w/2,h/2);
 			fcPointerView.setPosition(w/2,h/2);
-			fcProgressBar.setPosition(w/2, h/2);
+			//fcProgressBar.setPosition(w/2, h/2);
 			fcMainMenu.setPosition(w/2, h/2);
 			this.w=w;
 			this.h=h;
@@ -848,7 +849,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			{
 				pointer.scrollTo(0,0);
 				fcPointerView.scrollTo(0,0);
-				fcProgressBar.scrollTo(0,0);
+				//fcProgressBar.scrollTo(0,0);
 			}
 
 			mTouchPointValid = false;
@@ -1508,7 +1509,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					
 					pointer.scrollTo(scrollX, scrollY);
 					fcPointerView.scrollTo(scrollX, scrollY);
-					fcProgressBar.scrollTo(scrollX, scrollY);
+					//fcProgressBar.scrollTo(scrollX, scrollY);
 			
 					//fcTouchView.scrollTo(CircleX - X, CircleY - Y);
 					//fcTouchView.setVisibility(View.VISIBLE);
@@ -2056,7 +2057,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		        }
 		    }
 			public void onProgressChanged  (WebView  view, int newProgress) {
-				fcProgressBar.setProgress(newProgress);
+				//fcProgressBar.setProgress(newProgress);
 			}
 			
 			// @Override
@@ -2094,7 +2095,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 			@Override
 			public void onPageFinished(WebView view, String url) {
-				fcProgressBar.disable();
+				//fcProgressBar.disable();
+				fcView.clearAnimation();
 				fcMainMenu.toggleCloseORRefresh(true);
 				mContentWidth = view.getContentWidth();
 				mContentHeight = view.getContentHeight();
@@ -2162,7 +2164,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 */			
 			public void onPageStarted(WebView view, String url,Bitmap b) {
-				fcProgressBar.enable();		
+				//fcProgressBar.enable();
+				fcView.startRotateAnimation();
 				fcMainMenu.toggleCloseORRefresh(false);
 			}
 		}

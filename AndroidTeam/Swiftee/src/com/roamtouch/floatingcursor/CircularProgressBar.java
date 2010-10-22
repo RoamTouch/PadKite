@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import android.os.Handler;
 import android.view.View;
 
+/* This is NO LONGER USED */
 
 /**
  *   Circular progress bar is visible when a web view is loading a new URL 
