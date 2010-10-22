@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 
 public class FloatingCursorView extends View {
@@ -34,7 +35,7 @@ public class FloatingCursorView extends View {
                                  0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         ra.setDuration((long) 5000);
         ra.setRepeatCount(Animation.INFINITE);
-
+        ra.setInterpolator(new LinearInterpolator());
     }
 
 
