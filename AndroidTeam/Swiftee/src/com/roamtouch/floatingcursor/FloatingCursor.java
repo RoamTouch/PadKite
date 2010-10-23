@@ -904,7 +904,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				eventViewer.setText("Executing link ...");
 
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
-				pointer.setImageResource(R.drawable.address_bar_cursor);
+				//pointer.setImageResource(R.drawable.address_bar_cursor);
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);		
 				startHitTest(fcX,fcY);
 			}
