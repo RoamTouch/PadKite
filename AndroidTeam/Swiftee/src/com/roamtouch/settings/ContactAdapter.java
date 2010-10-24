@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,12 +38,12 @@ public class ContactAdapter extends BaseAdapter{
 			public void onClick(View v) {
 
 				String tag =  v.getTag().toString();
-				System.out.println("tag :: "+tag);
+				//System.out.println("tag :: "+tag);
 				if(tag.startsWith("call:")){
-					System.out.println("call : ");
-					if(tag==null)System.out.println("null");
+					//System.out.println("call : ");
+					//if(tag==null)System.out.println("null");
 					tag = tag.substring(tag.indexOf(":")+1, tag.length());
-					System.out.println("new Tag : "+tag);
+					//System.out.println("new Tag : "+tag);
 
 					Uri uri = Uri.fromParts("tel", tag, null);
 					Intent callIntent = new Intent(Intent.ACTION_CALL, uri);
@@ -80,8 +81,11 @@ public class ContactAdapter extends BaseAdapter{
 				}
 				else if(tag.startsWith("mail:")){
 					Intent intent = new Intent(Intent.ACTION_SENDTO);
-		            intent.setData(Uri.parse("mailto:"));
-		            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					tag = "mailto:" + tag.substring(tag.indexOf(":")+1, tag.length());
+		
+					//Log.v("Mailto: ", tag);
+					intent.setData(Uri.parse(tag));
+					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		            mContext.startActivity(intent);
 				}
 			}
