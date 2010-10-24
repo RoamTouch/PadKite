@@ -106,7 +106,7 @@ public class CircularTabsLayout extends ViewGroup {
 			initBG();
 			
 			ImageView redCircle = new ImageView(context);
-			redCircle.setBackgroundResource(R.drawable.red_circle);
+			redCircle.setBackgroundResource(R.drawable.wm_current);
 			addView(redCircle);
 		   }
 		
@@ -185,8 +185,8 @@ public class CircularTabsLayout extends ViewGroup {
 		    			if(i == activetabIndex){
 
 		    				ImageView redCircle = (ImageView)getChildAt(1);
-		    				redCircle.setBackgroundResource(R.drawable.red_circle);
-		    				redCircle.layout(childLeft-4, childTop-4, lb+4, rb+4);   
+		    				redCircle.setBackgroundResource(R.drawable.wm_current);
+		    				redCircle.layout(childLeft-10, childTop-10, lb+10, rb+10);   
 		    			}
 		    			child.layout(childLeft, childTop, lb, rb);                	
 		    		}
@@ -226,8 +226,8 @@ public class CircularTabsLayout extends ViewGroup {
 		   	final int rb = child.getCenterY() + BUTTON_RADIUS;
 
 		   	ImageView redCircle = (ImageView)getChildAt(1);
-		   	redCircle.setBackgroundResource(R.drawable.red_circle);
-		   	redCircle.layout(childLeft-3, childTop-3, lb+3, rb+3);   
+		   	redCircle.setBackgroundResource(R.drawable.wm_current);
+		   	redCircle.layout(childLeft-10, childTop-10, lb+10, rb+10);   
 
 	   }
 		public int getActiveTabIndex(){
@@ -235,8 +235,8 @@ public class CircularTabsLayout extends ViewGroup {
 		}
 		public void setfcRadius(int mfcRadius) {
 			this.mfcRadius = mfcRadius;
-			BUTTON_RADIUS = (int)(mfcRadius / 4f);
-			inR = (int) (mfcRadius-BUTTON_RADIUS*1.5f); //-5 ;
+			BUTTON_RADIUS = (int)(mfcRadius / 4.5f);
+			inR = (int) (mfcRadius-BUTTON_RADIUS*1.5f) - 10; //-5 ;
 			outR = 2*mfcRadius;
 			menuBackground.setRadius(mfcRadius);
 
@@ -412,8 +412,8 @@ public class CircularTabsLayout extends ViewGroup {
 
 						//	but1.layout(child.getCloseButCenterX()-25, child.getCloseButCenterY()-25,child.getCloseButCenterX()+25, child.getCloseButCenterY()+25);
 
-							redCircle.setBackgroundResource(R.drawable.red_circle);
-							redCircle.layout(childLeft-3, childTop-3, lb+3, rb+3);   
+							redCircle.setBackgroundResource(R.drawable.wm_current);
+							redCircle.layout(childLeft-10, childTop-10, lb+10, rb+10);   
 						}
 					}
 					else{
