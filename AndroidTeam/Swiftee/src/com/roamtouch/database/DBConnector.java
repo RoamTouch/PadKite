@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 
 /**
@@ -26,7 +27,7 @@ public class DBConnector {
 		
 	
 
-		private static final String DATABASE_NAME = "swifteeDB";
+		private static final String DATABASE_NAME = "padkiteDB";
 		private static final int DATABASE_VERSION = 1;
 
 		private final Context mContext;
@@ -93,6 +94,10 @@ public class DBConnector {
 			}
 		}
 		
+		public void deleteAllBookmarks() {
+			mDatabase.execSQL("DELETE FROM bookmarks");
+		}
+		
 		public boolean checkIfBookmarkAdded(){
 			try{
 				Cursor c = mDatabase.rawQuery("SELECT count(*) FROM bookmarks", null);
@@ -112,11 +117,14 @@ public class DBConnector {
 		public void addBookmark(){
 			try
 			{
-				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Google','http://www.google.com')");
-				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Yahoo','http://www.yahoo.com')");
-				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Wikipedia','http://www.wikipedia.com')");
-				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Picasa','http://www.picasa.google.com')");
 				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Cancel','Gesture cancelled')");
+				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Padkite','http://padkite.com')");
+				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('PadKite','http://padkite.com')");
+				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Google','http://www.google.com')");
+				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Calendar','http://calendar.google.com')");
+				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Facebook','http://www.facebook.com')");
+				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Twitter','http://twitter.com')");
+				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Wikipedia','http://www.wikipedia.com')");
 				
 			}
 			catch(Exception e)
@@ -155,10 +163,14 @@ public class DBConnector {
 			try{
 				Cursor c = mDatabase.rawQuery("SELECT url FROM bookmarks WHERE name='"+name+"'", null);
 				if(c!=null){
-					c.moveToFirst();
-//					System.out.println("-------------inside dbconector "+c.getCount()+" get bookmark ------------");
-					String url = c.getString(c.getColumnIndex("url"));
-					return url;
+					if (c.moveToFirst())
+					{
+//						System.out.println("-------------inside dbconector "+c.getCount()+" get bookmark ------------");
+						String url = c.getString(c.getColumnIndex("url"));
+						return url;
+					}
+					else
+						Log.e("getBookmark", "Error: Could not get bookmark for '" + name + "'");
 				}
 				return null;
 			}

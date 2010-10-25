@@ -1,5 +1,7 @@
 package com.roamtouch.menu;
 
+import com.roamtouch.swiftee.BrowserActivity;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,7 +22,7 @@ public class MenuBGView extends View {
 	public MenuBGView(Context context) {
 		super(context);
 		
-		bitmap = BitmapFactory.decodeFile("/sdcard/Swiftee/Default Theme/circle.png");
+		bitmap = BitmapFactory.decodeFile(BrowserActivity.THEME_PATH + "/circle.png");
 	}
 	
 

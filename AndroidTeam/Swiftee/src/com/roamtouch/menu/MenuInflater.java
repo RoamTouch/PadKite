@@ -7,13 +7,16 @@ import java.util.HashMap;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
+
+import com.roamtouch.swiftee.BrowserActivity;
+
 import android.content.Context;
 import android.view.ViewGroup;
 
 
 public class MenuInflater {
 	
-	public static String PATH = "/sdcard/Swiftee/Default Theme/";
+	public static String PATH = BrowserActivity.THEME_PATH + "/";
 	public static String hotkey_function,hotkey_image,hotkey_highlight;
 	public static void inflate(String xmlfile,Context context, ViewGroup view) {
 		

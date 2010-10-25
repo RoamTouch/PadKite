@@ -71,6 +71,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 
 	public static String version = "Version Beta-v1.41-eclair build #727ac2/b8a707";
 	public static String version_code = "Version Beta-v1.41";
+	
+	final public static String BASE_PATH = "/sdcard/PadKite";
+	final public static String THEME_PATH = BASE_PATH + "/Default Theme";
 
 	private int activeWebViewIndex = 0;
 	
@@ -248,6 +251,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 		//This is a dummy user entry...neeed to remove after
 		appState.getDatabase().registerUser("dummy", "dummy", "dummy@example.com");
+		//appState.getDatabase().deleteAllBookmarks();
+		//appState.getDatabase().addBookmark();
     }
    
 /*    public void setWebView(WebView wv){
@@ -464,6 +469,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         }
 		stopGesture();
 	}
+	
 	private void bookmarkGestures(String action){
 		
 		String url = appState.getDatabase().getBookmark(action);

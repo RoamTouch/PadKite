@@ -47,7 +47,7 @@ public class SwifteeApplication extends Application{
 		try{
 			String arr[] = getAssets().list(dir);
 			
-			File d = new File("/sdcard/Swiftee/"+dir);
+			File d = new File(BrowserActivity.BASE_PATH + "/"+dir);
 			if(!d.exists() || force == true){
 				d.mkdirs();
 
@@ -56,7 +56,7 @@ public class SwifteeApplication extends Application{
 				for(int i=0;i<count;i++){
 					InputStream is = getAssets().open(dir+"/"+arr[i]);
 
-					FileOutputStream myOutput = new FileOutputStream("/sdcard/Swiftee/"+dir+"/"+arr[i]);
+					FileOutputStream myOutput = new FileOutputStream(BrowserActivity.BASE_PATH + "/"+dir+"/"+arr[i]);
 					byte[] buffer = new byte[1024];
 					int length;
 					while ((length = is.read(buffer))>0)
@@ -98,37 +98,37 @@ public class SwifteeApplication extends Application{
 		switch(gestureType){
 			case CURSOR_TEXT_GESTURE:
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.text_gestures);
-				mLibrary = GestureLibraries.fromFile("/sdcard/Swiftee/Gesture Library/text_gestures");
+				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/text_gestures");
 				mLibrary.load();
 				break;
 			case CURSOR_LINK_GESTURE:
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.link_gestures);
-				mLibrary = GestureLibraries.fromFile("/sdcard/Swiftee/Gesture Library/link_gestures");
+				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/link_gestures");
 				mLibrary.load();
 				break;
 			case CURSOR_IMAGE_GESTURE:
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.image_gestures);
-				mLibrary = GestureLibraries.fromFile("/sdcard/Swiftee/Gesture Library/image_gestures");
+				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/image_gestures");
 				mLibrary.load();
 				break;
 			case CURSOR_NOTARGET_GESTURE:
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.notarget_gestures);
-				mLibrary = GestureLibraries.fromFile("/sdcard/Swiftee/Gesture Library/notarget_gestures");
+				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/notarget_gestures");
 				mLibrary.load();
 				break;
 			case CURSOR_VIDEO_GESTURE:
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.video_gestures);
-				mLibrary = GestureLibraries.fromFile("/sdcard/Swiftee/Gesture Library/video_gestures");
+				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/video_gestures");
 				mLibrary.load();
 				break;
 			case CUSTOM_GESTURE:
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.custom_gestures);
-				mLibrary = GestureLibraries.fromFile("/sdcard/Swiftee/Gesture Library/custom_gestures");
+				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/custom_gestures");
 				mLibrary.load();
 				break;
 			case BOOKMARK_GESTURE:
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.bookmarks);
-				mLibrary = GestureLibraries.fromFile("/sdcard/Swiftee/Gesture Library/bookmarks");
+				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/bookmarks");
 				mLibrary.load();
 				break;
 		}		

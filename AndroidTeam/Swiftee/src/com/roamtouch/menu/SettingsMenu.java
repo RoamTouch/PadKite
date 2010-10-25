@@ -36,7 +36,7 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 		this.setName("Settings Menu");
 		
 		//LayoutInflater.from(context).inflate(R.layout.settings_menu, this);
-		MenuInflater.inflate("/sdcard/Swiftee/Default Theme/settings_menu.xml", context, this);
+		MenuInflater.inflate(BrowserActivity.THEME_PATH + "/settings_menu.xml", context, this);
 		
 		init();
 		

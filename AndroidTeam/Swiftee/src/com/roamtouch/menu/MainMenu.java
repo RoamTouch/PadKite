@@ -41,7 +41,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 	private DBConnector database;
 	private SwifteeApplication appState;
 	private MenuButton button;
-	public static String PATH = "/sdcard/Swiftee/Default Theme/";
+	public static String PATH = BrowserActivity.THEME_PATH + "/";
 	
 //	private EventViewerArea eventViewer;
 	 
@@ -51,7 +51,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		this.setName("Main Menu");
 		
 		//LayoutInflater.from(context).inflate(R.layout.main_menu, this);
-		MenuInflater.inflate("/sdcard/Swiftee/Default Theme/main_menu.xml", context, this);
+		MenuInflater.inflate(PATH + "main_menu.xml", context, this);
 		
 		appState = ((SwifteeApplication)context.getApplicationContext());
     	database = appState.getDatabase();
