@@ -69,8 +69,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 
-	public static String version = "Version Beta-v1.41-eclair build #727ac2/b8a707";
-	public static String version_code = "Version Beta-v1.41";
+	public static String version = "Version Beta-v1.42-eclair build #727ac2/b8a707";
+	public static String version_code = "Version Beta-v1.42";
 	
 	final public static boolean developerMode = true;
 	
@@ -468,7 +468,6 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			actions.send();
         }     
         else if("Copy".equals(action)){
-			actions.send();
         }
         else {
 			eventViewer.setText("Unrecognized gesture: " + action);
