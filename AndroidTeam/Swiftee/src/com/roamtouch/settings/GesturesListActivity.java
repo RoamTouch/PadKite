@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.View;
 import android.view.Window;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 
 public class GesturesListActivity extends Activity{
@@ -81,5 +84,14 @@ public class GesturesListActivity extends Activity{
 			
 			}
 		}
+		
+		 public boolean onKeyDown(int keyCode, KeyEvent event){
+		        
+		    	if (keyCode == KeyEvent.KEYCODE_MENU && BrowserActivity.developerMode) { 
+		    		adapter.addNewGesture();
+		    		return false;
+		    	}
 
+		    	return super.onKeyDown(keyCode, event);
+		 }
 }

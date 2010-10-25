@@ -3,6 +3,7 @@ package com.roamtouch.settings;
 import java.util.ArrayList;
 import java.util.Set;
 import com.roamtouch.database.DBConnector;
+import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
 import android.app.Dialog;
@@ -13,11 +14,14 @@ import android.gesture.GestureLibrary;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -32,9 +36,24 @@ public class GestureAdapter extends BaseAdapter{
 		private Object str[];
 		private OnClickListener listener;
 		private OnLongClickListener longListener;
+		private OnLongClickListener editLongListener;
+		public OnKeyListener newGestureListener;
 
 		private int gestureType;
 		private DBConnector database;
+		
+		private GesturesListActivity mList;
+		
+		public void addNewGesture()
+		{
+			Intent i = new Intent(mContext,GestureRecorder.class);
+			i.putExtra("Gesture_Type", gestureType);
+			i.putExtra("Gesture_Name", "");	
+			i.putExtra("isEditable", true);
+			i.putExtra("isNew", true);
+
+			mContext.startActivity(i);
+		}
 		
 		public GestureAdapter(Context context,int type,final GesturesListActivity list){
 			mContext=context;
@@ -46,6 +65,7 @@ public class GestureAdapter extends BaseAdapter{
 			Set<String> s=mLibrary.getGestureEntries();
 			str = s.toArray();
 			gestureCount = str.length;
+			mList = list;
 		
 			longListener = new OnLongClickListener(){
 
@@ -81,6 +101,40 @@ public class GestureAdapter extends BaseAdapter{
 				
 			};
 			
+			editLongListener = new OnLongClickListener(){
+
+				public boolean onLongClick(View v) {
+					final Dialog dialog = new Dialog(mContext);
+					dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+					final String gestureName =  v.getTag().toString();
+					
+					Button delete = new Button(mContext);
+					delete.setPadding(20, 20, 20, 20);
+					delete.setText("Delete  "+gestureName);
+					delete.setTextSize(20);
+					delete.setBackgroundColor(Color.WHITE);
+					delete.setTextColor(Color.BLACK);
+					delete.setOnClickListener(new OnClickListener(){
+
+						public void onClick(View v) {	
+							mLibrary.removeGesture(gestureName, mLibrary.getGestures(gestureName).get(0));
+							mLibrary.save();
+							Set<String> s=mLibrary.getGestureEntries();
+							str = s.toArray();
+							gestureCount = str.length;
+							list.refrshList();
+							dialog.cancel();
+						}
+						
+					});
+					dialog.setContentView(delete);
+					dialog.show();
+					
+					return true;
+				}
+				
+			};
+			
 			listener = new OnClickListener(){
 
 				public void onClick(View v) {
@@ -94,9 +148,16 @@ public class GestureAdapter extends BaseAdapter{
 						i.putExtra("isStoredBookmark", true);
 						i.putExtra("url", database.getBookmark(gestureName));
 					}
+
+					if (BrowserActivity.developerMode)
+						i.putExtra("isEditable", true);
+
 					mContext.startActivity(i);
 				}
 			};
+			
+    		
+
 		}
 		public int getCount() {
 			return gestureCount ;
@@ -123,7 +184,12 @@ public class GestureAdapter extends BaseAdapter{
             }
         	if(gestureType == SwifteeApplication.BOOKMARK_GESTURE)
         		v.setOnLongClickListener(longListener);
-            
+        	else if (BrowserActivity.developerMode)
+        	{
+        		v.setOnLongClickListener(editLongListener);
+        		v.setOnKeyListener(newGestureListener);
+        		
+        	}
             ImageView gestureImage = (ImageView)v.findViewById(R.id.gestureImage);
             ArrayList<Gesture> list = mLibrary.getGestures(str[position].toString());
 			Bitmap bit = list.get(0).toBitmap(70, 70, 0, Color.BLACK);

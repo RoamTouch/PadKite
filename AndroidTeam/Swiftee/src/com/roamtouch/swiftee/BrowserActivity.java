@@ -72,6 +72,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	public static String version = "Version Beta-v1.41-eclair build #727ac2/b8a707";
 	public static String version_code = "Version Beta-v1.41";
 	
+	final public static boolean developerMode = true;
+	
 	final public static String BASE_PATH = "/sdcard/PadKite";
 	final public static String THEME_PATH = BASE_PATH + "/Default Theme";
 
@@ -447,7 +449,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         	eventViewer.setText("W (wikipedia) gesture done, wiki searching for: " + mSelection);
 			actions.wikipedia(webView);
         }     
-        else if("Add Link".equals(action)){
+        else if("Add Link".equals(action) || "Bookmark".equals(action)){
         	actions.addLink(floatingCursor.getCurrentURL());
         }     
         else if("Open Link".equals(action)){
@@ -462,10 +464,14 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 				e.printStackTrace();
 			}
         }     
-        else 
-        {
-			eventViewer.setText("Unrecognized gesture (HACK: Displays send field for the moment for testing): " + action);
+        else if("Send To".equals(action)){
 			actions.send();
+        }     
+        else if("Copy".equals(action)){
+			actions.send();
+        }
+        else {
+			eventViewer.setText("Unrecognized gesture: " + action);
         }
 		stopGesture();
 	}

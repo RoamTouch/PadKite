@@ -26,6 +26,9 @@ public class GestureRecorder extends Activity {
 		private int gestureType;
 		private boolean isNewBookmark = false;
 		private boolean isStoredBookmark = false;
+		private boolean isEditable = false;
+		private boolean isNew = false;
+		
 		private String url;
 		private EditText t;
 		@Override
@@ -38,6 +41,8 @@ public class GestureRecorder extends Activity {
 			gestureType = getIntent().getIntExtra("Gesture_Type", -1);
 			isNewBookmark = getIntent().getBooleanExtra("isNewBookmark", false);
 			isStoredBookmark =getIntent().getBooleanExtra("isStoredBookmark", false);
+			isEditable =getIntent().getBooleanExtra("isEditable", false);
+			isNew =getIntent().getBooleanExtra("isNew", false);
 			
 			url = getIntent().getStringExtra("url");
 			
@@ -49,15 +54,15 @@ public class GestureRecorder extends Activity {
 			if(gestureName.length()>10)
 				gestureName = gestureName.substring(0, 9);
 			t.setText(gestureName);
-			if(!isStoredBookmark){
-				t.setClickable(false);
-				t.setEnabled(false);
-				t.setFocusable(false);
-			}
-			else{
+			if(isStoredBookmark || isEditable){
 				t.setClickable(true);
 				t.setEnabled(true);
 				t.setFocusable(true);
+			}
+			else{
+				t.setClickable(false);
+				t.setEnabled(false);
+				t.setFocusable(false);
 			}
 				
 			overlay = (GestureOverlayView) findViewById(R.id.gestures_overlay);
@@ -70,7 +75,7 @@ public class GestureRecorder extends Activity {
 					String s=gestureName;
 					if(b.getText().toString().equals("Save Gesture")){
 						
-						if(isStoredBookmark){
+						if(isStoredBookmark || isEditable) {
 							s = t.getText().toString();
 							if(s.length()>10)
 								s = s.substring(0, 9);
@@ -82,8 +87,12 @@ public class GestureRecorder extends Activity {
 							if(isNewBookmark){
 								mLibrary.addGesture(gestureName, mGesture);
 								appState.getDatabase().addBookmark(gestureName,url);			
-							}							
-							if(isStoredBookmark){
+							}			
+							else if (isNew)
+							{
+								mLibrary.addGesture(s, mGesture);								
+							}
+							else if(isStoredBookmark){
 								mLibrary.removeGesture(gestureName, mLibrary.getGestures(gestureName).get(0));
 								mLibrary.addGesture(s, mGesture);
 								appState.getDatabase().addBookmark(s,url);								

@@ -122,7 +122,7 @@ public class GestureActions {
 		    	// Start Facebook intent directly
 		        Intent intentX = getIntent(intent, "com.facebook.katana");
 
-		        //intentX = null; // FIXME: FB broken at the moment; revert to old sharing code
+		        intentX = null; // FIXME: FB broken at the moment; revert to old sharing code
  
 		        if (intentX != null)
 			        mParent.startActivity(intentX);       	
