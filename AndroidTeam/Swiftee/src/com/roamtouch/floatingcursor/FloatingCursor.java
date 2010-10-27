@@ -428,7 +428,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				public void run() {
 					if(currentMenu.getVisibility() == VISIBLE && timerStarted){
 						toggleMenuVisibility();	
-						fcView.setVisibility(View.VISIBLE);
 						timerStarted = false;
 					}
 					else {
@@ -572,6 +571,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			// Abort fling animation
 			mScroller.forceFinished(true);
 			scrollBy(dx, dy);
+			
+			// Update fc coordinates
+			fcX = -(int)pointer.getScrollX() + -(int)getScrollX() + w/2;
+			fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;
+			invalidate();
 		}
 		
 		public boolean isMenuVisible()
@@ -593,7 +597,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		}
 		
 		protected boolean animationLock = false;
-		
+
 		public void toggleMenuVisibility(){
 			
 			if (animationLock)
@@ -621,7 +625,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					public void onAnimationEnd(Animation animation) {
 						currentMenu.setVisibility(VISIBLE);
 						animationLock = false;
-						handler.post(runnable);
+						handler.postDelayed(runnable, 10000);
 					}
 					public void onAnimationRepeat(Animation animation) {}
 
@@ -642,6 +646,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 				mMenuDown = false;
 				pointer.setImageResource(R.drawable.kite_cursor);
+				fcView.setVisibility(VISIBLE);
 
 				menuAnimation = new AlphaAnimation(1.0f, 0.0f);
 				menuAnimation.setDuration(250);
@@ -651,7 +656,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						currentMenu.setVisibility(INVISIBLE);
 						currentMenu = fcMainMenu;
 						animationLock = false;
+						handler.removeCallbacks(runnable);
 					}
+					
 					public void onAnimationRepeat(Animation animation) {}
 
 					public void onAnimationStart(Animation animation) {}
@@ -659,7 +666,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				});
 				currentMenu.startAnimation(menuAnimation);
 				vibrator.vibrate(25);
-				eventViewer.setText("");
+				//eventViewer.setText("");
 
 //				mParent.setTopBarVisibility(INVISIBLE);
 			}		
