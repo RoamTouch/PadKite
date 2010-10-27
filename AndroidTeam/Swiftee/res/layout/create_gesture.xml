@@ -17,7 +17,17 @@
             android:background="#000000"
             android:textColor="#FFFFFF"
             />
-  
+  	<EditText android:id="@+id/gestureUrl"
+            android:layout_width="fill_parent"
+            android:layout_height="60dip"
+            android:paddingLeft="6dip"   
+            android:layout_marginTop="2dip"
+            android:gravity="center_vertical"        
+            android:text="Rec Blog text new gesture"
+            android:background="#000000"
+            android:textColor="#FFFFFF"
+            android:visibility="gone"
+            />
     
     <android.gesture.GestureOverlayView
         android:id="@+id/gestures_overlay"

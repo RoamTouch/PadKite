@@ -22,9 +22,9 @@ public class SwifteeApplication extends Application{
 	public static final int CURSOR_IMAGE_GESTURE = 3;
 	public static final int CURSOR_NOTARGET_GESTURE = 4;
 	public static final int CURSOR_VIDEO_GESTURE = 5;
-	
-	public static final int CUSTOM_GESTURE = 7;
-	public static final int BOOKMARK_GESTURE = 8;
+	public static final int BOOKMARK_GESTURE = 7;
+	public static final int CUSTOM_GESTURE = 8;
+	public static final int MAIL_GESTURE = 8;
 	
 	private DBConnector database;
 	

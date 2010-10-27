@@ -76,10 +76,10 @@ public class GesturesListActivity extends Activity{
 				tv.setText("Cursor over video");
 				break;
 			case 7:
-				tv.setText("Custom gestures");
+				tv.setText("Bookmark gestures");
 				break;
 			case 8:
-				tv.setText("Bookmark gestures");
+				tv.setText("Custom gestures");
 				break;
 			
 			}

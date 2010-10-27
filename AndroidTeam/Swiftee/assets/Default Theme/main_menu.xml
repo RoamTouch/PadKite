@@ -20,8 +20,8 @@
 					android:button_highlightImage="windows_pressed.png"
                     android:button_function="windows"/>
 	
-	     <MenuButton android:button_image="new_window.png"
-		    		android:button_highlightImage="new_window.png"
+	     <MenuButton android:button_image="add_2.png"
+		    		android:button_highlightImage="add_glossy_2.png"
                     android:button_function="new_window"
                     android:hotkey="true" />
 
@@ -34,7 +34,7 @@
 					android:button_function="homepage"/>  
 			             
 		<MenuButton android:button_image="zoom_normal.png"
-					android:button_highlightImage="zoom_normal.png"
+					android:button_highlightImage="zoom_pressed.png"
                     android:button_function="zoom"/>
 	
 		<MenuButton android:button_image="bookmark_normal.png"
@@ -49,8 +49,8 @@
 					android:button_highlightImage="settings_pressed.png" 
 					android:button_function="settings"/> 
 					
-		<MenuButton android:button_image="cross.png"
-					android:button_highlightImage="cross.png" 
+		<MenuButton android:button_image="close_2.png"
+					android:button_highlightImage="close_glossy_2.png" 
 					android:button_function="close"/> 			 		
 </merge>
     	

@@ -21,9 +21,10 @@
         	<item>Cursor over video</item>
     	</string-array>
     	
-    	<string-array name="other_gestures_array">
-        	<item>Custom Gestures</item>
+    	<string-array name="other_gestures_array">     	
         	<item>Bookmark Gestures</item>
+        	<item>Custom Gestures</item>
+        	<item>Mail Gestures</item>
         </string-array>
     
 </resources>

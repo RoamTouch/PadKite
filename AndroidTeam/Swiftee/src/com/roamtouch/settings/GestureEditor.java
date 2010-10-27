@@ -4,7 +4,9 @@ package com.roamtouch.settings;
 import com.roamtouch.swiftee.R;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -52,7 +54,7 @@ public class GestureEditor extends Activity implements OnItemClickListener{
 		private int[] cursorgesturesImages= {R.drawable.text_cursor, R.drawable.link_cursor, R.drawable.image_cursor, 
 									   R.drawable.no_target_cursor,R.drawable.video_cursor};
 		
-		private int[] othergesturesImages= {R.drawable.gesture ,R.drawable.bookmark };
+		private int[] othergesturesImages= {R.drawable.bookmark,R.drawable.gesture ,R.drawable.bookmark };
 		
 		public GestureCategory(Context context){
 			mContext=context;
@@ -119,12 +121,24 @@ public class GestureEditor extends Activity implements OnItemClickListener{
 }
 
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		AlertDialog alertDialog;
 		if(position!=0 && position!=6){
 			if(isForPracticeGesture){
 				Intent i = new Intent();
 				i.putExtra("Gesture_Category", position);
 				setResult(1, i);
 				finish();
+			}
+			else if(position == 8 || position == 9){
+				alertDialog = new AlertDialog.Builder(GestureEditor.this).create();
+				alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+			    alertDialog.setMessage("Cooming soon..");
+			    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+			      public void onClick(DialogInterface dialog, int which) {
+			        return;
+
+			    } }); 
+			  	alertDialog.show();
 			}
 			else{
 				Intent i = new Intent(this,GesturesListActivity.class);

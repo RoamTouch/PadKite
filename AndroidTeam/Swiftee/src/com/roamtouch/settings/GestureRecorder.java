@@ -30,7 +30,7 @@ public class GestureRecorder extends Activity {
 		private boolean isNew = false;
 		
 		private String url;
-		private EditText t;
+		private EditText t,urlText;
 		@Override
 		protected void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
@@ -51,9 +51,14 @@ public class GestureRecorder extends Activity {
 			mDoneButton = (Button)findViewById(R.id.startRecording);
 
 			t = (EditText) findViewById(R.id.gestureText);	
+			urlText = (EditText) findViewById(R.id.gestureUrl);	
 			if(gestureName.length()>10)
 				gestureName = gestureName.substring(0, 9);
 			t.setText(gestureName);
+			if(isStoredBookmark){
+				urlText.setVisibility(View.VISIBLE);
+				urlText.setText(url);
+			}
 			if(isStoredBookmark || isEditable){
 				t.setClickable(true);
 				t.setEnabled(true);
@@ -92,10 +97,10 @@ public class GestureRecorder extends Activity {
 							{
 								mLibrary.addGesture(s, mGesture);								
 							}
-							else if(isStoredBookmark){
+							else if(isStoredBookmark){								
 								mLibrary.removeGesture(gestureName, mLibrary.getGestures(gestureName).get(0));
 								mLibrary.addGesture(s, mGesture);
-								appState.getDatabase().addBookmark(s,url);								
+								appState.getDatabase().updateBookmark(s,urlText.getText().toString());								
 							}
 							else{
 								mLibrary.removeGesture(gestureName, mLibrary.getGestures(gestureName).get(0));

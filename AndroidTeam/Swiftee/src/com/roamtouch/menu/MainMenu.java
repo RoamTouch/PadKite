@@ -7,13 +7,20 @@ import com.roamtouch.settings.RegisterActivity;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.SwifteeApplication;
 import com.roamtouch.view.EventViewerArea;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.Button;
 
 enum MainMenuFunctions {
 	none,
@@ -173,6 +180,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				break;
 			}
 		}
+		AlertDialog alertDialog;
 		if(event.getAction() == MotionEvent.ACTION_UP){
 			mParent.setEventViewerMode(EventViewerArea.TEXT_ONLY_MODE);
 			switch(button_function){
@@ -221,11 +229,16 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			//Backward	
 			case backward:
 				mFloatingCursor.goBackward();
+				if(!mFloatingCursor.canGoBackward())
+					b.setEnabled(false);
+
 				break;
 				
 			//forward	
 			case forward:
 				mFloatingCursor.goForward();
+				if(!mFloatingCursor.canGoForward())
+					b.setEnabled(false);
 				break;
 				
 			//Custom Gesture	
@@ -255,9 +268,23 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				mFloatingCursor.addNewWindow();
 				break;
 				
-			case close:
-				System.exit(1);
+			case close:{
+				alertDialog = new AlertDialog.Builder(mParent).create();
+				alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+			    alertDialog.setMessage("You got <n> open windows left. Do you really want to quit?");
+			    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+			      public void onClick(DialogInterface dialog, int which) {
+			    	mParent.finish();  
+			        return;
+
+			    } }); 
+			    alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
+			      public void onClick(DialogInterface dialog, int which) {
+			        return;
+			    }}); 			  
+			  	alertDialog.show();
 				break;
+			}
 			default:
 				/* Do nothing */
 				break;

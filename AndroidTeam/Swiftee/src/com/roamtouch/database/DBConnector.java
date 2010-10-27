@@ -158,6 +158,19 @@ public class DBConnector {
 				e.printStackTrace();
 			}
 		}
+		public void updateBookmark(String name,String url){
+			try
+			{
+//				System.out.println("-------------I am here in for deleting gesture "+name+" from database------------");
+				deleteBookmark(name);
+				addBookmark(name,url);
+			}
+			catch(Exception e)
+			{
+//				System.out.println("-------------exception while deleting bookmarks ------------");
+				e.printStackTrace();
+			}
+		}
 		
 		public String getBookmark(String name){
 			try{

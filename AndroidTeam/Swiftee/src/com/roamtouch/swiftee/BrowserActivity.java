@@ -7,7 +7,6 @@ import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -17,7 +16,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
-
 import com.api.blogger.BloggerActivity;
 import com.api.facebook.FacebookActivity;
 import com.api.twitter.TwitterActivity;
@@ -119,7 +117,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	    		else if(webView.canGoBack())
 	    			webView.goBack();
 	    		else
-	    			System.exit(1);
+	    			BrowserActivity.this.finish();
+	    			//System.exit(1);
 	    	}
 	   		return false;
 	  }
