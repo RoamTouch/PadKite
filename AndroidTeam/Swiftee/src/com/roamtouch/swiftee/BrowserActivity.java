@@ -396,14 +396,32 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     
     public void gestureDetected(String action)
     {
-    	 eventViewer.setText("Detected " + action + " gesture.");
-       
-         if(currentGestureLibrary == SwifteeApplication.BOOKMARK_GESTURE){
-        	 bookmarkGestures(action);
-         }
-         else
-        	 cursorGestures(action);
+        if (currentGestureLibrary == SwifteeApplication.BOOKMARK_GESTURE)
+        {
+        	eventViewer.setText("Detected " + action + " gesture.");      
+        	bookmarkGestures(action);
+        }
+        else
+        {
+        	action = convertGestureItem(action);        	
+        	eventViewer.setText("Detected " + action + " gesture.");      
+        	cursorGestures(action);
+        }
     }
+    
+	public static String convertGestureItem(String in)
+	{
+		String s = in;
+		
+		if (s.contains(":"))
+		{
+			String tmp[] = s.split(":");
+			if (tmp[0].replaceAll("\\d+","").length() <= 0)
+				s = tmp[1];
+		}
+		
+		return s;
+	}
     
 	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
 		
@@ -511,7 +529,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		ArrayList<GesturePoint> points =generateGesturePoints(strokes.get(0).points);
     //    ArrayList<GesturePoint> points = strokes.get(0).getGesturePoints();
 		     
-        eventViewer.setText("Detected " + action + " gesture.");
+		if (currentGestureLibrary == SwifteeApplication.BOOKMARK_GESTURE)
+	        eventViewer.setText("Detected " + action + " gesture.");
+		else
+			eventViewer.setText("Detected " + convertGestureItem(action) + " gesture.");
         
         mGestures.drawGesture(points,action);
                         // mGestures.setGesture(gesture);

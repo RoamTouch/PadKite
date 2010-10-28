@@ -2,6 +2,8 @@ package com.roamtouch.settings;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.SortedSet;
+
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
@@ -33,7 +35,7 @@ public class GestureAdapter extends BaseAdapter{
 		private GestureLibrary mLibrary;
 		private Context mContext;	
 		private int gestureCount;
-		private Object str[];
+		private String str[];
 		private OnClickListener listener;
 		private OnLongClickListener longListener;
 		private OnLongClickListener editLongListener;
@@ -55,6 +57,23 @@ public class GestureAdapter extends BaseAdapter{
 			mContext.startActivity(i);
 		}
 		
+		protected void refresh(boolean update)
+		{
+			Object tmp[] = mLibrary.getGestureEntries().toArray();
+			
+			str = new String[tmp.length];
+			
+			for (int i = 0; i < tmp.length; i++)
+				str[i] = tmp[i].toString();
+			
+			java.util.Arrays.sort( str );
+			
+			gestureCount = str.length;
+
+			if (update)
+				mList.refrshList();
+		}
+		
 		public GestureAdapter(Context context,int type,final GesturesListActivity list){
 			mContext=context;
 			this.gestureType = type;
@@ -62,10 +81,8 @@ public class GestureAdapter extends BaseAdapter{
 			SwifteeApplication appState = ((SwifteeApplication)context.getApplicationContext());
 			mLibrary = appState.getGestureLibrary(gestureType);
 			database = appState.getDatabase();
-			Set<String> s=mLibrary.getGestureEntries();
-			str = s.toArray();
-			gestureCount = str.length;
 			mList = list;
+			refresh(false);
 		
 			longListener = new OnLongClickListener(){
 
@@ -75,7 +92,7 @@ public class GestureAdapter extends BaseAdapter{
 					final String gestureName =  v.getTag().toString();					
 					Button delete = new Button(mContext);
 					delete.setPadding(20, 20, 20, 20);
-					delete.setText("Delete  "+gestureName);
+					delete.setText("Delete  "+convertItem(gestureName));
 					delete.setTextSize(20);
 					delete.setBackgroundColor(Color.WHITE);
 					delete.setTextColor(Color.BLACK);
@@ -84,11 +101,9 @@ public class GestureAdapter extends BaseAdapter{
 						public void onClick(View v) {	
 							mLibrary.removeGesture(gestureName, mLibrary.getGestures(gestureName).get(0));
 							mLibrary.save();
-							Set<String> s=mLibrary.getGestureEntries();
-							str = s.toArray();
-							gestureCount = str.length;
 							database.deleteBookmark(gestureName);
-							list.refrshList();
+
+							refresh(true);
 							dialog.cancel();
 						}
 						
@@ -110,7 +125,7 @@ public class GestureAdapter extends BaseAdapter{
 					
 					Button delete = new Button(mContext);
 					delete.setPadding(20, 20, 20, 20);
-					delete.setText("Delete  "+gestureName);
+					delete.setText("Delete  "+convertItem(gestureName));
 					delete.setTextSize(20);
 					delete.setBackgroundColor(Color.WHITE);
 					delete.setTextColor(Color.BLACK);
@@ -119,10 +134,7 @@ public class GestureAdapter extends BaseAdapter{
 						public void onClick(View v) {	
 							mLibrary.removeGesture(gestureName, mLibrary.getGestures(gestureName).get(0));
 							mLibrary.save();
-							Set<String> s=mLibrary.getGestureEntries();
-							str = s.toArray();
-							gestureCount = str.length;
-							list.refrshList();
+							refresh(true);
 							dialog.cancel();
 						}
 						
@@ -153,6 +165,7 @@ public class GestureAdapter extends BaseAdapter{
 						i.putExtra("isEditable", true);
 
 					mContext.startActivity(i);
+					refresh(true);
 				}
 			};
 			
@@ -162,9 +175,20 @@ public class GestureAdapter extends BaseAdapter{
 		public int getCount() {
 			return gestureCount ;
 		}
+		
+		public String convertItem(String in)
+		{
+			if(gestureType==SwifteeApplication.BOOKMARK_GESTURE)
+				return in;
+
+			if (BrowserActivity.developerMode)
+				return in;
+			
+			return BrowserActivity.convertGestureItem(in);
+		}
 
 		public Object getItem(int position) { 
-			return position;
+			return str[position];
 		}
 
 		public long getItemId(int position) {
@@ -191,14 +215,14 @@ public class GestureAdapter extends BaseAdapter{
         		
         	}
             ImageView gestureImage = (ImageView)v.findViewById(R.id.gestureImage);
-            ArrayList<Gesture> list = mLibrary.getGestures(str[position].toString());
+            ArrayList<Gesture> list = mLibrary.getGestures(str[position]);
 			Bitmap bit = list.get(0).toBitmap(70, 70, 0, Color.BLACK);
 			BitmapDrawable d = new BitmapDrawable(bit);
 			gestureImage.setBackgroundDrawable(d);
 			           
 			TextView v1= (TextView) v.findViewById(R.id.gestureText);			
-			v1.setText(str[position].toString());  
-			v.setTag(str[position].toString());
+			v1.setText(convertItem(str[position]));  
+			v.setTag(str[position]);
 			
 			Button rec = (Button) v.findViewById(R.id.recordButton);
 			rec.setTag(str[position].toString());
@@ -207,7 +231,7 @@ public class GestureAdapter extends BaseAdapter{
 			
 			if(gestureType==SwifteeApplication.BOOKMARK_GESTURE){
 				TextView url= (TextView) v.findViewById(R.id.url);			
-				url.setText(database.getBookmark(str[position].toString()));
+				url.setText(database.getBookmark(str[position]));
 			}
 				
 			return v;

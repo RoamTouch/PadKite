@@ -12,6 +12,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
 
@@ -52,7 +53,7 @@ public class GestureRecorder extends Activity {
 
 			t = (EditText) findViewById(R.id.gestureText);	
 			urlText = (EditText) findViewById(R.id.gestureUrl);	
-			if(gestureName.length()>10)
+			if(!BrowserActivity.developerMode && gestureName.length()>10)
 				gestureName = gestureName.substring(0, 9);
 			t.setText(gestureName);
 			if(isStoredBookmark){
@@ -82,7 +83,7 @@ public class GestureRecorder extends Activity {
 						
 						if(isStoredBookmark || isEditable) {
 							s = t.getText().toString();
-							if(s.length()>10)
+							if(!BrowserActivity.developerMode && s.length()>10)
 								s = s.substring(0, 9);
 						}
 						SwifteeApplication appState = ((SwifteeApplication)getApplicationContext());
@@ -104,7 +105,7 @@ public class GestureRecorder extends Activity {
 							}
 							else{
 								mLibrary.removeGesture(gestureName, mLibrary.getGestures(gestureName).get(0));
-								mLibrary.addGesture(gestureName, mGesture);
+								mLibrary.addGesture(s, mGesture);
 							}
 							
 							mLibrary.save();							

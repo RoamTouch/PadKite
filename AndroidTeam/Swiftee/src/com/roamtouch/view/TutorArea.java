@@ -2,9 +2,13 @@ package com.roamtouch.view;
 
 import java.util.ArrayList;
 import java.util.Set;
+
+import com.roamtouch.settings.GestureAdapter;
 import com.roamtouch.settings.PracticeGesture;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
+import com.roamtouch.swiftee.SwifteeApplication;
+
 import android.gesture.Gesture;
 import android.gesture.GestureLibrary;
 import android.app.Activity;
@@ -29,7 +33,7 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 	private BrowserActivity parent;
 	private PracticeGesture gParent;
 	private int gestureCount;
-	private Object str[];
+	private String str[];
 	
 	public TutorArea(Context context, AttributeSet attrs) {
 		super(context, attrs);	
@@ -80,23 +84,27 @@ public class TutorArea extends LinearLayout implements OnClickListener {
         return bitmap;	
 	}
 	
+	
 	private void initView(){
 		this.removeAllViews();
-		Set<String> s=mLibrary.getGestureEntries();
-		str = s.toArray();
+		Object tmp[] = mLibrary.getGestureEntries().toArray();
+		
+		str = new String[tmp.length];
+		
+		for (int i = 0; i < tmp.length; i++)
+			str[i] = tmp[i].toString();
+		
+		java.util.Arrays.sort( str );
 		gestureCount = str.length;
 		
 		LayoutParams params=new LayoutParams(125,LinearLayout.LayoutParams.FILL_PARENT);
 		for(int i=0;i<gestureCount;i++){
 			
-			if(str[i].toString().equals("Buzz") || str[i].toString().equals("Information") || str[i].toString().equals("Related search") || str[i].toString().equals("Blog"))
-				continue;
-			
 			Button b=new Button(mContext);
 			b.setId(i);
 			b.setBackgroundResource(R.drawable.tutor_button_1);
 			b.setLayoutParams(params);
-			b.setText(str[i].toString());
+			b.setText(BrowserActivity.convertGestureItem(str[i]));
 			ArrayList<Gesture> list = mLibrary.getGestures(str[i].toString());
 			Bitmap bit = toBitmap(list.get(0), 70, 70, 10, Color.BLACK);
 			BitmapDrawable d = new BitmapDrawable(bit);
