@@ -98,6 +98,26 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	private SwifteeApplication appState;
     private SharedPreferences sharedPreferences;
     
+    public void closeDialog()
+    {
+		AlertDialog alertDialog;
+
+    	alertDialog = new AlertDialog.Builder(this).create();
+		alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+	    alertDialog.setMessage("You got <n> open windows left. Do you really want to quit?");
+	    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+	      public void onClick(DialogInterface dialog, int which) {
+	    	//mParent.finish();  
+	        System.exit(0);
+
+	    } }); 
+	    alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
+	      public void onClick(DialogInterface dialog, int which) {
+	        return;
+	    }}); 			  
+	  	alertDialog.show();
+    }
+    
 	 public boolean onKeyDown(int keyCode, android.view.KeyEvent event){
 	        
 	    	if (keyCode == KeyEvent.KEYCODE_MENU) { 
@@ -117,8 +137,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	    		else if(webView.canGoBack())
 	    			webView.goBack();
 	    		else
-	    			BrowserActivity.this.finish();
-	    			//System.exit(1);
+	    			//BrowserActivity.this.finish();
+	    			closeDialog();
 	    	}
 	   		return false;
 	  }

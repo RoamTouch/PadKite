@@ -180,7 +180,6 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				break;
 			}
 		}
-		AlertDialog alertDialog;
 		if(event.getAction() == MotionEvent.ACTION_UP){
 			mParent.setEventViewerMode(EventViewerArea.TEXT_ONLY_MODE);
 			switch(button_function){
@@ -268,23 +267,10 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				mFloatingCursor.addNewWindow();
 				break;
 				
-			case close:{
-				alertDialog = new AlertDialog.Builder(mParent).create();
-				alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-			    alertDialog.setMessage("You got <n> open windows left. Do you really want to quit?");
-			    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-			      public void onClick(DialogInterface dialog, int which) {
-			    	mParent.finish();  
-			        return;
-
-			    } }); 
-			    alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
-			      public void onClick(DialogInterface dialog, int which) {
-			        return;
-			    }}); 			  
-			  	alertDialog.show();
+			case close:
+				mParent.closeDialog();
 				break;
-			}
+				
 			default:
 				/* Do nothing */
 				break;
