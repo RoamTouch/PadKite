@@ -61,7 +61,13 @@
     android:gravity="top|center_horizontal"
     android:layout_weight="1" 
     >
-     <com.roamtouch.view.EventViewerArea android:id="@+id/eventViewer" android:layout_width="fill_parent" android:layout_height="wrap_content" android:background="@drawable/event_viewer_1">
+     <com.roamtouch.view.EventViewerArea 
+     	android:id="@+id/eventViewer"
+     	android:layout_width="fill_parent"
+     	android:layout_marginLeft="10px"
+     	android:layout_marginRight="10px"
+     	android:layout_height="wrap_content"
+     	android:background="@drawable/event_viewer_1">
     </com.roamtouch.view.EventViewerArea>
 	
 <!--  	<com.roamtouch.view.TopBarArea android:id="@+id/topbararea"  android:layout_width="wrap_content" 

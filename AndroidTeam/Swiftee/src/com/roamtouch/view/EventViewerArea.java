@@ -54,7 +54,7 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 		isEnabled = sharedPreferences.getBoolean("enable_event_viewer", true);
 		tv1=new TextView(getContext());
 		tv1.setTextColor(Color.BLACK);
-		tv1.setPadding(15, 10, 10, 10);
+		tv1.setPadding(10, 10, 10, 10);
 		tv1.setText(Html.fromHtml("<font style='font-family:Lucida Grande,Verdana' color=\"black\">Action |</font> <font color=\"black\">FloatingCursor (" + BrowserActivity.version + ") </font"));
 //		tv1.setInputType(InputType.TYPE_CLASS_TEXT);
 		
