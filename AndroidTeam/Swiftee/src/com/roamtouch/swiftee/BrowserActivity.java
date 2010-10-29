@@ -104,7 +104,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 
     	alertDialog = new AlertDialog.Builder(this).create();
 		alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-	    alertDialog.setMessage("You got <n> open windows left. Do you really want to quit?");
+	    alertDialog.setMessage("You got " + floatingCursor.getWindowCount() + " open windows left. Do you really want to quit?");
 	    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 	      public void onClick(DialogInterface dialog, int which) {
 	    	//mParent.finish();  

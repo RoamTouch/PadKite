@@ -107,6 +107,12 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		
 		currentTab = 2;
 	}
+	
+	public int getWindowCount()
+	{
+		return getChildCount() - 4;
+	}
+	
 	public WebView createWebView(String url){
 		WebView webView = new WebView(mContext);
 		webView.setId(mParent.getActiveWebViewIndex()+1);
