@@ -38,13 +38,9 @@
                     android:button_function="zoom"/>
 	
 		<MenuButton android:button_image="bookmark_normal.png"
-					android:button_highlightImage="bookmark_normal.png"
+					android:button_highlightImage="bookmark_pressed.png"
                     android:button_function="bookmark"/>
 
-		<MenuButton android:button_image="history_normal.png"
-					android:button_highlightImage="history_pressed.png"
-                    android:button_function="history"/>
-                  
    		<MenuButton android:button_image="settings_normal.png"
 					android:button_highlightImage="settings_pressed.png" 
 					android:button_function="settings"/> 

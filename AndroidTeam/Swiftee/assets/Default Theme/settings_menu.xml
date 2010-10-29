@@ -20,14 +20,14 @@
 					android:button_function="gesture_kit_editor"
 		/>  
 	
+		
+		<MenuButton android:button_image="history_normal.png"
+					android:button_highlightImage="history_pressed.png"
+                    android:button_function="history"/>
+                  
 		<MenuButton android:button_image="help_sans.png"
 					android:button_highlightImage="help.png"
 					android:button_function="help_online"
 		/>
 	
-		<MenuButton android:button_image="practicegesture_sans.png"
-					android:button_highlightImage="practicegesture.png"
-					android:button_function="history"
-		/>
-		
 </merge>

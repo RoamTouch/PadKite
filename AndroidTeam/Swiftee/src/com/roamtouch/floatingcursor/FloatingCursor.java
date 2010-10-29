@@ -500,6 +500,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			mWebView.setDrawingCacheEnabled(true);
 			mWebView.setWebChromeClient(new WebClient());
 			mWebView.setWebViewClient(new GestureWebViewClient());	
+			
+			fcMainMenu.setBackEabled(mWebView.canGoBack());
+			fcMainMenu.setFwdEabled(mWebView.canGoForward());
 		}
 		
 		public WebView getWebView(){
@@ -2118,6 +2121,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				BitmapDrawable bd = new BitmapDrawable(getCircleBitmap(view));
 				fcWindowTabs.setCurrentThumbnail(bd,view);
 				
+				fcMainMenu.setBackEabled(view.canGoBack());
+				fcMainMenu.setFwdEabled(view.canGoForward());
 			}
 			public Bitmap getCircleBitmap(WebView view){
 				Picture thumbnail = view.capturePicture();

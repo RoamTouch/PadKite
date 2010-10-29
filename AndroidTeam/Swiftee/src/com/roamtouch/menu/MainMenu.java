@@ -47,7 +47,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 	public static boolean USER_REGISTERED = true;
 	private DBConnector database;
 	private SwifteeApplication appState;
-	private MenuButton button;
+	private MenuButton button,backButton,fwdButton;
 	public static String PATH = BrowserActivity.THEME_PATH + "/";
 	
 //	private EventViewerArea eventViewer;
@@ -76,6 +76,10 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				MenuButton b = (MenuButton) v;
 				if(b.getFunction().equals("refresh"))
 					button = b;
+				if(b.getFunction().equals("backward"))
+					backButton = b;
+				if(b.getFunction().equals("forward"))
+					fwdButton = b;
 			}
 		}
 	}
@@ -227,17 +231,12 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			
 			//Backward	
 			case backward:
-				mFloatingCursor.goBackward();
-				if(!mFloatingCursor.canGoBackward())
-					b.setEnabled(false);
-
+				mFloatingCursor.goBackward();			
 				break;
 				
 			//forward	
 			case forward:
-				mFloatingCursor.goForward();
-				if(!mFloatingCursor.canGoForward())
-					b.setEnabled(false);
+				mFloatingCursor.goForward();				
 				break;
 				
 			//Custom Gesture	
@@ -278,5 +277,10 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		}
 		return false;
 	}
-
+	public void setBackEabled(boolean b){
+			backButton.setEnabled(b);
+	}
+	public void setFwdEabled(boolean b){
+			fwdButton.setEnabled(b);
+	}
 }

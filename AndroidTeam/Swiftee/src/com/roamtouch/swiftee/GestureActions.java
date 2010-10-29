@@ -18,6 +18,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.widget.Toast;
 
 public class GestureActions {
 
@@ -42,6 +43,28 @@ public class GestureActions {
 		
     	if (mSelection.startsWith("http://"))
     		mSelection = mParent.getShortLink(mSelection);
+    	else if(mSelection.contains("http://")){
+    		int start = mSelection.indexOf("http://");
+    		int end;
+    		int spaceIndex = mSelection.indexOf(' ', start);
+    		int lineIndex = mSelection.indexOf('\n', start);
+    		if(spaceIndex != -1 && lineIndex !=-1){
+    			if(spaceIndex < lineIndex)end = spaceIndex; 
+    			else end = lineIndex;
+    		}   			
+    		else if(spaceIndex == -1 && lineIndex!=-1){
+    			end = lineIndex;
+    		}
+    		else if(spaceIndex != -1 && lineIndex==-1){
+    			end = spaceIndex;
+    		}
+    		else 
+    			return;
+    		String longUrl = mSelection.substring(start, end);
+    		String shortUrl = mParent.getShortLink(longUrl);
+    		mSelection = mSelection.replace(longUrl, shortUrl);
+//    		Toast.makeText(mParent, mSelection, Toast.LENGTH_LONG).show();
+    	}
 	}
 	
 	public void search(WebView webView)
