@@ -21,10 +21,12 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class TutorArea extends LinearLayout implements OnClickListener {
 
@@ -97,20 +99,36 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 		java.util.Arrays.sort( str );
 		gestureCount = str.length;
 		
-		LayoutParams params=new LayoutParams(125,LinearLayout.LayoutParams.FILL_PARENT);
+		LayoutParams params=new LayoutParams(70, 70);
 		for(int i=0;i<gestureCount;i++){
 			
+			LinearLayout linLayout = new LinearLayout(mContext);
+			linLayout.setLayoutParams(new LayoutParams(110, LayoutParams.FILL_PARENT));
+			linLayout.setOrientation(VERTICAL);
+			linLayout.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+			
+			linLayout.setPadding(0, 10, 0, 10);
+
 			Button b=new Button(mContext);
 			b.setId(i);
-			b.setBackgroundResource(R.drawable.tutor_button_1);
+			//b.setBackgroundResource(R.drawable.tutor_button_1);
 			b.setLayoutParams(params);
-			b.setText(BrowserActivity.convertGestureItem(str[i]));
+			//b.setText(BrowserActivity.convertGestureItem(str[i]));
 			ArrayList<Gesture> list = mLibrary.getGestures(str[i].toString());
-			Bitmap bit = toBitmap(list.get(0), 70, 70, 10, Color.BLACK);
+			Bitmap bit = toBitmap(list.get(0), 60, 60, 10, Color.BLACK);
 			BitmapDrawable d = new BitmapDrawable(bit);
 			b.setCompoundDrawablesWithIntrinsicBounds(null,d, null, null);
 			b.setOnClickListener(this);
-			this.addView(b);
+			
+			TextView tv = new TextView(mContext);
+			tv.setText(BrowserActivity.convertGestureItem(str[i]));
+			tv.setTextColor(Color.BLACK);
+			tv.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+			
+			linLayout.addView(b);
+			linLayout.addView(tv);
+			
+			this.addView(linLayout);
 		}
 	}
 	public void onClick(View v) {
