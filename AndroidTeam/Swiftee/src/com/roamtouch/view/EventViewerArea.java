@@ -43,18 +43,18 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 	private boolean isEnabled;
 	private boolean isForceEnabled = false;
 	
-	public EventViewerArea(Context context, AttributeSet attrs)  {
-		super(context, attrs);
-				
-		
+	public void init(Context context)  {
 		mContext = context;
 		handler = new Handler();
 		
 		sharedPreferences = mContext.getApplicationContext().getSharedPreferences("Shared_Pref_AppSettings", Context.MODE_WORLD_READABLE);;
 		isEnabled = sharedPreferences.getBoolean("enable_event_viewer", true);
-		tv1=new TextView(getContext());
+
+		tv1 = new TextView(context);
 		tv1.setTextColor(Color.BLACK);
 		tv1.setPadding(10, 10, 10, 10);
+		tv1.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
+                LayoutParams.FILL_PARENT));
 		tv1.setText(Html.fromHtml("<font style='font-family:Lucida Grande,Verdana' color=\"black\">Action |</font> <font color=\"black\">FloatingCursor (" + BrowserActivity.version + ") </font"));
 //		tv1.setInputType(InputType.TYPE_CLASS_TEXT);
 		
@@ -82,6 +82,18 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 		
 		handler.post(this);
 	}
+	
+	public EventViewerArea(Context context, AttributeSet attrs)  {
+		super(context, attrs);		
+		init(context);
+	}
+
+	public EventViewerArea(Context context)  {
+		super(context);
+		init(context);
+	}
+
+	
 	public TextView getTextView(){
 		return tv1;
 	}

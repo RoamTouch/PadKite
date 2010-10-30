@@ -67,7 +67,7 @@
      	android:layout_marginLeft="10px"
      	android:layout_marginRight="10px"
      	android:layout_height="wrap_content"
-     	android:background="@drawable/event_viewer_1">
+     	android:background="@drawable/event_viewer">
     </com.roamtouch.view.EventViewerArea>
 	
 <!--  	<com.roamtouch.view.TopBarArea android:id="@+id/topbararea"  android:layout_width="wrap_content" 
