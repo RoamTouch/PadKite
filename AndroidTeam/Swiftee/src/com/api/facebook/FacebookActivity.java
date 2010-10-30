@@ -14,6 +14,7 @@ import com.api.facebook.FacebookError;
 import com.api.facebook.Util;
 import com.api.facebook.AsyncFacebookRunner.RequestListener;
 import com.api.facebook.Facebook.DialogListener;
+import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 
 import android.app.Activity;
@@ -21,6 +22,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -30,10 +32,10 @@ public class FacebookActivity extends Activity {
     
     // Your Facebook Application ID must be set before running this example
     // See http://www.facebook.com/developers/createapp.php
-    public static final String APP_ID = "153137761374284";
+    public static final String APP_ID = "129223350464122";
     
     private static final String[] PERMISSIONS =
-        new String[] {"publish_stream", "read_stream", "offline_access"};
+        new String[] {"publish_stream", "offline_access"};
     
     TextView publicTestsText;
     TextView publicErrorsText;
@@ -48,6 +50,17 @@ public class FacebookActivity extends Activity {
     
     Facebook authenticatedFacebook = new Facebook();
     
+    private boolean mReturnOnError = true;
+    
+    public boolean onKeyDown(int keyCode, android.view.KeyEvent event){
+        
+    	if(keyCode == KeyEvent.KEYCODE_BACK) {
+  			finish();
+    	}
+    	
+   		return false;
+  }
+    
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +68,9 @@ public class FacebookActivity extends Activity {
         
         Intent i = getIntent();
         tweet = i.getStringExtra("Post");
-       
+        String accessToken = i.getStringExtra("accessToken");
+        long accessExpires = i.getLongExtra("accessExpires", 0);
+        
         setContentView(R.layout.facebook);
         
         
@@ -97,6 +112,29 @@ public class FacebookActivity extends Activity {
             }
         });
         
+        // Automatically connect
+
+        if (accessToken != null)
+        {
+        	authenticatedFacebook.setAccessToken(accessToken);
+        	authenticatedFacebook.setAccessExpires(accessExpires);
+        }
+        
+        if (authenticatedFacebook.isSessionValid())
+        {
+        	mReturnOnError = false;
+        	
+        	Bundle b = new Bundle();
+        	b.putString("message", tweet);
+            authenticatedFacebook.dialog(FacebookActivity.this, "stream.publish", b,
+                    new TestUiServerListener(),true);
+        }
+        else
+        {
+        	logoutText.setText("");
+        	authenticatedFacebook.authorize(FacebookActivity.this, 
+        			APP_ID, PERMISSIONS, new TestLoginListener(),true);
+        }
 //        runTestPublicApi();
     }
     
@@ -111,11 +149,29 @@ public class FacebookActivity extends Activity {
             	loginButton.setVisibility(View.INVISIBLE);
             	postButton.setVisibility(View.VISIBLE);
             	
+                // Set access token for bundle
+                
+                Intent i = new Intent();
+                
+                i.putExtra("status", BrowserActivity.FacebookStatusSuccess);
+                i.putExtra("accessToken", authenticatedFacebook.getAccessToken());
+                i.putExtra("accessExpires", authenticatedFacebook.getAccessExpires());
+                
+           		//Log.v("onOldFacebook", "accessToken = " + authenticatedFacebook.getAccessToken());
+
+                setResult(RESULT_OK, i);
+            	
             	publicTestsText.setTextColor(Color.GREEN);
             } else {
             	publicTestsText.setText(
                         "Log in  failed");
                 publicTestsText.setTextColor(Color.RED);
+                
+                Intent i = new Intent();
+
+                i.putExtra("status", BrowserActivity.FacebookStatusError);
+
+                setResult(RESULT_OK, i);
             }
            
         }
@@ -143,6 +199,7 @@ public class FacebookActivity extends Activity {
                 return false;
             }
             
+            /*            
             Log.d("Tests", "Testing graph API wall post");
             Bundle parameters = new Bundle();
             parameters.putString("message", URLEncoder.encode("hello world"));
@@ -186,7 +243,8 @@ public class FacebookActivity extends Activity {
             
            
             
-            Log.d("Tests", "All Authenticated Tests Passed");
+            Log.d("Tests", "All Authenticated Tests Passed");*/
+            
             return true;
         } catch (Throwable e) {
             e.printStackTrace();
@@ -230,9 +288,16 @@ public class FacebookActivity extends Activity {
         public void onComplete(Bundle values) {
             final String postId = values.getString("post_id");
             if (postId != null) {
-                Log.d("Facebook-Example", "Dialog Success! post_id=" + postId);
+                /*Log.d("Facebook-Example", "Dialog Success! post_id=" + postId);
                 new AsyncFacebookRunner(authenticatedFacebook).request(postId, 
-                        new TestPostRequestListener());
+                        new TestPostRequestListener());*/
+                FacebookActivity.this.runOnUiThread(new Runnable() {
+                    public void run() {
+                        wallPostText.setText("Posted Successfully");
+                        wallPostText.setTextColor(Color.GREEN);
+                        FacebookActivity.this.finish();
+                    }
+                });
             } else {
                 FacebookActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
@@ -266,6 +331,7 @@ public class FacebookActivity extends Activity {
                     public void run() {
                         wallPostText.setText("Posted Successfully");
                         wallPostText.setTextColor(Color.GREEN);
+         
                         FacebookActivity.this.finish();
                     }
                 });
@@ -277,6 +343,19 @@ public class FacebookActivity extends Activity {
                     public void run() {
                         wallPostText.setText("Wall Post Failure");
                         wallPostText.setTextColor(Color.RED);
+
+                        if (mReturnOnError)
+                        {
+                            Intent i = new Intent();
+
+                            i.putExtra("status", BrowserActivity.FacebookStatusError);
+                        	
+                        	setResult(RESULT_OK, i);
+            
+                        	FacebookActivity.this.finish();
+                        }
+                        
+                        mReturnOnError = true;
                     }
                 });
             }
@@ -309,6 +388,11 @@ public class FacebookActivity extends Activity {
         	publicTestsText.setText("");
         	publicErrorsText.setText("");
         	wallPostText.setText("");
+            Intent i = new Intent();
+
+            i.putExtra("status", BrowserActivity.FacebookStatusLogout);
+        	
+        	setResult(RESULT_OK, i);
         } else {
             logoutText.setText("Logout  Failed");
             logoutText.setTextColor(Color.RED);

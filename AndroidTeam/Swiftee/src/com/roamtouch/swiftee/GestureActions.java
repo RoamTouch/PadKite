@@ -18,6 +18,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.Toast;
 
 public class GestureActions {
@@ -97,12 +98,16 @@ public class GestureActions {
     	mParent.startActivity(intent);
 	}
 
-	public void oldFacebook()
+	public void oldFacebook(String accessToken, long accessExpires)
 	{
     	Intent intent = new Intent(mParent,FacebookActivity.class);  	
    		intent.putExtra("Post", mSelection);
+   		intent.putExtra("accessToken", accessToken);
+   		intent.putExtra("accessExpires", accessExpires);
+   		
+   		//Log.v("onOldFacebook", "accessToken = " + accessToken);
     	
-    	mParent.startActivity(intent);
+    	mParent.startActivityForResult(intent, BrowserActivity.FacebookRequestCode);
 	}
 	
 	protected Intent getIntent(Intent intent, String classname)
@@ -135,7 +140,7 @@ public class GestureActions {
         return intentX;
 	}
 	
-	public void facebook()
+	public void facebook(String accessToken, long accessExpires)
 	{
 		        
 		        final Intent intent = new Intent(Intent.ACTION_SEND);
@@ -150,7 +155,7 @@ public class GestureActions {
 		        if (intentX != null)
 			        mParent.startActivity(intentX);       	
 		        else
-		        	oldFacebook();
+		        	oldFacebook(accessToken, accessExpires);
 	}
 
 	public void oldTwitter()

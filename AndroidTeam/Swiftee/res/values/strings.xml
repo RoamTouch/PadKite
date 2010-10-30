@@ -39,5 +39,6 @@
     <string name="connected">Connected - Please press Return</string>
     <string name="connection_problem">Problem connecting - Please press Return</string>
     
+    <string name="facebookExplanation">This is your Facebook Control Center. Please connect with Facebook. Then publish your post.</string>
     	
 </resources>

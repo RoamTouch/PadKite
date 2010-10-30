@@ -52,6 +52,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.ClipboardManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -157,6 +158,39 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     @Override
     protected void onResume() {
     	super.onResume();
+    }
+    
+    public static final int FacebookRequestCode = 100042;
+    
+    String mFacebookAccessToken = null;
+    long mFacebookAccessExpires = 0;
+    
+    public static final int FacebookStatusSuccess = 1;
+    public static final int FacebookStatusError = 2;
+    public static final int FacebookStatusLogout = 3;
+    
+    @Override
+    protected void onActivityResult ( int requestCode, int resultCode, Intent data)
+    {
+    	super.onActivityResult(requestCode, resultCode, data);
+    	//Log.v("onActivityResult", "requestCode = " + requestCode + ", resCode = " + resultCode);
+    	if (requestCode == FacebookRequestCode && data != null)
+    	{
+    		final int status = data.getIntExtra("status", 0);
+
+    		//Log.v("onActivityResult", "status = " + status);
+
+   			if (status == FacebookStatusSuccess)
+   			{
+   				mFacebookAccessToken = data.getStringExtra("accessToken");
+   				mFacebookAccessExpires = data.getLongExtra("accessExpires", 0);
+   	    		//Log.v("onActivityResult", "accessToken = " + mFacebookAccessToken);
+   			}
+   			else {
+   				mFacebookAccessToken = null;
+   				mFacebookAccessExpires = 0;
+   			}
+    	}
     }
 
     @Override
@@ -459,7 +493,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			actions.calendar();
         }
         else if("Facebook".equals(action)){
-        	actions.facebook();
+        	actions.facebook(mFacebookAccessToken, mFacebookAccessExpires);
         }
         else if("Twitter".equals(action)){
         	actions.twitter();

@@ -47,9 +47,9 @@
        <activity android:name="com.roamtouch.settings.Contacts" />          
        <activity android:name="com.api.twitter.TwitterActivity" />   
        <activity android:name="com.api.blogger.BloggerActivity" />      
-       <activity android:name="com.api.facebook.FacebookActivity" android:launchMode="singleTask"
-                  android:alwaysRetainTaskState="true"
-                  android:configChanges="orientation|keyboardHidden"/>   
+       <activity android:name="com.api.facebook.FacebookActivity" 
+       		android:configChanges="orientation|keyboardHidden"
+       />   
        <activity android:name="com.roamtouch.settings.BrowserSettingActivity" />
        <activity android:name="com.roamtouch.view.WebPage" />   
            
