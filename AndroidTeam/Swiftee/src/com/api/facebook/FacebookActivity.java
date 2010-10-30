@@ -124,6 +124,27 @@ public class FacebookActivity extends Activity {
         {
         	mReturnOnError = false;
         	
+        	publicTestsText.setText(
+            "Log in successfull");
+        	
+        	logoutButton.setVisibility(View.VISIBLE);
+        	loginButton.setVisibility(View.INVISIBLE);
+        	postButton.setVisibility(View.VISIBLE);
+	
+        	// Set access token for bundle
+    
+        	Intent intent = new Intent();
+    
+        	intent.putExtra("status", BrowserActivity.FacebookStatusSuccess);
+        	intent.putExtra("accessToken", authenticatedFacebook.getAccessToken());
+        	intent.putExtra("accessExpires", authenticatedFacebook.getAccessExpires());
+    
+        	//Log.v("onOldFacebook", "accessToken = " + authenticatedFacebook.getAccessToken());
+
+        	setResult(RESULT_OK, intent);
+	
+        	publicTestsText.setTextColor(Color.GREEN);
+        	
         	Bundle b = new Bundle();
         	b.putString("message", tweet);
             authenticatedFacebook.dialog(FacebookActivity.this, "stream.publish", b,
