@@ -68,10 +68,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 
-	public static String version = "Version Beta-v1.42.2-eclair build #727ac2/b8a707";
-	public static String version_code = "Version Beta-v1.42.2";
+	public static String version = "Version Beta-v1.42.3-eclair build #727ac2/b8a707";
+	public static String version_code = "Version Beta-v1.42.3";
 	
-	final public static boolean developerMode = true;
+	final public static boolean developerMode = false;
 	
 	final public static String BASE_PATH = "/sdcard/PadKite";
 	final public static String THEME_PATH = BASE_PATH + "/Default Theme";
