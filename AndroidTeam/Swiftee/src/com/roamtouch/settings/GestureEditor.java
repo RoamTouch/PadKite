@@ -132,7 +132,8 @@ public class GestureEditor extends Activity implements OnItemClickListener{
 			else if(position == 8 || position == 9){
 				alertDialog = new AlertDialog.Builder(GestureEditor.this).create();
 				alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-			    alertDialog.setMessage("Cooming soon..");
+			    alertDialog.setMessage("This feature is currently not yet available. We are working really hard on it and it'll be there in future versions. Stay tuned.");
+			    alertDialog.setTitle("Coming soon ...");
 			    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 			      public void onClick(DialogInterface dialog, int which) {
 			        return;
