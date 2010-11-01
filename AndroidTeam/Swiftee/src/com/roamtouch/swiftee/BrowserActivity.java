@@ -236,6 +236,27 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         
         }
         
+        if(getExpired()){
+        	AlertDialog.Builder dialog= new AlertDialog.Builder(this);
+        	dialog.setTitle("Beta version is expired");
+        	dialog.setMessage("This version of PadKite Beta has expired. Please download a new version from http://padkite.com/. The application will close automatically in 30 seconds.");
+        	dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {	
+        			public void onClick(DialogInterface dialog, int id) {
+        			}        		
+        	});
+
+        	dialog.show();
+        	
+        	mHandler.postDelayed(new Runnable() {
+			
+        		public void run()
+        		{
+        			System.exit(1);
+        		}
+			
+        	}, 30000);
+        }
+        
         webLayout = (FrameLayout) findViewById(R.id.webviewLayout);
         
         webView = new WebView(this);
@@ -653,6 +674,32 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	}
 	public void setEventViewerMode(int mode){
 			eventViewer.setMode(mode);		
+	}
+	
+	public boolean getExpired()
+	{
+		String responseString = "";
+		try {
+			HttpClient httpclient = new DefaultHttpClient();
+			//Log.d("Expiration", "http://padkite.com/expiration/" + version_code.replace(" ", "_").toLowerCase());
+			HttpPost httppost = new HttpPost("http://padkite.com/expiration/" + version_code.replace(" ", "_").toLowerCase());
+			HttpResponse response = httpclient.execute(httppost);
+			HttpEntity entity = response.getEntity();
+			responseString = getResponseBody(entity);
+			httppost.abort();
+			//Log.d("Connection successful.......", "-----------");
+		} catch (MalformedURLException e) {
+		} catch (IOException e) {
+		} catch (Exception e) {
+		}
+		
+		//Log.d("Expiration", "Response: " + responseString);
+		
+		if (responseString.contains("EXPIRED")) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	/*Get short link from server*/	
