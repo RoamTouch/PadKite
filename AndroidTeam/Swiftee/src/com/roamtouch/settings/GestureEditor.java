@@ -129,7 +129,7 @@ public class GestureEditor extends Activity implements OnItemClickListener{
 				setResult(1, i);
 				finish();
 			}
-			else if(position == 8 || position == 9){
+			else if(position == 4 || position == 8 || position == 9){
 				alertDialog = new AlertDialog.Builder(GestureEditor.this).create();
 				alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 			    alertDialog.setMessage("This feature is currently not yet available. We are working really hard on it and it'll be there in future versions. Stay tuned.");
