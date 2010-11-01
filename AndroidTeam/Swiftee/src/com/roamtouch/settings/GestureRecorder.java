@@ -53,8 +53,8 @@ public class GestureRecorder extends Activity {
 
 			t = (EditText) findViewById(R.id.gestureText);	
 			urlText = (EditText) findViewById(R.id.gestureUrl);	
-			if(!BrowserActivity.developerMode && gestureName.length()>10)
-				gestureName = gestureName.substring(0, 9);
+			if(!BrowserActivity.developerMode && gestureName.length()>12)
+				gestureName = gestureName.substring(0, 11);
 			t.setText(gestureName);
 			if(isStoredBookmark){
 				urlText.setVisibility(View.VISIBLE);
@@ -69,6 +69,7 @@ public class GestureRecorder extends Activity {
 				t.setClickable(false);
 				t.setEnabled(false);
 				t.setFocusable(false);
+				t.setText(BrowserActivity.convertGestureItem(gestureName));
 			}
 				
 			overlay = (GestureOverlayView) findViewById(R.id.gestures_overlay);
