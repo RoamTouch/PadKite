@@ -40,6 +40,9 @@ public class HowToActivity extends Activity implements  OnClickListener, OnCheck
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
 		dont_start = sharedPref.getBoolean("DontShowAgain", false);
+		
+		// FIXME: Disabled startup animation for beta release
+		dont_start = true;
 
 		if(dont_start){
 			Intent intent = new Intent();
