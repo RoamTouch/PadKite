@@ -366,8 +366,6 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	floatingCursor.gestureDisableFC();
 		webLayout.setEnabled(false);
 		
-		mSelection = "";
-		
 		if (useSelection)
 		{
 			mSelection = (String) ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).getText();		
@@ -521,7 +519,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			actions.wikipedia(webView);
         }     
         else if("Add Link".equals(action) || "Bookmark".equals(action)){
-        	actions.addLink(floatingCursor.getCurrentURL());
+        	actions.addLink();
         }     
         else if("Open Link".equals(action)){
         	actions.openLink(floatingCursor);

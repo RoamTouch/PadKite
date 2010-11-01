@@ -201,12 +201,12 @@ public class GestureActions {
     	webView.loadUrl("http://en.wikipedia.org/wiki/"+mSelection);
 	}
 
-	public void addLink(String url)
+	public void addLink()
 	{
     	Intent i = new Intent(mParent,GestureRecorder.class);
 		i.putExtra("Gesture_Name", "");
 		i.putExtra("isNewBookmark", true);
-		i.putExtra("url", url);
+		i.putExtra("url", mSelection);
 		i.putExtra("Gesture_Type", SwifteeApplication.BOOKMARK_GESTURE);
 		mParent.startActivity(i);
 	}
