@@ -64,7 +64,17 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 
 		MenuButton b = (MenuButton)v;
 
-		SettingsMenuFunctions button_function = SettingsMenuFunctions.valueOf(b.getFunction());
+		String function = b.getFunction();
+		
+		SettingsMenuFunctions button_function = null;
+		
+		try {
+			button_function = SettingsMenuFunctions.valueOf(function);
+		}
+		catch (Exception e)
+		{
+			button_function = SettingsMenuFunctions.none;
+		}
 	
 		if(event.getAction() == MotionEvent.ACTION_DOWN){
 			switch(button_function){

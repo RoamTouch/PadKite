@@ -116,7 +116,15 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		
 		Log.d("MainMenu", "Function = " + function);
 		
-		MainMenuFunctions button_function = MainMenuFunctions.valueOf(function);
+		MainMenuFunctions button_function = null;
+		
+		try {
+			button_function = MainMenuFunctions.valueOf(function);
+		}
+		catch (Exception e)
+		{
+			button_function = MainMenuFunctions.none;
+		}
 		
 		if(event.getAction() == MotionEvent.ACTION_DOWN) {
 			switch(button_function) {
