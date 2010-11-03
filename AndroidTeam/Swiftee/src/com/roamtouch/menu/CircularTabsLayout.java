@@ -1,5 +1,6 @@
 package com.roamtouch.menu;
 
+import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import android.content.Context;
 import android.util.Log;
@@ -195,6 +196,9 @@ public class CircularTabsLayout extends ViewGroup {
 		    	}
 		    }			   
 	   }
+	   
+	   public final static String PATH = BrowserActivity.THEME_PATH + "/";
+	   
 	   public void init(){
 		   
 		
@@ -202,11 +206,10 @@ public class CircularTabsLayout extends ViewGroup {
 		 	coneSeparator.setBackgroundResource(R.drawable.circleround_cone);
 		 	addView(coneSeparator);
 
-		 	Button but = new Button(context);
+		 	MenuButton but = new MenuButton(context);
 		 	but.setId(33);
-		 	but.setBackgroundResource(R.drawable.cross);
+		 	but.setDrawables(PATH+"close_windows_normal.png", PATH+"close_windows_pressed.png");
 		 	addView(but);
-
 	   }   
 
 	   public boolean canScroll(float angleDiff,int childCount) {
