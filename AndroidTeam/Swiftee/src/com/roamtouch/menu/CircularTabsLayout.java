@@ -25,6 +25,7 @@ public class CircularTabsLayout extends ViewGroup {
 
 		private int mfcRadius ;
 		private int BUTTON_RADIUS;
+		private int BUTTON_RADIUS2;
 		
 		private boolean mIsBeingDragged = false;
 		private float mLastMotionY,mLastMotionX, mLastMotionAngle=-999;
@@ -50,6 +51,7 @@ public class CircularTabsLayout extends ViewGroup {
 		private int outR;
 	   
 		private int inR=INNER_RADIUS;
+		private int inR2=INNER_RADIUS;
 	   
 		private float mAngleChange;
 	   
@@ -145,8 +147,8 @@ public class CircularTabsLayout extends ViewGroup {
 
 		    childStartPoint = 2;
 		    Button but = (Button)getChildAt(count-1);
-		    int diff = BUTTON_RADIUS/2;
-		    but.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
+		    int diff = BUTTON_RADIUS2*2/3;
+		    but.layout(a-diff, b-inR2-diff,a+diff, b-inR2+diff);
 
 		    ImageView cone = (ImageView)getChildAt(count-2);	   
 		    if (cone.getVisibility() != GONE) {         
@@ -235,8 +237,13 @@ public class CircularTabsLayout extends ViewGroup {
 		}
 		public void setfcRadius(int mfcRadius) {
 			this.mfcRadius = mfcRadius;
+			
 			BUTTON_RADIUS = (int)(mfcRadius / 4.5f);
 			inR = (int) (mfcRadius-BUTTON_RADIUS*1.5f) - 10; //-5 ;
+
+			BUTTON_RADIUS2 = (int)(mfcRadius / 3.5f);
+			inR2 = (int) (mfcRadius-BUTTON_RADIUS2*1.5f); //-5 ;
+			
 			outR = 2*mfcRadius;
 			menuBackground.setRadius(mfcRadius);
 

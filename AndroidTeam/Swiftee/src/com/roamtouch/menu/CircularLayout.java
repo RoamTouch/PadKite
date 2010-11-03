@@ -171,7 +171,7 @@ public class CircularLayout extends ViewGroup {
 		   }
 		   MenuButton hotKey = (MenuButton)getChildAt(childEndPoint+1);
 		   if(hotKey.getVisibility() != GONE){
-			   int diff = BUTTON_RADIUS/2;
+			   int diff = BUTTON_RADIUS*2/3;
 			   hotKey.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
 		   }
 
