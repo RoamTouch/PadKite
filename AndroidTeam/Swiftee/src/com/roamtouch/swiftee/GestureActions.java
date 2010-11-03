@@ -160,8 +160,8 @@ public class GestureActions {
 
 	public void oldTwitter()
 	{
-    	Intent intent = new Intent(mParent,TwitterActivity.class);  	
-   		intent.putExtra("Post", mSelection);
+    	Intent intent = new Intent(mParent,TwitterActivity.class);  
+    	intent.putExtra("Post", mSelection);
     	
 		mParent.startActivity(intent);
 	}
@@ -170,7 +170,12 @@ public class GestureActions {
 	{	      
 	        final Intent intent = new Intent(Intent.ACTION_SEND);
 	        intent.setType("text/plain");
-	        intent.putExtra(Intent.EXTRA_TEXT, mSelection);
+	        
+	       	String sel = mSelection;
+	    	if (sel.startsWith("http://"))
+	    		sel = "Link: " + sel;
+	 
+	        intent.putExtra(Intent.EXTRA_TEXT, sel);
 		        
 	    	// Start Twitter intent directly
 	        Intent intentX = getIntent(intent, "com.twitter.android");
