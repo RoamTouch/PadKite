@@ -7,8 +7,10 @@ import java.util.Locale;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -125,11 +127,21 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 			startActivity(intent);
 			break;
 		case 8:
-			intent = new Intent();
+			AlertDialog alertDialog = new AlertDialog.Builder(MiscListActivity.this).create();
+			alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+		    alertDialog.setMessage("This feature is currently not yet available. We are working really hard on it and it'll be there in future versions. Stay tuned.");
+		    alertDialog.setTitle("Coming soon ...");
+		    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+		      public void onClick(DialogInterface dialog, int which) {
+		        return;
+
+		    } }); 
+		  	alertDialog.show();
+/*			intent = new Intent();
 			intent.setType("image/*");
 			intent.setAction(Intent.ACTION_GET_CONTENT);
 			startActivityForResult(Intent.createChooser(intent,"Select Picture"), SELECT_PICTURE);
-			break;
+*/			break;
 		}
 
 	}

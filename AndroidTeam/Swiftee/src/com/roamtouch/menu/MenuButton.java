@@ -13,12 +13,15 @@ public class MenuButton extends Button{
 		private int centerX,centerY;
 		private Drawable m_drawable;
 		private Drawable m_selectDrawable;
+		private Drawable m_disabledDrawable;
+		
 		private String m_button_function = null;
 		private boolean isHotkey = false;
 		private void init(Context context)
 		{
 			m_drawable = context.getResources().getDrawable(R.drawable.default_normal);
 			m_selectDrawable = context.getResources().getDrawable(R.drawable.default_pressed);
+			m_disabledDrawable = context.getResources().getDrawable(R.drawable.default_normal);
 		}
 		
 		public MenuButton(Context context, AttributeSet attrs) {
@@ -40,7 +43,11 @@ public class MenuButton extends Button{
 				m_selectDrawable = selectDrawable;
 			this.setBackgroundDrawable(m_drawable);
 		}
-		
+		public void setDisabled(String drawableStr){
+			Drawable drawable = Drawable.createFromPath(drawableStr);
+			if (drawable != null)
+				m_disabledDrawable = drawable;
+		}
 		public String getFunction()
 		{
 			return (m_button_function==null)?"none":m_button_function;
@@ -86,10 +93,11 @@ public class MenuButton extends Button{
 
 			if (StateSet.stateSetMatches(new int[] { android.R.attr.state_pressed }, states) || StateSet.stateSetMatches(new int[] { android.R.attr.state_focused }, states)) {
 				setBackgroundDrawable(m_selectDrawable);
-			} else {
-				setBackgroundDrawable(m_drawable);
+			} else if(!StateSet.stateSetMatches(new int[] { android.R.attr.state_enabled }, states)){
+				setBackgroundDrawable(m_disabledDrawable);
 			}
-
+			else
+				setBackgroundDrawable(m_drawable);
 		}
 
 		public void setHotkey(boolean isHotkey) {

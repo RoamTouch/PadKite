@@ -47,7 +47,12 @@ public class MenuInflater {
 					
 					b.setFunction(attrs.get("button_function"));
 					
-					String s = attrs.get("hotkey");
+					String s = attrs.get("button_disabled");
+					if(s != null){
+						b.setDisabled(PATH+s);
+					}
+					
+					s = attrs.get("hotkey");
 					
 					if(s != null){
 						if(s.equals("true")){

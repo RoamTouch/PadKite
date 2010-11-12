@@ -7,11 +7,14 @@ import com.roamtouch.settings.MiscListActivity;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.view.WebPage;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnTouchListener;
 
 enum SettingsMenuFunctions {
@@ -129,10 +132,21 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 				
 			//Set home page
 			case set_homepage:
-				SharedPreferences sharedPreferences = mParent.getApplicationContext().getSharedPreferences("Shared_Pref_AppSettings", Context.MODE_WORLD_READABLE);
-				SharedPreferences.Editor editor = sharedPreferences.edit();
-				editor.putString("home_page",mFloatingCursor.getCurrentURL());
-				editor.commit();
+				AlertDialog alertDialog = new AlertDialog.Builder(mParent).create();
+				alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+			    alertDialog.setMessage("Do you want to set "+mFloatingCursor.getCurrentURL()+" as your home page?");
+			    alertDialog.setTitle("Set home page");
+			    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+			      public void onClick(DialogInterface dialog, int which) {
+			    	  	SharedPreferences sharedPreferences = mParent.getApplicationContext().getSharedPreferences("Shared_Pref_AppSettings", Context.MODE_WORLD_READABLE);
+						SharedPreferences.Editor editor = sharedPreferences.edit();
+						editor.putString("home_page",mFloatingCursor.getCurrentURL());
+						editor.commit();
+						return;
+
+			    } }); 
+			  	alertDialog.show();
+				
 				break;
 				
 			//Resize hit area

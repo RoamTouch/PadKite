@@ -31,8 +31,8 @@ public class CircularLayout extends ViewGroup {
 		private boolean mIsBeingDragged = false;
 		private float mLastMotionY,mLastMotionX, mLastMotionAngle=-999;
 		private int mTouchSlop;
-		private int mMinimumVelocity;
-		private int mMaximumVelocity;
+//		private int mMinimumVelocity;
+//		private int mMaximumVelocity;
 	  
 		/**
 		 * flag indicating moving direction
@@ -104,8 +104,8 @@ public class CircularLayout extends ViewGroup {
 			final ViewConfiguration configuration = ViewConfiguration.get(context);
 			mTouchSlop = configuration.getScaledTouchSlop();
 			//Log.d("Touch slope", ""+mTouchSlop);
-			mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
-			mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
+//			mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
+//			mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
 			//Log.d
 			this.context = context;		
 			initBG();
@@ -120,8 +120,8 @@ public class CircularLayout extends ViewGroup {
 			final ViewConfiguration configuration = ViewConfiguration.get(context);
 			mTouchSlop = configuration.getScaledTouchSlop();
 			//Log.d("Touch slope", ""+mTouchSlop);
-			mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
-			mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
+//			mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
+//			mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
 			initBG();
 		}
 
@@ -155,7 +155,7 @@ public class CircularLayout extends ViewGroup {
 		@Override
 	   protected void onLayout(boolean changed, int left, int top, int right, int bot) {
 
-		
+		   Log.d("---inside onLayout-----", "---------inside onlayout-------");
 		   final int count = getChildCount();
 		   double t = 0;
 
