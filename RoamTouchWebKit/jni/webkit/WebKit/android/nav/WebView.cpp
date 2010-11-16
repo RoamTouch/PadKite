@@ -1899,18 +1899,17 @@ static jobject nativeGetHitTestResultAtPoint(JNIEnv *env, jobject obj,
 
         bounds = result->getBounds();
 
-        if (type == WebView::HIT_TEST_UNKNOWN_TYPE 
-            || type == WebView::HIT_TEST_SRC_ANCHOR_TYPE) {
-            // Now check to see if it is an image.
-            String text = view->imageURI(x, y);
-            if (!text.isEmpty()) {
-                type = (type == WebView::HIT_TEST_UNKNOWN_TYPE) ?
-                        WebView::HIT_TEST_IMAGE_TYPE : WebView::HIT_TEST_SRC_IMAGE_ANCHOR_TYPE;
-                extraString = text;
-            }
-        }
-
         toolTipString = result->getToolTip() ;
+    }
+    if (type == WebView::HIT_TEST_UNKNOWN_TYPE 
+        || type == WebView::HIT_TEST_SRC_ANCHOR_TYPE) {
+        // Now check to see if it is an image.
+        String text = view->imageURI(x, y);
+        if (!text.isEmpty()) {
+            type = (type == WebView::HIT_TEST_UNKNOWN_TYPE) ?
+                    WebView::HIT_TEST_IMAGE_TYPE : WebView::HIT_TEST_SRC_IMAGE_ANCHOR_TYPE;
+            extraString = text;
+        }
     }
 
     jstring toolTip = env->NewString(toolTipString.characters(), toolTipString.length());
