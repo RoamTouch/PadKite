@@ -1009,6 +1009,8 @@ void CacheBuilder::BuildFrame(Frame* root, Frame* frame,
         String toolTip;
         bool isVideo = false;
         IntSize videoSize;
+        bool isSelect = false;
+        bool isInput = false;
         //RoamTouch change - end
         CachedNodeType type = NORMAL_CACHEDNODETYPE;
         IntRect bounds;
@@ -1145,8 +1147,15 @@ void CacheBuilder::BuildFrame(Frame* root, Frame* frame,
             maxLength = input->maxLength();
             name = input->name().string().copy();
             isUnclipped = isTransparent; // can't detect if this is drawn on top (example: deviant.com login parts)
+            toolTip = input->getAttribute(HTMLNames::typeAttr).string().copy();
+            isInput = true;
         } else if (node->hasTagName(HTMLNames::textareaTag))
             isTextArea = wantsKeyEvents = true;
+        //RoamTouch Change - begin
+        else if (node->hasTagName(HTMLNames::selectTag)) {
+            isSelect = wantsKeyEvents = true;
+        }
+        //RoamTouch Change - end
         else if (node->hasTagName(HTMLNames::aTag)) {
             const HTMLAnchorElement* anchorNode = 
                 (const HTMLAnchorElement*) node;
@@ -1267,6 +1276,8 @@ void CacheBuilder::BuildFrame(Frame* root, Frame* frame,
         cachedNode.setToolTip(toolTip); 
         cachedNode.setVideoSize(videoSize);
         cachedNode.setIsVideo(isVideo);
+        cachedNode.setIsInput(isInput);
+        cachedNode.setIsSelect(isSelect);
         //RoamTouch Change - end
         cachedNode.setHasCursorRing(hasCursorRing);
         cachedNode.setHasMouseOver(hasMouseOver);

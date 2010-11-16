@@ -108,6 +108,8 @@ enum WebHitTestResultType {
         HIT_TEST_EDIT_TEXT_TYPE,
         HIT_TEST_VIDEO_TYPE,
         HIT_TEST_TEXT_TYPE,
+        HIT_TEST_INPUT_TYPE,
+        HIT_TEST_SELECT_TYPE,
         HIT_TEST_TYPE_END,
 };
 //ROAMTOUCH CHANGE <<
@@ -1861,6 +1863,11 @@ static jobject nativeGetHitTestResultAtPoint(JNIEnv *env, jobject obj,
     if (result) {
         if (result->isTextField() || result->isTextArea()) {
             type = WebView::HIT_TEST_EDIT_TEXT_TYPE;
+        } else if (result->isInput()) {
+            type = WebView::HIT_TEST_INPUT_TYPE;
+            extraString = result->getToolTip();
+        } else if (result->isSelect()) {
+            type = WebView::HIT_TEST_SELECT_TYPE;
         } else if (result->isText()) {
             type = WebView::HIT_TEST_TEXT_TYPE;
             //extraString = text;

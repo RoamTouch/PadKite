@@ -69,9 +69,18 @@ public class WebHitTestResult {
      */
     public static final int VIDEO_TYPE = 10;
     /**
-     * HitTestResult for hitting text a text node
+     * HitTestResult for hitting a text node
      */
     public static final int TEXT_TYPE = 11;
+    /**
+     * HitTestResult for hitting HTML <input> element other than EDIT_TEXT_TYPE
+     * getExtra() will return the 'type' attribute of <input> element.
+     */
+    public static final int INPUT_TYPE = 12;
+    /**
+     * HitTestResult for hitting HTML <select>element
+     */
+    public static final int SELECT_TYPE = 13;
 
     private int mType;
     private String mExtra;

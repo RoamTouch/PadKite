@@ -126,6 +126,8 @@ public:
     //ROAMTOUCH CHANGE - begin
     bool isText() const { return mIsText; }
     bool isVideo() const { return mIsVideo; }
+    bool isSelect() const { return mIsSelect; }
+    bool isInput() const { return mIsInput; }
     const WebCore::String& getToolTip() const { return mToolTip; }
     const WebCore::IntSize& getVideoSize() const { return mVideoSize; }
     //ROAMTOUCH CHANGE - end
@@ -166,6 +168,8 @@ public:
     void setIsVideo(bool isVideo) { mIsVideo = isVideo; }
     void setVideoSize(WebCore::IntSize size) { mVideoSize = size; }
     void setToolTip(const WebCore::String& toolTip) { mToolTip = toolTip; }
+    void setIsSelect(bool isSelect) { mIsSelect = isSelect; }
+    void setIsInput(bool isInput) { mIsInput = isInput; }
     //ROAMTOUCH CHANGE - end
     void setIsTransparent(bool isTransparent) { mIsTransparent = isTransparent; }
     void setIsUnclipped(bool unclipped) { mIsUnclipped = unclipped; }
@@ -225,6 +229,8 @@ private:
     //ROAMTOUCH CHANGE - begin
     bool mIsText : 1;
     bool mIsVideo : 1;
+    bool mIsSelect : 1;
+    bool mIsInput : 1;
     //ROAMTOUCH CHANGE - end
     bool mIsTransparent : 1;
     bool mIsUnclipped : 1;
