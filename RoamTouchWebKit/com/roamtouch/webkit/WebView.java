@@ -1746,8 +1746,8 @@ public class WebView extends AbsoluteLayout
     }
 
 
-    /* Select single word or link */
-    public static final int SELECT_WORD_OR_LINK    = 1;
+    /* Select single word*/
+    public static final int SELECT_WORD            = 1;
     /* Select single line */
     public static final int SELECT_LINE            = 2;
     /* Select single sentence */
@@ -1781,6 +1781,8 @@ public class WebView extends AbsoluteLayout
     public static final int COPY_HTML_FRAGMENT_TO_CLIPBOARD      = 15;
     /* Select all web page content*/
     public static final int SELECT_ALL              = 16;
+    /* Select the entire link*/
+    public static final int SELECT_LINK             = 17;
 
     /**
        * Executes the selection command on the given point. The x,y co-ordinates are

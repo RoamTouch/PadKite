@@ -1506,27 +1506,33 @@ static void selectUsingGranularity(WebCore::Frame* frame, const WebCore::HitTest
     }
 }
 
+static void selectLink(WebCore::Frame* frame, const WebCore::HitTestResult& result)
+{
+    if (result.isLiveLink()) {
+        Node* innerNode = targetNode(result);
+
+        if (innerNode && innerNode->renderer()) {
+            WebCore::VisibleSelection newSelection;
+            Element* URLElement = result.URLElement();
+            WebCore::VisiblePosition pos(innerNode->renderer()->positionForPoint(result.localPoint()));
+            if (pos.isNotNull() && pos.deepEquivalent().node()->isDescendantOf(URLElement))
+                newSelection = WebCore::VisibleSelection::selectionFromContentsOfNode(URLElement);
+        
+            if (newSelection.isRange()) {
+                frame->setSelectionGranularity(WebCore::WordGranularity);
+            }
+
+            if (frame->shouldChangeSelection(newSelection))
+                frame->selection()->setSelection(newSelection);
+        }
+    }
+}
 static void selectClosestWordOrLink(WebCore::Frame* frame, const WebCore::HitTestResult& result)
 {
     if (!result.isLiveLink())
         return selectUsingGranularity(frame, result, WebCore::WordGranularity);
 
-    Node* innerNode = targetNode(result);
-
-    if (innerNode && innerNode->renderer()) {
-        WebCore::VisibleSelection newSelection;
-        Element* URLElement = result.URLElement();
-        WebCore::VisiblePosition pos(innerNode->renderer()->positionForPoint(result.localPoint()));
-        if (pos.isNotNull() && pos.deepEquivalent().node()->isDescendantOf(URLElement))
-            newSelection = WebCore::VisibleSelection::selectionFromContentsOfNode(URLElement);
-    
-        if (newSelection.isRange()) {
-            frame->setSelectionGranularity(WebCore::WordGranularity);
-        }
-
-        if (frame->shouldChangeSelection(newSelection))
-            frame->selection()->setSelection(newSelection);
-    }
+    selectLink(frame, result);
 }
 
 
@@ -1658,8 +1664,8 @@ void WebViewCore::executeSelectionCommand(int x, int y, int cmd)
 
     switch (cmd)
     {
-    case 1: //SELECT_WORD_OR_LINK
-        selectClosestWordOrLink(frame, result) ;
+    case 1: //SELECT_WORD
+        selectUsingGranularity(frame, result, WebCore::WordGranularity) ;
         break ;
     case 2: //SELECT_LINE
         selectUsingGranularity(frame, result, WebCore::LineGranularity) ;
@@ -1706,7 +1712,9 @@ void WebViewCore::executeSelectionCommand(int x, int y, int cmd)
     case 16: //SELECT_ALL
         m_mainFrame->selection()->selectAll();
         break ;
-
+    case 17: //SELECT_LINK
+        selectLink(frame, result);  
+        break;
     default:
         break ;
     }
