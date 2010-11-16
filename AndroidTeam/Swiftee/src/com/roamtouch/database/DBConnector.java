@@ -25,7 +25,11 @@ public class DBConnector {
 		private static final String DATABASE_CREATE2 = "create table bookmarks (name text not null ," +
 													  "url text not null);" ;
 		
-	
+		private static final String DATABASE_CREATE3 = "create table padkite_history (_id integer primary key autoincrement, "+
+		  "timestamp text not null ," +
+		  "url text not null ," +
+		  "title text not null ," +
+		  "type int);" ;
 
 		private static final String DATABASE_NAME = "padkiteDB";
 		private static final int DATABASE_VERSION = 1;
@@ -43,6 +47,7 @@ public class DBConnector {
 
 				db.execSQL(DATABASE_CREATE1);
 				db.execSQL(DATABASE_CREATE2);
+				db.execSQL(DATABASE_CREATE3);
 			}
 
 			@Override
@@ -189,6 +194,40 @@ public class DBConnector {
 			}
 			catch(Exception e){
 //				System.out.println("-------------exception "+  e  +" while getting bookmarks ------------");
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		/**
+		 * @param timestamp
+		 * @param url
+		 * @param title
+		 * @param type 0 for browser history, 1 for down-load history and 2 for event history
+		 */
+		public void addToHistory(String timestamp,String url,String title,int type){
+			try
+			{
+				mDatabase.execSQL("INSERT INTO padkite_history(timestamp,url,title,type) VALUES('"+timestamp+"','"+url+"','"+title+"',"+type+")");			
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		public Cursor getFromHistory(int type){
+			try
+			{
+				Cursor c = mDatabase.rawQuery("SELECT * FROM padkite_history WHERE type="+type, null);
+				if(c!=null)
+					if(c.getCount()>0)
+						return c;
+				
+				return null;
+			}
+			catch(Exception e)
+			{
 				e.printStackTrace();
 				return null;
 			}

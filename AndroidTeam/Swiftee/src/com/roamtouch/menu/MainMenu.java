@@ -7,20 +7,13 @@ import com.roamtouch.settings.RegisterActivity;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.SwifteeApplication;
 import com.roamtouch.view.EventViewerArea;
-
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.widget.Button;
 
 enum MainMenuFunctions {
 	none,
@@ -46,7 +39,6 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 	private BrowserActivity mParent;
 	public static boolean USER_REGISTERED = true;
 	private DBConnector database;
-	private SwifteeApplication appState;
 	private MenuButton button,backButton,fwdButton;
 	public static String PATH = BrowserActivity.THEME_PATH + "/";
 	
@@ -60,7 +52,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		//LayoutInflater.from(context).inflate(R.layout.main_menu, this);
 		MenuInflater.inflate(PATH + "main_menu.xml", context, this);
 		
-		appState = ((SwifteeApplication)context.getApplicationContext());
+		SwifteeApplication appState = ((SwifteeApplication)context.getApplicationContext());
     	database = appState.getDatabase();
     	
 		init();

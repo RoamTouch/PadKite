@@ -1,14 +1,8 @@
 package com.roamtouch.view;
 
 import java.util.ArrayList;
-import java.util.Set;
-
-import com.roamtouch.settings.GestureAdapter;
 import com.roamtouch.settings.PracticeGesture;
 import com.roamtouch.swiftee.BrowserActivity;
-import com.roamtouch.swiftee.R;
-import com.roamtouch.swiftee.SwifteeApplication;
-
 import android.gesture.Gesture;
 import android.gesture.GestureLibrary;
 import android.app.Activity;

@@ -51,7 +51,6 @@
        		android:configChanges="orientation|keyboardHidden"
        />   
        <activity android:name="com.roamtouch.settings.BrowserSettingActivity" />
-       <activity android:name="com.roamtouch.view.WebPage" />   
            
        <activity android:name="com.api.twitter.OAUTH" android:label="@string/oauth_name">
 			<intent-filter>

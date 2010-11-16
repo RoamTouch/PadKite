@@ -16,9 +16,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
-import com.api.blogger.BloggerActivity;
-import com.api.facebook.FacebookActivity;
-import com.api.twitter.TwitterActivity;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import android.gesture.Gesture;
 import android.gesture.GestureLibrary;
@@ -27,7 +24,6 @@ import android.gesture.GestureStroke;
 import android.gesture.Prediction;
 import com.roamtouch.menu.TabButton;
 import com.roamtouch.menu.WindowTabs;
-import com.roamtouch.settings.GestureRecorder;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SelectionGestureView;
@@ -47,12 +43,10 @@ import android.gesture.GestureOverlayView.OnGestureListener;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.ClipboardManager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -791,6 +785,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	     protected void onPostExecute(Long result) {
 	    	 eventViewer.setText("Download Complete");
 	         //showDialog("Downloaded " + result + " bytes");
+	    	 
 	     }
 	 }
 	

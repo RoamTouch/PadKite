@@ -30,7 +30,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.view.animation.Animation.AnimationListener;
 import roamtouch.webkit.WebChromeClient;
 import roamtouch.webkit.WebHitTestResult;
@@ -49,6 +48,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SelectionGestureView;
+import com.roamtouch.database.DBConnector;
 import com.roamtouch.menu.CircularLayout;
 import com.roamtouch.menu.CircularTabsLayout;
 import com.roamtouch.menu.MainMenu;
@@ -63,13 +63,12 @@ import com.roamtouch.swiftee.SwifteeApplication;
 public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanvas<FloatingCursor.FCObj> {
 	
 	
-	 	private BrowserActivity mParent;
-	 	
-		private int w = 0, h = 0;
-		
+		private DBConnector dbConnector;		
+	 	private BrowserActivity mParent;	 	
+		private int w = 0, h = 0;		
 		/* Maximum jump that is tolerated */
 		private final int MAX_JUMP = 128;
-	
+		
 	/**
 	 * Calculate the touching radius for FP 
 	 */
@@ -443,6 +442,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		public FloatingCursor(Context context, AttributeSet attrs) {
 			super(context, attrs);
 			init(context);
+			
+			SwifteeApplication app = (SwifteeApplication)context.getApplicationContext();
+			dbConnector = app.getDatabase();
 		}
         public String getCurrentURL(){
         	return mWebView.getUrl();
@@ -1792,7 +1794,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 			mWebView.loadUrl(url);
 		}
-		
+		public void loadData(String data){
+			
+			mWebView.loadData(data, "text/html", "utf-8");
+		}
 		public void nextWebPage(){
 			mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()-1);
 			//fcWindowTabs.setCurrentTab(fcWindowTabs.getCurrentTab()+1);
@@ -2118,6 +2123,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 		
 			@Override
+			public void doUpdateVisitedHistory (WebView view, String url, boolean isReload){
+				if(!isReload && !url.startsWith("data:text/html") && !url.startsWith("file:///android_asset/")){
+					Log.d("---History--------", "url = "+url+"  Title ="+ view.getTitle());
+					dbConnector.addToHistory(System.currentTimeMillis()+"", url, view.getTitle(), 1);
+				}
+			}
+			@Override
 			public void onPageFinished(WebView view, String url) {
 				//fcProgressBar.disable();
 				fcView.clearAnimation();
@@ -2130,6 +2142,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 				fcMainMenu.setBackEabled(view.canGoBack());
 				fcMainMenu.setFwdEabled(view.canGoForward());
+				
 			}
 			public Bitmap getCircleBitmap(WebView view){
 				Picture thumbnail = view.capturePicture();

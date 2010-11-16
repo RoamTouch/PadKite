@@ -3,7 +3,6 @@ package com.roamtouch.menu;
 import roamtouch.webkit.WebView;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.Button;
 import android.widget.ImageView;
 
 public class TabButton extends ImageView{

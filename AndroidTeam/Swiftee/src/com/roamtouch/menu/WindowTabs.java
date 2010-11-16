@@ -91,7 +91,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 	}
 	public void addWindow(String url){
 		TabButton but = new TabButton(mContext);
-		but.setBackgroundResource(R.drawable.settings_btn);
+		//but.setBackgroundResource(R.drawable.settings_btn);
 		but.setWebView(createWebView(url));
 		but.setOnClickListener(this);
 		but.setTabIndex(2);

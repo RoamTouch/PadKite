@@ -11,8 +11,8 @@ import android.view.View;
 
 public class MenuBGView extends View {
 
-	private float x = 0;
-	private float y = 0;
+//	private float x = 0;
+//	private float y = 0;
 	private int r = 25;
 	
 	private Bitmap bitmap;
@@ -28,8 +28,8 @@ public class MenuBGView extends View {
 
 	protected void setPosition(float x, float y)
 	{
-		this.x = x;
-		this.y = y;
+//		this.x = x;
+//		this.y = y;
 		invalidate();
 	}
 

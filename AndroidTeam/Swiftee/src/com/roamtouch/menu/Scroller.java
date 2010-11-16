@@ -17,9 +17,7 @@
 package com.roamtouch.menu;
 
 import android.content.Context;
-import android.hardware.SensorManager;
 import android.util.Log;
-import android.view.ViewConfiguration;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
@@ -85,7 +83,7 @@ public class Scroller  {
     public Scroller(Context context, Interpolator interpolator) {
         mFinished = true;
         mInterpolator = interpolator;
-        float ppi = context.getResources().getDisplayMetrics().density * 160.0f;
+///        float ppi = context.getResources().getDisplayMetrics().density * 160.0f;
         /*mDeceleration = SensorManager.GRAVITY_EARTH   // g (m/s^2)
                       * 39.37f                        // inch/meter
                       * ppi                           // pixels per inch

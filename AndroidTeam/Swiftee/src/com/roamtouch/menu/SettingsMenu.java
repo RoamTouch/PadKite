@@ -145,8 +145,13 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 						return;
 
 			    } }); 
-			  	alertDialog.show();
-				
+			    alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
+				      public void onClick(DialogInterface dialog, int which) {
+				    	  	//alertDialog.cancel();
+							return;
+
+				    } }); 
+			  	alertDialog.show();			
 				break;
 				
 			//Resize hit area
@@ -172,7 +177,9 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 			
 			//Practice gesture	
 			case history:		
-				mFloatingCursor.loadPage("file:///android_asset/Web Pages/history.html");
+				//mFloatingCursor.loadPage("file:///android_asset/Web Pages/history.html");
+				WebPage page = new WebPage();
+				mFloatingCursor.loadData(page.getBrowserHistory(mParent));
 				break;
 
 			case none:
