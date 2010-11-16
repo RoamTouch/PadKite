@@ -1891,6 +1891,12 @@ static jobject nativeGetHitTestResultAtPoint(JNIEnv *env, jobject obj,
                 }
             }
         }
+        
+        if (type == WebView::HIT_TEST_UNKNOWN_TYPE && result->isAnchor()) {
+            //This is probably an anchor node with javascript in its 'src' attribute.
+            type = WebView::HIT_TEST_SRC_ANCHOR_TYPE;
+        }
+
         bounds = result->getBounds();
 
         if (type == WebView::HIT_TEST_UNKNOWN_TYPE 
