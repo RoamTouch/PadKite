@@ -1825,6 +1825,28 @@ public class WebView extends AbsoluteLayout
                                     color, 0, 0);
         //nativeSetSelectionColor(Color.red(color), Color.green(color), Color.blue(color),  Color.alpha(color)) ;
     }
+
+
+    /**
+     * Performs zoom operation in the webview with respect to the given anchor point
+     * @param zoomCenterX horizontal zoom anchor point
+     * @param zoomCenterY vertical zoom anchor point
+     * @param zoomMultiplier Zoom in/out multiplier 
+               (e.g 1.25f for 25% zoom in or 0.8f for 25% zoom out from
+               the current scale factor)
+     * @return TRUE if zoom in succeeds. FALSE if no zoom changes.
+     */
+    public boolean zoom(float zoomCenterX, float zoomCenterY, float zoomMultiplier) {
+        switchOutDrawHistory();
+        mInZoomOverview = false;
+        // Anchor zooming to the given zoomCente point of the screen.
+        mZoomCenterX = zoomCenterX;
+        mZoomCenterY = zoomCenterY;
+        mAnchorX = viewToContentX((int) mZoomCenterX + mScrollX);
+        mAnchorY = viewToContentY((int) mZoomCenterY + mScrollY);
+        return zoomWithPreview(mActualScale * zoomMultiplier);
+    }
+    
     //ROAMTOUCH CHANGE <<
 
     /**
