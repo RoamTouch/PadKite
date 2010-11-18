@@ -2088,8 +2088,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		            
 		        }
 		    }
+		    
 			public void onProgressChanged  (WebView  view, int newProgress) {
-				//fcProgressBar.setProgress(newProgress);
+				fcView.setProgress(newProgress);
 			}
 			
 			// @Override
@@ -2134,8 +2135,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 			@Override
 			public void onPageFinished(WebView view, String url) {
-				//fcProgressBar.disable();
-				fcView.clearAnimation();
+				
+				fcView.stopAllAnimation(); // Stop 'loading' animation
+				fcView.startScaleUpAnimation(); //Restore original size
+				
 				fcMainMenu.toggleCloseORRefresh(true);
 				mContentWidth = view.getContentWidth();
 				mContentHeight = view.getContentHeight();
@@ -2207,7 +2210,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 */			
 			public void onPageStarted(WebView view, String url,Bitmap b) {
 				//fcProgressBar.enable();
-				fcView.startRotateAnimation();
+				fcView.startScaleDownAndRotateAnimation();
 				fcMainMenu.toggleCloseORRefresh(false);
 			}
 		}
