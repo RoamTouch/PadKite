@@ -125,17 +125,17 @@ public class ZoomWebView extends ViewGroup{
 	            }
 	            		
 	           //if (yDiff > 3 || xDiff > 3) {
-	            if(Math.abs(angleDiff) > 25 && Math.abs(angleDiff) < 250)  {
+	            if(Math.abs(angleDiff) > 10 && Math.abs(angleDiff) < 265)  {
 	            
 	            mAngleChange = angleDiff;
             	mAngle+=mAngleChange;
 
 	            onLayout(true,0,0,0,0);
 	            if(mAngleChange<0)
-	            	floatingCursor.circularZoomOut();
+	            	floatingCursor.circularZoom(0.9f);
 	            	//direction = -1;
 	            else
-	            	floatingCursor.circularZoomIn();
+	            	floatingCursor.circularZoom(1.10f);
 				
 				mLastMotionAngle = currentAngle;
 				mLastMotionX = x;

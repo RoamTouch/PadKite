@@ -1780,10 +1780,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				return false;
 			}
 			public void circularZoomIn(){
-				mWebView.zoomIn();
+				mWebView.zoom(fcX, fcY, 1.25f);
 			}
 			public void circularZoomOut(){
-				mWebView.zoomOut();
+				mWebView.zoom(fcX, fcY, 0.8f);
+			}
+			public void circularZoom(float zoomVal){
+				mWebView.zoom(fcX, fcY, zoomVal);
 			}
 			
 		public void setEventText(String str){
