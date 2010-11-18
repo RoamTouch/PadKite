@@ -16,6 +16,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
+
+import com.roamtouch.database.DBConnector;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import android.gesture.Gesture;
 import android.gesture.GestureLibrary;
@@ -47,6 +49,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.ClipboardManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -648,13 +651,16 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		floatingCursor.setWebView(wv,false);
 	}
 	public void removeWebView(){
-		webLayout.removeViewAt(activeWebViewIndex);
+		webLayout.removeViewAt(activeWebViewIndex);	
 		setActiveWebViewIndex(activeWebViewIndex);
 		int count = webLayout.getChildCount();
 		for(int i= activeWebViewIndex;i<count;i++){
 			WebView wv = (WebView) webLayout.getChildAt(i);
 			wv.setId(wv.getId()-1);
 		}
+		if(webLayout.getChildCount()==0){
+			floatingCursor.addNewWindow();
+		}	
 	}
 	public void adjustTabIndex(WindowTabs winTabs){
 		int count = winTabs.getChildCount() - 2;
@@ -768,11 +774,14 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	
 	public class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
+		URL url;
 	     protected Long doInBackground(URL... urls) {
 	         int count = urls.length;
 	         long totalSize = 0;
 	         for (int i = 0; i < count; i++) {
 	             Downloader.downloadFile(urls[i]);
+	             if(urls[i]!=null)
+	            	 url = urls[i];
 	             publishProgress((int) ((i / (float) count) * 100));
 	         }
 	         return totalSize;
@@ -785,7 +794,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	     protected void onPostExecute(Long result) {
 	    	 eventViewer.setText("Download Complete");
 	         //showDialog("Downloaded " + result + " bytes");
-	    	 
+	    	 SwifteeApplication appState = ((SwifteeApplication)BrowserActivity.this.getApplicationContext());
+	     	 DBConnector database = appState.getDatabase();
+	     	 //Log.d("Inside async task download-----------", database + "url="+url);
+	     	 database.addToHistory(System.currentTimeMillis()+"", url.toString(), "", 2);
 	     }
 	 }
 	
