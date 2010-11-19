@@ -132,10 +132,10 @@ public class ZoomWebView extends ViewGroup{
 
 	            onLayout(true,0,0,0,0);
 	            if(mAngleChange<0)
-	            	floatingCursor.circularZoom(0.9f);
+	            	floatingCursor.circularZoom(0.9f); // zoomOut
 	            	//direction = -1;
 	            else
-	            	floatingCursor.circularZoom(1.10f);
+	            	floatingCursor.circularZoom(1.10f); // zoomIn
 				
 				mLastMotionAngle = currentAngle;
 				mLastMotionX = x;
