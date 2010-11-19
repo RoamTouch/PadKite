@@ -65,8 +65,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 
-	public static String version = "Version Beta-v1.42.5-eclair build #727ac2/b8a707";
-	public static String version_code = "Version Beta-v1.42.5";
+	public static String version = "Version Beta-v1.42.6-eclair build #5947d1/1adc6d";
+	public static String version_code = "Version Beta-v1.42.6";
 	
 	final public static boolean developerMode = false;
 	
