@@ -377,7 +377,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			//pointer.scrollTo(-140, -140);
         
 			fcView = new FloatingCursorView(getContext());
-			fcView.setRadius(RADIUS);
+			fcView.setRadius(RADIUS*3/4);
 	
 			removeTouchPoint();
 		
@@ -388,25 +388,27 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 			//fcProgressBar=new CircularProgressBar(getContext(),(int)(RADIUS*0.3f)+20);
 
+			int circRadius = (int)(RADIUS*110/120);
+			
 			fcMainMenu = new MainMenu(context);
-			fcMainMenu.setfcRadius(RADIUS);
+			fcMainMenu.setfcRadius(circRadius);
 			fcMainMenu.setVisibility(INVISIBLE);
 			fcMainMenu.setFloatingCursor(this);
 			currentMenu = fcMainMenu;
 			
 			fcSettingsMenu =  new SettingsMenu(context);
-			fcSettingsMenu.setfcRadius(RADIUS);
+			fcSettingsMenu.setfcRadius(circRadius);
 			fcSettingsMenu.setVisibility(INVISIBLE);
 			fcSettingsMenu.setFloatingCursor(this);
 			
 			fcWindowTabs = new WindowTabs(context);
-			fcWindowTabs.setfcRadius(RADIUS);
+			fcWindowTabs.setfcRadius(circRadius);
 			fcWindowTabs.setVisibility(INVISIBLE);
 			fcWindowTabs.setFloatingCursor(this);
 			
 			zoomView = new ZoomWebView(context);
 			zoomView.setFloatingCursor(this);
-			zoomView.setFCRadius(RADIUS);
+			zoomView.setFCRadius(circRadius);
 			zoomView.setVisibility(INVISIBLE);
 			
 
