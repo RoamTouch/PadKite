@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -716,7 +717,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		String responseString = "";
 		try {
 			HttpClient httpclient = new DefaultHttpClient();
-			HttpPost httppost = new HttpPost("http://padkite.com/shurly/api/shorten?longUrl="+longUrl+"&format=txt");
+			HttpPost httppost = new HttpPost("http://padkite.com/shurly/api/shorten?longUrl="+URLEncoder.encode(longUrl,"UTF-8")+"&format=txt");
 			HttpResponse response = httpclient.execute(httppost);
 			HttpEntity entity = response.getEntity();
 			responseString = getResponseBody(entity);
