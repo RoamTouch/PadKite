@@ -792,7 +792,18 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					cursorImage = R.drawable.keyboard_cursor;
 					break;
 				}
-			
+				
+				case WebHitTestResult.INPUT_TYPE: {
+					//eventViewer.setText("Type = " + mWebHitTestResult.getExtra());
+					cursorImage = R.drawable.link_cursor;
+					break;
+				}
+
+				case WebHitTestResult.SELECT_TYPE: {
+					cursorImage = R.drawable.link_cursor;
+					break;
+				}
+				
 				case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
 				case WebHitTestResult.SRC_ANCHOR_TYPE: 
 				{
@@ -932,7 +943,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);		
 				startHitTest(fcX,fcY);
 			}
-			else if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE || mWebHitTestResult.getType() == WebHitTestResult.UNKNOWN_TYPE || mWebHitTestResult.getType() == -1){
+			else if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE || mWebHitTestResult.getType() == WebHitTestResult.UNKNOWN_TYPE || mWebHitTestResult.getType() == WebHitTestResult.INPUT_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SELECT_TYPE || mWebHitTestResult.getType() == -1){
 				eventViewer.setText("Clicking ...");
 
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
