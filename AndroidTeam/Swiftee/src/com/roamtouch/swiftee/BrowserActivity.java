@@ -216,7 +216,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	
 		sharedPreferences = getApplicationContext().getSharedPreferences("Shared_Pref_AppSettings", MODE_WORLD_READABLE);
 
-		
+
+		// FIXME: First show loading screen ...
         setContentView(R.layout.main);
         
         if(!isOnline()){
@@ -233,26 +234,32 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         
         }
         
-        if(getExpired()){
-        	AlertDialog.Builder dialog= new AlertDialog.Builder(this);
-        	dialog.setTitle("Beta version is expired");
-        	dialog.setMessage("This version of PadKite Beta has expired. Please download a new version from http://padkite.com/. The application will close automatically in 30 seconds.");
-        	dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {	
-        			public void onClick(DialogInterface dialog, int id) {
-        			}        		
-        	});
-
-        	dialog.show();
+        mHandler.postDelayed(new Runnable() {
+       
+        	public void run() {
         	
-        	mHandler.postDelayed(new Runnable() {
+        	if(getExpired()){
+        		AlertDialog.Builder dialog= new AlertDialog.Builder(BrowserActivity.this);
+        		dialog.setTitle("Beta version is expired");
+        		dialog.setMessage("This version of PadKite Beta has expired. Please download a new version from http://padkite.com/. The application will close automatically in 30 seconds.");
+        		dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {	
+        				public void onClick(DialogInterface dialog, int id) {
+        				}        		
+        		});
+
+        		dialog.show();
+        	
+        		mHandler.postDelayed(new Runnable() {
 			
-        		public void run()
-        		{
-        			System.exit(1);
-        		}
+        			public void run()
+        			{
+        				System.exit(1);
+        			}
 			
-        	}, 30000);
-        }
+        		}, 30000);
+        	}
+        }   	
+        }, 1000);
         
         webLayout = (FrameLayout) findViewById(R.id.webviewLayout);
         
