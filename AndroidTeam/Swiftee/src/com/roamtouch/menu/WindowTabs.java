@@ -51,7 +51,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 	
 	public void setCurrentThumbnail(BitmapDrawable bd,WebView wv){
 		int count = getChildCount();
-		for(int i =2;i<count-2;i++){
+		for(int i =2;i<count-3;i++){
 			TabButton tab = (TabButton) getChildAt(i);
 			if(wv == tab.getWebView()){
 				tab.setImageDrawable(bd);
@@ -81,7 +81,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 	}
 	
 	public void setCurrentTab(int i){
-		int count = getChildCount()-2;
+		int count = getChildCount()-3;
 		if(i > 1 && i < count){
 			currentTab = i;
 		}
@@ -89,6 +89,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 	public int getCurrentTab(){
 		return currentTab;
 	}
+	
 	public void addWindow(String url){
 		TabButton but = new TabButton(mContext);
 		//but.setBackgroundResource(R.drawable.settings_btn);
@@ -97,7 +98,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		but.setTabIndex(2);
 		addView(but,2);
 		int count = getChildCount();
-		for(int i =3;i<count-2;i++){
+		for(int i =3;i<count-3;i++){
 			TabButton tab = (TabButton) getChildAt(i);
 			tab.setTabIndex(i);
 		}
@@ -106,11 +107,12 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()+1);
 		
 		currentTab = 2;
+		setActiveTabIndex(but);
 	}
 	
 	public int getWindowCount()
 	{
-		return getChildCount() - 4;
+		return getChildCount() - 5;
 	}
 	
 	public WebView createWebView(String url){

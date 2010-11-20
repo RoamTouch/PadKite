@@ -56,11 +56,12 @@ public class CircularTabsLayout extends ViewGroup {
 	   
 		private float mAngleChange;
 	   
-		private int childStartPoint;
+		private int childStartPoint = 3;
 		
 		private int activetabIndex = 2;
 		
 		protected MenuBGView menuBackground= null;
+		protected ImageView currentWindowIcon = null;
 		
 		private String m_name = "Windows";
 		
@@ -91,7 +92,10 @@ public class CircularTabsLayout extends ViewGroup {
 			menuBackground.setScaleType(ImageView.ScaleType.CENTER);*/
 			menuBackground = new MenuBGView(this.context);
 			menuBackground.setRadius(INNER_RADIUS);
-		
+			
+			ImageView empty = new ImageView(this.context);
+
+			addView(empty);
 			addView(menuBackground);
 		}		
 		
@@ -107,10 +111,6 @@ public class CircularTabsLayout extends ViewGroup {
 			this.context = context;			
 
 			initBG();
-			
-			ImageView redCircle = new ImageView(context);
-			redCircle.setBackgroundResource(R.drawable.wm_current);
-			addView(redCircle);
 		   }
 		
 		@Override
@@ -146,7 +146,6 @@ public class CircularTabsLayout extends ViewGroup {
 		    t=55;
 
 
-		    childStartPoint = 2;
 		    Button but = (Button)getChildAt(count-1);
 		    int diff = BUTTON_RADIUS2*2/3;
 		    but.layout(a-diff, b-inR2-diff,a+diff, b-inR2+diff);
@@ -185,11 +184,9 @@ public class CircularTabsLayout extends ViewGroup {
 
 
 		    		if(child.shouldDraw()) {
-		    			if(i == activetabIndex){
+		    			if(child.getId() == activetabIndex){
 
-		    				ImageView redCircle = (ImageView)getChildAt(1);
-		    				redCircle.setBackgroundResource(R.drawable.wm_current);
-		    				redCircle.layout(childLeft-10, childTop-10, lb+10, rb+10);   
+		    				currentWindowIcon.layout(childLeft-10, childTop-10, lb+10, rb+10);   
 		    			}
 		    			child.layout(childLeft, childTop, lb, rb);                	
 		    		}
@@ -200,7 +197,10 @@ public class CircularTabsLayout extends ViewGroup {
 	   public final static String PATH = BrowserActivity.THEME_PATH + "/";
 	   
 	   public void init(){
-		   
+			
+			currentWindowIcon = new ImageView(context);
+			currentWindowIcon.setBackgroundResource(R.drawable.wm_current);
+			addView(currentWindowIcon);		   
 		
 		 	ImageView coneSeparator = new ImageView(context);
 		 	coneSeparator.setBackgroundResource(R.drawable.circleround_cone);
@@ -214,7 +214,7 @@ public class CircularTabsLayout extends ViewGroup {
 
 	   public boolean canScroll(float angleDiff,int childCount) {
 		   	TabButton first = (TabButton)getChildAt(2);
-		   	TabButton last = (TabButton)getChildAt(childCount-3);
+		   	TabButton last = (TabButton)getChildAt(childCount-4);
 
 		   	if((first.getAngle()+angleDiff)>4)
 		   		return false;
@@ -230,9 +230,8 @@ public class CircularTabsLayout extends ViewGroup {
 		   	final int lb = child.getCenterX() + BUTTON_RADIUS;
 		   	final int rb = child.getCenterY() + BUTTON_RADIUS;
 
-		   	ImageView redCircle = (ImageView)getChildAt(1);
-		   	redCircle.setBackgroundResource(R.drawable.wm_current);
-		   	redCircle.layout(childLeft-10, childTop-10, lb+10, rb+10);   
+		   	activetabIndex = child.getId();
+		   	currentWindowIcon.layout(childLeft-10, childTop-10, lb+10, rb+10);   
 
 	   }
 		public int getActiveTabIndex(){
@@ -394,11 +393,16 @@ public class CircularTabsLayout extends ViewGroup {
 		}
 	
 		public void moveChilds(){
+			
 			int count=getChildCount();
 			for (int i = 2; i < count-childStartPoint; i++) {
 
-				TabButton child = (TabButton)getChildAt(i);
-
+		    	View v = getChildAt(i);
+		    	if (!(v instanceof TabButton))
+		    		continue;
+		    	
+		    	TabButton child = (TabButton)v;
+				
 				if (child.getVisibility() != GONE) {            
 					double angle=child.getAngle();
 					angle+=mAngleChange;
@@ -410,27 +414,19 @@ public class CircularTabsLayout extends ViewGroup {
 					final int lb = child.getCenterX() + BUTTON_RADIUS;
 					final int rb = child.getCenterY() + BUTTON_RADIUS;
 
-					ImageView redCircle = (ImageView)getChildAt(1);
+					if(child.getId() == activetabIndex){
+						currentWindowIcon.layout(childLeft-10, childTop-10, lb+10, rb+10);   
+						currentWindowIcon.setVisibility(View.VISIBLE);
+					}
+					
 					//Button but1 = (Button)getChildAt(count-3);
 					if(child.shouldDraw()) {
 						child.setVisibility(View.VISIBLE);
 						child.layout(childLeft, childTop, lb, rb);
-						if(i == activetabIndex){
-							redCircle.setVisibility(View.VISIBLE);
-						//	but1.setVisibility(View.VISIBLE);
-							//child.calCloseButCenter(a,b,inR-50,angle);
-
-						//	but1.layout(child.getCloseButCenterX()-25, child.getCloseButCenterY()-25,child.getCloseButCenterX()+25, child.getCloseButCenterY()+25);
-
-							redCircle.setBackgroundResource(R.drawable.wm_current);
-							redCircle.layout(childLeft-10, childTop-10, lb+10, rb+10);   
-						}
 					}
 					else{
-						if(i == activetabIndex){
-							redCircle.setVisibility(View.INVISIBLE);
-							child.setVisibility(View.INVISIBLE);
-						//	but1.setVisibility(View.INVISIBLE);
+						if(child.getId() == activetabIndex){
+							currentWindowIcon.setVisibility(View.INVISIBLE);
 						}
 						child.setVisibility(View.INVISIBLE);
 					}

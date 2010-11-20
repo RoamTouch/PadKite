@@ -662,8 +662,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			floatingCursor.addNewWindow();
 		}	
 	}
+
 	public void adjustTabIndex(WindowTabs winTabs){
-		int count = winTabs.getChildCount() - 2;
+		int count = winTabs.getChildCount() - 3;
 		int wvCount = webLayout.getChildCount();
 		for(int i= 2;i<count;i++){
 			TabButton child = (TabButton)winTabs.getChildAt(i);
