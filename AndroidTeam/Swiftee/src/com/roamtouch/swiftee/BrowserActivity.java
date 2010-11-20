@@ -259,7 +259,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         		}, 30000);
         	}
         }   	
-        }, 1000);
+        }, 10000);
         
         webLayout = (FrameLayout) findViewById(R.id.webviewLayout);
         
