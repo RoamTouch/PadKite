@@ -41,6 +41,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		TabButton tab1 = (TabButton) findViewById(R.id.Tab1);
 		tab1.setId(0);
 		tab1.setWebView(wv);
+		setActiveTabIndex(tab1);
 	}
 	public void setFloatingCursor(FloatingCursor mFloatingCursor) {
 //		this.mFloatingCursor = mFloatingCursor;
