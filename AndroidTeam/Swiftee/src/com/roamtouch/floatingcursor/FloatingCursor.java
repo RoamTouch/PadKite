@@ -149,6 +149,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
     
 		private Handler handler;
 		private Runnable runnable;
+		private KiteRunnable runnableKiteAni;
+
 		private boolean timerStarted = false;//ms
 
 	/**
@@ -438,6 +440,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}
 				
 			};
+
+			runnableKiteAni = new KiteRunnable();
 		}
 
 
@@ -669,6 +673,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						currentMenu = fcMainMenu;
 						animationLock = false;
 						handler.removeCallbacks(runnable);
+						runnableKiteAni.start();
 					}
 					
 					public void onAnimationRepeat(Animation animation) {}
@@ -1330,6 +1335,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 			int action = event.getAction() & MotionEvent.ACTION_MASK;
 			
+			if (action == MotionEvent.ACTION_DOWN)
+				runnableKiteAni.stop();
+			
 			boolean status;
 
 			int X,Y;		
@@ -1596,6 +1604,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			{
 				if(currentMenu.getVisibility() == View.VISIBLE)
 					handler.postDelayed(runnable, 10000);
+				else
+					runnableKiteAni.start();
 				
 				if(currentMenu == fcWindowTabs){
 					if(mPrevX > X+100)
@@ -2271,5 +2281,39 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		public void setSelectionGesture(SelectionGestureView v) {
 			mSelectionGestures = v;
 		}
+
+		class KiteRunnable implements Runnable {
+
+			boolean started = false;
+			boolean animated = false;
+			
+			public void run() {
+				if( false /* !getOption (animateKite) */)
+					return;
+
+				if (started) {
+					if (!animated)
+						fcView.startKiteAnimation();
+					animated = true;
+				}
+				else {
+					started = true;
+					animated = false;
+					handler.postDelayed(this,2000);
+				}
+			}
+			
+			public void start() {
+				handler.post(this);
+			}
+
+			public void stop() {
+				if (animated)
+					fcView.stopAllAnimation();
+				handler.removeCallbacks(this);
+				animated = false;
+				started = false;
+			}
+		};
 
 }

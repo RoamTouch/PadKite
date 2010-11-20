@@ -7,13 +7,17 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
+import android.view.animation.Animation.AnimationListener;
 
 public class FloatingCursorView extends View{
 	
@@ -34,6 +38,8 @@ public class FloatingCursorView extends View{
     private AnimationSet set;
     private RotateAnimation ra;
     private ScaleAnimation sa;
+    private TranslateAnimation ta;
+
     private boolean isLoadingAnimationShown = false;
 
     public FloatingCursorView(Context context) {
@@ -147,7 +153,82 @@ public class FloatingCursorView extends View{
     	// ra.setInterpolator(new LinearInterpolator());
     	// this.startAnimation(ra);
 	}
-	
+    
+    public Handler handler = new Handler();
+ 
+    public Runnable runnable = new Runnable() {
+    	public void run() {
+            FloatingCursorView.this.startKiteAnimation();
+
+    	}
+    };
+    
+    public void startKiteAnimation() {
+    	
+    	if (isLoadingAnimationShown)
+    		return;
+
+        this.clearAnimation();
+        //Drift to be a random number between -20 and 20
+        float driftX = -20 + (float) Math.random() * 40;
+        float driftY = -20 + (float) Math.random() * 40;
+
+        if (driftX < 0 && driftX > -5)
+        	driftX = -5;
+
+        if (driftX >= 0 && driftX < 5)
+        	driftX = -5;
+
+        if (driftY < 0 && driftY > -5)
+        	driftY = -5;
+
+        if (driftY >= 0 && driftY < 5)
+        	driftY = -5;
+        
+        ta = new TranslateAnimation(0, driftX, 0, driftY);
+        ta.setDuration((long) 5000);
+        ta.setInterpolator(new AccelerateDecelerateInterpolator());
+        
+        final float driftXC = driftX;
+        final float driftYC = driftY;
+        
+        ta.setAnimationListener(new AnimationListener(){
+
+            public void onAnimationEnd(Animation arg0) {
+            	   TranslateAnimation ta2 = new TranslateAnimation(driftXC, 0, driftYC, 0);
+                   ta2.setDuration((long) 5000);
+                   ta2.setInterpolator(new AccelerateDecelerateInterpolator());      
+                   ta2.setAnimationListener(new AnimationListener() {
+
+                	   public void onAnimationEnd(Animation arg0) {
+
+                		   handler.postDelayed(runnable, (int) (1000+Math.random() * 5000));
+                	   }
+                	   
+                	   public void onAnimationRepeat(Animation arg0) {
+
+                       }
+
+                       public void onAnimationStart(Animation arg0) {
+
+                       }
+                	   
+                   });
+                   FloatingCursorView.this.startAnimation(ta2);
+            }
+
+            public void onAnimationRepeat(Animation arg0) {
+
+            }
+
+            public void onAnimationStart(Animation arg0) {
+
+            }
+
+        });
+        this.startAnimation(ta);
+    }
+    	
 	public void stopAllAnimation() {
 		this.clearAnimation();
 		isLoadingAnimationShown = false;
