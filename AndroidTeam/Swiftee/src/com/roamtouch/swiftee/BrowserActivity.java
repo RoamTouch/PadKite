@@ -269,7 +269,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         webView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
         webView.setMapTrackballToArrowKeys(false); // use trackball directly
         // Enable the built-in zoom
-        webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setBuiltInZoomControls(false);
         webView.getSettings().setJavaScriptEnabled(true);
 		LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
 		//params.setMargins(0, 20, 0, 0);

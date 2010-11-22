@@ -123,7 +123,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
         webView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
         webView.setMapTrackballToArrowKeys(false); // use trackball directly
         // Enable the built-in zoom
-        webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setBuiltInZoomControls(false);
         webView.getSettings().setJavaScriptEnabled(true);
         LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
 		webView.setLayoutParams(params);
