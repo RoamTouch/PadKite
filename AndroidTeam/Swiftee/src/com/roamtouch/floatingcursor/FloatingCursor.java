@@ -1014,6 +1014,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 				mLongTouchEnabled = true;
 			}
+			
+			vibrator.vibrate(25);
 		}
 		
 		public void onLongTouchUp() 
