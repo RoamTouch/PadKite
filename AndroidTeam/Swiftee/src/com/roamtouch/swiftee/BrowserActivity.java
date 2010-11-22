@@ -547,7 +547,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         else if("Add Link".equals(action) || "Bookmark".equals(action)){
         	actions.addLink();
         }     
-        else if("Open Link".equals(action)){
+        else if("Open Link".equals(action) || "New Window".equals(action)){
         	actions.openLink(floatingCursor);
         }     
         else if("Download".equals(action)){
