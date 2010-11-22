@@ -945,6 +945,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 			else if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE || mWebHitTestResult.getType() == WebHitTestResult.UNKNOWN_TYPE || mWebHitTestResult.getType() == WebHitTestResult.INPUT_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SELECT_TYPE || mWebHitTestResult.getType() == -1){
 				eventViewer.setText("Clicking ...");
+				cancelSelection();
 
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 				//pointer.setImageResource(R.drawable.address_bar_cursor);
@@ -1014,6 +1015,27 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 				mLongTouchEnabled = true;
 			}
+			else if ( mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE) {
+				eventViewer.setText("Detected Long-Touch. Pasting clipboard contents ...");
+
+				
+				final String selection = (String) ((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).getText();
+
+				if (selection != "") {
+					sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
+					sendEvent(MotionEvent.ACTION_UP, fcX, fcY);
+
+					handler.postDelayed(new Runnable() {
+						
+						public void run() {
+							mWebView.pasteText(selection);
+						}
+					}, 300);
+					mLongTouchEnabled = true;
+				}
+				
+				//mLongTouchEnabled = true;
+			}
 			
 			vibrator.vibrate(25);
 		}
@@ -1026,6 +1048,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				return;
 			}
 			
+			if (mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE) {
+				cancelSelection();
+				return;
+			}
+
 			mLongTouchEnabled = false;
 
 			stopSelectionCommand();
@@ -1430,7 +1457,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				int dMX = Math.abs(X-mPrevMoveX);
 				int dMY = Math.abs(Y-mPrevMoveY);
 
-				if (dMX >= MAX_JUMP || dMY >= MAX_JUMP)
+				if ((dMX >= MAX_JUMP || dMY >= MAX_JUMP) && mGesturesEnabled)
 				{
 					action = MotionEvent.ACTION_UP;
 					mMoveFrozen = true;
