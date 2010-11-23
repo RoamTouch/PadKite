@@ -282,9 +282,11 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		return false;
 	}
 	public void setBackEabled(boolean b){
+		if(backButton!=null)
 			backButton.setEnabled(b);
 	}
 	public void setFwdEabled(boolean b){
+		if(fwdButton!=null)
 			fwdButton.setEnabled(b);
 	}
 }

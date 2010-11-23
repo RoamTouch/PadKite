@@ -37,6 +37,15 @@ public class HowToActivity extends Activity implements  OnClickListener, OnCheck
        
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         
+        SwifteeApplication appState = ((SwifteeApplication)getApplicationContext());
+        
+        if(!appState.isSdCardReady()){
+        	Intent i = new Intent(this,SdCardError.class);
+        	startActivity(i);
+        	finish();
+        }
+        else{
+        
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
 		dont_start = sharedPref.getBoolean("DontShowAgain", false);
@@ -80,8 +89,8 @@ public class HowToActivity extends Activity implements  OnClickListener, OnCheck
 
 		        CheckBox chk_dntShowAgn = (CheckBox) findViewById(R.id.dont_show_again);
 		        chk_dntShowAgn.setOnCheckedChangeListener(this);
-		}
-        
+		}      
+       }
     }
 
     public void onClick(View v) {

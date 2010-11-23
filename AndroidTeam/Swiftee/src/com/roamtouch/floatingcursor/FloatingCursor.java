@@ -149,7 +149,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
     
 		private Handler handler;
 		private Runnable runnable;
-//		private KiteRunnable runnableKiteAni;
+		private KiteRunnable runnableKiteAni;
 
 		private boolean timerStarted = false;//ms
 
@@ -441,7 +441,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 			};
 
-			//runnableKiteAni = new KiteRunnable();
+			runnableKiteAni = new KiteRunnable();
 		}
 
 
@@ -673,7 +673,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						currentMenu = fcMainMenu;
 						animationLock = false;
 						handler.removeCallbacks(runnable);
-						//runnableKiteAni.start();
+						runnableKiteAni.start();
 					}
 					
 					public void onAnimationRepeat(Animation animation) {}
@@ -1099,11 +1099,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					selectedLink.endsWith(".mov"))
 				return 2;
 				if(
-					selectedLink.endsWith(".jpg") || 
-					selectedLink.endsWith(".jpeg") || 
+					selectedLink.endsWith(".jpg")|| 
+					selectedLink.endsWith(".jpeg")|| 
 					selectedLink.endsWith(".png")||
 					selectedLink.endsWith(".gif")||
-					selectedLink.endsWith(".bmp"))
+					selectedLink.endsWith(".bmp")||
+					selectedLink.endsWith(".pdf")||
+					selectedLink.endsWith(".doc")||
+					selectedLink.endsWith(".txt"))
 				return 1;
 			return 0;
 		}
@@ -1375,8 +1378,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 			int action = event.getAction() & MotionEvent.ACTION_MASK;
 			
-			//if (action == MotionEvent.ACTION_DOWN)
-				//runnableKiteAni.stop();
+			if (action == MotionEvent.ACTION_DOWN)
+				runnableKiteAni.stop();
 			
 			boolean status;
 
@@ -1644,8 +1647,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			{
 				if(currentMenu.getVisibility() == View.VISIBLE)
 					handler.postDelayed(runnable, 10000);
-				//else
-					//runnableKiteAni.start();
+				else
+					runnableKiteAni.start();
 				
 				if(currentMenu == fcWindowTabs){
 					if(mPrevX > X+100)

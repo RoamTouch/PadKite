@@ -6,7 +6,6 @@ import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.view.EventViewerArea;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -70,7 +69,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 			removeWindow();
 			return;
 		}
-		else{
+		else if (v instanceof TabButton){
 			TabButton child = (TabButton)v;
 			mParent.setActiveWebViewIndex(id);
 			setActiveTabIndex(child);	

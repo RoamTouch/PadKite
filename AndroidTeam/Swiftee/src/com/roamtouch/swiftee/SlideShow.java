@@ -38,6 +38,7 @@ public class SlideShow extends Activity implements OnGestureListener, OnClickLis
 		super.onCreate(savedInstanceState);
 		getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 		
+		
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
 //		SharedPreferences.Editor editor = sharedPref.edit();

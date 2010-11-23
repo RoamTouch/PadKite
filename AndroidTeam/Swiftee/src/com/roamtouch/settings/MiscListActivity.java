@@ -2,13 +2,13 @@ package com.roamtouch.settings;
 
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,7 +26,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -43,6 +42,11 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 	private ListView mMiscList;
 	private String phoneLanguage;
 
+	float scale;
+	private int item_height ; //Converting to Pixel
+	private int padding;
+	
+	private ArrayList<View> views = new ArrayList<View>();
 	OnCheckedChangeListener chk_lsnr;
 	SharedPreferences sharedPreferences;
 
@@ -66,6 +70,10 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 
 		getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 		
+		scale = getResources().getDisplayMetrics().density;
+		item_height = (int) (60 * scale + 0.5f); //Converting to Pixel
+		padding = (int) (10 * scale + 0.5f); //Converting to Pixel
+		
 		setContentView(R.layout.misc_list);
 		mMiscList = (ListView)findViewById(R.id.miscList);
 		mMiscList.setAdapter(new MiscListAdapter());
@@ -85,7 +93,7 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 		switch(position){
-		case 2:
+/*		case 2:
 			final TextView tv2 = (TextView)view.findViewById(R.id.tv2);
 			String langs[] = getResources().getStringArray(R.array.language_preference);
 			final Dialog d = new Dialog(this);
@@ -108,25 +116,25 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 			list.setAdapter(new ArrayAdapter<String>(this,R.layout.simple_list_item_1,langs));
 			d.show();
 			break;
-		case 5:
+*/		case 4:
 			CheckBox cb = (CheckBox)view.findViewById(R.id.checkbox);
 			if(cb.isChecked())
 				cb.setChecked(false);
 			else
 				cb.setChecked(true);		
 			break;
-		case 6:
+		case 5:
 			cb = (CheckBox)view.findViewById(R.id.checkbox);
 			if(cb.isChecked())
 				cb.setChecked(false);
 			else
 				cb.setChecked(true);		
 			break;
-		case 7:
+		case 6:
 			Intent intent = new Intent(MiscListActivity.this,Contacts.class);
 			startActivity(intent);
 			break;
-		case 8:
+		case 7:
 			AlertDialog alertDialog = new AlertDialog.Builder(MiscListActivity.this).create();
 			alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 		    alertDialog.setMessage("This feature is currently not yet available. We are working really hard on it and it'll be there in future versions. Stay tuned.");
@@ -142,8 +150,19 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 			intent.setAction(Intent.ACTION_GET_CONTENT);
 			startActivityForResult(Intent.createChooser(intent,"Select Picture"), SELECT_PICTURE);
 */			break;
-		}
+		case 9:
+			alertDialog = new AlertDialog.Builder(MiscListActivity.this).create();
+			alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+		    alertDialog.setMessage("About Roaming Keyboards...");
+		    alertDialog.setTitle("About Us ...");
+		    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+		      public void onClick(DialogInterface dialog, int which) {
+		        return;
 
+		    } }); 
+		  	alertDialog.show();
+		  	break;
+		}
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -174,23 +193,23 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 			super(context);
 			LayoutInflater.from(context).inflate(R.layout.translate_adapter, this);		
 			TextView v1= (TextView) findViewById(R.id.tv1);
-			v1.setText(arr[position-1]);
+			v1.setText("Translate to:");
 
 			TextView v2= (TextView) findViewById(R.id.tv2);
 			SharedPreferences.Editor editor = sharedPreferences.edit();
 			
-			if(position == 1){
+//			if(position == 1){
 				v2.setText(phoneLanguage);
 				ImageView image = (ImageView)findViewById(R.id.image);
 				image.setVisibility(INVISIBLE);
 				editor.putString("language_from", phoneLanguage);
 				editor.commit();
-			}
+/*			}
 			else
 				v2.setText(sharedPreferences.getString("language_to", "Hindi"));
 				editor.putString("language_from", phoneLanguage);
 				editor.commit();
-		}
+*/		}
 
 	}
 	
@@ -202,16 +221,16 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 			LayoutInflater.from(context).inflate(R.layout.misc_adapter, this);
 
 			TextView v1= (TextView) findViewById(R.id.tv1);
-			v1.setText(arr[position-4]);
+			v1.setText(arr[position-3]);
 
 			CheckBox cb= (CheckBox) findViewById(R.id.checkbox);
 			ImageView image = (ImageView)findViewById(R.id.image);
 
-			if(position == 4){
+			if(position == 3){
 				cb.setVisibility(GONE);
 				image.setVisibility(VISIBLE);
 			}
-			else if(position == 5){
+			else if(position == 4){
 				if(sharedPreferences.getBoolean("enable_tutor", true)){
 					cb.setChecked(true);
 				}
@@ -221,7 +240,7 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 				cb.setTag("enable_tutor");
 				cb.setOnCheckedChangeListener(chk_lsnr);
 			}
-			else if(position == 6){
+			else if(position == 5){
 				if(sharedPreferences.getBoolean("enable_event_viewer", true)){
 					cb.setChecked(true);
 				}
@@ -231,7 +250,7 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 				cb.setTag("enable_event_viewer");
 				cb.setOnCheckedChangeListener(chk_lsnr);
 			}
-			else if(position == 7){
+			else if(position == 6){
 				cb.setVisibility(GONE);
 				image.setVisibility(VISIBLE);
 			}
@@ -249,14 +268,13 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 			ImageView image = (ImageView)findViewById(R.id.image_hotkey);
 			System.out.println("path : "+sharedPreferences.getString("selected_image_path", " "));
 			if(!sharedPreferences.getString("selected_image_path", " ").equals(" ")){
-				Bitmap bit = getSmallImage(sharedPreferences.getString("selected_image_path", " "));
-				image.setImageBitmap(bit);
+				//Bitmap bit = getSmallImage(sharedPreferences.getString("selected_image_path", " "));
+				//image.setImageBitmap(bit);
 			}
 			else{
 				image.setVisibility(View.GONE);
 			}
 		}
-
 	}
 	
 	public class AboutView extends LinearLayout{
@@ -315,6 +333,9 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 		}
 
 		public View getView(int position, View convertView, ViewGroup parent) {
+			if(views.size()==11)
+				return views.get(position);
+			
 			if(position == 0){
 				TextView tv = new TextView(MiscListActivity.this);
 				tv.setHeight(60);
@@ -323,9 +344,10 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 				tv.setTextColor(Color.WHITE);		
 				tv.setBackgroundColor(Color.BLACK);
 				tv.setGravity(Gravity.CENTER_VERTICAL);
+				views.add(0,tv);
 				return tv; 
 			}
-			else if(position == 3){
+			else if(position == 2){
 				TextView tv = new TextView(MiscListActivity.this);
 				tv.setHeight(60);
 				tv.setPadding(5, 0, 0, 0);
@@ -333,9 +355,10 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 				tv.setTextColor(Color.WHITE);		
 				tv.setBackgroundColor(Color.BLACK);
 				tv.setGravity(Gravity.CENTER_VERTICAL);
+				views.add(2,tv);
 				return tv; 
 			}
-			else if(position == 9){
+			else if(position == 8){
 				TextView tv = new TextView(MiscListActivity.this);
 				tv.setHeight(60);
 				tv.setPadding(5, 0, 0, 0);
@@ -343,21 +366,38 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 				tv.setTextColor(Color.WHITE);		
 				tv.setBackgroundColor(Color.BLACK);
 				tv.setGravity(Gravity.CENTER_VERTICAL);
+				views.add(8,tv);
+				return tv; 
+			}
+			else if(position == 9){
+				TextView tv = new TextView(MiscListActivity.this);
+				tv.setHeight(item_height);
+				tv.setPadding(padding, 0, 0, 0);
+				tv.setText("About Us");
+				tv.setTextSize(20);
+				tv.setTextColor(Color.BLACK);		
+				tv.setBackgroundColor(Color.WHITE);
+				tv.setGravity(Gravity.CENTER_VERTICAL);
+				views.add(9,tv);
 				return tv; 
 			}
 			else if(position == 10){
 				AboutView about=new AboutView(MiscListActivity.this);
+				views.add(10,about);
 				return about;
 			}
-			else if(position == 1 || position == 2){
+			else if(position == 1){
 				TranslateView translateView=new TranslateView(MiscListActivity.this,position);
+				views.add(1,translateView);
 				return translateView;
 			}
-			else if(position == 8){
+			else if(position == 7){
 				HotKeyView hotKeyView = new HotKeyView(MiscListActivity.this);
+				views.add(7,hotKeyView);
 				return hotKeyView;
 			}
 			MiscView miscView = new MiscView(MiscListActivity.this,position);
+			views.add(position,miscView);
 			return miscView;
 		}
 	}

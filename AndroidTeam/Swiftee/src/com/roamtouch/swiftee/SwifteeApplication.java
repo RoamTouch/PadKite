@@ -13,6 +13,7 @@ import com.roamtouch.database.DBConnector;
 import android.app.Application;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
+import android.os.Environment;
 //import android.os.Environment;
 
 public class SwifteeApplication extends Application{
@@ -34,15 +35,17 @@ public class SwifteeApplication extends Application{
 		database = new DBConnector(this);
 		database.open();
 		
-		// FIXME: For now force an update!
-		
-		copyFilestoSdcard("Default Theme", true);
-		copyFilestoSdcard("Gesture Library", false);
-		
+		if(isSdCardReady()){
+			// FIXME: For now force an update!		
+			copyFilestoSdcard("Default Theme", true);
+			copyFilestoSdcard("Gesture Library", false);
+		}
 		if(database.checkIfBookmarkAdded())
 			database.addBookmark();
 	}
-	
+	public boolean isSdCardReady(){
+		return Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);  
+	}
 	public void copyFilestoSdcard(String dir, boolean force){
 		try{
 			String arr[] = getAssets().list(dir);

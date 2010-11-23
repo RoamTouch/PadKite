@@ -67,9 +67,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 
 	public static String version = "Version Beta-v1.43.2-eclair build #299fbf/3e5dda";
-	public static String version_code = "Version Beta-v1.43.2-eclair";
+	public static String version_code = "Version Beta-v1.43.2";
 	
-	final public static boolean developerMode = true;
+	final public static boolean developerMode = false;
 	
 	final public static String BASE_PATH = "/sdcard/PadKite";
 	final public static String THEME_PATH = BASE_PATH + "/Default Theme";
@@ -209,6 +209,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        appState = ((SwifteeApplication)getApplicationContext());
+      
+        
 //    	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
     	
@@ -328,7 +331,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		mTopBarArea.setVisibility(View.GONE);
 		mTopBarArea.setWebView(webView);
 */		
-		appState = ((SwifteeApplication)getApplicationContext());
+		
 		
 		//This is a dummy user entry...neeed to remove after
 		appState.getDatabase().registerUser("dummy", "dummy", "dummy@example.com");
@@ -669,6 +672,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		if(webLayout.getChildCount()==0){
 			floatingCursor.addNewWindow();
 		}	
+		
 	}
 
 	public void adjustTabIndex(WindowTabs winTabs){
@@ -679,7 +683,14 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			wvCount--;
 			child.setId(wvCount);
 			child.setTabIndex(i);
-		}
+			if(i == winTabs.getCurrentTab()){
+				setActiveWebViewIndex(child.getId());
+				winTabs.setActiveTabIndex(child);	
+				winTabs.setCurrentTab(child.getTabIndex());
+				String url = child.getWebView().getUrl();
+				eventViewer.setText(url);
+			}
+		}		
 	}
 	public void setEventViewerMode(int mode){
 			eventViewer.setMode(mode);		
