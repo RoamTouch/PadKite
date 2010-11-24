@@ -29,6 +29,7 @@
 #include "wtf/Vector.h"
 
 #include "SkTypes.h"
+#include "SkColor.h"//ROAMTOUCH CHANGE
 
 class SkCanvas;
 
@@ -59,6 +60,13 @@ public:
 
     static void DrawRing(SkCanvas* ,
         const Vector<WebCore::IntRect>& rects, Flavor );
+    //ROAMTOUCH CHANGE >>
+    static void SetCursorOuterColors(SkColor normalRingSelect, SkColor fakeRingSelect,
+                                      SkColor normalRingPressed, SkColor fakeRingPressed);
+    static void SetCursorInnerColors(SkColor normalRingSelect, SkColor fakeRingSelect,
+                                      SkColor normalRingPressed, SkColor fakeRingPressed);
+    static void SetCursorPressedColors(SkColor normalRingPressed, SkColor fakeRingPressed);
+    //ROAMTOUCH CHANGE <<
 };
 
 #endif

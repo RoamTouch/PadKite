@@ -33,21 +33,21 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-const static SkColor cursorOuterColors[] = {
+/*const*/ static SkColor cursorOuterColors[] = {
     SkColorSetARGB(0xff, 0xB3, 0x3F, 0x08), // normal ring select
     SkColorSetARGB(0xff, 0x46, 0xb0, 0x00), // fake ring select, for phone, email, text
     SkColorSetARGB(0xff, 0xAD, 0x5C, 0x0A), // normal ring pressed
     SkColorSetARGB(0xff, 0x36, 0xc0, 0x00)  // fake ring pressed
 };
 
-const static SkColor cursorInnerColors[] = {
+/*const*/ static SkColor cursorInnerColors[] = {
     SkColorSetARGB(0xff, 0xFE, 0x92, 0x30), // normal ring select
     SkColorSetARGB(0xff, 0x8c, 0xd9, 0x00), // fake ring select, for phone, email, text
     SkColorSetARGB(0xff, 0xFE, 0xBD, 0x3A), // normal ring pressed
     SkColorSetARGB(0xff, 0x7c, 0xe9, 0x00)  // fake ring pressed
 };
 
-const static SkColor cursorPressedColors[] = {
+/*const*/ static SkColor cursorPressedColors[] = {
     SkColorSetARGB(0x80, 0xFF, 0xC6, 0x4B), // normal ring pressed
     SkColorSetARGB(0x80, 0x7c, 0xe9, 0x00)  // fake ring pressed
 };
@@ -89,4 +89,30 @@ void CursorRing::DrawRing(SkCanvas* canvas,
     canvas->drawPath(path, paint);
 }
 
+//ROAMTOUCH CHANGE >>
+void CursorRing::SetCursorOuterColors(SkColor normalRingSelect, SkColor fakeRingSelect,
+                                      SkColor normalRingPressed, SkColor fakeRingPressed)
+{
+    cursorOuterColors[0] = normalRingSelect;
+    cursorOuterColors[1] = fakeRingSelect;
+    cursorOuterColors[2] = normalRingPressed;
+    cursorOuterColors[3] = fakeRingPressed;
+}
+
+void CursorRing::SetCursorInnerColors(SkColor normalRingSelect, SkColor fakeRingSelect,
+                                      SkColor normalRingPressed, SkColor fakeRingPressed)
+{
+    cursorInnerColors[0] = normalRingSelect;
+    cursorInnerColors[1] = fakeRingSelect;
+    cursorInnerColors[2] = normalRingPressed;
+    cursorInnerColors[3] = fakeRingPressed;
+}
+
+void CursorRing::SetCursorPressedColors(SkColor normalRingPressed, SkColor fakeRingPressed)
+{
+    cursorPressedColors[0] = normalRingPressed;
+    cursorPressedColors[1] = fakeRingPressed;
+}
+
+//ROAMTOUCH CHANGE >>
 

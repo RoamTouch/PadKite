@@ -1823,8 +1823,60 @@ public class WebView extends AbsoluteLayout
     public void setSelectionColor(int color) {
         mWebViewCore.sendMessage(EventHub.SET_SELECTION_COLOR,
                                     color, 0, 0);
-        //nativeSetSelectionColor(Color.red(color), Color.green(color), Color.blue(color),  Color.alpha(color)) ;
     }
+
+    /**
+      * Sets the Search result highlight color of WebKit.
+      *
+      * @param c Search result highlight color
+      *       
+      */
+    public void setSearchHighlightColor(int color) {
+        if (mNativeClass != 0) {
+            nativeSetSelectionColor(Color.red(color), Color.green(color), Color.blue(color),  Color.alpha(color)) ;
+        }
+    }
+
+    /**
+      * Sets the WebKit focus ring outer colors
+      *
+      * @param c Focus ring outer colors
+      *       
+      */
+    public void     setCursorOuterColors(int normalRingSelect, int fakeRingSelect,
+                                      int normalRingPressed, int fakeRingPressed) {
+        if (mNativeClass != 0) {
+            nativeSetCursorOuterColors(normalRingSelect, fakeRingSelect,
+                                      normalRingPressed, fakeRingPressed) ;
+        }
+    }
+
+    /**
+      * Sets the WebKit focus ring inner colors
+      *
+      * @param c Focus ring inner colors
+      *       
+      */
+    public void     setCursorInnerColors(int normalRingSelect, int fakeRingSelect,
+                                      int normalRingPressed, int fakeRingPressed) {
+        if (mNativeClass != 0) {
+            nativeSetCursorInnerColors(normalRingSelect, fakeRingSelect,
+                                      normalRingPressed, fakeRingPressed) ;
+        }
+    }
+    
+    /**
+      * Sets the WebKit focus ring pressed state colors
+      *
+      * @param c Focus ring pressed state colors
+      *       
+      */
+    public void     setCursorPressedColors(int normalRingPressed, int fakeRingPressed) {
+        if (mNativeClass != 0) {
+            nativeSetCursorPressedColors(normalRingPressed, fakeRingPressed) ;
+        }
+    }
+    
 
 
     /**
@@ -6285,6 +6337,11 @@ public class WebView extends AbsoluteLayout
     //ROAMTOUCH CHANGE >>
     private native WebHitTestResult  nativeGetHitTestResultAtPoint(int x, int y, int slop);
     private native void     nativeSetCursorAtPoint(int x, int y, int slop);
-    private native void     nativeSetSelectionColor(int r, int g, int b, int a) ;    
+    private native void     nativeSetSelectionColor(int r, int g, int b, int a) ;
+    private native void     nativeSetCursorOuterColors(int normalRingSelect, int fakeRingSelect,
+                                      int normalRingPressed, int fakeRingPressed) ;
+    private native void     nativeSetCursorInnerColors(int normalRingSelect, int fakeRingSelect,
+                                      int normalRingPressed, int fakeRingPressed) ;
+    private native void     nativeSetCursorPressedColors(int normalRingPressed, int fakeRingPressed) ;
     //ROAMTOUCH CHANGE <<
 }

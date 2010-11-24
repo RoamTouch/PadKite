@@ -1995,6 +1995,33 @@ static void nativeSetSelectionColor(JNIEnv *env, jobject obj,
     view->setSelectionColor(r, g, b, alpha);
 }
 
+static void nativeSetCursorOuterColors(JNIEnv *env, jobject obj,
+                                int color1, int color2, int color3, int color4)
+{
+    WebView* view = GET_NATIVE_VIEW(env, obj);
+    LOG_ASSERT(view, "view not set in %s", __FUNCTION__);
+
+    CursorRing::SetCursorOuterColors(color1, color2, color3, color4);
+}
+
+static void nativeSetCursorInnerColors(JNIEnv *env, jobject obj,
+                                int color1, int color2, int color3, int color4)
+{
+    WebView* view = GET_NATIVE_VIEW(env, obj);
+    LOG_ASSERT(view, "view not set in %s", __FUNCTION__);
+
+    CursorRing::SetCursorInnerColors(color1, color2, color3, color4);
+}
+
+static void nativeSetCursorPressedColors(JNIEnv *env, jobject obj,
+                                                int color1, int color2)
+{
+    WebView* view = GET_NATIVE_VIEW(env, obj);
+    LOG_ASSERT(view, "view not set in %s", __FUNCTION__);
+
+    CursorRing::SetCursorPressedColors(color1, color2);
+}
+
 //ROAMTOUCH CHANGE <<
 
 static bool nativeHasCursorNode(JNIEnv *env, jobject obj)
@@ -2387,7 +2414,13 @@ static JNINativeMethod gJavaWebViewMethods[] = {
     ,{ "nativeSetCursorAtPoint", "(III)V",
         (void*) nativeSetCursorAtPoint }
     ,{ "nativeSetSelectionColor", "(IIII)V",
-        (void*) nativeSetSelectionColor },
+        (void*) nativeSetSelectionColor }
+    ,{ "nativeSetCursorOuterColors", "(IIII)V",
+        (void*) nativeSetCursorOuterColors }
+    ,{ "nativeSetCursorInnerColors", "(IIII)V",
+        (void*) nativeSetCursorInnerColors }
+    ,{ "nativeSetCursorPressedColors", "(II)V",
+        (void*) nativeSetCursorPressedColors }
     //ROAMTOUCH CHANGE <<    
 };
 
