@@ -18,6 +18,7 @@ package roamtouch.webkit;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.graphics.Point;
 import android.util.Log;
 
 public class WebHitTestResult {
@@ -88,6 +89,7 @@ public class WebHitTestResult {
     private Rect mRect;
     private int mIdentifier;
     private WebVideoInfo mVideoInfo = null;
+    private Point mPoint;
 
     WebHitTestResult() {
         mType = UNKNOWN_TYPE;
@@ -107,6 +109,10 @@ public class WebHitTestResult {
 
     public void setRect(Rect rect) {
         mRect = rect;
+    }
+
+    public void setPoint(int x, int y) {
+        mPoint = new Point(x, y);
     }
 
     public void setIdentifier(int identifier) {
@@ -129,6 +135,10 @@ public class WebHitTestResult {
         return mRect;
     }
 
+    public Point getPoint() {
+        return mPoint;
+    }
+
     public int getIdentifier() {
         return mIdentifier;
     }
@@ -147,6 +157,7 @@ public class WebHitTestResult {
             + ", mExtra=" + mExtra
             + ", mToolTip=" + mToolTip
             + ", mIdentifier=" + mIdentifier
+            + ", mPoint=" + mPoint
             + ", mRect=" + mRect;
     }
 
@@ -155,6 +166,7 @@ public class WebHitTestResult {
             + ", mExtra=" + mExtra
             + ", mToolTip=" + mToolTip
             + ", mIdentifier=" + mIdentifier
+            + ", mPoint=" + mPoint
             + ", mRect=" + mRect.toString()) ;
     }
 }

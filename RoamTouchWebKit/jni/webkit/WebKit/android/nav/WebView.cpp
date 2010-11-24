@@ -1032,23 +1032,22 @@ bool motionUp(int x, int y, int slop)
 }
 
 //ROAMTOUCH CHANGE >>
-const CachedNode* findCachedNodeAt(int x, int y, int slop)
+const CachedNode* findCachedNodeAt(int x, int y, int slop, int* rxPtr, int* ryPtr)
 {
     bool pageScrolled = false;
     m_followedLink = false;
     const CachedFrame* frame;
     WebCore::IntRect rect = WebCore::IntRect(x - slop, y - slop, slop * 2, slop * 2);
-    int rx, ry;
     CachedRoot* root = getFrameCache(AllowNewer);
     if (!root)
         return 0;
-    const CachedNode* result = findAt(root, rect, &frame, &rx, &ry);
+    const CachedNode* result = findAt(root, rect, &frame, rxPtr, ryPtr);
     if (!result) {
         DBG_NAV_LOGD("No cached node found root=%p", root);
         return 0;
     }
     DBG_NAV_LOGD("CachedNode:%p (%d) x=%d y=%d rx=%d ry=%d", result,
-        result->index(), x, y, rx, ry);
+        result->index(), x, y, *rxPtr, *ryPtr);
     
     return result;
 }
@@ -1854,7 +1853,8 @@ static jobject nativeGetHitTestResultAtPoint(JNIEnv *env, jobject obj,
 {
     WebView* view = GET_NATIVE_VIEW(env, obj);
     LOG_ASSERT(view, "view not set in %s", __FUNCTION__);
-    const CachedNode *result = view->findCachedNodeAt(x, y, slop);
+    int rx=0, ry=0;
+    const CachedNode *result = view->findCachedNodeAt(x, y, slop, &rx, &ry);
 
     WebCore::String extraString ;
     WebCore::String toolTipString ;
@@ -1931,6 +1931,9 @@ static jobject nativeGetHitTestResultAtPoint(JNIEnv *env, jobject obj,
     
     jmethodID setRect = env->GetMethodID(hitTestResultClass, "setRect", "(Landroid/graphics/Rect;)V");
     env->CallVoidMethod(hitTestResult, setRect, rect) ;
+
+    jmethodID setPoint = env->GetMethodID(hitTestResultClass, "setPoint", "(II)V");
+    env->CallVoidMethod(hitTestResult, setPoint, rx, ry) ;
 
     jmethodID setIdentifier = env->GetMethodID(hitTestResultClass, "setIdentifier", "(I)V");
     env->CallVoidMethod(hitTestResult, setIdentifier, (int)result) ;
