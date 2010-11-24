@@ -771,7 +771,7 @@ public class WebView extends AbsoluteLayout
         WebSettings settings = getSettings();
         mSupportMultiTouch = context.getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_TOUCHSCREEN_MULTITOUCH)
-                && settings.supportZoom() && settings.getBuiltInZoomControls();
+                && settings.supportZoom(); // ROAMTOUCH CHANGE: HACK: Always allow MT scaling
         if (mSupportMultiTouch && (mScaleDetector == null)) {
             mScaleDetector = new ScaleGestureDetector(context,
                     new ScaleDetectorListener());
