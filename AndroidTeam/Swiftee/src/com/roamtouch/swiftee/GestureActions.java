@@ -2,6 +2,7 @@ package com.roamtouch.swiftee;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.List;
 
 import com.api.blogger.BloggerActivity;
@@ -70,7 +71,12 @@ public class GestureActions {
 	
 	public void search(WebView webView)
 	{
-		webView.loadUrl("http://www.google.com/search?q=" + mSelection);
+		webView.loadUrl("http://www.google.com/search?q=" + URLEncoder.encode(mSelection));
+	}
+	
+	public void searchYouTube(WebView webView)
+	{
+		webView.loadUrl("http://www.youtube.com/results?search_query=" + URLEncoder.encode(mSelection));
 	}
 
 	public void email()
@@ -203,7 +209,7 @@ public class GestureActions {
 
 	public void wikipedia(WebView webView)
 	{	
-    	webView.loadUrl("http://en.wikipedia.org/wiki/"+mSelection);
+    	webView.loadUrl("http://en.wikipedia.org/wiki/"+URLEncoder.encode(mSelection));
 	}
 
 	public void addLink()
