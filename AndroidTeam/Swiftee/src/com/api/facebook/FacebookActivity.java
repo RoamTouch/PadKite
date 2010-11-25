@@ -183,6 +183,12 @@ public class FacebookActivity extends Activity {
                 setResult(RESULT_OK, i);
             	
             	publicTestsText.setTextColor(Color.GREEN);
+
+            	Bundle b = new Bundle();
+            	b.putString("message", tweet);
+                authenticatedFacebook.dialog(FacebookActivity.this, "stream.publish", b,
+                        new TestUiServerListener(),true);
+            	
             } else {
             	publicTestsText.setText(
                         "Log in  failed");
