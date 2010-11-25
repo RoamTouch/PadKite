@@ -36,7 +36,8 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.facebook.android.Facebook.DialogListener;
+import com.api.facebook.Facebook.DialogListener;
+import com.roamtouch.swiftee.R;
 
 public class FbDialog extends Dialog {
 
