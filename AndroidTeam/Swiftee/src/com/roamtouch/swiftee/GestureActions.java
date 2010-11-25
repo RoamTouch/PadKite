@@ -35,6 +35,8 @@ public class GestureActions {
  		// Stub: Create title from mSelection
  	}
 	
+	String mLink = null;
+	
 	public GestureActions(BrowserActivity parent, String selection)
 	{
 		mSelection = selection;
@@ -43,9 +45,7 @@ public class GestureActions {
 		
 		// Check selection for http
 		
-    	if (mSelection.startsWith("http://"))
-    		mSelection = mParent.getShortLink(mSelection);
-    	else if(mSelection.contains("http://")){
+    	if (mSelection.contains("http://")) {
     		int start = mSelection.indexOf("http://");
     		int end;
     		int spaceIndex = mSelection.indexOf(' ', start);
@@ -61,12 +61,31 @@ public class GestureActions {
     			end = spaceIndex;
     		}
     		else 
-    			return;
-    		String longUrl = mSelection.substring(start, end);
-    		String shortUrl = mParent.getShortLink(longUrl);
+    			end = 0;
+    		String longUrl;
+    		
+    		
+    		if (end == 0)
+    			longUrl = mSelection;
+    		else
+    			longUrl = mSelection.substring(start, end);
+
+    		mLink = checkMobileTube(longUrl);
+	
+    		String shortUrl = mParent.getShortLink(mLink);
     		mSelection = mSelection.replace(longUrl, shortUrl);
 //    		Toast.makeText(mParent, mSelection, Toast.LENGTH_LONG).show();
     	}
+	}
+	
+	public String checkMobileTube(String link) {
+		
+		if (link.contains("m.youtube.com")) {
+			String[] parts = link.split("=");
+			String videoId = parts[parts.length-1];
+			link = "http://www.youtube.com/watch?v=" + videoId;
+		}
+		return link;
 	}
 	
 	public void search(WebView webView)
