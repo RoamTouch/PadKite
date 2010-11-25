@@ -47,6 +47,7 @@ public class FacebookActivity extends Activity {
     TextView logoutText;
     
     String tweet;
+    String link = null;
     
     Facebook authenticatedFacebook = new Facebook();
     
@@ -61,13 +62,24 @@ public class FacebookActivity extends Activity {
    		return false;
   }
     
+    protected void startPublishDialog() {
+    	Bundle b = new Bundle();
+    	b.putString("message", tweet);
+    	if (link != null)
+    		b.putString("link", URLEncoder.encode(link));
+        authenticatedFacebook.dialog(FacebookActivity.this, "stream.publish", b,
+                new TestUiServerListener(),true);
+    }
+    
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         Intent i = getIntent();
-        tweet = i.getStringExtra("Post");
+        tweet = i.getStringExtra("message");
+        link = i.getStringExtra("link");
+
         String accessToken = i.getStringExtra("accessToken");
         long accessExpires = i.getLongExtra("accessExpires", 0);
         
@@ -97,11 +109,7 @@ public class FacebookActivity extends Activity {
             public void onClick(View v) {
               //  authenticatedFacebook.dialog(Tests.this, "stream.publish", 
                //         new TestUiServerListener());
-            	Bundle b = new Bundle();
-            	b.putString("message", tweet);
-                authenticatedFacebook.dialog(FacebookActivity.this, "stream.publish", b,
-                        new TestUiServerListener(),true);
-                
+                startPublishDialog();
             }
         });
         
@@ -145,10 +153,7 @@ public class FacebookActivity extends Activity {
 	
         	publicTestsText.setTextColor(Color.GREEN);
         	
-        	Bundle b = new Bundle();
-        	b.putString("message", tweet);
-            authenticatedFacebook.dialog(FacebookActivity.this, "stream.publish", b,
-                    new TestUiServerListener(),true);
+            startPublishDialog();
         }
         else
         {
@@ -184,11 +189,7 @@ public class FacebookActivity extends Activity {
             	
             	publicTestsText.setTextColor(Color.GREEN);
 
-            	Bundle b = new Bundle();
-            	b.putString("message", tweet);
-                authenticatedFacebook.dialog(FacebookActivity.this, "stream.publish", b,
-                        new TestUiServerListener(),true);
-            	
+                startPublishDialog();
             } else {
             	publicTestsText.setText(
                         "Log in  failed");
