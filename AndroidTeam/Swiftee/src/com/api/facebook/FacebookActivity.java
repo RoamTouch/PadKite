@@ -66,7 +66,7 @@ public class FacebookActivity extends Activity {
     	b.putString("app_id", APP_ID);
     	b.putString("message", tweet);
     	if (link != null)
-    		b.putString("link", URLEncoder.encode(link));
+    		b.putString("link", link);
         authenticatedFacebook.dialog(FacebookActivity.this, "stream.publish", b,
                 new TestUiServerListener());
     }
