@@ -125,8 +125,10 @@ public class GestureActions {
 
 	public void oldFacebook(String accessToken, long accessExpires)
 	{
-    	Intent intent = new Intent(mParent,FacebookActivity.class);  	
-   		intent.putExtra("Post", mSelection);
+    	Intent intent = new Intent(mParent,FacebookActivity.class);  
+   		intent.putExtra("message", mSelection);
+   		if (mLink != null)
+   	   		intent.putExtra("link", mLink);   			
    		intent.putExtra("accessToken", accessToken);
    		intent.putExtra("accessExpires", accessExpires);
    		
