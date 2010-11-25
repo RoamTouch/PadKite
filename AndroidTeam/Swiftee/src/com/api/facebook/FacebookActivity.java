@@ -7,7 +7,6 @@ import java.net.URLEncoder;
 
 import org.json.JSONObject;
 
-import com.api.facebook.AsyncFacebookRunner;
 import com.api.facebook.DialogError;
 import com.api.facebook.Facebook;
 import com.api.facebook.FacebookError;
@@ -49,7 +48,7 @@ public class FacebookActivity extends Activity {
     String tweet;
     String link = null;
     
-    Facebook authenticatedFacebook = new Facebook();
+    Facebook authenticatedFacebook = new Facebook(APP_ID);
     
     private boolean mReturnOnError = true;
     
@@ -64,11 +63,12 @@ public class FacebookActivity extends Activity {
     
     protected void startPublishDialog() {
     	Bundle b = new Bundle();
+    	b.putString("app_id", APP_ID);
     	b.putString("message", tweet);
     	if (link != null)
     		b.putString("link", URLEncoder.encode(link));
         authenticatedFacebook.dialog(FacebookActivity.this, "stream.publish", b,
-                new TestUiServerListener(),true);
+                new TestUiServerListener());
     }
     
     /** Called when the activity is first created. */
@@ -100,7 +100,7 @@ public class FacebookActivity extends Activity {
             public void onClick(View v) {
             	  logoutText.setText("");
                 authenticatedFacebook.authorize(FacebookActivity.this, 
-                        APP_ID, PERMISSIONS, new TestLoginListener(),true);
+                        PERMISSIONS, new TestLoginListener());
             }
         });
         
@@ -152,16 +152,20 @@ public class FacebookActivity extends Activity {
         	setResult(RESULT_OK, intent);
 	
         	publicTestsText.setTextColor(Color.GREEN);
-        	
             startPublishDialog();
         }
         else
         {
         	logoutText.setText("");
         	authenticatedFacebook.authorize(FacebookActivity.this, 
-        			APP_ID, PERMISSIONS, new TestLoginListener(),true);
+        			PERMISSIONS, new TestLoginListener());
         }
 //        runTestPublicApi();
+    }
+    
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	super.onActivityResult(requestCode, resultCode, data);
+    	authenticatedFacebook.authorizeCallback(requestCode, resultCode, data);
     }
     
 
