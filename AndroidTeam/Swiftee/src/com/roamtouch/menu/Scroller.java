@@ -17,7 +17,7 @@
 package com.roamtouch.menu;
 
 import android.content.Context;
-import android.util.Log;
+//import android.util.Log;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
@@ -204,7 +204,7 @@ public class Scroller  {
 
         int timePassed = (int)(AnimationUtils.currentAnimationTimeMillis() - mStartTime);
     
-        Log.d("Timepassed,duration","timeP:"+timePassed+",duration"+mDuration);
+//        Log.d("Timepassed,duration","timeP:"+timePassed+",duration"+mDuration);
         
         if (timePassed < mDuration) {
             switch (mMode) {
@@ -236,8 +236,8 @@ public class Scroller  {
                 	prevAngle = angleChange;
                 }
                 //angleChange = distance;
-                Log.d("mVelocity, decceleration,timePassed ", " "+mVelocity+" "+mDeceleration+" "+timePassedSeconds);
-                Log.d("inside FLING_MODE Angle Change::distance::prevAngle",""+angleChange+"::"+distance+"::"+prevAngle);
+//                Log.d("mVelocity, decceleration,timePassed ", " "+mVelocity+" "+mDeceleration+" "+timePassedSeconds);
+//                Log.d("inside FLING_MODE Angle Change::distance::prevAngle",""+angleChange+"::"+distance+"::"+prevAngle);
                 
 /*                mCurrX = mStartX + Math.round(distance * mCoeffX);
                 // Pin to mMinX <= mCurrX <= mMaxX
@@ -347,7 +347,7 @@ public class Scroller  {
         mVelocity = velocity;
         mDuration = (int) (1000 * velocity / mDeceleration); // Duration is in milliseconds
         
-        Log.d("Duration:: velocity: mDecceleration: ", " "+mDuration+" "+velocity+" "+mDeceleration);
+//        Log.d("Duration:: velocity: mDecceleration: ", " "+mDuration+" "+velocity+" "+mDeceleration);
         
         mStartTime = AnimationUtils.currentAnimationTimeMillis();
         mStartX = (int) startX;
@@ -360,7 +360,7 @@ public class Scroller  {
        // mCoeffY = 1.0f;
         
         int totalDistance = (int) ((velocity * velocity) / (2 * mDeceleration));
-        Log.d("Total distance: ", " "+totalDistance);
+//        Log.d("Total distance: ", " "+totalDistance);
         mMinX = minX;
         mMaxX = maxX;
         mMinY = minY;

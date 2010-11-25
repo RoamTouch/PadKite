@@ -120,14 +120,14 @@ public class CircularTabsLayout extends ViewGroup {
         
 		   a = widthSpecSize /2;
         
-		   Log.i("widthSpecSize:", ""+widthSpecSize);        
+//		   Log.i("widthSpecSize:", ""+widthSpecSize);        
 
 		   final int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
 		   final int heightSpecSize =  MeasureSpec.getSize(heightMeasureSpec);
         
 		   b = heightSpecSize /2;
         
-		   Log.i("heightSpecSize:", ""+heightSpecSize);        
+//		   Log.i("heightSpecSize:", ""+heightSpecSize);        
 
 		   // for now we take the width of the view as the radius 
 		   outR = widthSpecSize/2;
@@ -232,7 +232,7 @@ public class CircularTabsLayout extends ViewGroup {
 
 		   	activetabIndex = child.getId();
 		   	currentWindowIcon.layout(childLeft-10, childTop-10, lb+10, rb+10);   
-
+		   	currentWindowIcon.setVisibility(VISIBLE);
 	   }
 		public int getActiveTabIndex(){
 			return activetabIndex;
@@ -296,7 +296,7 @@ public class CircularTabsLayout extends ViewGroup {
 				mLastMotionAngle = -999;
 				mLastMotionX =0;
 				mLastMotionY =0;
-				Log.d("inside mLastMotionAngle touch Down"," resetting position!!----------------------");
+//				Log.d("inside mLastMotionAngle touch Down"," resetting position!!----------------------");
 				break;
 			}
 			case MotionEvent.ACTION_OUTSIDE:{
@@ -304,7 +304,7 @@ public class CircularTabsLayout extends ViewGroup {
 				mLastMotionAngle = -999;
 				mLastMotionX =0;
 				mLastMotionY =0;
-				Log.d("inside mLastMotionAngle touch outside"," resetting position!!----------------------");
+//				Log.d("inside mLastMotionAngle touch outside"," resetting position!!----------------------");
 			}
 			case MotionEvent.ACTION_MOVE:{
 
@@ -315,7 +315,7 @@ public class CircularTabsLayout extends ViewGroup {
 					mLastMotionAngle = (float)computeAngle1(a, b, x, y);
 					mLastMotionX = x;
 					mLastMotionY = y;
-					Log.d("inside mLastMotionAngle,"," reseted initial position!!----------------------");
+//					Log.d("inside mLastMotionAngle,"," reseted initial position!!----------------------");
 					currentAngle = mLastMotionAngle;
 				}
 				currentAngle = (float)computeAngle1(a, b, x, y);
@@ -328,14 +328,14 @@ public class CircularTabsLayout extends ViewGroup {
 					if(currentAngle < mLastMotionAngle) {
 						if((mLastMotionAngle > 270) && (currentAngle < 90)) {
 							angleDiff = currentAngle + (360 - mLastMotionAngle);
-							Log.d("Angle diff adjusted---------------",""+angleDiff);
+//							Log.d("Angle diff adjusted---------------",""+angleDiff);
 						}
 					}
 					else {
 						if((mLastMotionAngle < 90) && (currentAngle > 270)) {
 							angleDiff = mLastMotionAngle + (360 - currentAngle);
 							angleDiff = -1*angleDiff;
-							Log.d("Angle diff adjusted---------------",""+angleDiff);
+//							Log.d("Angle diff adjusted---------------",""+angleDiff);
 						}
 					}
 				}
@@ -385,7 +385,7 @@ public class CircularTabsLayout extends ViewGroup {
 				mLastMotionAngle = -999;
 				mLastMotionX =0;
 				mLastMotionY =0;
-				Log.d("inside mLastMotionAngle,"," resetting position!!----------------------");
+//				Log.d("inside mLastMotionAngle,"," resetting position!!----------------------");
 			}
 
 
@@ -442,7 +442,7 @@ public class CircularTabsLayout extends ViewGroup {
 
 	@Override
 	public void computeScroll() {
-		Log.d("INSIDE computeScroll","-----------------------------");
+///		Log.d("INSIDE computeScroll","-----------------------------");
 		if (mScroller.computeScrollOffset()) {
 			Log.d("INSIDE computeScrolloffset","-----------------------------");
 			mAngleChange = mScroller.getAngle();

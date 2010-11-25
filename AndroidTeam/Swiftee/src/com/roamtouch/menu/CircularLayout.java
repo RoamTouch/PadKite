@@ -132,14 +132,14 @@ public class CircularLayout extends ViewGroup {
         
 		   a = widthSpecSize /2;
         
-		   Log.i("widthSpecSize:", ""+widthSpecSize);        
+//		   Log.i("widthSpecSize:", ""+widthSpecSize);        
 
 		   final int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
 		   final int heightSpecSize =  MeasureSpec.getSize(heightMeasureSpec);
         
 		   b = heightSpecSize /2;
         
-		   Log.i("heightSpecSize:", ""+heightSpecSize);        
+//		   Log.i("heightSpecSize:", ""+heightSpecSize);        
 
 		   // for now we take the width of the view as the radius 
 		   outR = widthSpecSize/2;
@@ -155,7 +155,7 @@ public class CircularLayout extends ViewGroup {
 		@Override
 	   protected void onLayout(boolean changed, int left, int top, int right, int bot) {
 
-		   Log.d("---inside onLayout-----", "---------inside onlayout-------");
+//		   Log.d("---inside onLayout-----", "---------inside onlayout-------");
 		   final int count = getChildCount();
 		   double t = 0;
 
@@ -326,7 +326,7 @@ public class CircularLayout extends ViewGroup {
             	mLastMotionAngle = (float)computeAngle1(a, b, x, y);
     			mLastMotionX = x;
                 mLastMotionY = y;
-                Log.d("inside mLastMotionAngle,"," reseted initial position!!----------------------");
+//                Log.d("inside mLastMotionAngle,"," reseted initial position!!----------------------");
                 currentAngle = mLastMotionAngle;
             }
             currentAngle = (float)computeAngle1(a, b, x, y);
@@ -339,7 +339,7 @@ public class CircularLayout extends ViewGroup {
             	if(currentAngle < mLastMotionAngle) {
             		if((mLastMotionAngle > 270) && (currentAngle < 90)) {
             			angleDiff = currentAngle + (360 - mLastMotionAngle);
-            			Log.d("Angle diff adjusted---------------",""+angleDiff);
+//            			Log.d("Angle diff adjusted---------------",""+angleDiff);
             		}
             	}
            		else {

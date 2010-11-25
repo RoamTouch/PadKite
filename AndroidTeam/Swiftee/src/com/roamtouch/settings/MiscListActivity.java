@@ -9,6 +9,7 @@ import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -93,7 +95,7 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 		switch(position){
-/*		case 2:
+		case 1:
 			final TextView tv2 = (TextView)view.findViewById(R.id.tv2);
 			String langs[] = getResources().getStringArray(R.array.language_preference);
 			final Dialog d = new Dialog(this);
@@ -116,7 +118,7 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 			list.setAdapter(new ArrayAdapter<String>(this,R.layout.simple_list_item_1,langs));
 			d.show();
 			break;
-*/		case 4:
+		case 4:
 			CheckBox cb = (CheckBox)view.findViewById(R.id.checkbox);
 			if(cb.isChecked())
 				cb.setChecked(false);
@@ -197,13 +199,20 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 
 			TextView v2= (TextView) findViewById(R.id.tv2);
 			SharedPreferences.Editor editor = sharedPreferences.edit();
+			String langto = sharedPreferences.getString("language_to", null);
 			
 //			if(position == 1){
+			if(langto!=null){
+				v2.setText(langto);				
+			}
+			else{
 				v2.setText(phoneLanguage);
+				editor.putString("language_to", phoneLanguage);
+				editor.commit();
+			}
 				ImageView image = (ImageView)findViewById(R.id.image);
 				image.setVisibility(INVISIBLE);
-				editor.putString("language_from", phoneLanguage);
-				editor.commit();
+				
 /*			}
 			else
 				v2.setText(sharedPreferences.getString("language_to", "Hindi"));

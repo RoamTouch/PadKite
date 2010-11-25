@@ -1,13 +1,13 @@
 package com.roamtouch.floatingcursor;
 
-import com.roamtouch.swiftee.R;
+//import com.roamtouch.swiftee.R;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+//import android.graphics.Bitmap;
+//import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 
-import android.graphics.Rect;
+//import android.graphics.Rect;
 import android.view.View;
 
 public class FloatingCursorInnerView extends View {
@@ -16,13 +16,13 @@ public class FloatingCursorInnerView extends View {
 	private float y = 0;
 	private int r = 25;
 	
-	private Bitmap bitmap;
-	private Rect rect;
+//	private Bitmap bitmap;
+//	private Rect rect;
 
 	
 	public FloatingCursorInnerView(Context context) {
 		super(context);
-		bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.inner_circle); 
+//		bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.inner_circle); 
 	}
 
 	

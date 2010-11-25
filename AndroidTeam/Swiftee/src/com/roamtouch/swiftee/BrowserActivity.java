@@ -17,7 +17,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
-
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import android.gesture.Gesture;
@@ -36,9 +35,11 @@ import com.roamtouch.view.SwifteeOverlayView;
 import com.roamtouch.view.TutorArea;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.gesture.GestureOverlayView;
@@ -337,6 +338,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		appState.getDatabase().registerUser("dummy", "dummy", "dummy@example.com");
 		//appState.getDatabase().deleteAllBookmarks();
 		//appState.getDatabase().addBookmark();
+		
+		IntentFilter filter = new IntentFilter (Intent.ACTION_MEDIA_UNMOUNTED); 
+		filter.addDataScheme("file"); 
+		registerReceiver(this.mSDInfoReceiver, new IntentFilter(filter));
     }
    
 /*    public void setWebView(WebView wv){
@@ -820,5 +825,23 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	     	 database.addToHistory(System.currentTimeMillis()+"", url.toString(), "", 2);
 	     }
 	 }
+	
+	private BroadcastReceiver mSDInfoReceiver = new BroadcastReceiver(){
+	    @Override
+	    public void onReceive(Context arg0, Intent intent) {
+	    	AlertDialog alertDialog;
+
+	    	alertDialog = new AlertDialog.Builder(BrowserActivity.this).create();
+			alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+		    alertDialog.setMessage("Sdcard is not available or write protected.Please insert the sdcard or unmount it from USB");
+		    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+		      public void onClick(DialogInterface dialog, int which) {
+		    	//mParent.finish();  
+
+		    } }); 
+		      
+		  	alertDialog.show();
+	    }
+	 }; 
 	
 }
