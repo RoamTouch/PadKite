@@ -834,7 +834,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	private BroadcastReceiver mSDInfoReceiver = new BroadcastReceiver(){
 	    @Override
 	    public void onReceive(Context arg0, Intent intent) {
-	    	AlertDialog alertDialog;
+/*	    	AlertDialog alertDialog;
 
 	    	alertDialog = new AlertDialog.Builder(BrowserActivity.this).create();
 			alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
@@ -846,6 +846,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		    } }); 
 		      
 		  	alertDialog.show();
+		  	
+*/	        Intent i = new Intent(BrowserActivity.this,SdCardError.class);
+			i.putExtra("isAppLaunched", true);
+			startActivity(i);
 	    }
 	 }; 
 	

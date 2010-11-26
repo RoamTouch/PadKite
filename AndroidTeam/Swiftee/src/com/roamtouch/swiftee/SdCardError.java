@@ -15,7 +15,7 @@ public class SdCardError extends Activity{
 
 
 	SwifteeApplication appState;
-	
+	private boolean isAppLaunched = false;
 	 /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -23,6 +23,7 @@ public class SdCardError extends Activity{
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.sdcard_error);
         
+        isAppLaunched = getIntent().getBooleanExtra("isAppLaunched", false);
         appState = ((SwifteeApplication)getApplicationContext());
         
         if(appState.isSdCardReady()){
@@ -50,11 +51,16 @@ public class SdCardError extends Activity{
     private BroadcastReceiver mSDInfoReceiver = new BroadcastReceiver(){
 	    @Override
 	    public void onReceive(Context arg0, Intent intent) {
-	    	intent = new Intent();
-			intent.setClass(SdCardError.this,BrowserActivity.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			startActivity(intent);
-			finish();
+	    	if(isAppLaunched){
+	    		finish();
+	    	}
+	    	else{
+	    		intent = new Intent();
+	    		intent.setClass(SdCardError.this,BrowserActivity.class);
+	    		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	    		startActivity(intent);
+	    		finish();
+	    	}
 	    }
 	 }; 
 }
