@@ -1050,6 +1050,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 			if (mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE) {
 				cancelSelection();
+				disableGestures();
 				return;
 			}
 
@@ -1460,7 +1461,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				int dMX = Math.abs(X-mPrevMoveX);
 				int dMY = Math.abs(Y-mPrevMoveY);
 
-				if ((dMX >= MAX_JUMP || dMY >= MAX_JUMP) && mGesturesEnabled)
+				if ((dMX >= MAX_JUMP || dMY >= MAX_JUMP)) // && mGesturesEnabled)
 				{
 					action = MotionEvent.ACTION_UP;
 					mMoveFrozen = true;
