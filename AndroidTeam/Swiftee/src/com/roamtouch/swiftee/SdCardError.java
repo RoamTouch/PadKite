@@ -47,7 +47,11 @@ public class SdCardError extends Activity{
     		registerReceiver(this.mSDInfoReceiver, new IntentFilter(filter));
         }
     }
-    
+    @Override
+    public void onDestroy(){
+    	super.onDestroy();
+    	unregisterReceiver(mSDInfoReceiver);
+    }
     private BroadcastReceiver mSDInfoReceiver = new BroadcastReceiver(){
 	    @Override
 	    public void onReceive(Context arg0, Intent intent) {

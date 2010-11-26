@@ -90,6 +90,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 //		eventViewer = ev;
 	}
 	public void toggleCloseORRefresh(boolean isRefresh){
+		if(button == null)
+			return;
 		if(isRefresh){
 			button.setDrawables(PATH+"refresh_normal.png",PATH+"refresh_pressed.png");
 			button.setFunction("refresh");
