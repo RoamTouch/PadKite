@@ -160,6 +160,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     }
     
     public static final int FacebookRequestCode = 100042;
+    public static final int SDCardRequestCode = 100050;
     
     String mFacebookAccessToken = null;
     long mFacebookAccessExpires = 0;
@@ -189,6 +190,13 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
    				mFacebookAccessToken = null;
    				mFacebookAccessExpires = 0;
    			}
+    	}
+    	if (requestCode == SDCardRequestCode && data != null)
+    	{
+    		final boolean status = data.getBooleanExtra("quit", false);
+
+    		if (status == true)
+    			System.exit(1);
     	}
     }
 
@@ -327,7 +335,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		mTutor = (HorizontalScrollView) findViewById(R.id.gestureScrollView);
 		
 		mTutor.setVisibility(View.INVISIBLE);
-				
+		
 /*		mTopBarArea=(TopBarArea)this.findViewById(R.id.topbararea);
 		mTopBarArea.setVisibility(View.GONE);
 		mTopBarArea.setWebView(webView);
@@ -847,10 +855,19 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		      
 		  	alertDialog.show();
 		  	
-*/	        Intent i = new Intent(BrowserActivity.this,SdCardError.class);
-			i.putExtra("isAppLaunched", true);
-			startActivity(i);
-	    }
+*/
+	    	mHandler.post(new Runnable() {
+	    	
+	    		public void run() {
+	    			Intent i = new Intent(BrowserActivity.this,SdCardError.class);
+					i.putExtra("isAppLaunched", true);
+					i.putExtra("numWindows", floatingCursor.getWindowCount());
+
+					startActivityForResult(i, SDCardRequestCode);
+	    		}
+	    	});
+
+	    	}
 	 }; 
 	
 }
