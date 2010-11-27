@@ -95,8 +95,8 @@
 		android:scrollbars="none"
 		android:fadingEdge="none"
 		android:visibility="visible"
-		android:layout_marginLeft="10px"
-    	android:layout_marginRight="10px"
+		android:layout_marginLeft="15px"
+    	android:layout_marginRight="15px"
 		android:background="@drawable/tutor_background"
 		>	  
  			<com.roamtouch.view.TutorArea
