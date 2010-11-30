@@ -526,12 +526,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		if ("Search".equals(action)) 
 		{
 			eventViewer.setText("S (search) gesture done, searching for: " + mSelection);
-			actions.search(webView);
+			actions.search(floatingCursor);
 		}
 		else if ("YouTube".equals(action)) 
 		{
 			eventViewer.setText("Y (YouTube) gesture done, searching YouTube for: " + mSelection);
-			actions.searchYouTube(webView);
+			actions.searchYouTube(floatingCursor);
 		}
         else if ("Email".equals(action))
         {
@@ -568,7 +568,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         }
         else if("Wikipedia".equals(action)){
         	eventViewer.setText("W (wikipedia) gesture done, wiki searching for: " + mSelection);
-			actions.wikipedia(webView);
+			actions.wikipedia(floatingCursor);
         }     
         else if("Add Link".equals(action) || "Bookmark".equals(action)){
         	actions.addLink();

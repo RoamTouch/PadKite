@@ -88,14 +88,14 @@ public class GestureActions {
 		return link;
 	}
 	
-	public void search(WebView webView)
+	public void search(FloatingCursor fc)
 	{
-		webView.loadUrl("http://www.google.com/search?q=" + URLEncoder.encode(mSelection));
+		fc.loadPage("http://www.google.com/search?q=" + URLEncoder.encode(mSelection));
 	}
 	
-	public void searchYouTube(WebView webView)
+	public void searchYouTube(FloatingCursor fc)
 	{
-		webView.loadUrl("http://www.youtube.com/results?search_query=" + URLEncoder.encode(mSelection));
+		fc.loadPage("http://www.youtube.com/results?search_query=" + URLEncoder.encode(mSelection));
 	}
 
 	public void email()
@@ -228,9 +228,9 @@ public class GestureActions {
     	return Translater.text(mSelection, "ENGLISH", languageTo);
 	}
 
-	public void wikipedia(WebView webView)
+	public void wikipedia(FloatingCursor fc)
 	{	
-    	webView.loadUrl("http://en.wikipedia.org/wiki/"+URLEncoder.encode(mSelection));
+    	fc.loadPage("http://en.wikipedia.org/wiki/"+URLEncoder.encode(mSelection));
 	}
 
 	public void addLink()
