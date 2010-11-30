@@ -56,7 +56,7 @@ public class BrowserSettingActivity extends Activity implements OnItemClickListe
 
 	    public int getCount() 
 	    {
-	        return DATA.length;
+	        return 1;
 	    }
 
 

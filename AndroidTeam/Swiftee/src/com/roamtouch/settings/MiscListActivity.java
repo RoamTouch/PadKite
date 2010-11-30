@@ -4,7 +4,6 @@ package com.roamtouch.settings;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
-
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import android.app.Activity;
@@ -51,7 +50,9 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 	private ArrayList<View> views = new ArrayList<View>();
 	OnCheckedChangeListener chk_lsnr;
 	SharedPreferences sharedPreferences;
-
+	private CheckBox tutorCB,eventViewerCB;
+	private TextView lang;
+	
 	//Shared_Pref_MiscActivity
 	//---language_from(String)
 	//---language_to(String)
@@ -117,6 +118,14 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 			});
 			list.setAdapter(new ArrayAdapter<String>(this,R.layout.simple_list_item_1,langs));
 			d.show();
+			break;
+		case 3:
+			eventViewerCB.setChecked(true);
+			tutorCB.setChecked(true);
+			SharedPreferences.Editor editor = sharedPreferences.edit();
+			editor.putString("language_to", phoneLanguage);
+			editor.commit();
+			lang.setText(phoneLanguage);
 			break;
 		case 4:
 			CheckBox cb = (CheckBox)view.findViewById(R.id.checkbox);
@@ -200,7 +209,8 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 			TextView v2= (TextView) findViewById(R.id.tv2);
 			SharedPreferences.Editor editor = sharedPreferences.edit();
 			String langto = sharedPreferences.getString("language_to", null);
-			
+			lang = v2;
+
 //			if(position == 1){
 			if(langto!=null){
 				v2.setText(langto);				
@@ -248,6 +258,7 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 				}
 				cb.setTag("enable_tutor");
 				cb.setOnCheckedChangeListener(chk_lsnr);
+				tutorCB = cb;
 			}
 			else if(position == 5){
 				if(sharedPreferences.getBoolean("enable_event_viewer", true)){
@@ -258,6 +269,7 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 				}
 				cb.setTag("enable_event_viewer");
 				cb.setOnCheckedChangeListener(chk_lsnr);
+				eventViewerCB = cb;
 			}
 			else if(position == 6){
 				cb.setVisibility(GONE);
