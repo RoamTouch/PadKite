@@ -693,7 +693,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			wv.setId(wv.getId()-1);
 		}
 		if(webLayout.getChildCount()==0){
-			floatingCursor.addNewWindow();
+			floatingCursor.addNewWindow(false);
 		}	
 		
 	}

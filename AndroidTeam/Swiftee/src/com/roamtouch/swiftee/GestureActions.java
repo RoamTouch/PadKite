@@ -245,7 +245,7 @@ public class GestureActions {
 	
 	public void openLink(FloatingCursor floatingCursor)
 	{
-    	floatingCursor.addNewWindow();
+    	floatingCursor.addNewWindow(true);
 	}
 	
 	public void send()
