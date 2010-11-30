@@ -83,7 +83,7 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 		mMiscList.setOnItemClickListener(this);
 
 		Locale l=Locale.getDefault();
-		phoneLanguage = l.getDisplayLanguage();
+		phoneLanguage = l.getDisplayLanguage(Locale.ENGLISH);
 
 	}
 
