@@ -2239,6 +2239,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		            canvas.scale(scaleFactor, scaleFactor);
 		        }
 		        thumbnail.draw(canvas);
+		        
 		        System.gc();
 		        return bm;
 			}

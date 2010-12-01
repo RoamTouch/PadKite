@@ -120,13 +120,26 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 			d.show();
 			break;
 		case 3:
-			eventViewerCB.setChecked(true);
-			tutorCB.setChecked(true);
-			SharedPreferences.Editor editor = sharedPreferences.edit();
-			editor.putString("language_to", phoneLanguage);
-			editor.commit();
-			lang.setText(phoneLanguage);
-			break;
+			AlertDialog alertDialog = new AlertDialog.Builder(MiscListActivity.this).create();
+			alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+		    alertDialog.setMessage("Do you really want to restore the default settings?");
+		    alertDialog.setTitle("Restore Defaults");
+		    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+		      public void onClick(DialogInterface dialog, int which) {
+		    	  	eventViewerCB.setChecked(true);
+					tutorCB.setChecked(true);
+					SharedPreferences.Editor editor = sharedPreferences.edit();
+					editor.putString("language_to", phoneLanguage);
+					editor.commit();
+					lang.setText(phoneLanguage);
+
+		    } }); 
+		    alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
+			      public void onClick(DialogInterface dialog, int which) {
+			    	  return;
+			    } });
+		  	alertDialog.show();
+		  	break;
 		case 4:
 			CheckBox cb = (CheckBox)view.findViewById(R.id.checkbox);
 			if(cb.isChecked())
@@ -146,7 +159,7 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 			startActivity(intent);
 			break;
 		case 7:
-			AlertDialog alertDialog = new AlertDialog.Builder(MiscListActivity.this).create();
+			alertDialog = new AlertDialog.Builder(MiscListActivity.this).create();
 			alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 		    alertDialog.setMessage("This feature is currently not yet available. We are working really hard on it and it'll be there in future versions. Stay tuned.");
 		    alertDialog.setTitle("Coming soon ...");
@@ -220,8 +233,8 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 				editor.putString("language_to", phoneLanguage);
 				editor.commit();
 			}
-				ImageView image = (ImageView)findViewById(R.id.image);
-				image.setVisibility(INVISIBLE);
+				//ImageView image = (ImageView)findViewById(R.id.image);
+				//image.setVisibility(INVISIBLE);
 				
 /*			}
 			else
