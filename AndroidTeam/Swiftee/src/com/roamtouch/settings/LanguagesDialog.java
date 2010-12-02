@@ -1,29 +1,26 @@
 package com.roamtouch.settings;
 
 import com.roamtouch.swiftee.R;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 public class LanguagesDialog extends Dialog{
 
 	private Context context;
-	private String langs[];
+//	private String langs[];
 	
 	public LanguagesDialog(Context context) {
 		super(context);
         this.context = context;
-        Resources res = context.getResources();
-		langs = res.getStringArray(R.array.language_preference);
+//        Resources res = context.getResources();
+//		langs = res.getStringArray(R.array.language_preference);
 		
 		setContentView(R.layout.languages_dialog);
 		ListView list = (ListView) findViewById(R.id.list);

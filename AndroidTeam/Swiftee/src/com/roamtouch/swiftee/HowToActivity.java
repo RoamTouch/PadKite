@@ -16,8 +16,6 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ViewFlipper;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-
-import java.util.Timer;
 import java.util.TimerTask;
 
 

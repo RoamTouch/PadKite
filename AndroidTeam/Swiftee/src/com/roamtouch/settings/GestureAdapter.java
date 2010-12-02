@@ -1,9 +1,6 @@
 package com.roamtouch.settings;
 
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.SortedSet;
-
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
@@ -16,8 +13,6 @@ import android.gesture.GestureLibrary;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

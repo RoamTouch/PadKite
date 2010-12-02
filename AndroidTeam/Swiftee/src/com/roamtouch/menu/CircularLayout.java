@@ -217,6 +217,43 @@ public class CircularLayout extends ViewGroup {
 	public void setAngleChange(float angleChange){
 		mAngleChange = angleChange;
 	}
+	public void resetMenu(){
+		double t = 55;
+		for (int i = 1; i < childEndPoint; i++) {
+			   MenuButton child = (MenuButton)getChildAt(i);
+			   if (child.getVisibility() != GONE) {    
+			   double angle;				   
+         	// Calc coordinates around the circle at the center of cart. system
+			    angle = (i-1)*t;
+             angle=angle-90 + 46;
+         
+         	child.setAngle(angle);
+         	child.calculateCenter(a,b,inR,angle);
+         	
+         	//Log.i("Circle before if angle,x,y" , "("+ x +","+ y +")angle"+angle);
+         
+         	//Log.i("Circle x,y" , "("+ x +","+ y +")");
+
+             final int childLeft = child.getCenterX() - BUTTON_RADIUS;
+             final int childTop = child.getCenterY() - BUTTON_RADIUS;
+             final int lb = child.getCenterX() + BUTTON_RADIUS;
+             final int rb = child.getCenterY() + BUTTON_RADIUS;
+            
+             if(child.shouldDraw()) {
+                 child.layout(childLeft, childTop, lb, rb);                	
+             }
+         }
+     }			   
+		mAngleChange = 0;
+		//mLastMotionY = 0;
+		//mLastMotionX = 0;
+		//mLastMotionAngle=-999;	
+		/*for (int i = 1; i < childEndPoint; i++) {
+			MenuButton child = (MenuButton)getChildAt(i);
+			child.setAngle(0);
+			child.calculateCenter(a,b,inR,0);
+		}*/
+	}
 	public double getZoomAngle(){
 		MenuButton b = (MenuButton) getChildAt(4);
 		return b.getAngle();
@@ -326,7 +363,7 @@ public class CircularLayout extends ViewGroup {
             	mLastMotionAngle = (float)computeAngle1(a, b, x, y);
     			mLastMotionX = x;
                 mLastMotionY = y;
-//                Log.d("inside mLastMotionAngle,"," reseted initial position!!----------------------");
+                //Log.d("inside mLastMotionAngle,"," reseted initial position!!----------------------x= " + x+" y ="+y );
                 currentAngle = mLastMotionAngle;
             }
             currentAngle = (float)computeAngle1(a, b, x, y);
@@ -458,7 +495,7 @@ public class CircularLayout extends ViewGroup {
 	public void computeScroll() {
 ///		Log.d("INSIDE computeScroll","-----------------------------");
 		if (mScroller.computeScrollOffset()) {
-			Log.d("INSIDE computeScrolloffset","-----------------------------");
+			//Log.d("INSIDE computeScrolloffset","-----------------------------");
 			mAngleChange = mScroller.getAngle();
 			int count = getChildCount();
 			mAngleChange *= direction;
@@ -646,7 +683,7 @@ public class CircularLayout extends ViewGroup {
 				runnable=new Runnable(){
 					public void run() {
 						while(Math.abs(angleD) > 2) {
-							Log.d("Here in animation", "AngleDiff: "+angleD);
+							//Log.d("Here in animation", "AngleDiff: "+angleD);
 							
 						if(Math.abs(angleD) > 5) 
 							angleChange=angleD/i;

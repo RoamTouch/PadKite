@@ -4,23 +4,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
-
 import com.api.blogger.BloggerActivity;
 import com.api.facebook.FacebookActivity;
 import com.api.twitter.TwitterActivity;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.settings.GestureRecorder;
-
-import roamtouch.webkit.WebView;
-
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.util.Log;
-import android.widget.Toast;
 
 public class GestureActions {
 

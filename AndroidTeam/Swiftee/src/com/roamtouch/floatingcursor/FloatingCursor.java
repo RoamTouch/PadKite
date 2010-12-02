@@ -647,6 +647,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						currentMenu.setVisibility(VISIBLE);
 						animationLock = false;
 						handler.postDelayed(runnable, 10000);
+						if(currentMenu instanceof CircularLayout){
+							//((CircularLayout) currentMenu).resetMenu();
+							//Log.d("Reset menu", "---------------------------");
+						}
 					}
 					public void onAnimationRepeat(Animation animation) {}
 
@@ -704,7 +708,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			this.w=w;
 			this.h=h;
 			scrollTo(0,0);
-			Log.d("OnSizeChanged:(w,h)","("+w+","+h+")" );
+//			Log.d("OnSizeChanged:(w,h)","("+w+","+h+")" );
 		}
 
 		private boolean mHandleTouch = false;
@@ -936,6 +940,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 		public void onClick()
 		{
+			if(mWebHitTestResult == null)
+				return;
+			
 			mLongTouchEnabled = false;
 			executeSelectionCommand(WebView.STOP_SELECTION);
 
@@ -994,6 +1001,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 		public void onLongTouch() 
 		{			
+			if(mWebHitTestResult == null)
+				return;
 			if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE)
 			{
 				eventViewer.setText("Detected Long-Touch. Selecting image ...");
@@ -2162,7 +2171,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			// @Override
 			public void onClipBoardUpdate (String type) {
 				if (mGesturesEnabled) {
-					Log.d("in onClickBoardUpdate-------------------------------", type);
+//					Log.d("in onClickBoardUpdate-------------------------------", type);
 					mParent.startGesture(true);
 					mGesturesEnabled=false;
 				}
@@ -2170,7 +2179,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 			@Override
 	        public void onRequestFocus(WebView view) {
-				Log.d("INSIDE ONREQUEST FOCUS","--------------------------");
+//				Log.d("INSIDE ONREQUEST FOCUS","--------------------------");
 			}
 			
 			//@Override
@@ -2195,7 +2204,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			@Override
 			public void doUpdateVisitedHistory (WebView view, String url, boolean isReload){
 				if(!isReload && !url.startsWith("data:text/html") && !url.startsWith("file:///android_asset/")){
-					Log.d("---History--------", "url = "+url+"  Title ="+ view.getTitle());
+//					Log.d("---History--------", "url = "+url+"  Title ="+ view.getTitle());
 					dbConnector.addToHistory(System.currentTimeMillis()+"", url, view.getTitle(), 1);
 				}
 			}
@@ -2243,36 +2252,20 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		        System.gc();
 		        return bm;
 			}
-			
-/*			public Bitmap getCircleBitmap(Bitmap sourceBitmap){
-				
-				
-				int targetWidth = 50;
-			    int targetHeight = 50;
-			    Bitmap targetBitmap = Bitmap.createBitmap(
-			        targetWidth,
-			        targetHeight,
-			        Bitmap.Config.ARGB_8888);
-			    Canvas canvas = new Canvas(targetBitmap);
-			    Path path = new Path();
-			
-			    path.addCircle(
-			    		25,
-			    		25,
-				        25,
-				        Path.Direction.CCW);
-			    canvas.clipPath(path,Region.Op.REPLACE);
-			    	    
-			   // canvas.drawCircle(27, 27, 30, mPaint);
-			   // canvas.drawBitmap(buffer, 0, 0, mPaint);
-			    canvas.drawBitmap(
-			        sourceBitmap,
-			        new Rect(0, 0, sourceBitmap.getWidth(), sourceBitmap.getHeight()),
-			        new Rect(0, 0, targetWidth-2, targetHeight-2),
-			        null);
-			    sourceBitmap.recycle();
-			    path.reset();
-			    return targetBitmap;
+/*			
+			public Bitmap getCircleBitmap(WebView view){
+				 Bitmap sourceBitmap = view.getDrawingCache();
+				 Bitmap bm = Bitmap.createBitmap(50,
+			                50, Bitmap.Config.ARGB_4444);
+			        
+			        Canvas canvas = new Canvas(bm);
+			        Path path = new Path();
+				    
+					path.addCircle(25,25,25,Path.Direction.CCW);
+					canvas.clipPath(path,Region.Op.INTERSECT);
+					canvas.drawBitmap(sourceBitmap, 0, 0, null);
+					//sourceBitmap.recycle();
+			    return bm;
 			}
 */			
 			public void onPageStarted(WebView view, String url,Bitmap b) {

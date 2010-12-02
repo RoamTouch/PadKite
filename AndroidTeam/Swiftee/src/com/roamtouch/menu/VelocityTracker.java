@@ -17,7 +17,7 @@
 package com.roamtouch.menu;
 
 import android.util.Config;
-import android.util.Log;
+//import android.util.Log;
 import android.view.MotionEvent;
 
 
@@ -208,12 +208,12 @@ public final class VelocityTracker implements Poolable<VelocityTracker> {
                
                          
                 float dist = Math.abs((float) (computeAngle1(pastX[j],pastY[j]) - computeAngle1(oldestX,oldestY)));
-                Log.d("angular distance : ", ""+dist);
+//                Log.d("angular distance : ", ""+dist);
                 
                 float vel = (dist/dur) ;   // pixels/frame.
                // float velDeg = (float) Math.toDegrees(vel);
                 
-                Log.d("angular velocity : ", ""+vel);
+//                Log.d("angular velocity : ", ""+vel);
 
                 accumX = (accumX == 0) ? vel : (accumX + vel) * .5f;
             }
@@ -223,8 +223,8 @@ public final class VelocityTracker implements Poolable<VelocityTracker> {
             mYVelocity[pos] = accumY < 0.0f ? Math.max(accumY, -maxVelocity)
                     : Math.min(accumY, maxVelocity);
 
-            if (localLOGV) Log.v(TAG, "Y velocity=" + mYVelocity +" X velocity="
-                    + mXVelocity + " N=" + N);
+//            if (localLOGV) Log.v(TAG, "Y velocity=" + mYVelocity +" X velocity="
+//                    + mXVelocity + " N=" + N);
         }
     }
     
