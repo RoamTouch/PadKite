@@ -4,7 +4,6 @@ import com.roamtouch.swiftee.R;
 import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -245,9 +244,10 @@ public class CircularLayout extends ViewGroup {
          }
      }			   
 		mAngleChange = 0;
-		//mLastMotionY = 0;
-		//mLastMotionX = 0;
-		//mLastMotionAngle=-999;	
+		mLastMotionY = 0;
+		mLastMotionX = 0;
+		mLastMotionAngle=-999;	
+		moveChilds();
 		/*for (int i = 1; i < childEndPoint; i++) {
 			MenuButton child = (MenuButton)getChildAt(i);
 			child.setAngle(0);

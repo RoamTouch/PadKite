@@ -21,7 +21,6 @@ import android.os.SystemClock;
 import android.os.Vibrator;
 import android.text.ClipboardManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -648,7 +647,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						animationLock = false;
 						handler.postDelayed(runnable, 10000);
 						if(currentMenu instanceof CircularLayout){
-							//((CircularLayout) currentMenu).resetMenu();
+							((CircularLayout) currentMenu).resetMenu();
 							//Log.d("Reset menu", "---------------------------");
 						}
 					}
