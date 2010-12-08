@@ -77,7 +77,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		private final float scale = getContext().getResources().getDisplayMetrics().density;
 		private final int RADIUS = (int) (RADIUS_DIP * scale + 0.5f); //Converting to Pixel
 		private final int INNER_RADIUS = (int) (RADIUS*0.3f);
-			
+		private final int FC_RADIUS = (int) (RADIUS*0.9f); //Converting to Pixel
+
 	/**
 	 * 	FloatingCursor child views
 	 */
@@ -256,7 +257,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			// FC was touched, get out of parking mode
 			if(mParent.isInParkingMode) {
 				mParent.exitParkingMode();
-				fcView.setRadius(RADIUS*3/4); //Restore radius size
+				fcView.setRadius(FC_RADIUS); //Restore radius size
 			}
         
 			if (mVelocityTracker == null) {
@@ -386,7 +387,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			//pointer.scrollTo(-140, -140);
         
 			fcView = new FloatingCursorView(getContext());
-			fcView.setRadius(RADIUS*3/4);
+			fcView.setRadius(FC_RADIUS);
 	
 			removeTouchPoint();
 		
@@ -648,7 +649,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				// FC was touched, get out of parking mode
 				if(mParent.isInParkingMode) {
 					mParent.exitParkingMode();
-					fcView.setRadius(RADIUS*3/4); //Restore radius size
+					fcView.setRadius(FC_RADIUS); //Restore radius size
 				}
 
 				pointer.setImageResource(R.drawable.kite_cursor);
