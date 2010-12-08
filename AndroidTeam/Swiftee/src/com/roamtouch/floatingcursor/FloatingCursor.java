@@ -289,6 +289,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
                 */
                 if (!mScroller.isFinished()) {
                     mScroller.abortAnimation();
+                    updateFC();
                 }
 
                 // Remember where the motion event started
@@ -365,7 +366,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
             
 				// FIXME: Update cursor image
-
+				updateFC();
+				
 				// Keep on drawing until the animation has finished.
 				postInvalidate();
 			}
@@ -506,6 +508,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			this.setVisibility(View.VISIBLE);
  		}
 		
+		public void updateFC()
+		{
+			fcX = -(int)pointer.getScrollX() + -(int)getScrollX() + w/2;
+			fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;
+		}
+		
 		public void enterParkingMode() {
 			//Scale down cursor
 			fcView.setRadius(RADIUS*1/2);
@@ -606,8 +614,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			scrollBy(dx, dy);
 			
 			// Update fc coordinates
-			fcX = -(int)pointer.getScrollX() + -(int)getScrollX() + w/2;
-			fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;
+			updateFC();
 			invalidate();
 		}
 		
@@ -911,6 +918,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			{
 				pointer.scrollTo(0,0);
 				fcPointerView.scrollTo(0,0);
+				updateFC();
 				//fcProgressBar.scrollTo(0,0);
 			}
 
@@ -1533,6 +1541,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				timerStarted = false;
 				handler.removeCallbacks(runnable);
 				
+                if (!mScroller.isFinished()) {
+                    mScroller.abortAnimation();
+                    updateFC();
+                }
+				
 				mPrevX = X;
 				mPrevY = Y;
 				mPrevMoveX = X;
@@ -1623,9 +1636,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 					//fcTouchView.scrollTo(CircleX - X, CircleY - Y);
 					//fcTouchView.setVisibility(View.VISIBLE);
-				
-					fcX = -(int)pointer.getScrollX() + -(int)getScrollX() + w/2;
-					fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;
+
+					updateFC();
 				
 					//stopSelection(fcX, fcY);
 					startHitTest(fcX, fcY);	
@@ -1727,8 +1739,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}
 				
 				removeTouchPoint();
-				fcX = -(int)pointer.getScrollX() + -(int)getScrollX() + w/2;
-				fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;
 				checkFCMenuBounds();
 
 				//fcTouchView.setVisibility(View.INVISIBLE);
