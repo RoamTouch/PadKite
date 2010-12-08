@@ -151,9 +151,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
     
 		private Handler handler;
 		private Runnable runnable;
-//		private KiteRunnable runnableKiteAni;
+		private Runnable parkingRunnable;
+
+		//		private KiteRunnable runnableKiteAni;
 
 		private boolean timerStarted = false;//ms
+		private boolean parkTimerStarted = false;//ms
 
 	/**
 	 * Vibrator for device vibration	
@@ -254,12 +257,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				return false;
 			}
 			
-			// FC was touched, get out of parking mode
-			if(mParent.isInParkingMode) {
-				mParent.exitParkingMode();
-				fcView.setRadius(FC_RADIUS); //Restore radius size
-			}
-        
 			if (mVelocityTracker == null) {
 				mVelocityTracker = VelocityTracker.obtain();
 			}
@@ -451,6 +448,23 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 			};
 
+			parkingRunnable = new Runnable(){
+
+				public void run() {
+					if(!mParent.isInParkingMode && parkTimerStarted && FloatingCursor.this.isFCOutofBounds()) {
+						parkTimerStarted = false;
+						mParent.enterParkingMode(false);
+						checkFCParkingBounds();
+					}
+					else {
+						parkTimerStarted = true;
+						handler.postDelayed(this,2000);
+					}
+				}
+				
+			};
+
+			
 			//runnableKiteAni = new KiteRunnable();
 		}
 
@@ -592,6 +606,50 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			return fcWindowTabs.getWindowCount();
 		}
 		
+		protected boolean isFCOutofBounds()
+		{
+			int r = fcView.getRadius();
+			r = r / 2;
+
+			if (fcX - r < 0)
+				return true;
+			else if (fcX + r > this.w)
+				return true;
+
+			if (fcY - (r + 50) < 0)
+				return true;
+			else if (fcY + r > this.h)
+				return true;
+			
+			return false;
+		}
+
+		protected void checkFCParkingBounds()
+		{
+			int r = fcView.getRadius();
+			r = r / 2;
+			
+			int dx = 0;
+			int dy = 0;
+						
+			if (fcX - r < 0)
+				dx = fcX - r;
+			else if (fcX + r > this.w)
+				dx = (fcX + r)-this.w;
+
+			if (fcY - (r + 50) < 0)
+				dy = fcY - (r + 50);
+			else if (fcY + r > this.h)
+				dy = (fcY + r) - this.h;
+			
+			scrollBy(dx, dy);
+			
+			// Update fc coordinates
+			updateFC();
+			invalidate();
+		}
+
+		
 		protected void checkFCMenuBounds()
 		{
 			final int r = fcView.getRadius();
@@ -672,6 +730,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						currentMenu.setVisibility(VISIBLE);
 						animationLock = false;
 						handler.postDelayed(runnable, 10000);
+						handler.removeCallbacks(parkingRunnable);
+
 						if(currentMenu instanceof CircularLayout){
 							((CircularLayout) currentMenu).resetMenu();
 							//Log.d("Reset menu", "---------------------------");
@@ -707,6 +767,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						currentMenu = fcMainMenu;
 						animationLock = false;
 						handler.removeCallbacks(runnable);
+
 						//runnableKiteAni.start();
 					}
 					
@@ -1539,7 +1600,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			{
 				
 				timerStarted = false;
+				parkTimerStarted = false;
+
 				handler.removeCallbacks(runnable);
+				handler.removeCallbacks(parkingRunnable);
 				
                 if (!mScroller.isFinished()) {
                     mScroller.abortAnimation();
@@ -1559,7 +1623,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				final int CircleX = -(int)getScrollX() + w/2;
 				final int CircleY = -(int)getScrollY() + h/2;
 
-				final int r = fcView.getRadius();
+				int r = fcView.getRadius();
 				
 				// Check for inner circle click and show Circular menu
 				final int innerCirRad = (int)(fcPointerView.getRadius() * 0.6f);
@@ -1567,7 +1631,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				// We need to factor the inner circle relocation so
 				// it does not get out of the outer circle
 				// Fixed Size: 60 % from our radius
-				final float radFact = 0.6f*r; //(float)(2*innerCirRad) / (float)r;
+				float radFact = 0.6f*r; //(float)(2*innerCirRad) / (float)r;
 
 				//Toast.makeText(mContext, "radFact: " + radFact, 100).show();
 				
@@ -1621,6 +1685,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					//fcTouchView.setVisibility(View.VISIBLE);
 
 					mHandleTouch = true;
+					// FC was touched, get out of parking mode
+					if(mParent.isInParkingMode) {
+						mParent.exitParkingMode();
+						fcView.setRadius(FC_RADIUS); //Restore radius size
+						// Now recalculate some vars
+						r = fcView.getRadius();
+						radFact = 0.6f*r;
+					}
 				
 					// Save coordinates
 					//				mLastTouchX = X;
@@ -1739,8 +1811,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}
 				
 				removeTouchPoint();
-				checkFCMenuBounds();
-
+				//checkFCMenuBounds();
+				if(currentMenu.getVisibility() != View.VISIBLE)
+					handler.post(parkingRunnable);
+				
 				//fcTouchView.setVisibility(View.INVISIBLE);
 
 				if (mHandleTouch == false)
