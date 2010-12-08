@@ -88,6 +88,7 @@ public class FloatingCursorView extends View{
         }
     }
 
+    
     protected void startRotateAnimation() {
     	ra = null;
     	this.clearAnimation();
@@ -162,6 +163,7 @@ public class FloatingCursorView extends View{
 
     	}
     };
+    
     
     public void startKiteAnimation() {
     	

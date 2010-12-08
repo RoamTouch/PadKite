@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Path;
 import android.graphics.Picture;
 import android.graphics.Point;
@@ -65,7 +66,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	
 		private DBConnector dbConnector;		
 	 	private BrowserActivity mParent;	 	
-		private int w = 0, h = 0;		
+		public int w = 0, h = 0;		
 		/* Maximum jump that is tolerated */
 		private final int MAX_JUMP = 128;
 		
@@ -250,7 +251,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				// Don't handle edge touches immediately -- they may actually belong to one of our
 				// descendants.
 				return false;
-			}	
+			}
+			
+			// FC was touched, get out of parking mode
+			if(mParent.isInParkingMode) {
+				mParent.exitParkingMode();
+				fcView.setRadius(RADIUS*3/4); //Restore radius size
+			}
         
 			if (mVelocityTracker == null) {
 				mVelocityTracker = VelocityTracker.obtain();
@@ -497,6 +504,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			mIsDisabled = false;
 			this.setVisibility(View.VISIBLE);
  		}
+		
+		public void enterParkingMode() {
+			//Scale down cursor
+			fcView.setRadius(RADIUS*1/2);
+		}
 	
 		public void setWebView(WebView wv,boolean isFirst) {
 			/*
@@ -632,6 +644,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			removeTouchPoint();
 
 			if(currentMenu.getVisibility() == INVISIBLE){
+				
+				// FC was touched, get out of parking mode
+				if(mParent.isInParkingMode) {
+					mParent.exitParkingMode();
+					fcView.setRadius(RADIUS*3/4); //Restore radius size
+				}
 
 				pointer.setImageResource(R.drawable.kite_cursor);
 				mMenuDown = true;
@@ -2210,8 +2228,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			@Override
 			public void onPageFinished(WebView view, String url) {
 				
-				fcView.stopAllAnimation(); // Stop 'loading' animation
-				fcView.startScaleUpAnimation(); //Restore original size
+				fcView.stopAllAnimation(); //Stop 'loading' animation
+				if(!mParent.isInParkingMode) {
+					fcView.startScaleUpAnimation(); //Restore original size if not in parking mode
+				}
 				
 				fcMainMenu.toggleCloseORRefresh(true);
 				mContentWidth = view.getContentWidth();
@@ -2222,8 +2242,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 				fcMainMenu.setBackEabled(view.canGoBack());
 				fcMainMenu.setFwdEabled(view.canGoForward());
-				
 			}
+			
 			public Bitmap getCircleBitmap(WebView view){
 				Picture thumbnail = view.capturePicture();
 		        if (thumbnail == null) {
@@ -2268,8 +2288,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 */			
 			public void onPageStarted(WebView view, String url,Bitmap b) {
-				//fcProgressBar.enable();
-				fcView.startScaleDownAndRotateAnimation();
+				if(!mParent.isInParkingMode) {
+					fcView.startScaleDownAndRotateAnimation();
+				} else {
+					fcView.startRotateAnimation();
+				}
 				fcMainMenu.toggleCloseORRefresh(false);
 			}
 		}

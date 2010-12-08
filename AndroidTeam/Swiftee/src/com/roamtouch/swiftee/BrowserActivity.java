@@ -51,13 +51,20 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.ClipboardManager;
+import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
+import android.view.animation.Animation.AnimationListener;
 import roamtouch.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
+import android.widget.Toast;
 //import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
@@ -70,6 +77,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	public static String version_code = "Version Beta-v1.43.8";
 	
 	final public static boolean developerMode = false;
+	public boolean isInParkingMode = false;
 	
 	final public static String BASE_PATH = "/sdcard/PadKite";
 	final public static String THEME_PATH = BASE_PATH + "/Default Theme";
@@ -92,10 +100,11 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 	private int currentGestureLibrary;
 	private int mGestureType = SwifteeApplication.CURSOR_TEXT_GESTURE;
-;
 	
 	private SwifteeApplication appState;
     private SharedPreferences sharedPreferences;
+    
+    private TranslateAnimation ta;
     
     public void closeDialog()
     {
@@ -204,8 +213,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	super.onNewIntent(intent);
     	String data = null;
     	
-    	if (intent != null)
+    	if (intent != null) {
     		data = intent.getDataString();
+    		enterParkingMode(true);
+    	}
 		
     	if(data!=null)
 			webView.loadUrl(data);
@@ -290,13 +301,14 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		//webView.setDragTracker(tracker);	
 		webLayout.addView(webView);
 		//webView.loadUrl("http://padkite.com/start");
-
-		//		webView.loadUrl("http://www.google.com");
+		
 		String data = getIntent().getDataString();
-		if(data!=null)
+		if(data!=null) {
 			webView.loadUrl(data);
-		else
+		}
+		else {
 			webView.loadUrl("file:///android_asset/loadPage.html");
+		}
 		
 		webView.setSelectionColor(0xAAb4d5fe);
 		webView.setSearchHighlightColor(0xAAb4d5fe);
@@ -317,6 +329,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		floatingCursor.setEventViewerArea(eventViewer);
 		floatingCursor.setParent(this);
 		//floatingCursor.setHandler(handler);
+		
+		if(data!=null) {
+			enterParkingMode(true);
+		}
 		
 		overlay.setFloatingCursor(floatingCursor);
 
@@ -814,6 +830,40 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		return charset;
 	}
 	
+	public void enterParkingMode(boolean moveToParkingPosition) {
+		isInParkingMode = true;
+		
+		//Shrink to a half the size
+		floatingCursor.enterParkingMode();
+		Display display = getWindowManager().getDefaultDisplay();
+        final int w = display.getWidth();
+        final int h = display.getHeight();
+		
+		if(moveToParkingPosition) {
+			ta = new TranslateAnimation(0, w/2 - 50, 0, h/2 - 50);
+	        ta.setDuration((long) 1000);
+	        ta.setInterpolator(new AccelerateDecelerateInterpolator());
+	        ta.setAnimationListener(new AnimationListener(){
+	        	
+	        	public void onAnimationEnd(Animation arg0) {
+	        		floatingCursor.scrollTo( -w/2 + 50, -h/2 + 50);
+	     	   }
+	     	   
+	     	   public void onAnimationRepeat(Animation arg0) {
+	     		   //Do nothing
+	            }
+
+	            public void onAnimationStart(Animation arg0) {
+	            	//Do nothing
+	            }
+	        });
+	        floatingCursor.startAnimation(ta);
+		}
+	}
+	
+	public void exitParkingMode() {
+		isInParkingMode = false;
+	}
 	
 	public class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
 		URL url;
