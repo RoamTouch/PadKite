@@ -73,8 +73,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 
-	public static String version = "Version Beta-v1.43.9-eclair build #862e37/105d79";
-	public static String version_code = "Version Beta-v1.43.9";
+	public static String version = "Version Beta-v1.44.1-eclair build #862e37/105d79";
+	public static String version_code = "Version Beta-v1.44.1";
 	
 	final public static boolean developerMode = false;
 	public boolean isInParkingMode = false;
@@ -257,6 +257,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         
         }
         
+        /*
         mHandler.postDelayed(new Runnable() {
        
         	public void run() {
@@ -282,7 +283,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         		}, 30000);
         	}
         }   	
-        }, 10000);
+        }, 10000);*/ 
         
         webLayout = (FrameLayout) findViewById(R.id.webviewLayout);
         
