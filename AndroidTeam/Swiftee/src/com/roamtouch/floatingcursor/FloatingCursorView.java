@@ -29,6 +29,9 @@ public class FloatingCursorView extends View{
     private float x = 0;
     private float y = 0;
     private int r = 25;
+    
+    private static final float smallFact = 0.5f;
+    
     private int mProgress;
 
     private Bitmap bitmap;
@@ -102,7 +105,7 @@ public class FloatingCursorView extends View{
 
     protected void startScaleDownAnimation() {
     	sa = null; //Clear previous reference
-    	sa = new ScaleAnimation(1.0f,0.3f,1.0f,0.3f,
+    	sa = new ScaleAnimation(1.0f,smallFact,1.0f,smallFact,
     			Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
     	sa.setDuration((long) 1000);
     	sa.setInterpolator(new LinearInterpolator());
@@ -111,7 +114,7 @@ public class FloatingCursorView extends View{
     
     protected void startScaleUpAnimation() {
     	sa = null; //Clear previous reference
-    	sa = new ScaleAnimation(0.3f,1f,0.3f,1f,
+    	sa = new ScaleAnimation(smallFact,1f,smallFact,1f,
     			Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
     	sa.setDuration((long) 1000);
     	sa.setInterpolator(new LinearInterpolator());
@@ -129,7 +132,7 @@ public class FloatingCursorView extends View{
     	ra.setDuration((long) 1000); // 1 sec/rotation @ 0% loading
     	ra.setRepeatCount(Animation.INFINITE);
     	
-    	sa = new ScaleAnimation(1.0f,0.3f,1.0f,0.3f,
+    	sa = new ScaleAnimation(1.0f,smallFact,1.0f,smallFact,
     			Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
     	sa.setDuration((long) 1000);
     	
