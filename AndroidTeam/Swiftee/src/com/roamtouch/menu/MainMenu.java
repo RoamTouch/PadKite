@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 //import android.util.Log;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -107,7 +108,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				return false;
 
 		MenuButton b = (MenuButton)v;
-		
+
 		String function = b.getFunction();
 		
 //		Log.d("MainMenu", "Function = " + function);
@@ -188,8 +189,19 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				break;
 			}
 		}
-		if(event.getAction() == MotionEvent.ACTION_UP){
+		if(event.getAction() == MotionEvent.ACTION_UP){			
 			mParent.setEventViewerMode(EventViewerArea.TEXT_ONLY_MODE);
+
+			String policy = b.getPolicy();
+			
+			if (policy.equals("keep")) { // Keep current menu opened
+				;
+			}
+			else /* policy == "close" or "none" */
+			{
+				mFloatingCursor.hideMenuFast();
+			}
+			
 			switch(button_function){
 			
 			//Settings
@@ -218,7 +230,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			//Zoom
 			case zoom:
 				//mFloatingCursor.disableCircularZoom();
-				mFloatingCursor.enableCircularZoom();
+				mFloatingCursor.enableCircularZoom(policy.equals("keep"));
 				break;
 					
 			//Find text

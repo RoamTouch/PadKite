@@ -4,6 +4,7 @@ import com.roamtouch.swiftee.R;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.StateSet;
 import android.widget.Button;
 
@@ -16,6 +17,8 @@ public class MenuButton extends Button{
 		private Drawable m_disabledDrawable;
 		
 		private String m_button_function = null;
+		private String m_button_policy = null;
+		
 		private boolean isHotkey = false;
 		private void init(Context context)
 		{
@@ -56,6 +59,16 @@ public class MenuButton extends Button{
 		public void setFunction(String button_function)
 		{
 			m_button_function = button_function;
+		}
+		
+		public String getPolicy()
+		{
+			return (m_button_policy==null)?"none":m_button_policy;
+		}
+
+		public void setPolicy(String button_policy)
+		{
+			m_button_policy = button_policy;
 		}
 		
 		public void setAngle(double angle) {

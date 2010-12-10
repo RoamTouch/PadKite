@@ -1931,7 +1931,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		 * Circular zoom functions 
 		 * 
 		 */
-			public void enableCircularZoom(){
+		
+		boolean mZoomOpenMenu = true;
+			
+			public void enableCircularZoom(boolean openMenuAfterFinish){
 				zoomView.setVisibility(VISIBLE);
 				zoomView.setClickable(true);
 			/*	long downTime = SystemClock.uptimeMillis();
@@ -1941,15 +1944,19 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				fcMainMenu.onTouch(fcMainMenu.getChildAt(3), event);
 			*/	
 				zoomView.setAngle((float)fcMainMenu.getZoomAngle());
-				eventViewer.setText("Circular Zooming enabled.Click back to disable it");
+				eventViewer.setText("Circular Zooming enabled. Click back to disable it");
 				currentMenu.setVisibility(INVISIBLE);
 				fcView.setVisibility(View.VISIBLE);
+				mZoomOpenMenu = openMenuAfterFinish;
 			}
 			public void disableCircularZoom(){
 				currentMenu.setVisibility(VISIBLE);
 				fcView.setVisibility(View.INVISIBLE);
 				zoomView.setVisibility(INVISIBLE);
 				eventViewer.setText("Circular Zooming disabled");
+				if (!mZoomOpenMenu) {
+					hideMenuFast();
+				}
 			}
 			public boolean isCircularZoomEnabled(){
 				if(zoomView.getVisibility() == VISIBLE)
@@ -1975,7 +1982,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			mWebView.loadUrl(url);
 		}
 		public void loadData(String data){
-			
 			mWebView.loadDataWithBaseURL("file:///android_asset/images/", data,  "text/html", "utf-8", null);
 		}
 		public void nextWebPage(){

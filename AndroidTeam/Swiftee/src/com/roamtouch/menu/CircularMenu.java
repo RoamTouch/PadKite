@@ -67,7 +67,7 @@ public class CircularMenu extends CircularLayout implements OnTouchListener{
 			case R.id.stop:break;
 			case R.id.zoom:
 				
-				mFloatingCursor.enableCircularZoom();
+				mFloatingCursor.enableCircularZoom(true);
 				break;
 			case R.id.resizeHit:break;
 			case R.id.windows:
@@ -154,7 +154,7 @@ public class CircularMenu extends CircularLayout implements OnTouchListener{
 			}
 			case R.id.stop:break;
 			case R.id.zoom:				
-				mFloatingCursor.enableCircularZoom();
+				mFloatingCursor.enableCircularZoom(true);
 				break;
 			case R.id.resizeHit:break;
 			case R.id.windows:

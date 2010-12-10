@@ -122,6 +122,17 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 		}
 		}
 		if(event.getAction() == MotionEvent.ACTION_UP){
+
+			String policy = b.getPolicy();
+			
+			if (policy.equals("keep")) { // Keep current menu opened
+				;
+			}
+			else /* policy == "close" or "none" */
+			{
+				mFloatingCursor.hideMenuFast();
+			}
+			
 			switch(button_function){
 			
 			//Browser Settings

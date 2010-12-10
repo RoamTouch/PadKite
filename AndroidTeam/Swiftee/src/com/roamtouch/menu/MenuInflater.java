@@ -46,6 +46,7 @@ public class MenuInflater {
 					b.setDrawables(PATH+attrs.get("button_image"),PATH+attrs.get("button_highlightImage"));
 					
 					b.setFunction(attrs.get("button_function"));
+					b.setPolicy(attrs.get("button_policy"));
 					
 					String s = attrs.get("button_disabled");
 					if(s != null){
