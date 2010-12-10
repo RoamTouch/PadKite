@@ -4,12 +4,13 @@
   
     <!-- Languages preferences -->
     	<string-array name="language_preference">
+        	<item>Chinese</item>
         	<item>English</item>
-        	<item>Hindi</item>
-        	<item>Spanish</item>  
         	<item>French</item>
         	<item>German</item>
+        	<item>Hindi</item>
         	<item>Russian</item>  
+        	<item>Spanish</item>          	
     	</string-array>
     
     <!-- Gesture Kit Editor Arrays -->
