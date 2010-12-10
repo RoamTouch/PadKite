@@ -16,7 +16,7 @@
 <TextView android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
-    android:text="Sdcard is not available or write protected.Please insert the sdcard or unmount it from USB"
+    android:text="SD Card is not available or write protected. Please insert the SD Card or unmount it from USB."
     android:textAppearance="?android:attr/textAppearanceLarge"
     android:paddingBottom="20dip"
     android:textColor="#000000"/>    

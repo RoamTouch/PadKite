@@ -901,7 +901,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 
 	    	alertDialog = new AlertDialog.Builder(BrowserActivity.this).create();
 			alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-		    alertDialog.setMessage("Sdcard is not available or write protected.Please insert the sdcard or unmount it from USB");
+		    alertDialog.setMessage("SD Card is not available or write protected. Please insert the SD Card or unmount it from USB.");
 		    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
 		    	//mParent.finish();  
