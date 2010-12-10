@@ -84,12 +84,18 @@ public class GestureActions {
 	
 	public void search(FloatingCursor fc)
 	{
-		fc.loadPage("http://www.google.com/search?q=" + URLEncoder.encode(mSelection));
+		fc.loadPage("http://www.google.com/m/search?q=" + URLEncoder.encode(mSelection));
 	}
+
+	public void searchPicture(FloatingCursor fc)
+	{
+		fc.loadPage("http://www.google.com/m/search?site=images&q=" + URLEncoder.encode(mSelection));
+	}
+
 	
 	public void searchYouTube(FloatingCursor fc)
 	{
-		fc.loadPage("http://www.youtube.com/results?search_query=" + URLEncoder.encode(mSelection));
+		fc.loadPage("http://m.youtube.com/results?search_query=" + URLEncoder.encode(mSelection));
 	}
 
 	public void email()
