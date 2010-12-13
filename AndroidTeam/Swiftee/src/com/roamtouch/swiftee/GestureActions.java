@@ -10,11 +10,13 @@ import com.api.twitter.TwitterActivity;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.settings.GestureRecorder;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.text.ClipboardManager;
 
 public class GestureActions {
 
@@ -80,6 +82,11 @@ public class GestureActions {
 			link = "http://www.youtube.com/watch?v=" + videoId;
 		}
 		return link;
+	}
+	
+	public void copy() 
+	{
+		((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).setText(mSelection);
 	}
 	
 	public void search(FloatingCursor fc)

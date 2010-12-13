@@ -610,6 +610,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			actions.send();
         }     
         else if("Copy".equals(action)){
+			actions.copy();
         }
         else {
 			eventViewer.setText("Unrecognized gesture: " + action);
