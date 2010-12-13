@@ -62,7 +62,8 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 		update.setGravity(Gravity.RIGHT);
 		update.setText("Update");
 		update.setVisibility(View.GONE);
-		
+
+		this.setVisibility(View.INVISIBLE);
 		this.addView(tv1);
 		this.addView(update);
 		
@@ -138,7 +139,7 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 		isEnabled = sharedPreferences.getBoolean("enable_event_viewer", true);
 		if(isEnabled){
 			this.setVisibility(View.VISIBLE);
-			tv1.setText(Html.fromHtml("<font color=\"black\">" + txt + "</font><font color=\"white\">" + txt2 + "</font>"));
+			tv1.setText(Html.fromHtml("<font color=\"#666666\">" + txt + "</font><font color=\"black\">" + txt2 + "</font>"));
 			timeToWait = TIME_TO_WAIT;
 		}
 	}
@@ -151,21 +152,21 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 			switch(type){
 
 			case WebHitTestResult.ANCHOR_TYPE:
-				tv1.setText(Html.fromHtml("<font color=\"white\">FloatingCursor over link |</font> <font color=\"black\">"+extra+"</font>"));
+				tv1.setText(Html.fromHtml("<font color=\"#666666\">FloatingCursor over link |</font> <font color=\"black\">"+extra+"</font>"));
 				break;
 			case WebHitTestResult.VIDEO_TYPE:
-				tv1.setText(Html.fromHtml("<font color=\"white\">FloatingCursor over video |</font> <font color=\"black\">"+extra+"</font>"));
+				tv1.setText(Html.fromHtml("<font color=\"#666666\">FloatingCursor over video |</font> <font color=\"black\">"+extra+"</font>"));
 				break;
 			case WebHitTestResult.IMAGE_TYPE:
-				Spanned s = Html.fromHtml("<font color=\"white\">Protocol:</font> <font color=\"black\">Markup Language</font><br>" +
-						"<font color=\"white\">Type:</font><font color=\"black\">Image JPEG</font><br>" +
-						"<font color=\"white\">Address:(URL):</font>    <font color=\"black\">http://www.images.com/1.jpeg</font><br>" +
-						"<font color=\"white\">Size:</font>  <font color=\"black\">43395 bytes</font><br>"+ 
-				"<font color=\"white\">Dimensions:</font> <font color=\"black\">300 x 170 pixels</font>");
+				Spanned s = Html.fromHtml("<font color=\"#666666\">Protocol:</font> <font color=\"black\">Markup Language</font><br>" +
+						"<font color=\"#666666\">Type:</font><font color=\"black\">Image JPEG</font><br>" +
+						"<font color=\"#666666\">Address:(URL):</font>    <font color=\"black\">http://www.images.com/1.jpeg</font><br>" +
+						"<font color=\"#666666\">Size:</font>  <font color=\"black\">43395 bytes</font><br>"+ 
+				"<font color=\"#666666\">Dimensions:</font> <font color=\"black\">300 x 170 pixels</font>");
 				tv1.setText(s);
 				break;
 			case WebHitTestResult.TEXT_TYPE:
-				tv1.setText(Html.fromHtml("<font color=\"white\">FloatingCursor over text |</font> <font color=\"black\">"+extra+"</font>"));
+				tv1.setText(Html.fromHtml("<font color=\"#666666\">FloatingCursor over text |</font> <font color=\"black\">"+extra+"</font>"));
 				break;
 			case -1:
 				tv1.setText("");

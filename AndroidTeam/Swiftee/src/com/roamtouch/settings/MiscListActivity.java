@@ -186,6 +186,18 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 		    } }); 
 		  	alertDialog.show();
 		  	break;
+		case 10:
+			alertDialog = new AlertDialog.Builder(MiscListActivity.this).create();
+			alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+		    alertDialog.setTitle("Version-Information");
+		    alertDialog.setMessage("Version: " + BrowserActivity.version);
+		    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+		      public void onClick(DialogInterface dialog, int which) {
+		        return;
+
+		    } }); 
+		  	alertDialog.show();
+		  	break;
 		}
 	}
 
