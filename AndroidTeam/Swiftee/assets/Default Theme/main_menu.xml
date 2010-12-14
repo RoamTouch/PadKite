@@ -3,12 +3,12 @@
    		<MenuButton android:button_image="backward_normal.png"
 					android:button_highlightImage="backward_pressed.png" 
 					android:button_disabled="backward_disabled.png"
-                    android:button_function="backward" android:button_policy="keep" />
+                    android:button_function="backward" android:button_policy="" />
 		
 		<MenuButton android:button_image="forward_normal.png"
 					android:button_highlightImage="forward_pressed.png" 
 					android:button_disabled="forward_disabled.png"
-					android:button_policy="keep"
+					android:button_policy=""
                     android:button_function="forward"/>
 	
 		<MenuButton android:button_image="refresh_normal.png"
