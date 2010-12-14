@@ -554,9 +554,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			eventViewer.setText("P (Picture) gesture done, searching Google images for: " + mSelection);
 			actions.searchPicture(floatingCursor);
 		}
-        else if ("Email".equals(action))
+        else if ("Email".equals(action) || "Mail".equals(action))
         {
-			eventViewer.setText("e (email) gesture done");
+			eventViewer.setText("M (eMail) gesture done");
 			actions.email();
         }
         else if("Calendar".equals(action)){
