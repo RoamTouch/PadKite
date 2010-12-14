@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Path;
 import android.graphics.Picture;
 import android.graphics.Point;
@@ -702,6 +701,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		}
 		
 		protected boolean animationLock = false;
+		private boolean mSoftKeyboardVisible = false;
 
 		public void toggleMenuVisibility(){
 			
@@ -801,7 +801,17 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			this.w=w;
 			this.h=h;
 			scrollTo(0,0);
-//			Log.d("OnSizeChanged:(w,h)","("+w+","+h+")" );
+			if (w == oldw && h != oldh) {
+				if (h < oldh) { // Soft Keyboard now visible
+					mSoftKeyboardVisible = true;
+				}
+				else { // Soft Keyboard now hidden
+					mSoftKeyboardVisible = false;
+				}
+			}
+			//Log.e("OnSizeChanged:(w,h,ow,oh)","("+w+","+h+","+oldw+","+oldh+")" );
+
+			//			Log.d("OnSizeChanged:(w,h)","("+w+","+h+")" );
 		}
 
 		private boolean mHandleTouch = false;
@@ -956,8 +966,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				// Was there a node change?
 
 				if (identifier != mWebHitTestResultIdentifer) {
-					if (resultType == WebHitTestResult.ANCHOR_TYPE)
-						mWebView.focusNodeAt(X,Y);
+					if (resultType == WebHitTestResult.ANCHOR_TYPE) {					
+						if (mSoftKeyboardVisible == false) {
+							mWebView.focusNodeAt(X,Y);
+						}
+					}
 					else if (mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE)
 						sendEvent(MotionEvent.ACTION_CANCEL, X, Y); // FIXME: Use proper API for that
 				}
