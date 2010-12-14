@@ -99,6 +99,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 		
 		private boolean mIsDisabled = false;
+		private boolean mIsLoading = false;
 		
 		private WebView mWebView = null;
 	
@@ -453,6 +454,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				public void run() {
 					if(!mParent.isInParkingMode && parkTimerStarted && FloatingCursor.this.isFCOutofBounds()) {
 						parkTimerStarted = false;
+						if (mIsLoading)
+						{
+							fcView.startScaleUpAndRotateAnimation(100);
+						}
 						mParent.enterParkingMode(false);
 						checkFCParkingBounds();
 					}
@@ -1695,7 +1700,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						r = fcView.getRadius();
 						radFact = 0.6f*r;
 					}
-				
+
+					if (mIsLoading) {
+						fcView.startScaleUpAndRotateAnimation(100);
+					}
+					
 					// Save coordinates
 					//				mLastTouchX = X;
 					//				mLastTouchY = Y;
@@ -1816,6 +1825,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				//checkFCMenuBounds();
 				if(currentMenu.getVisibility() != View.VISIBLE)
 					handler.post(parkingRunnable);
+				
+				if (mIsLoading) {
+					fcView.startScaleDownAndRotateAnimation(100);
+				}
 				
 				//fcTouchView.setVisibility(View.INVISIBLE);
 
@@ -2322,8 +2335,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			public void onPageFinished(WebView view, String url) {
 				
 				fcView.stopAllAnimation(); //Stop 'loading' animation
+				mIsLoading = false;
 				if(!mParent.isInParkingMode) {
-					fcView.startScaleUpAnimation(); //Restore original size if not in parking mode
+					fcView.startScaleUpAnimation(1000); //Restore original size if not in parking mode
 				}
 				
 				fcMainMenu.toggleCloseORRefresh(true);
@@ -2381,8 +2395,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 */			
 			public void onPageStarted(WebView view, String url,Bitmap b) {
+				mIsLoading = true;
+
 				if(!mParent.isInParkingMode) {
-					fcView.startScaleDownAndRotateAnimation();
+					fcView.startScaleDownAndRotateAnimation(1000);
 				} else {
 					fcView.startRotateAnimation();
 				}

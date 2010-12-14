@@ -44,6 +44,8 @@ public class FloatingCursorView extends View{
     private TranslateAnimation ta;
 
     private boolean isLoadingAnimationShown = false;
+    
+    private boolean isSmall = false;
 
     public FloatingCursorView(Context context) {
         super(context);
@@ -59,7 +61,7 @@ public class FloatingCursorView extends View{
         //Make sure animation follows new co-ordiantes, just restart animation.
         if (isLoadingAnimationShown) {
         	this.clearAnimation();
-        	this.startScaleDownAndRotateAnimation();
+        	this.startScaleDownAndRotateAnimation(1000);
         }
         
         invalidate();
@@ -104,25 +106,36 @@ public class FloatingCursorView extends View{
     }
 
     protected void startScaleDownAnimation() {
+    	if (isSmall)
+    		return;
+    	
     	sa = null; //Clear previous reference
     	sa = new ScaleAnimation(1.0f,smallFact,1.0f,smallFact,
     			Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
     	sa.setDuration((long) 1000);
     	sa.setInterpolator(new LinearInterpolator());
         this.startAnimation(sa);
+        isSmall = true;
     }
     
-    protected void startScaleUpAnimation() {
+    protected void startScaleUpAnimation(long duration) {
+    	if (!isSmall)
+    		return;
+    	
     	sa = null; //Clear previous reference
     	sa = new ScaleAnimation(smallFact,1f,smallFact,1f,
     			Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-    	sa.setDuration((long) 1000);
+    	sa.setDuration(duration);
     	sa.setInterpolator(new LinearInterpolator());
         this.startAnimation(sa);
+        isSmall = false;
     }
     
     // Combined scale-down and rotate operation
-    protected void startScaleDownAndRotateAnimation() {
+    protected void startScaleDownAndRotateAnimation(long duration) {
+    	
+    	if (isSmall)
+    		return;
     	
     	this.clearAnimation();
     	isLoadingAnimationShown = true;
@@ -134,14 +147,52 @@ public class FloatingCursorView extends View{
     	
     	sa = new ScaleAnimation(1.0f,smallFact,1.0f,smallFact,
     			Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-    	sa.setDuration((long) 1000);
+    	sa.setDuration((long) duration);
     	
     	set = new AnimationSet(true);
     	set.setInterpolator(new LinearInterpolator());
     	set.addAnimation(ra);
-        set.addAnimation(sa);
+    	if (isSmall) {
+    		sa = null; // trigger gc
+    	}
+    	else {
+    		set.addAnimation(sa);
+    	}
         this.startAnimation(set);
+        isSmall = true;
     }
+
+    protected void startScaleUpAndRotateAnimation(long duration) {
+ 
+       	if (!isSmall)
+    		return;
+ 
+    	this.clearAnimation();
+    	isLoadingAnimationShown = true;
+    	
+    	ra = new RotateAnimation(ROTATE_FROM, ROTATE_TO, Animation.RELATIVE_TO_SELF,
+                0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+    	ra.setDuration((long) 1000); // 1 sec/rotation @ 0% loading
+    	ra.setRepeatCount(Animation.INFINITE);
+    	
+    	sa = new ScaleAnimation(smallFact,1f,smallFact,1f,
+    			Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+    	sa.setDuration(duration);
+    	
+    	set = new AnimationSet(true);
+    	set.setInterpolator(new LinearInterpolator());
+    	set.addAnimation(ra);
+    	if (isSmall) {
+    		sa = null; // trigger gc
+    	}
+    	else {
+    		set.addAnimation(sa);
+    	}
+        this.startAnimation(set);
+        isSmall = false;
+    }
+
+    
     
     public void setProgress(int progress){
     	Log.v(TAG,"Progress is " + progress);
