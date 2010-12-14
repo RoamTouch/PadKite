@@ -463,7 +463,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					}
 					else {
 						parkTimerStarted = true;
-						handler.postDelayed(this,2000);
+						handler.postDelayed(this,1000);
 					}
 				}
 				
