@@ -21,6 +21,7 @@
            
         <MenuButton android:button_image="windows_normal.png"
 					android:button_highlightImage="windows_pressed.png"
+					android:button_policy="keep"
                     android:button_function="windows"/>
 	
 	     <MenuButton android:button_image="add_normal.png"
@@ -48,6 +49,7 @@
                     android:button_function="bookmark"/>
 
    		<MenuButton android:button_image="settings_normal.png"
+					android:button_policy="keep"
 					android:button_highlightImage="settings_pressed.png" 
 					android:button_function="settings"/> 
 					
