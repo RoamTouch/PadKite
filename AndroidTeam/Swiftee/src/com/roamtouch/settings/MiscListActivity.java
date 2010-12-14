@@ -20,6 +20,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Html;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -177,8 +178,8 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 		case 9:
 			alertDialog = new AlertDialog.Builder(MiscListActivity.this).create();
 			alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-		    alertDialog.setMessage("About Roaming Keyboards...");
-		    alertDialog.setTitle("About Us ...");
+		    alertDialog.setMessage(Html.fromHtml("Engineering new standards in multi-touch technology, RoamingKeyboards LLC doing Business as RoamTouchª delivers innovative, hands-on, tactile applications for next-generation multi touch devices. For more information on Roamtouchª, visit <a href='http://www.roamtouch.com'>www.roamtouch.com</a>."));
+		    alertDialog.setTitle("About RoamTouchª");
 		    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
 		        return;
