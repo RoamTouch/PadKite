@@ -345,7 +345,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			// FIXME: Change so that Size of WebView is adjusted instead of being overlayed
 			int r = fcPointerView.getRadius();
 			int hd_1 = r;
-			int hd_2 = 50 + r;
+			int hd_2 = r;
 
 //			if (currentMenu.getVisibility() == VISIBLE)
 	//			hd_2 = -80;
@@ -644,8 +644,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			else if (fcX + r > this.w)
 				dx = (fcX + r)-this.w;
 
-			if (fcY - (r + 50) < 0)
-				dy = fcY - (r + 50);
+			if (fcY - (r) < 0)
+				dy = fcY - (r);
 			else if (fcY + r > this.h)
 				dy = (fcY + r) - this.h;
 			
