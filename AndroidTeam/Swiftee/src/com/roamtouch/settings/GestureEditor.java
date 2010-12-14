@@ -54,7 +54,7 @@ public class GestureEditor extends Activity implements OnItemClickListener{
 		private int[] cursorgesturesImages= {R.drawable.text_cursor, R.drawable.link_cursor, R.drawable.image_cursor, 
 									   R.drawable.no_target_cursor,R.drawable.video_cursor};
 		
-		private int[] othergesturesImages= {R.drawable.ge_bookmark,R.drawable.gesture ,R.drawable.bookmark };
+		private int[] othergesturesImages= {R.drawable.ge_bookmark,R.drawable.ge_gesture };
 		
 		public GestureCategory(Context context){
 			mContext=context;
@@ -129,7 +129,7 @@ public class GestureEditor extends Activity implements OnItemClickListener{
 				setResult(1, i);
 				finish();
 			}
-			else if(position == 4 || position == 8 || position == 9){
+			else if(position == 4 || position == 8){
 				alertDialog = new AlertDialog.Builder(GestureEditor.this).create();
 				alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 			    alertDialog.setMessage("This feature is currently not yet available. We are working really hard on it and it'll be there in future versions. Stay tuned.");
