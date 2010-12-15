@@ -237,7 +237,7 @@ public class GestureActions {
 
 	public void wikipedia(FloatingCursor fc)
 	{	
-    	fc.loadPage("http://en.wikipedia.org/wiki/"+URLEncoder.encode(mSelection));
+    	fc.loadPage("http://en.wikipedia.org/w/index.php?search=" + URLEncoder.encode(mSelection) + "&go=Go");
 	}
 
 	public void addLink()
