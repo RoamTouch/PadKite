@@ -1,12 +1,16 @@
 package com.roamtouch.floatingcursor;
 
+import java.net.URISyntaxException;
+
 import org.metalev.multitouch.controller.MultiTouchController;
 import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCanvas;
 import org.metalev.multitouch.controller.MultiTouchController.PointInfo;
 import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -2393,8 +2397,39 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
 //				mParent.setTopBarURL(url);
-				view.loadUrl(url);
-				return true;
+				//view.loadUrl(url);
+				
+	            Intent intent;
+	            
+	            try {
+	                intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+	            } catch (URISyntaxException ex) {
+	                return false;
+	            }
+
+	            if (mParent.getPackageManager().resolveActivity(intent, 0) == null)
+	            	return false;
+	            
+	            // Security settings - Sanitize access
+	            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+	            intent.setComponent(null);
+	            
+	            
+	            // Hack: Here we need to check all possible activities, and if its only browsers
+	            //       directly return false. Now we just make YouTube working.
+	            
+	            if (url.startsWith("http"))
+	            	return false;
+	            
+	            try {
+	                if (mParent.startActivityIfNeeded(intent, -1)) {
+	                    return true;
+	                }
+	            } catch (ActivityNotFoundException e) {
+	            	// Then just download it or handle it otherwise
+	            }
+				
+				return false;
 			}
 		
 			@Override
