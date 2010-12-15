@@ -1952,9 +1952,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				else if(Y+r > this.h)
 					scrollWebView(10, 1);
 
-				if((fcY-(r+50)) <= 0)
+				if((fcY-(r)) <= 0)
 					scrollWebView(-10, 1);
-				else if ((Y-(r+50)) <= 0)
+				else if ((Y-(r)) <= 0)
 					scrollWebView(-10, 1);
 			}
 			/*
