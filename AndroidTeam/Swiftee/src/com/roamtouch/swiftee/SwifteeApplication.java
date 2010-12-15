@@ -88,6 +88,11 @@ public class SwifteeApplication extends Application{
 	public DBConnector getDatabase(){
 		return database;
 	}
+	public void restoreDefaults(){
+		database.restoreDefaults();
+		copyFilestoSdcard("Gesture Library", true);
+	}
+	
 	public GestureLibrary getGestureLibrary(int gestureType){
 		
 		

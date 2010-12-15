@@ -102,7 +102,10 @@ public class DBConnector {
 		public void deleteAllBookmarks() {
 			mDatabase.execSQL("DELETE FROM bookmarks");
 		}
-		
+		public void restoreDefaults(){
+			deleteAllBookmarks();
+			mDatabase.execSQL("DELETE FROM padkite_history");
+		}
 		public boolean checkIfBookmarkAdded(){
 			try{
 				Cursor c = mDatabase.rawQuery("SELECT count(*) FROM bookmarks", null);

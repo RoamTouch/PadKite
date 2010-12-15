@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
+import com.roamtouch.swiftee.SwifteeApplication;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -17,6 +19,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.SweepGradient;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -123,7 +126,7 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 		case 3:
 			AlertDialog alertDialog = new AlertDialog.Builder(MiscListActivity.this).create();
 			alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-		    alertDialog.setMessage("Do you really want to restore the default settings?");
+		    alertDialog.setMessage("Do you really want to restore the default settings? This will overwrite all changes to gestures you made and also delete all boomarks and history.");
 		    alertDialog.setTitle("Restore Defaults");
 		    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
@@ -133,6 +136,8 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 					editor.putString("language_to", phoneLanguage);
 					editor.commit();
 					lang.setText(phoneLanguage);
+					SwifteeApplication app =(SwifteeApplication)MiscListActivity.this.getApplicationContext();
+					app.restoreDefaults();
 
 		    } }); 
 		    alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
@@ -178,8 +183,8 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 		case 9:
 			alertDialog = new AlertDialog.Builder(MiscListActivity.this).create();
 			alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-		    alertDialog.setMessage(Html.fromHtml("Engineering new standards in multi-touch technology, RoamingKeyboards LLC doing Business as RoamTouchª delivers innovative, hands-on, tactile applications for next-generation multi touch devices. For more information on Roamtouchª, visit <a href='http://www.roamtouch.com'>www.roamtouch.com</a>."));
-		    alertDialog.setTitle("About RoamTouchª");
+		    alertDialog.setMessage(Html.fromHtml("Engineering new standards in multi-touch technology, RoamingKeyboards LLC doing Business as RoamTouchï¿½ delivers innovative, hands-on, tactile applications for next-generation multi touch devices. For more information on Roamtouchï¿½, visit <a href='http://www.roamtouch.com'>www.roamtouch.com</a>."));
+		    alertDialog.setTitle("About RoamTouchï¿½");
 		    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
 		        return;
