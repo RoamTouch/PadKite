@@ -924,7 +924,17 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					String tooltip = mWebHitTestResult.getToolTip();
 					if (tooltip.length() > 5)
 						eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
-	
+					
+					selectedLink = mWebHitTestResult.getExtra();
+					int type = getLinkType(selectedLink);
+
+					if (type == 1) { /* Image */
+						cursorImage = R.drawable.image_cursor;
+					}
+					else if (type == 2) { /* Video */
+						cursorImage = R.drawable.video_cursor;
+					}
+					
 					break;
 				}
 	
