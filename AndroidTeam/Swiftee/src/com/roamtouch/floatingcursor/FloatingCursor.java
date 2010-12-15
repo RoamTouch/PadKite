@@ -2505,7 +2505,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			public void onPageStarted(WebView view, String url,Bitmap b) {
 				mIsLoading = true;
 
-				if(!mParent.isInParkingMode) {
+				if(!mParent.isInParkingMode && !mHandleTouch) {
 					fcView.startScaleDownAndRotateAnimation(1000);
 				} else {
 					fcView.startRotateAnimation();
