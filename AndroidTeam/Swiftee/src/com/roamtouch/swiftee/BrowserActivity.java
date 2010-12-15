@@ -410,6 +410,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		tArea.setGestureLibrary(mLibrary);
 		tArea.setParent(this);
     }
+
+    public int getGestureType()
+    {
+    	return mGestureType;
+    }
+
     
     public void setGestureType(int gestureType)
     {

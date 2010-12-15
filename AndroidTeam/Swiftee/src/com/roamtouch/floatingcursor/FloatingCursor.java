@@ -1087,7 +1087,24 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					eventViewer.setText("Selecting image ...");
 				
 					mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
-					mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
+					//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
+					selectedLink = mWebHitTestResult.getExtra();
+					//enableGestures();
+					//((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).setText(selectedLink);
+					mParent.setSelection(selectedLink);
+					mParent.setGestureType(SwifteeApplication.CURSOR_IMAGE_GESTURE);					
+				}
+				if (mWebHitTestResult.getType() == WebHitTestResult.VIDEO_TYPE)
+				{
+					eventViewer.setText("Selecting video ...");
+				
+					mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
+					//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
+					selectedLink = mWebHitTestResult.getExtra();
+					//enableGestures();
+					//((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).setText(selectedLink);
+					mParent.setSelection(selectedLink);
+					mParent.setGestureType(SwifteeApplication.CURSOR_VIDEO_GESTURE);
 				}
 				else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE)
 				{
@@ -1095,6 +1112,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 					mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD);
 					mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
+					mParent.setGestureType(SwifteeApplication.CURSOR_TEXT_GESTURE);
 				}
 				
 				startSelection(false);
@@ -1125,8 +1143,25 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				eventViewer.setText("Detected Long-Touch. Selecting image ...");
 			
 				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
-				mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
+				//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
+
+				selectedLink = mWebHitTestResult.getExtra();
+				mParent.setSelection(selectedLink);
+
 				mLongTouchEnabled = true;
+			}
+			else if (mWebHitTestResult.getType() == WebHitTestResult.VIDEO_TYPE)
+			{
+				eventViewer.setText("Detected Long-Touch. Selecting video ...");
+			
+				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
+				//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
+
+				selectedLink = mWebHitTestResult.getExtra();
+				mParent.setSelection(selectedLink);
+
+				mLongTouchEnabled = true;
+
 			}
 			else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE)
 			{
@@ -1196,14 +1231,23 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			startSelection(true);
 			
 //Added for distinguishing various selection
+
+			boolean linkFlag = false;
 			
-			if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE)
+			if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE) {
 				mParent.setGestureType(SwifteeApplication.CURSOR_IMAGE_GESTURE);
-			else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE)
+				linkFlag = true;
+			}
+			else if (mWebHitTestResult.getType() == WebHitTestResult.VIDEO_TYPE) {
+				mParent.setGestureType(SwifteeApplication.CURSOR_VIDEO_GESTURE);
+				linkFlag = true;
+			}
+			else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE) {
 				mParent.setGestureType(SwifteeApplication.CURSOR_TEXT_GESTURE);
+			}
 			else if ( mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
-				int type = getLinkType();
+				int type = getLinkType(selectedLink);
 				if(type == 0)
 					mParent.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);
 				else if(type == 1)
@@ -1211,11 +1255,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				else 
 					mParent.setGestureType(SwifteeApplication.CURSOR_VIDEO_GESTURE);
 
+				linkFlag = true;
+			}
+
+			if (linkFlag) {
 				stopSelection();
-				disableGestures();
-				
-				mParent.setSelection(selectedLink);
-				mParent.startGesture(false);
 			}
 		}
 		/**
@@ -1225,25 +1269,25 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		 * else return 0
 		 * @return
 		 */
-		private int getLinkType(){
+		private int getLinkType(String lselectedLink){
 				if(
-					selectedLink.endsWith(".mp4") || 
-					selectedLink.endsWith(".flv") || 
-					selectedLink.endsWith(".mpeg")||
-					selectedLink.endsWith(".wmv")||
-					selectedLink.endsWith(".mpg")||
-					selectedLink.endsWith(".rm")||
-					selectedLink.endsWith(".mov"))
+					lselectedLink.endsWith(".mp4") || 
+					lselectedLink.endsWith(".flv") || 
+					lselectedLink.endsWith(".mpeg")||
+					lselectedLink.endsWith(".wmv")||
+					lselectedLink.endsWith(".mpg")||
+					lselectedLink.endsWith(".rm")||
+					lselectedLink.endsWith(".mov"))
 				return 2;
 				if(
-					selectedLink.endsWith(".jpg")|| 
-					selectedLink.endsWith(".jpeg")|| 
-					selectedLink.endsWith(".png")||
-					selectedLink.endsWith(".gif")||
-					selectedLink.endsWith(".bmp")||
-					selectedLink.endsWith(".pdf")||
-					selectedLink.endsWith(".doc")||
-					selectedLink.endsWith(".txt"))
+					lselectedLink.endsWith(".jpg")|| 
+					lselectedLink.endsWith(".jpeg")|| 
+					lselectedLink.endsWith(".png")||
+					lselectedLink.endsWith(".gif")||
+					lselectedLink.endsWith(".bmp")||
+					lselectedLink.endsWith(".pdf")||
+					lselectedLink.endsWith(".doc")||
+					lselectedLink.endsWith(".txt"))
 				return 1;
 			return 0;
 		}
@@ -1295,11 +1339,17 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			mSelectionActive = false;
    			mMovableSelection = false;
 			mSelectionStarted = false;
+			
+			if (mParent.getGestureType() == SwifteeApplication.CURSOR_TEXT_GESTURE) {
+				enableGestures();
 
-			enableGestures();
-
-			mWebView.executeSelectionCommand(fcX, fcY, WebView.STOP_SELECTION);
-			mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
+				mWebView.executeSelectionCommand(fcX, fcY, WebView.STOP_SELECTION);
+				mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
+			}
+			else {
+				mParent.setSelection(selectedLink);
+				mParent.startGesture(false);
+			}
 		}
 
 		protected void stopSelectionMovable()
