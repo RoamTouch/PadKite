@@ -17,6 +17,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.text.ClipboardManager;
+import android.util.Log;
 
 public class GestureActions {
 

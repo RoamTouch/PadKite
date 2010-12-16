@@ -25,6 +25,7 @@ import android.os.SystemClock;
 import android.os.Vibrator;
 import android.text.ClipboardManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -1266,6 +1267,17 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				stopSelection();
 			}
 		}
+		
+		/**
+		 * 
+		 */
+		private boolean isYouTube(String lselectedLink)
+		{
+			if (lselectedLink.contains("youtube.com/watch") || lselectedLink.contains("m.youtube.com/#/watch"))
+				return true;
+			return false;
+		}
+		
 		/**
 		 * checks for link type and returns whether it is of type image or video
 		 * return 1 for image type 
@@ -1281,7 +1293,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					lselectedLink.endsWith(".wmv")||
 					lselectedLink.endsWith(".mpg")||
 					lselectedLink.endsWith(".rm")||
-					lselectedLink.endsWith(".mov"))
+					lselectedLink.endsWith(".mov") || 
+					isYouTube(lselectedLink))
 				return 2;
 				if(
 					lselectedLink.endsWith(".jpg")|| 
