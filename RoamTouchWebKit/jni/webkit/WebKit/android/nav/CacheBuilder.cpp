@@ -37,6 +37,7 @@
 #include "FrameView.h"
 //#include "GraphicsContext.h"
 #include "HTMLAreaElement.h"
+#include "HTMLButtonElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLMapElement.h"
@@ -1149,6 +1150,15 @@ void CacheBuilder::BuildFrame(Frame* root, Frame* frame,
             isUnclipped = isTransparent; // can't detect if this is drawn on top (example: deviant.com login parts)
             toolTip = input->getAttribute(HTMLNames::typeAttr).string().copy();
             isInput = true;
+        //RoamTouch Change - begin
+        } else if (node->hasTagName(HTMLNames::buttonTag)) {
+            HTMLButtonElement* button = (HTMLButtonElement*) node;
+            toolTip = button->getAttribute(HTMLNames::typeAttr).string().copy();
+            isInput = true;
+            DBG_NAV_LOGD("BUTTON NODE type=%s ", toolTip.latin1().data() );
+            DBG_NAV_LOGD("BUTTON NODE absBounds={%d, %d, %d, %d}",
+                absBounds.x(), absBounds.y(), absBounds.width(), absBounds.height());
+        //RoamTouch Change - end
         } else if (node->hasTagName(HTMLNames::textareaTag))
             isTextArea = wantsKeyEvents = true;
         //RoamTouch Change - begin
