@@ -371,7 +371,7 @@ namespace android {
 
         //ROAMTOUCH CHANGE >>
         // Execute the selection command
-        void executeSelectionCommand(int x, int y, int cmd);
+        void executeSelectionCommand(int x, int y, int cmd, bool);
 
         void copySelectedContentToClipboard(bool);
         //ROAMTOUCH CHANGE <<

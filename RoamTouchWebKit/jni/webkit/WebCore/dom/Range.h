@@ -101,6 +101,7 @@ public:
 
     Node* shadowTreeRootNode() const;
 
+    IntRect boundingBoxRect(); //RoamTouch Change
     IntRect boundingBox();
     void textRects(Vector<IntRect>&, bool useSelectionHeight = false);
 

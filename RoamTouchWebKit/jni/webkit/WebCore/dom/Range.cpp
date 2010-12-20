@@ -1589,6 +1589,39 @@ IntRect Range::boundingBox()
     return result;
 }
 
+//RoamTouch Change - begin
+IntRect Range::boundingBoxRect()
+{
+    IntRect result;
+    Vector<IntRect> rects;
+
+    Node* startContainer = m_start.container();
+    Node* endContainer = m_end.container();
+
+    if (startContainer && endContainer) {
+        Node* stopNode = pastLastNode();
+        for (Node* node = firstNode(); node != stopNode; node = node->traverseNextNode()) {
+            RenderObject* r = node->renderer();
+            if (r && r->isText()) {
+                RenderText* renderText = toRenderText(r);
+                int startOffset = node == startContainer ? m_start.offset() : 0;
+                int endOffset = node == endContainer ? m_end.offset() : numeric_limits<int>::max();
+                renderText->absoluteRectsForRange(rects, startOffset, endOffset, false);
+            }
+            else if (r && (r->isImage() || r->isVideo())) {
+                RenderObject* renderObject = static_cast<RenderObject*>(r);
+                IntRect r = renderObject->absoluteBoundingBoxRect();
+                rects.append(r);
+            }
+        }
+    }
+    const size_t n = rects.size();
+    for (size_t i = 0; i < n; ++i)
+        result.unite(rects[i]);
+    return result;
+}
+//RoamTouch Change - end
+
 void Range::textRects(Vector<IntRect>& rects, bool useSelectionHeight)
 {
     if (!m_start.container() || !m_end.container())

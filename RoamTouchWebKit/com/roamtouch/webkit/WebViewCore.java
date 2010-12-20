@@ -1259,7 +1259,11 @@ final class WebViewCore {
                         //ROAMTOUCH CHANGE >>
                         case EXECUTE_SELECTION_COMMAND:
                             Point pos = (Point)msg.obj;
-                            nativeExecuteSelectionCommand(pos.x, pos.y, (int)msg.arg1);
+                            boolean notify = false;
+                            if (msg.arg2 == 1) {
+                                notify = true ;
+                            }
+                            nativeExecuteSelectionCommand(pos.x, pos.y, (int)msg.arg1, notify);
                             break;
                         case SET_SELECTION_COLOR:
                             int color = (int)msg.arg1;
@@ -2251,13 +2255,17 @@ final class WebViewCore {
                 , WebView.UPDATE_CLIPBOARD, data)
                 .sendToTarget();
     }
+    //Called by JNI
+    private void notifySelectionBound(int left, int top, int right, int bottom) {
+        mCallbackProxy.notifySelectionBound(new Rect(left, top, right, bottom));
+    }
     //ROAMTOUCH CHANGE <<
 
     private native void nativePause();
     private native void nativeResume();
     private native void nativeFreeMemory();
     //ROAMTOUCH CHANGE >>
-    private native void     nativeExecuteSelectionCommand(int x, int y, int command);
+    private native void     nativeExecuteSelectionCommand(int x, int y, int command, boolean notifySelectionBound);
     private native void     nativeSetSelectionColor(int r, int g, int b, int a) ;    
     //ROAMTOUCH CHANGE <<
     

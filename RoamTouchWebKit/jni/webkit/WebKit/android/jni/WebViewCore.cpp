@@ -196,8 +196,10 @@ struct WebViewCore::JavaGlue {
     jmethodID   m_createSurface;
     jmethodID   m_destroySurface;
     jmethodID   m_showRect;
-    //ROAMTOUCH CHANGE
+    //ROAMTOUCH CHANGE - begin
     jmethodID   m_updateClipboard;
+    jmethodID   m_notifySelectionBound;
+    //ROAMTOUCH CHANGE - end
 
     AutoJObject object(JNIEnv* env) {
         return getRealObject(env, m_obj);
@@ -276,9 +278,10 @@ WebViewCore::WebViewCore(JNIEnv* env, jobject javaWebViewCore, WebCore::Frame* m
     m_javaGlue->m_createSurface = GetJMethod(env, clazz, "createSurface", "(Ljava/lang/String;Ljava/lang/String;IIIII)Lroamtouch/webkit/ViewManager$ChildView;");
     m_javaGlue->m_destroySurface = GetJMethod(env, clazz, "destroySurface", "(Lroamtouch/webkit/ViewManager$ChildView;)V");
     m_javaGlue->m_showRect = GetJMethod(env, clazz, "showRect", "(IIIIIIFFFF)V");
-    //ROAMTOUCH CHANGE
+    //ROAMTOUCH CHANGE - begin
     m_javaGlue->m_updateClipboard = GetJMethod(env, clazz, "updateClipboard", "(Ljava/lang/String;)V");
-
+    m_javaGlue->m_notifySelectionBound = GetJMethod(env, clazz, "notifySelectionBound", "(IIII)V");
+    //ROAMTOUCH CHANGE - end
     env->SetIntField(javaWebViewCore, gWebViewCoreFields.m_nativeClass, (jint)this);
 
     m_scrollOffsetX = m_scrollOffsetY = 0;
@@ -1653,7 +1656,7 @@ void WebViewCore::copySelectedContentToClipboard(bool bHTMLFragment)
     checkException(env);
 }
 
-void WebViewCore::executeSelectionCommand(int x, int y, int cmd) 
+void WebViewCore::executeSelectionCommand(int x, int y, int cmd, bool notifySelectionBound) 
 {
     WebCore::IntPoint pt = m_mousePos = WebCore::IntPoint(x, y);
     WebCore::HitTestResult result = m_mainFrame->eventHandler()->hitTestResultAtPoint(pt, false, true);
@@ -1718,7 +1721,16 @@ void WebViewCore::executeSelectionCommand(int x, int y, int cmd)
     default:
         break ;
     }
-
+    if (notifySelectionBound) {
+        JNIEnv* env = JSC::Bindings::getJNIEnv();
+        AutoJObject obj = m_javaGlue->object(env);
+        RefPtr<WebCore::Range> range = m_mainFrame->selection()->toNormalizedRange();
+        if (obj.get() && range) {
+            WebCore::IntRect rect = range->boundingBoxRect();
+            env->CallVoidMethod(obj.get(), m_javaGlue->m_notifySelectionBound, rect.x(), rect.y(), rect.right(), rect.bottom());
+            checkException(env);
+        }
+    }
 }
 //ROAMTOUCH CHANGE <<
 
@@ -3236,14 +3248,14 @@ static void UpdatePluginState(JNIEnv* env, jobject obj, jint framePtr, jint node
 }
 
 //ROAMTOUCH CHANGE >>
-static void nativeExecuteSelectionCommand(JNIEnv* env, jobject obj, jint x, jint y, jint cmd)
+static void nativeExecuteSelectionCommand(JNIEnv* env, jobject obj, jint x, jint y, jint cmd, jboolean notifySelectionBound)
 {
 #ifdef ANDROID_INSTRUMENT
     TimeCounterAuto counter(TimeCounter::WebViewCoreTimeCounter);
 #endif
     WebViewCore* viewImpl = GET_NATIVE_VIEW(env, obj);
     LOG_ASSERT(viewImpl, "viewImpl not set in nativeUpdatePluginState");
-    viewImpl->executeSelectionCommand((int)x, (int)y, (int)cmd);
+    viewImpl->executeSelectionCommand((int)x, (int)y, (int)cmd, (bool)notifySelectionBound);
 }
 
 static void nativeSetSelectionColor(JNIEnv *env, jobject obj,
@@ -3427,7 +3439,7 @@ static JNINativeMethod gJavaWebViewCoreMethods[] = {
     { "nativeProvideVisitedHistory", "([Ljava/lang/String;)V",
         (void*) ProvideVisitedHistory },
     //ROAMTOUCH CHANGE >>    
-    { "nativeExecuteSelectionCommand", "(III)V", (void*) nativeExecuteSelectionCommand },
+    { "nativeExecuteSelectionCommand", "(IIIZ)V", (void*) nativeExecuteSelectionCommand },
     { "nativeSetSelectionColor", "(IIII)V",(void*) nativeSetSelectionColor },
     //ROAMTOUCH CHANGE <<
 };

@@ -1785,17 +1785,23 @@ public class WebView extends AbsoluteLayout
     public static final int SELECT_LINK             = 17;
 
     /**
-       * Executes the selection command on the given point. The x,y co-ordinates are
-       * irrelevant incase of COPY_TO_CLIPBOARD command.
-       */
-    public void executeSelectionCommand(int x, int y, int command) {
+     * Executes the selection command on the given point. The x,y co-ordinates are
+     * irrelevant incase of COPY_TO_CLIPBOARD command. If 'notifySelectionBound' is true
+     * application will get notified about the new selection bound via
+     * WebChromeClient.onSelectionBoundChange() callback. Use this flag conservatively since
+     * this may become selection performance bottleneck.
+     */
+    public void executeSelectionCommand(int x, int y, int command, boolean notifySelectionBound) {
 
         int contentX = viewToContentX(x + mScrollX);
         int contentY = viewToContentY(y + mScrollY);
-
+        int notify = 0 ;
+        if (notifySelectionBound) {
+            notify = 1 ;
+        }
         Point pt = new Point(contentX, contentY) ;
         mWebViewCore.sendMessage(EventHub.EXECUTE_SELECTION_COMMAND,
-                                    command, 0, pt);
+                                    command, notify, pt);
     }
 
     /**

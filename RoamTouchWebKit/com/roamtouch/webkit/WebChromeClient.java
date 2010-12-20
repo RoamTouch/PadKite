@@ -17,6 +17,7 @@
 package roamtouch.webkit;
 
 import android.graphics.Bitmap;
+import android.graphics.Rect; //RoamTouch Change
 import android.os.Message;
 import android.view.View;
 
@@ -290,6 +291,14 @@ public class WebChromeClient {
      */
     void onListBoxRequest(String[] array, boolean[]enabledArray, int[] selectedArray) {}
     
+    /**
+     * Report a Selection bound updated message to the host application. The ChromeClient
+     * should override this to get notification about the selection bound. 'notifySelectionBound' parameter 
+     * should be passed as 'true' while calling WebView.executeSelectionCommand() to get this notification.
+     * @param selectionBound Selected contents bound.
+     */
+    public void onSelectionBoundChange(Rect selectionBound) {}
+
     //Roamtouch Change - end
 
     /**

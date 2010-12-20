@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Rect; //RoamTouch Change
 import android.net.Uri;
 import roamtouch.net.http.SslCertificate;
 import roamtouch.net.http.SslError;
@@ -111,6 +112,7 @@ class CallbackProxy extends Handler {
     private static final int CLIPBOARD_UPDATED                   = 134;
     private static final int REQUEST_LISTBOX_SINGLECHOICE        = 135;
     private static final int REQUEST_LISTBOX_MULTICHOICE         = 136;
+    private static final int NOTIFY_SELECTION_BOUND              = 137;
     //RoamTouch Change  - end
 
     // Message triggered by the client to resume execution
@@ -685,6 +687,11 @@ class CallbackProxy extends Handler {
                     boolean[] enabledArray = msg.getData().getBooleanArray("enabledArray");
                     int[] selectedArray = msg.getData().getIntArray("selectedArray");
                     mWebChromeClient.onListBoxRequest(array, enabledArray, selectedArray);
+                }
+                break;
+            case NOTIFY_SELECTION_BOUND:
+                if (mWebChromeClient != null) {
+                    mWebChromeClient.onSelectionBoundChange((Rect)msg.obj);
                 }
                 break;
             //RoamTouch change - end
@@ -1361,6 +1368,12 @@ class CallbackProxy extends Handler {
         sendMessage(msg);
     }
 
+    public void notifySelectionBound(Rect selectionBound) {
+        if (mWebChromeClient == null) {
+            return;
+        }
+        sendMessage(obtainMessage(NOTIFY_SELECTION_BOUND, selectionBound));
+    }
     //RoamTouch Change - end
 
     /**
