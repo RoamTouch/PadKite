@@ -69,8 +69,8 @@ public class TabButton extends ImageView{
 			return true;
 		}
 
-		public void setWebView(WebView mWebView) {
-			this.mWebView = mWebView;
+		public void setWebView(WebView wv) {
+			this.mWebView = wv;
 		}
 
 		public WebView getWebView() {

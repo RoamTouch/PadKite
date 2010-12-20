@@ -65,8 +65,13 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		int id = v.getId();
 		if(id == 33){
 			//addWindow();
+			boolean lastWindow = (getWindowCount() == 1);
 			mParent.removeWebView();
-			removeWindow();
+			if(lastWindow) {
+				removeLastWindow();
+			}else {
+				removeWindow();
+			}
 			return;
 		}
 		else if (v instanceof TabButton){
@@ -103,8 +108,9 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 			tab.setTabIndex(i);
 		}
 		mParent.addWebView(but.getWebView());
-		but.setId(mParent.getActiveWebViewIndex()+1);
-		mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()+1);
+		// Increase the Tab ID by 1.
+		but.setId(getWindowCount() - 1);
+		mParent.setActiveWebViewIndex(but.getId());
 		
 		currentTab = 2;
 		setActiveTabIndex(but);
@@ -117,6 +123,8 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 	
 	public WebView createWebView(String url){
 		WebView webView = new WebView(mContext);
+		// FIXME: mParent.getActiveWebViewIndex()+1 is NOT the proper index ID.
+		// See #382.
 		webView.setId(mParent.getActiveWebViewIndex()+1);
 		webView.setScrollbarFadingEnabled(true);
         webView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
@@ -152,6 +160,18 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 			setActiveTabIndex(child);
 			mParent.adjustTabIndex(this);
 		}
+	}
+
+	// This is a helper method to use in case user is deleting the last window
+	// tab. We need to create new tab (as well as the WebView) first and insert
+	// it into WindowTabs, then we remove the old one (previous "last" one) 
+	// in turn.
+	private void removeLastWindow(){
+			removeViewAt(3);
+			currentTab=2;
+			TabButton child = (TabButton)getChildAt(currentTab);
+			setActiveTabIndex(child);
+			mParent.adjustTabIndex(this);
 	}
 
 	public void setEventViewer(EventViewerArea eventViewer) {
