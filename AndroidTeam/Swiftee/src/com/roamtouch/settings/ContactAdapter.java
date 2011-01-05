@@ -84,6 +84,7 @@ public class ContactAdapter extends BaseAdapter{
 		
 					//Log.v("Mailto: ", tag);
 					intent.setData(Uri.parse(tag));
+			        intent.putExtra(Intent.EXTRA_TEXT, "Hi,\n\nI wanted to pass on the word about this cool, new application - PadKite. It«s going to make your browsing experience easier and faster.\n\nHope you enjoy it as much I do!");
 					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		            mContext.startActivity(intent);
 				}
