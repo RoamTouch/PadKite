@@ -142,8 +142,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	    		else if(mTutor.getVisibility() == View.VISIBLE){
 	    			cancelGesture(true);
 	    		}
-	    		else if(webView.canGoBack())
-	    			webView.goBack();
+	    		else if(floatingCursor.canGoBackward())
+	    			floatingCursor.goBackward();
 	    		else
 	    			//BrowserActivity.this.finish();
 	    			closeDialog();
@@ -219,7 +219,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	}
 		
     	if(data!=null)
-			webView.loadUrl(data);
+			floatingCursor.loadPage(data);
 	}
 
     
