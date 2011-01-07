@@ -348,7 +348,12 @@ public class SelectionGestureView extends FrameLayout {
 	public boolean dispatchTouchEventFC(float X, float Y, int action, long eventTime) {
 
 		//mEventViewer.setText("downX:" + downX + " downY:" + downY + " X:" + event.getX() + " Y:" + event.getY() + " idx:" + event.getPointerCount());
-		
+		// Ignore selection gesture while in loading.
+		if(mFloatingCursor.inLoad())
+		{
+			return false;
+		}
+
 		if (action == MotionEvent.ACTION_DOWN)
 		{
 			mDownX = X;

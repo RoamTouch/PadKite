@@ -491,6 +491,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
         public String getCurrentTitle(){
         	return mWebView.getTitle();
         }
+        public boolean inLoad() {
+        	return mIsLoading;
+        }
 		public void gestureDisableFC()
 		{
 			//mCanBeDisabled  = true;
