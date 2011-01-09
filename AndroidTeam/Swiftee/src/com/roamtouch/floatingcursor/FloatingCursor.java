@@ -726,7 +726,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			removeTouchPoint();
 
 			if(currentMenu.getVisibility() == INVISIBLE){
-				
+
+				// Reset menu to Main menu (as WM sometimes gives wrong occurence)
+				currentMenu = fcMainMenu;
+
 				// FC was touched, get out of parking mode
 				if(mParent.isInParkingMode) {
 					mParent.exitParkingMode();
