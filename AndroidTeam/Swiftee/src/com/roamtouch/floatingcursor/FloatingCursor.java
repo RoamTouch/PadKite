@@ -2478,12 +2478,32 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				fcMainMenu.setBackEabled(view.canGoBack());
 				fcMainMenu.setFwdEabled(view.canGoForward());
 	            if (url.startsWith("file:///android_asset/Web%20Pages/history.html")) {
+	            	int start = 0;
+            		String[] parts = url.split("\\?", 2);
+	            	try {
+	            		String[] t = parts[1].split("\\=", 2);
+	            		if (t[0].equals("start"))
+	            			start = Integer.parseInt(t[1]);
+	            	}
+	            	catch (Exception e) {
+	            	
+	            	}
 					WebPage page = new WebPage();
-					loadData(page.getBrowserHistory(mParent));
+					loadData(page.getBrowserHistory(mParent, parts[0], start));
 	            }
 	            else if (url.startsWith("file:///android_asset/Web%20Pages/download.html")) {
+	            	int start = 0;
+            		String[] parts = url.split("\\?", 2);
+	            	try {
+	            		String[] t = parts[1].split("\\=", 2);
+	            		if (t[0].equals("start"))
+	            			start = Integer.parseInt(t[1]);
+	            	}
+	            	catch (Exception e) {
+	            	
+	            	}
 					WebPage page = new WebPage();
-					loadData(page.getDownloadHistory(mParent));
+					loadData(page.getDownloadHistory(mParent, url, start));
 	            }
 			}
 			
