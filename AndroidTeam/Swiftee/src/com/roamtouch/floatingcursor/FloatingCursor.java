@@ -53,6 +53,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SelectionGestureView;
+import com.roamtouch.view.WebPage;
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.menu.CircularLayout;
 import com.roamtouch.menu.CircularTabsLayout;
@@ -2473,6 +2474,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 				fcMainMenu.setBackEabled(view.canGoBack());
 				fcMainMenu.setFwdEabled(view.canGoForward());
+	            if (url.startsWith("file:///android_asset/Web%20Pages/history.html")) {
+					WebPage page = new WebPage();
+					loadData(page.getBrowserHistory(mParent));
+	            }
+	            else if (url.startsWith("file:///android_asset/Web%20Pages/download.html")) {
+					WebPage page = new WebPage();
+					loadData(page.getDownloadHistory(mParent));
+	            }
 			}
 			
 			public Bitmap getCircleBitmap(WebView view){

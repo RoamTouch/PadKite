@@ -269,9 +269,9 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				//Intent i = new Intent(mParent,WebPage.class);
 				//i.putExtra("webUrl", "http://www.padkite.com/downloads");
 				//mParent.startActivity(i);
-				//mFloatingCursor.loadPage("file:///android_asset/Web Pages/download.html");
-				WebPage page = new WebPage();
-				mFloatingCursor.loadData(page.getDownLoadHistory(mParent));
+				mFloatingCursor.loadPage("file:///android_asset/Web Pages/download.html");
+				//WebPage page = new WebPage();
+				//mFloatingCursor.loadData(page.getDownLoadHistory(mParent));
 				break;
 			
 			case bookmark:

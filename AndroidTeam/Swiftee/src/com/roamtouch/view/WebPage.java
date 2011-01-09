@@ -41,7 +41,7 @@ public class WebPage {
                "</table>"+
                "</body></html>";
 	}
-	public String getDownLoadHistory(Context context){
+	public String getDownloadHistory(Context context){
 		SwifteeApplication appState = ((SwifteeApplication)context.getApplicationContext());
     	DBConnector database = appState.getDatabase();
     	Cursor c = database.getFromHistory(2);
