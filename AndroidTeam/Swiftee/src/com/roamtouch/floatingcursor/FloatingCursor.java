@@ -1188,8 +1188,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				eventViewer.setText("Detected Long-Touch. Selecting link ...");
 				selectedLink = mWebHitTestResult.getExtra();
 				Point focusCenter = mWebHitTestResult.getPoint();
-				focusCenter.y += 100;
-				focusCenter.x += 50;
 
 				//Log.e("SELECT_LINK", "x: " + focusCenter.x + ", y: " + focusCenter.y + ", fcX: " + fcX + ", fcY: " + fcY);
 				mWebView.executeSelectionCommand(focusCenter.x, focusCenter.y, WebView.SELECT_LINK);
