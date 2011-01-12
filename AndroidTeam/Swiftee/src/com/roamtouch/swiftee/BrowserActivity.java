@@ -1,54 +1,54 @@
 package com.roamtouch.swiftee;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
-import com.roamtouch.database.DBConnector;
-import com.roamtouch.floatingcursor.FloatingCursor;
-import android.gesture.Gesture;
-import android.gesture.GestureLibrary;
-import android.gesture.GesturePoint;
-import android.gesture.GestureStroke;
-import android.gesture.Prediction;
-import com.roamtouch.menu.TabButton;
-import com.roamtouch.menu.WindowTabs;
-import com.roamtouch.swiftee.R;
-import com.roamtouch.view.EventViewerArea;
-import com.roamtouch.view.SelectionGestureView;
-import com.roamtouch.view.SwifteeGestureView;
-import com.roamtouch.view.SwifteeOverlayView;
-//import com.roamtouch.view.TopBarArea;
-import com.roamtouch.view.TutorArea;
+
+import roamtouch.webkit.WebView;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Color;
+import android.gesture.Gesture;
+import android.gesture.GestureLibrary;
 import android.gesture.GestureOverlayView;
 import android.gesture.GestureOverlayView.OnGestureListener;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
+import android.gesture.GesturePoint;
+import android.gesture.GestureStroke;
+import android.gesture.Prediction;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.text.ClipboardManager;
 import android.util.Log;
@@ -59,14 +59,22 @@ import android.view.View;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.view.animation.Animation.AnimationListener;
-import roamtouch.webkit.WebView;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
-import android.widget.Toast;
-//import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.RemoteViews;
+
+import com.roamtouch.database.DBConnector;
+import com.roamtouch.floatingcursor.FloatingCursor;
+import com.roamtouch.menu.TabButton;
+import com.roamtouch.menu.WindowTabs;
+import com.roamtouch.view.EventViewerArea;
+import com.roamtouch.view.SelectionGestureView;
+import com.roamtouch.view.SwifteeGestureView;
+import com.roamtouch.view.SwifteeOverlayView;
+import com.roamtouch.view.TutorArea;
 
 
 public class BrowserActivity extends Activity implements OnGesturePerformedListener, OnGestureListener {
@@ -106,6 +114,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     
     private TranslateAnimation ta;
     
+	//For Download 
+	private NotificationManager mNotificationManager;
+	private static final int NOTIFICATION_ID = 9;
+	private Notification mNf;
+	private RemoteViews mRv;
+
     public void closeDialog()
     {
 		AlertDialog alertDialog;
@@ -878,30 +892,89 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		isInParkingMode = false;
 	}
 	
-	public class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
+	public class DownloadFilesTask extends AsyncTask<URL, Double, Long> {
+
+		protected void onPreExecute(){
+			//showDialog(DOWNLOADING);
+		}
+
 		URL url;
 	     protected Long doInBackground(URL... urls) {
-	         int count = urls.length;
 	         long totalSize = 0;
-	         for (int i = 0; i < count; i++) {
-	             Downloader.downloadFile(urls[i]);
-	             if(urls[i]!=null)
-	            	 url = urls[i];
-	             publishProgress((int) ((i / (float) count) * 100));
+			Log.v("PADKITE","url for download is"+urls[0]+" == " +urls[1]+"   "+urls[2]);
+			url = urls[0];
+
+			if(urls[0] != null){
+				try {
+					InputStream myInputStream = null;
+
+					HttpClient client = new DefaultHttpClient();
+			        HttpGet request = new HttpGet();
+			        request.setURI(urls[0].toURI());
+		            HttpResponse response = client.execute(request);
+					myInputStream = response.getEntity().getContent();
+
+					long contentLength = response.getEntity().getContentLength();
+					//Log.v("PADKITE","contentLength="+contentLength); 
+
+					String s = urls[0].toString();
+					String arr[] = s.split("/");
+					int cnt = arr.length;
+					FileOutputStream f = new FileOutputStream(new File(Environment.getExternalStorageDirectory()+"/download",arr[cnt-1]));
+					Log.v("PADKITE","downloading file... "+arr[cnt-1]);
+
+					byte[] buffer = new byte[4096];
+					int buffered = 0;
+					long downloaded = 0;
+					while ((buffered = myInputStream.read(buffer)) >= 0 ) {
+						f.write(buffer, 0, buffered);
+						downloaded += buffered;
+						//Log.v("PADKITE","buffered = "+buffered);
+						//Log.v("PADKITE","total downloaded = "+downloaded);
+						//Log.v("PADKITE","contentLength = "+contentLength);
+
+						double progress = ((double)downloaded/(double)contentLength)*100;
+						//Log.v("PADKITE","progress percent is="+progress);
+						publishProgress(progress);
+					}
+					f.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} 
 	         }
 	         return totalSize;
 	     }
 
-	     protected void onProgressUpdate(Integer... progress) {
-	         //setProgressPercent(progress[0]);
+		protected void onProgressUpdate(Double... progress) {
+			//Log.d("PADKITE" ,"onProgressUpdate...............");
+
+			mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			mRv = new RemoteViews(getApplicationContext().getPackageName(), R.layout.download_remote_view);
+			mRv.setTextViewText(R.id.data_meter_label,BrowserActivity.this.getResources().getText(R.string.downloading));
+			mRv.setTextViewText(R.id.percent_label,String.valueOf((progress[0].intValue())+"%"));
+			mRv.setImageViewResource(R.id.appIcon, android.R.drawable.stat_sys_download);
+			mRv.setProgressBar(R.id.progress_bar, 100, progress[0].intValue(), false);
+			//Log.v("PADKITE","down percent"+String.valueOf(progress[0])+" progress in RV "+progress[0].intValue());
+			mNf = new Notification();
+			mNf.icon = android.R.drawable.stat_sys_download;
+			mNf.flags |= Notification.FLAG_ONGOING_EVENT;
+			mNf.flags = Notification.FLAG_AUTO_CANCEL;
+			mNf.contentView = mRv;
+
+			// set the pending intent like below to launch the new activity which shows the progress of the each download.
+			Intent notificationIntent = new Intent(getApplicationContext(), BrowserActivity.class);
+			notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
+			mNf.contentIntent = contentIntent;
+			mNotificationManager.notify(NOTIFICATION_ID, mNf);
 	     }
 
 	     protected void onPostExecute(Long result) {
 	    	 eventViewer.setText("Download Complete");
-	         //showDialog("Downloaded " + result + " bytes");
+	    	 if (mNotificationManager != null)
+	    		 mNotificationManager.cancel(NOTIFICATION_ID);
 	    	 SwifteeApplication appState = ((SwifteeApplication)BrowserActivity.this.getApplicationContext());
 	     	 DBConnector database = appState.getDatabase();
-	     	 //Log.d("Inside async task download-----------", database + "url="+url);
 	     	 database.addToHistory(System.currentTimeMillis()+"", url.toString(), "", 2);
 	     }
 	 }

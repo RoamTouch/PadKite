@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PadKite</string>
+    <string name="downloading">Downloading ...</string>
     
     <!-- Miscellaneous Activity Preferences -->
     	
