@@ -6,6 +6,7 @@ package com.roamtouch.swiftee;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import com.roamtouch.database.DBConnector;
@@ -40,12 +41,40 @@ public class SwifteeApplication extends Application{
 			copyFilestoSdcard("Default Theme", true);
 			copyFilestoSdcard("Gesture Library", false);
 		}
-		if(database.checkIfBookmarkAdded())
+		if(database.checkIfBookmarkAdded()) {
 			database.addBookmark();
+			copyBookmarksToSdcard();
+		}
 	}
 	public boolean isSdCardReady(){
 		return Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);  
 	}
+	
+	public void copyBookmarksToSdcard() {
+		String dir = "Gesture Library";
+		String name = "bookmarks";
+		try {
+			InputStream is = getAssets().open(dir+"/"+name);
+			FileOutputStream myOutput = new FileOutputStream(BrowserActivity.BASE_PATH + "/"+dir+"/"+name);
+			byte[] buffer = new byte[1024];
+			int length;
+			while ((length = is.read(buffer))>0)
+			{
+				myOutput.write(buffer, 0, length);
+			}
+
+			//Close the streams
+			myOutput.flush();
+			myOutput.close();
+			is.close();
+		
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
 	public void copyFilestoSdcard(String dir, boolean force){
 		try{
 			String arr[] = getAssets().list(dir);
