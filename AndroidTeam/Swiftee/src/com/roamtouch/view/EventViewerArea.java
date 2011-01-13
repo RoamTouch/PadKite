@@ -192,6 +192,10 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 		}
 	}
 	
+	public void stop() {
+		this.setVisibility(View.INVISIBLE);
+		timeToWait = -1;
+	}
 	
 	public void run() {
 		if(timeToWait < 0){

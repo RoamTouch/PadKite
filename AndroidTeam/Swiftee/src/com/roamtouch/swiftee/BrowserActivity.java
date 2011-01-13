@@ -602,7 +602,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         		public void run()
         		{
         			String translated = actions.translate(languageTo);
-        			eventViewer.setTimedSplittedText("ENGLISH to "+languageTo+": ",translated, 10000, true);			
+        			eventViewer.setTimedSplittedText("ENGLISH to "+languageTo+": ",translated, -1, true);			
         		}
 			
         	}, 100);

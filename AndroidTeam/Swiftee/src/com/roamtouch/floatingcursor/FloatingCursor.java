@@ -1700,6 +1700,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 			if (action == MotionEvent.ACTION_DOWN)
 			{
+				eventViewer.stop();
 				
 				timerStarted = false;
 				parkTimerStarted = false;

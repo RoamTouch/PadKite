@@ -233,7 +233,9 @@ public class GestureActions {
 	
 	public String translate(String languageTo)
 	{	
-    	return Translater.text(mSelection, "ENGLISH", languageTo);
+    	String translated = Translater.text(mSelection, "ENGLISH", languageTo);
+		((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).setText(translated);
+		return translated;
 	}
 
 	public void wikipedia(FloatingCursor fc)
