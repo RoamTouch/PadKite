@@ -2110,7 +2110,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			mWebView.loadUrl(url);
 		}
 		public void loadData(String data){
-			mWebView.loadDataWithBaseURL("file:///android_asset/images/", data,  "text/html", "utf-8", null);
+			mWebView.loadDataWithBaseURL("file:///android_asset/Web Pages/", data,  "text/html", "utf-8", null);
 		}
 		public void nextWebPage(){
 			mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()-1);
