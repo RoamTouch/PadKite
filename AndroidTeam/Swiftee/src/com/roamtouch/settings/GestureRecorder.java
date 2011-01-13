@@ -64,6 +64,15 @@ public class GestureRecorder extends Activity {
 				t.setClickable(true);
 				t.setEnabled(true);
 				t.setFocusable(true);
+				// HACK 
+				// - Allow only editing of name
+				if (!isNew)
+				{
+					SwifteeApplication appState = ((SwifteeApplication)getApplicationContext());
+					GestureLibrary mLibrary = appState.getGestureLibrary(gestureType);
+					mGesture = mLibrary.getGestures(gestureName).get(0);
+				}
+				// END HACK
 			}
 			else{
 				t.setClickable(false);
@@ -158,17 +167,20 @@ public class GestureRecorder extends Activity {
 
 		private class GesturesProcessor implements GestureOverlayView.OnGestureListener {
 			public void onGestureStarted(GestureOverlayView overlay, MotionEvent event) {
-				mGesture = null;
+				//mGesture = null;
 			}
 
 			public void onGesture(GestureOverlayView overlay, MotionEvent event) {
 			}
 
 			public void onGestureEnded(GestureOverlayView overlay, MotionEvent event) {
-				mGesture = overlay.getGesture();
+				/*
+				 * HACK: Allow only editing of name
+				 * 
+				 *mGesture = overlay.getGesture();
 				if (mGesture.getLength() < LENGTH_THRESHOLD) {
 					overlay.clear(false);
-				}
+				}*/
 				mDoneButton.setEnabled(true);
 				mDoneButton.setText("Save Gesture");
 			}
