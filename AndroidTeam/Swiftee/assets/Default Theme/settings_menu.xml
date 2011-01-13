@@ -29,9 +29,9 @@
 					android:button_highlightImage="history_pressed.png"
                     android:button_function="history"/>
                   
-		<MenuButton android:button_image="help_normal.png"
+<!--		<MenuButton android:button_image="help_normal.png"
 					android:button_highlightImage="help_pressed.png"
 					android:button_function="help_online"
-		/>
+		/>-->
 	
 </merge>
