@@ -33,6 +33,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -607,6 +608,22 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		}
 
 		public void addNewWindow(boolean useSelection){
+			if(getWindowCount()>7){
+				AlertDialog alertDialog;
+
+		    	alertDialog = new AlertDialog.Builder(mParent).create();
+				alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+			    alertDialog.setMessage("You have reached the limit of windows. Please close one in the Windows Manager.");
+			    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+			      public void onClick(DialogInterface dialog, int which) {
+			    	//mParent.finish();  
+
+			    } }); 
+			  
+			  	alertDialog.show();
+			  	return;
+			}
+			
 			removeSelection();
 
 			if (useSelection && selectedLink != "")

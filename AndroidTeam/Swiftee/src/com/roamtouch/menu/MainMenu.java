@@ -284,22 +284,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				break;
 			
 			case new_window:
-				if(mFloatingCursor.getWindowCount()>7){
-					AlertDialog alertDialog;
-
-			    	alertDialog = new AlertDialog.Builder(mParent).create();
-					alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-				    alertDialog.setMessage("Cannot open more windows. Please close some.");
-				    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-				      public void onClick(DialogInterface dialog, int which) {
-				    	//mParent.finish();  
-
-				    } }); 
-				  
-				  	alertDialog.show();
-				}
-				else
-					mFloatingCursor.addNewWindow(false);
+				mFloatingCursor.addNewWindow(false);
 				break;
 				
 			case close:
