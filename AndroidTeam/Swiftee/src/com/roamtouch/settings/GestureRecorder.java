@@ -60,7 +60,7 @@ public class GestureRecorder extends Activity {
 				urlText.setVisibility(View.VISIBLE);
 				urlText.setText(url);
 			}
-			if(isStoredBookmark || isEditable){
+			if(isStoredBookmark || isEditable || isNewBookmark){
 				t.setClickable(true);
 				t.setEnabled(true);
 				t.setFocusable(true);
@@ -82,7 +82,7 @@ public class GestureRecorder extends Activity {
 					String s=gestureName;
 					if(b.getText().toString().equals("Save Gesture")){
 						
-						if(isStoredBookmark || isEditable) {
+						if(isStoredBookmark || isEditable  || isNewBookmark) {
 							s = t.getText().toString();
 							if(!BrowserActivity.developerMode && s.length()>10)
 								s = s.substring(0, 9);
@@ -92,8 +92,8 @@ public class GestureRecorder extends Activity {
 						
 						if(mGesture!=null){
 							if(isNewBookmark){
-								mLibrary.addGesture(gestureName, mGesture);
-								appState.getDatabase().addBookmark(gestureName,url);			
+								mLibrary.addGesture(s, mGesture);
+								appState.getDatabase().addBookmark(s,url);			
 							}			
 							else if (isNew)
 							{
