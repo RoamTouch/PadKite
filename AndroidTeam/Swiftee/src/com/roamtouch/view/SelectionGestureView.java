@@ -351,7 +351,8 @@ public class SelectionGestureView extends FrameLayout {
 		// Ignore selection gesture while in loading.
 		if(mFloatingCursor.inLoad())
 		{
-			return false;
+			// Disable for now as it is buggy
+			//return false;
 		}
 
 		if (action == MotionEvent.ACTION_DOWN)
