@@ -37,6 +37,7 @@ import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import roamtouch.webkit.CookieSyncManager;
 import roamtouch.webkit.WebChromeClient;
 import roamtouch.webkit.WebHitTestResult;
 import roamtouch.webkit.WebVideoInfo;
@@ -2402,6 +2403,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		    
 			public void onProgressChanged  (WebView  view, int newProgress) {
 				fcView.setProgress(newProgress);
+				
+				if (newProgress == 100) {
+	                // sync cookies and cache promptly here.
+	                CookieSyncManager.getInstance().sync();
+				}
 			}
 			
 			// @Override
@@ -2575,6 +2581,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					fcView.startRotateAnimation();
 				}
 				fcMainMenu.toggleCloseORRefresh(false);
+				
+	            // reset sync timer to avoid sync starts during loading a page
+	            CookieSyncManager.getInstance().resetSync();
 			}
 		}
 		

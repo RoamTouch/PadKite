@@ -23,6 +23,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 
+import roamtouch.webkit.CookieManager;
+import roamtouch.webkit.CookieSyncManager;
 import roamtouch.webkit.WebView;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -243,8 +245,13 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         appState = ((SwifteeApplication)getApplicationContext());
-      
         
+        // create CookieSyncManager with current Context
+        CookieSyncManager.createInstance(this);
+        // remove all expired cookies
+        CookieManager.getInstance().removeExpiredCookie();
+        CookieManager.getInstance().removeSessionCookie();
+
 //    	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
     	
