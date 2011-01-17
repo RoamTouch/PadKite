@@ -209,14 +209,16 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			
 			//Settings
 			case settings:
-				boolean is_registered = database.checkUserRegistered();
+				mFloatingCursor.setCurrentMenu(1);
+
+				/*boolean is_registered = database.checkUserRegistered();
 
 				if(is_registered)
 					mFloatingCursor.setCurrentMenu(1);
 				else{
 					Intent i = new Intent(mParent,RegisterActivity.class);
 					mParent.startActivity(i);
-				}
+				}*/
 				break;
 				
 			//Refresh
