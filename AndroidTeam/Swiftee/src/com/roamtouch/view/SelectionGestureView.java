@@ -25,6 +25,7 @@ public class SelectionGestureView extends FrameLayout {
 
 	private Handler mHandler;
 	private Runnable mRunnable;
+	private Runnable mLTRunnable;
 	
 	public class DebugView extends View {
 
@@ -120,6 +121,17 @@ public class SelectionGestureView extends FrameLayout {
 					mHandler.postDelayed(this, delayMillis);
 			}
 		};
+		mLTRunnable = new Runnable() {
+			public void run()
+			{
+				if (selectionType == null)
+				{
+					selectionType = SelectionTypes.LongTouch;
+					mFloatingCursor.onLongTouch();
+				}	
+			}
+		};
+
 		mDebugView = new DebugView(context);
 		addView(mDebugView);
 	}
@@ -363,19 +375,20 @@ public class SelectionGestureView extends FrameLayout {
 			selectionType = null;
 			mEventViewer.setText("Starting selection gesture ...");
 			mFloatingCursor.startSelectionCommand();
+			mHandler.postDelayed(mLTRunnable, 250);
 		}
 		else if (action == MotionEvent.ACTION_MOVE)
-		{			
+		{		
 			if (selectionType == null || selectionType == SelectionTypes.LongTouch)
 			{
 				float deltaX = Math.abs(X - mDownX);
 				float deltaY = Math.abs(Y - mDownY);
 				
-				if (eventTime-mStartEventTime >= 250 && selectionType == null)
+/*				if (eventTime-mStartEventTime >= 250 && selectionType == null)
 				{
 					selectionType = SelectionTypes.LongTouch;
 					mFloatingCursor.onLongTouch();
-				}
+				}*/
 
 				/*if (deltaX >= TOUCH_TOLERANCE && deltaY >= TOUCH_TOLERANCE)
 				{
@@ -385,6 +398,8 @@ public class SelectionGestureView extends FrameLayout {
 				}
 				else*/ if(deltaX >= TOUCH_TOLERANCE)
 				{
+					mHandler.removeCallbacks(mLTRunnable);
+					
 					// FIXME: Use config variables
 					
 					// Text automatic selection
@@ -397,9 +412,12 @@ public class SelectionGestureView extends FrameLayout {
 					
 					selectionType = SelectionTypes.TextAutomatic;
 					mEventViewer.setText("Detected text automatic selection gesture ...");
+					
 				}
 				else if(deltaY >= TOUCH_TOLERANCE)
 				{
+					mHandler.removeCallbacks(mLTRunnable);
+
 					// FIXME: Use config variables
 					
 					// Line automatic selection
@@ -436,6 +454,8 @@ public class SelectionGestureView extends FrameLayout {
 		}
 		else if (action == MotionEvent.ACTION_UP)
 		{	
+			mHandler.removeCallbacks(mLTRunnable);
+
 /*			mDownX = -1;
 			mDownY = -1;*/
 			
