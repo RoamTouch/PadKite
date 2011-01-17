@@ -922,7 +922,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 					String s = urls[0].toString();
 					String arr[] = s.split("/");
 					int cnt = arr.length;
-					FileOutputStream f = new FileOutputStream(new File(Environment.getExternalStorageDirectory()+"/download",arr[cnt-1]));
+					String filename = URLEncoder.encode(arr[cnt-1]);
+					FileOutputStream f = new FileOutputStream(new File(Environment.getExternalStorageDirectory()+"/download",filename));
 					Log.v("PADKITE","downloading file... "+arr[cnt-1]);
 
 					byte[] buffer = new byte[4096];

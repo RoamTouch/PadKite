@@ -2,6 +2,7 @@ package com.roamtouch.view;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -62,7 +63,7 @@ public class WebPage {
                 	   "</tr>";*/
      			if (type == 2) {
      				String t[] = c.getString(2).split("/");
-     				String filename = t[t.length-1];
+     				String filename = URLEncoder.encode(t[t.length-1]);
      				str+="<li><p class=\"title\"><a href=\"file:///sdcard/download/" + filename + "\" >" + filename +"</a></p><p class=\"url\"><a href=\"" + c.getString(2) + "\" >" + c.getString(2) +"</a></p><p class=\"date\">" + formatter.format(date) + "</p></li>";     				
      			}
      			else
