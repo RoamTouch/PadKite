@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REL="Beta"
+REL="RC6"
 SUFFIX="-eclair"
 
 # Find actual md5sum
