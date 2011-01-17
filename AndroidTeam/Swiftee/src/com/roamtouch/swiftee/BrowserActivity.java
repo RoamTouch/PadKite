@@ -626,12 +626,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         }     
         else if("Download".equals(action)){
         	eventViewer.setText("Downloading:"+mSelection);
-        	try {
-				new DownloadFilesTask().execute(new URL(mSelection), null, null);
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			actions.download(floatingCursor);
         }     
         else if("Send To".equals(action)){
 			actions.send();

@@ -33,6 +33,7 @@ public class GestureActions {
  	}
 	
 	String mLink = null;
+	String mVideoId = null;
 	
 	public GestureActions(BrowserActivity parent, String selection)
 	{
@@ -77,10 +78,26 @@ public class GestureActions {
 	
 	public String checkMobileTube(String link) {
 		
-		if (link.contains("m.youtube.com")) {
+		if (link.contains("m.youtube.com") || link.contains("youtube.com/watch")) {
 			String[] parts = link.split("=");
 			String videoId = parts[parts.length-1];
-			link = "http://www.youtube.com/watch?v=" + videoId;
+			try {
+				String[] t = link.split("?");
+				t = t[1].split("&");
+				for (int i = 0; i < t.length; i++)
+				{
+					parts = t[i].split("=");
+					if (parts[0].equals("v"))
+						videoId = parts[1];
+				}
+
+			}
+			catch (Exception e) {
+
+			}
+			if (link.contains("m.youtube.com"))
+					link = "http://www.youtube.com/watch?v=" + videoId;
+			mVideoId = videoId;
 		}
 		return link;
 	}
@@ -269,8 +286,13 @@ public class GestureActions {
         mParent.startActivity(Intent.createChooser(intent, "Share ..."));		
 	}
 
-	public void download()
+	public void download(FloatingCursor floatingCursor)
 	{
+		// Just show the video instead of downloading for now ...
+		if (mVideoId != null) {
+			floatingCursor.showVideo(mVideoId, true);
+			return;
+		}
 		try {
 			mParent.new DownloadFilesTask().execute(new URL(mSelection), null, null);
 		} catch (MalformedURLException e) {

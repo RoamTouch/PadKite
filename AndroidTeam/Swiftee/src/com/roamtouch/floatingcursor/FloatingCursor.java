@@ -948,6 +948,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 				case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
 				case WebHitTestResult.SRC_ANCHOR_TYPE: 
+				case WebHitTestResult.IMAGE_ANCHOR_TYPE:
 				{
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
@@ -955,7 +956,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					if (tooltip.length() > 5)
 						eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
 					
-					selectedLink = mWebHitTestResult.getExtra();
+					selectedLink = mWebHitTestResult.getHref();
+					if (selectedLink == "")
+						selectedLink = mWebHitTestResult.getExtra();
+
 					int type = getLinkType(selectedLink);
 
 					if (type == 1) { /* Image */
@@ -968,18 +972,41 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					break;
 				}
 	
-				case WebHitTestResult.IMAGE_ANCHOR_TYPE: {
-					resultType = WebHitTestResult.IMAGE_TYPE;
-					cursorImage = R.drawable.image_cursor;
+				/*case WebHitTestResult.IMAGE_ANCHOR_TYPE: {
+					resultType = WebHitTestResult.ANCHOR_TYPE;
+					cursorImage = R.drawable.link_cursor;
+					
+					selectedLink = mWebHitTestResult.getExtra();
+					int type = getLinkType(selectedLink);
+
+					if (type == 1) { // Image 
+						cursorImage = R.drawable.image_cursor;
+					}
+					else if (type == 2) { // Video 
+						cursorImage = R.drawable.video_cursor;
+					}
 
 					String tooltip = mWebHitTestResult.getToolTip();
 					if (tooltip.length() > 5)
 						eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
 					break;
-				}
+				}*/
 	
 				case WebHitTestResult.IMAGE_TYPE: {
 					cursorImage = R.drawable.image_cursor;
+					selectedLink = mWebHitTestResult.getExtra();
+
+					// HACK: Mobile YouTube images are not detected, fake it.
+
+					if (selectedLink.startsWith("http://i.ytimg.com/vi/")) {
+						// We fake a link to the current URL
+						resultType = WebHitTestResult.ANCHOR_TYPE;
+						mWebHitTestResult.setType(resultType);
+						mWebHitTestResult.setHref(mWebView.getUrl());
+
+						cursorImage = R.drawable.video_cursor;
+					}
+
 		//			eventViewer.splitText(WebHitTestResult.IMAGE_TYPE,"");
 					break;
 				}
@@ -1204,7 +1231,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			else if ( mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
 				eventViewer.setText("Detected Long-Touch. Selecting link ...");
-				selectedLink = mWebHitTestResult.getExtra();
+				selectedLink = mWebHitTestResult.getHref();
+				if (selectedLink == "")
+					selectedLink = mWebHitTestResult.getExtra();
 				Point focusCenter = mWebHitTestResult.getPoint();
 
 				//Log.e("SELECT_LINK", "x: " + focusCenter.x + ", y: " + focusCenter.y + ", fcX: " + fcX + ", fcY: " + fcY);
@@ -2106,10 +2135,35 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			eventViewer.setText(str);
 		}
 		
-		public void loadPage(String url){
-			
+		public void showVideo(String videoId, boolean showAlert){
+			if (showAlert)
+				eventViewer.setText("Download not yet implemented. Showing video instead ...");
+			String url = "vnd.youtube:" + videoId + "?vndapp=youtube_mobile&vndclient=mv-google&vndel=watch&vndxl=xl_blazer";
+		    Intent intent;
+            
+            try {
+                intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+            } catch (URISyntaxException ex) {
+                return;
+            }
+
+            if (mParent.getPackageManager().resolveActivity(intent, 0) == null)
+            	return;
+            
+            // Security settings - Sanitize access
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+            intent.setComponent(null);           
+                       
+            try {
+                mParent.startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+            }			
+		}
+
+		public void loadPage(String url){			
 			mWebView.loadUrl(url);
 		}
+		
 		public void loadData(String data){
 			mWebView.loadDataWithBaseURL("file:///android_asset/Web Pages/", data,  "text/html", "utf-8", null);
 		}
@@ -2462,6 +2516,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	            
 	            if (url.startsWith("http"))
 	            	return false;
+	            
+	            //Log.e("External URL", url);
 	            
 	            try {
 	                if (mParent.startActivityIfNeeded(intent, -1)) {
