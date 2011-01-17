@@ -222,7 +222,7 @@ public class DBConnector {
 		public Cursor getFromHistory(int type){
 			try
 			{
-				Cursor c = mDatabase.rawQuery("SELECT * FROM padkite_history WHERE type="+type, null);
+				Cursor c = mDatabase.rawQuery("SELECT * FROM padkite_history WHERE type="+type + " ORDER BY timestamp DESC", null);
 				if(c!=null)
 					if(c.getCount()>0)
 						return c;
