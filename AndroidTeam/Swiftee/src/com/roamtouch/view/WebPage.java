@@ -46,14 +46,14 @@ public class WebPage {
     	String end = "Showing " + numPerPage + " results per page.<br>";
     	int num = 0;
     	
-    	if(c!=null){
+    	if(c!=null) {
         	if (start < 0)
         		start = 0;
         	if (start >= c.getCount())
         		start = c.getCount() - 1;
 
     		c.moveToPosition(start);
-    		while(!c.isAfterLast() && num < numPerPage){
+    		while (!c.isAfterLast() && num < numPerPage){
     			Date date = new Date(Long.parseLong(c.getString(1)));
      			SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM d, yyyy h:mm a");
      			
@@ -64,10 +64,18 @@ public class WebPage {
      			if (type == 2) {
      				String t[] = c.getString(2).split("/");
      				String filename = URLEncoder.encode(t[t.length-1]);
-     				str+="<li><p class=\"title\"><a href=\"file:///sdcard/download/" + filename + "\" >" + filename +"</a></p><p class=\"url\"><a href=\"" + c.getString(2) + "\" >" + c.getString(2) +"</a></p><p class=\"date\">" + formatter.format(date) + "</p></li>";     				
+     				String link = c.getString(2);
+     				str+="<li><p class=\"title\"><a href=\"file:///sdcard/download/" + filename + "\" >" + filename +"</a></p><p class=\"url\"><a href=\"" + link + "\" >" + link +"</a></p><p class=\"date\">" + formatter.format(date) + "</p></li>";     				
      			}
-     			else
-     				str+="<li><p class=\"title\"><a href=\"" + c.getString(2) + "\" >" + c.getString(3) +"</a></p><p class=\"url\"><a href=\"" + c.getString(2) + "\" >" + c.getString(2) +"</a></p><p class=\"date\">" + formatter.format(date) + "</p></li>";
+     			else {
+     				String name = c.getString(3);
+     				String link = c.getString(2);
+     				
+     				if (name.equals("null") || name == null)
+     					name = "";
+     				
+     				str+="<li><p class=\"title\"><a href=\"" + link + "\" >" + name + "</a></p><p class=\"url\"><a href=\"" + link + "\" >" + link +"</a></p><p class=\"date\">" + formatter.format(date) + "</p></li>";
+     			}
 
    				c.moveToNext();
     			num++;
