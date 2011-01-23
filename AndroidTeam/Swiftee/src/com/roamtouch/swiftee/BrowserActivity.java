@@ -792,7 +792,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	/*Get short link from server*/	
 	public String getShortLink(String longUrl) {
 		
-		String responseString = "";
+		String responseString = longUrl;
 		try {
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpPost httppost = new HttpPost("http://padkite.com/shurly/api/shorten?longUrl="+URLEncoder.encode(longUrl,"UTF-8")+"&format=txt");
@@ -800,6 +800,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			HttpEntity entity = response.getEntity();
 			responseString = getResponseBody(entity);
 			httppost.abort();
+			if (!responseString.startsWith("http"))
+				responseString = longUrl;
 			//Log.d("Connection successful.......", "-----------");
 		} catch (MalformedURLException e) {
 		} catch (IOException e) {
@@ -973,12 +975,17 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	     }
 
 	     protected void onPostExecute(Long result) {
-	    	 eventViewer.setText("Download Complete");
 	    	 if (mNotificationManager != null)
 	    		 mNotificationManager.cancel(NOTIFICATION_ID);
-	    	 SwifteeApplication appState = ((SwifteeApplication)BrowserActivity.this.getApplicationContext());
-	     	 DBConnector database = appState.getDatabase();
-	     	 database.addToHistory(System.currentTimeMillis()+"", url.toString(), "", 2);
+			String s = url.toString();
+			String arr[] = s.split("/");
+			int cnt = arr.length;
+			String filename = URLEncoder.encode(arr[cnt-1]);
+			eventViewer.setText("Download Complete: " + filename);
+
+			SwifteeApplication appState = ((SwifteeApplication)BrowserActivity.this.getApplicationContext());
+			DBConnector database = appState.getDatabase();
+			database.addToHistory(System.currentTimeMillis()+"", url.toString(), filename, 2);
 	     }
 	 }
 	

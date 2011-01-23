@@ -294,7 +294,7 @@ public class GestureActions {
 			return;
 		}
 		try {
-			mParent.new DownloadFilesTask().execute(new URL(mSelection), null, null);
+			mParent.new DownloadFilesTask().execute(new URL(mLink), null, null);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

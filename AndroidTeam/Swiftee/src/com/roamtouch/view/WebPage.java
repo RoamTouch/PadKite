@@ -62,10 +62,13 @@ public class WebPage {
                 	   "<td ><font color=\"#F2A31C\" size=\"2px\">"+c.getString(3)+"</font><br><font size=\"2px\"><a href=\""+c.getString(2)+"\">"+c.getString(2)+"</a></font></td>" +
                 	   "</tr>";*/
      			if (type == 2) {
-     				String t[] = c.getString(2).split("/");
-     				String filename = URLEncoder.encode(t[t.length-1]);
+     				String filename = c.getString(3);
+     				if (filename.equals("")) { // TODO: Remove this later
+     					String t[] = c.getString(2).split("/");
+     					filename = URLEncoder.encode(t[t.length-1]).replace("%", " %");
+     				}
      				String link = c.getString(2);
-     				str+="<li><p class=\"title\"><a href=\"file:///sdcard/download/" + filename + "\" >" + filename +"</a></p><p class=\"url\"><a href=\"" + link + "\" >" + link +"</a></p><p class=\"date\">" + formatter.format(date) + "</p></li>";     				
+     				str+="<li><p class=\"title\"><a href=\"file:///sdcard/download/" + filename + "\" >" + filename +"</a></p><p class=\"url\"><a href=\"" + link + "\" >" + link.replace("%"," %") +"</a></p><p class=\"date\">" + formatter.format(date) + "</p></li>";     				
      			}
      			else {
      				String name = c.getString(3);
