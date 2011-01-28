@@ -755,7 +755,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 				winTabs.setActiveTabIndex(child);	
 				winTabs.setCurrentTab(child.getTabIndex());
 				String url = child.getWebView().getUrl();
-				eventViewer.setText(url);
+				if(url != null) {
+					eventViewer.setText(url);
+				}
 			}
 		}		
 	}
