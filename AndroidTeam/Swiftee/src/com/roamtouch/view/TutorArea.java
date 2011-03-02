@@ -18,7 +18,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -34,13 +34,14 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 	public TutorArea(Context context, AttributeSet attrs) {
 		super(context, attrs);	
 		mContext = context;
+		BITMAP_RENDERING_WIDTH = getResources().getDimensionPixelSize(com.roamtouch.swiftee.R.dimen.tutor_gesture_stroke);
 	}
 	public void setGestureLibrary(GestureLibrary l) {
 		mLibrary = l;
 		initView();
 	}
 	
-    private static final float BITMAP_RENDERING_WIDTH = 4;
+    private static float BITMAP_RENDERING_WIDTH = 4;
 
     private static final boolean BITMAP_RENDERING_ANTIALIAS = true;
     private static final boolean BITMAP_RENDERING_DITHER = true;
@@ -92,26 +93,32 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 		
 		java.util.Arrays.sort( str );
 		gestureCount = str.length;
-		
-		LayoutParams params=new LayoutParams(70, 70);
+
+		int buttonGrid = getResources().getDimensionPixelSize(com.roamtouch.swiftee.R.dimen.tutor_button_grid_width);
+		int buttonWidth = getResources().getDimensionPixelSize(com.roamtouch.swiftee.R.dimen.tutor_button_width);
+		int imageWidth = getResources().getDimensionPixelSize(com.roamtouch.swiftee.R.dimen.tutor_button_image_width);
+		int padding = getResources().getDimensionPixelSize(com.roamtouch.swiftee.R.dimen.tutor_button_padding);
+		LayoutParams params=new LayoutParams(buttonWidth, buttonWidth);
+
 		for(int i=0;i<gestureCount;i++){
 			
 			LinearLayout linLayout = new LinearLayout(mContext);
-			linLayout.setLayoutParams(new LayoutParams(110, LayoutParams.FILL_PARENT));
+			linLayout.setLayoutParams(new LayoutParams(buttonGrid, LayoutParams.FILL_PARENT));
 			linLayout.setOrientation(VERTICAL);
 			linLayout.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
 			
-			linLayout.setPadding(0, 10, 0, 10);
+			linLayout.setPadding(0, padding, 0, padding);
 
-			Button b=new Button(mContext);
+			ImageButton b=new ImageButton(mContext);
 			b.setId(i);
 			//b.setBackgroundResource(R.drawable.tutor_button_1);
 			b.setLayoutParams(params);
 			//b.setText(BrowserActivity.convertGestureItem(str[i]));
 			ArrayList<Gesture> list = mLibrary.getGestures(str[i].toString());
-			Bitmap bit = toBitmap(list.get(0), 60, 60, 10, Color.BLACK);
+			Bitmap bit = toBitmap(list.get(0), imageWidth, imageWidth, 10, Color.BLACK);
 			BitmapDrawable d = new BitmapDrawable(bit);
-			b.setCompoundDrawablesWithIntrinsicBounds(null,d, null, null);
+			//b.setCompoundDrawablesWithIntrinsicBounds(null,d, null, null);
+			b.setImageDrawable(d);
 			b.setOnClickListener(this);
 			
 			TextView tv = new TextView(mContext);
