@@ -635,6 +635,17 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			selectedLink = "";
 		}
 
+		public void addNewWindow(String url){
+			removeSelection();
+
+			if (selectedLink != null)
+				fcWindowTabs.addWindow(url);
+			else
+				fcWindowTabs.addWindow("");
+				
+			selectedLink = "";
+		}
+
 		public int getWindowCount(){
 			return fcWindowTabs.getWindowCount();
 		}

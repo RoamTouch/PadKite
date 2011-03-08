@@ -21,12 +21,16 @@ import java.util.TimerTask;
 
 public class HowToActivity extends Activity implements  OnClickListener, OnCheckedChangeListener
 {
-	
+	Button btn_skip;
+	Button btn_prev;
+	Button btn_next;
 
 //	private Button btn_skip,btn_prev,btn_next;
 //	private CheckBox chk_dntShowAgn;
 	private ViewFlipper flipper;
 	boolean dont_start = false;
+	int slide_index = 0;
+	int slide_count = 0;
 	
     /** Called when the activity is first created. */
     @Override
@@ -49,7 +53,7 @@ public class HowToActivity extends Activity implements  OnClickListener, OnCheck
 		dont_start = sharedPref.getBoolean("DontShowAgain", false);
 		
 		// FIXME: Disabled startup animation for beta release
-		dont_start = true;
+		//dont_start = true;
 
 		if(dont_start){
 			Intent intent = new Intent();
@@ -62,6 +66,7 @@ public class HowToActivity extends Activity implements  OnClickListener, OnCheck
 			 	setContentView(R.layout.tutorial);
 		        
 			 	flipper = (ViewFlipper)findViewById(R.id.flipper);
+			 	slide_count = flipper.getChildCount();
 			 	
 
 /*		        ImageView img = (ImageView)findViewById(R.id.simple_anim);
@@ -76,13 +81,14 @@ public class HowToActivity extends Activity implements  OnClickListener, OnCheck
 		        Timer t2 = new Timer(false);
 		        t2.schedule(mar2, 5000);
 */			
-			 	Button btn_skip = (Button) findViewById(R.id.skip);
+			 	btn_skip = (Button) findViewById(R.id.skip);
 		        btn_skip.setOnClickListener(this);
 
-		        Button btn_prev = (Button) findViewById(R.id.prev);
+		        btn_prev = (Button) findViewById(R.id.prev);
 		        btn_prev.setOnClickListener(this);
+		        btn_prev.setEnabled(false);
 
-		        Button btn_next = (Button) findViewById(R.id.next);
+		        btn_next = (Button) findViewById(R.id.next);
 		        btn_next.setOnClickListener(this);
 
 		        CheckBox chk_dntShowAgn = (CheckBox) findViewById(R.id.dont_show_again);
@@ -107,6 +113,11 @@ public class HowToActivity extends Activity implements  OnClickListener, OnCheck
 			 flipper.setOutAnimation(AnimationUtils.loadAnimation(HowToActivity.this,
 		                R.anim.slide_out_right));
 			 flipper.showPrevious();
+			 if(--slide_index <= 0) {
+					btn_prev.setEnabled(false);
+					slide_index = 0;
+			 }
+			 btn_next.setEnabled(true);
 		}
 		else if(id == R.id.next){
 			 flipper.setInAnimation(AnimationUtils.loadAnimation(this,
@@ -114,6 +125,11 @@ public class HowToActivity extends Activity implements  OnClickListener, OnCheck
 		     flipper.setOutAnimation(AnimationUtils.loadAnimation(this,
 		             R.anim.slide_out_left));
 			 flipper.showNext();
+			 if(++slide_index >= slide_count-1) {
+					btn_next.setEnabled(false);
+					slide_index = slide_count - 1;
+			 }
+			 btn_prev.setEnabled(true);
 		}
 	}
 

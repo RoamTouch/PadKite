@@ -36,7 +36,8 @@ enum MainMenuFunctions {
 	download,
 	close,
 	new_window,
-	bookmark
+	bookmark,
+	help_online
 }
 
 public class MainMenu extends CircularLayout implements OnTouchListener{
@@ -183,6 +184,10 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				mFloatingCursor.setEventText("Bookmark");
 				break;
 				
+			case help_online:
+				mFloatingCursor.setEventText("Help Online");
+				break;
+
 			case new_window:
 				mFloatingCursor.setEventText("New Window");
 				break;
@@ -285,6 +290,14 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				mParent.startActivity(i);
 				break;
 			
+			case help_online:
+				if(mFloatingCursor.getWindowCount()>7){
+					mFloatingCursor.loadPage("file:///android_asset/Web Pages/help.html");
+				} else {
+					mFloatingCursor.addNewWindow("file:///android_asset/Web Pages/help.html");
+				}
+				break;
+				
 			case new_window:
 				mFloatingCursor.addNewWindow(false);
 				break;
