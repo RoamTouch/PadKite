@@ -1,7 +1,20 @@
 #!/bin/bash
 
-REL="RC7"
+set -x
+
+REL="RC8"
+
+if [ -n "$ROAMTOUCH_VERSION" ]
+then
+	REL="${ROAMTOUCH_VERSION}"
+fi
+
 SUFFIX="-eclair"
+
+if [ -n "$GIT_BRANCH" ]
+then
+	SUFFIX="-${GIT_BRANCH}"
+fi
 
 # Find actual md5sum
 if [ "x$(which md5)" = "x" ]
