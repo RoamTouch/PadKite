@@ -4,6 +4,12 @@ REL="RC7"
 SUFFIX="-eclair"
 
 # Find actual md5sum
+if [ "x$(which md5)" = "x" ]
+then
+	function md5 () {
+		md5sum "$@" | awk '{ print $2 " = " $1 }'
+	}
+fi
 
 [ ! -d .git ] && { echo "Please run only from toplevel directory." 1>&2; exit 1; }
 
