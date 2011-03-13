@@ -15,7 +15,7 @@ then
 	GIT_BRANCH="master"
 fi
 
-git checkout "$GIT_BRANCH"
+git checkout "$GIT_BRANCH" || exit 1
 
 if [ "$GIT_BRANCH" = "master" ]
 then
