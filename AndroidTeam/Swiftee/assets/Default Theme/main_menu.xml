@@ -15,8 +15,8 @@
 					android:button_highlightImage="refresh_pressed.png"
 					android:button_function="refresh"/>   
 
-		<MenuButton android:button_image="custom_gesture_normal.png"
-					android:button_highlightImage="custom_gesture_pressed.png"
+		<MenuButton android:button_image="bookmark_normal.png"
+					android:button_highlightImage="bookmark_pressed.png"
                     android:button_function="custom_gesture"/>
            
         <MenuButton android:button_image="windows_normal.png"
@@ -44,8 +44,8 @@
                     android:button_function="download"/>
         		             
 
-		<MenuButton android:button_image="bookmark_normal.png"
-					android:button_highlightImage="bookmark_pressed.png"
+		<MenuButton android:button_image="bookmark_edit_normal.png"
+					android:button_highlightImage="bookmark_edit_pressed.png"
                     android:button_function="bookmark"/>
 
 		<MenuButton android:button_image="help_normal.png"
