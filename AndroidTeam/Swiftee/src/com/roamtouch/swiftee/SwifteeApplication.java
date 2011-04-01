@@ -40,6 +40,7 @@ public class SwifteeApplication extends Application{
 			// FIXME: For now force an update!		
 			copyFilestoSdcard("Default Theme", true);
 			copyFilestoSdcard("Gesture Library", false);
+			copyHomepagetoSdcard(false);//home page
 		}
 		if(database.checkIfBookmarkAdded()) {
 			database.addBookmark();
@@ -75,6 +76,40 @@ public class SwifteeApplication extends Application{
 
 	}
 	
+	public void copyHomepagetoSdcard(boolean force){
+		try{
+			String arr[] = {/*"loadPage.html",*/ 
+					"content.html"};
+			
+			int count = arr.length;
+
+			File file;
+			for(int i=0;i<count;i++){
+				file = new File(BrowserActivity.BASE_PATH + "/" + arr[i]);
+				if(file.exists() && !force) {
+					continue;
+				}
+				InputStream is = getAssets().open(arr[i]);
+
+				FileOutputStream myOutput = new FileOutputStream(BrowserActivity.BASE_PATH + "/"+arr[i]);
+				byte[] buffer = new byte[1024];
+				int length;
+				while ((length = is.read(buffer))>0)
+				{
+					myOutput.write(buffer, 0, length);
+				}
+
+				//Close the streams
+				myOutput.flush();
+				myOutput.close();
+				is.close();
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
 	public void copyFilestoSdcard(String dir, boolean force){
 		try{
 			String arr[] = getAssets().list(dir);

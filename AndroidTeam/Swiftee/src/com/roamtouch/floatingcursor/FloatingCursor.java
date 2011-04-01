@@ -66,6 +66,7 @@ import com.roamtouch.menu.WindowTabs;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
+import com.roamtouch.swiftee.TrackHelper;
 
 
 public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanvas<FloatingCursor.FCObj> {
@@ -2506,7 +2507,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 //				mParent.setTopBarURL(url);
 				//view.loadUrl(url);
 				
-	            Intent intent;
+				TrackHelper.doTrack(TrackHelper.EXECUTE_LINK, 1);
+
+				Intent intent;
 	            
 	            try {
 	                intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);

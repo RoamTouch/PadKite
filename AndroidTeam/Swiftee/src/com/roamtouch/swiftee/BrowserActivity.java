@@ -124,6 +124,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 
     public void closeDialog()
     {
+    	//TrackHelper.submit();
+    	
 		AlertDialog alertDialog;
 
     	alertDialog = new AlertDialog.Builder(this).create();
@@ -273,11 +275,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         			}
         		
         	});
-
         	dialog.show();
         
         }
-        
+        // Update remote content if needed.
+        Downloader.updateRemoteContentIfNeeded();
+
         /*
         mHandler.postDelayed(new Runnable() {
        
@@ -329,7 +332,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			webView.loadUrl(data);
 		}
 		else {
-			webView.loadUrl("file:///android_asset/loadPage.html");
+			//webView.loadUrl("file:///android_asset/loadPage.html");
+			webView.loadUrl(SwifteeHelper.getHomepage());
 		}
 		
 		webView.setSelectionColor(0xAAb4d5fe);
@@ -547,6 +551,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     
 	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
 		
+		TrackHelper.doTrack(TrackHelper.PERFORM_GESTURE, 1);
+
 		 ArrayList<Prediction> predictions = mLibrary.recognize(gesture);
          if (predictions.size() > 0) {
                  if (predictions.get(0).score > 1.5) {

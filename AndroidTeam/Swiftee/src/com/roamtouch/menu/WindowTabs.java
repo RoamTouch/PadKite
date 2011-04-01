@@ -5,6 +5,7 @@ import roamtouch.webkit.WebView;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
+import com.roamtouch.swiftee.SwifteeHelper;
 import com.roamtouch.view.EventViewerArea;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -135,7 +136,8 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
         LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
 		webView.setLayoutParams(params);
 		if(url.equals(""))
-			webView.loadUrl("file:///android_asset/loadPage.html");
+			//webView.loadUrl("file:///android_asset/loadPage.html");
+			webView.loadUrl(SwifteeHelper.getHomepage());
 		else
 			webView.loadUrl(url);
 		webView.setSelectionColor(0xAAb4d5fe);

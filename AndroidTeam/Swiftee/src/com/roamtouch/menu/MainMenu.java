@@ -6,6 +6,7 @@ import com.roamtouch.settings.GestureRecorder;
 import com.roamtouch.settings.RegisterActivity;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.SwifteeApplication;
+import com.roamtouch.swiftee.TrackHelper;
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.WebPage;
 
@@ -299,6 +300,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				break;
 				
 			case new_window:
+				TrackHelper.doTrack(TrackHelper.NEW_PAGE, 1);
 				mFloatingCursor.addNewWindow(false);
 				break;
 				

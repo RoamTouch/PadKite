@@ -5,6 +5,7 @@ import org.metalev.multitouch.controller.MultiTouchController.PointInfo;
 import roamtouch.webkit.WebView;
 
 import com.roamtouch.floatingcursor.FloatingCursor;
+import com.roamtouch.swiftee.TrackHelper;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -196,7 +197,8 @@ public class SelectionGestureView extends FrameLayout {
 	protected void startAutoSelection(int selectionDir, int steps, int delay, boolean restart)
 	{
 		//Log.i("startAutoSelection", "Params: " + selectionDir + "," + steps + "," + delay);
-
+		TrackHelper.doTrack(TrackHelper.SELECT_CONTENT, 1);
+		
 		if (mAutoSelectionStarted)
 		{
 			mSelectionDirection = selectionDir;
