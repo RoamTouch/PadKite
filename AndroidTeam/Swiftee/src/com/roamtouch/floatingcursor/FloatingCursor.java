@@ -1949,8 +1949,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}
 				mActivePointerId = INVALID_POINTER_ID;
 
-				if (!mMenuDown)
+				if (!mMenuDown) {
+					// Here the FC may be invisible so we reset it. See #507
+					// TODO: Is there a better solution?
+					if(this.getVisibility() == View.INVISIBLE) {
+						this.setVisibility(View.VISIBLE);
+					}
 					fcView.setVisibility(View.VISIBLE);
+				}
 
 				stopSelection();
 				stopHitTest(fcX, fcY,false);
