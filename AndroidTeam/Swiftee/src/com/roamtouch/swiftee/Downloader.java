@@ -48,7 +48,7 @@ public class Downloader {
 			public void run() {
 				try {
 					// Update the remote content after 3 seconds.
-					Thread.sleep(3000);
+					Thread.sleep(5000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

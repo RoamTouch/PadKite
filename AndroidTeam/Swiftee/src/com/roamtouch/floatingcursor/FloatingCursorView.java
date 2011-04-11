@@ -61,6 +61,11 @@ public class FloatingCursorView extends View{
         //Make sure animation follows new co-ordiantes, just restart animation.
         if (isLoadingAnimationShown) {
         	this.clearAnimation();
+        	// Force isSmall to be false otherwise we may 
+        	// fail to call startScaleDownAndRotateAnimation.
+        	// See ticket #506, in which animations are cleared but
+        	// startScaleDownAndRotateAnimation is not really invoked.
+        	this.isSmall = false;
         	this.startScaleDownAndRotateAnimation(1000);
         }
         
@@ -80,7 +85,6 @@ public class FloatingCursorView extends View{
     {
         return this.r;
     }
-
 
     @Override
         protected void onDraw(Canvas canvas) {

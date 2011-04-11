@@ -122,10 +122,11 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	private Notification mNf;
 	private RemoteViews mRv;
 
+	// For data tracker
+	TrackHelper mTrackHelper;
+	
     public void closeDialog()
     {
-    	//TrackHelper.submit();
-    	
 		AlertDialog alertDialog;
 
     	alertDialog = new AlertDialog.Builder(this).create();
@@ -134,7 +135,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 	      public void onClick(DialogInterface dialog, int which) {
 	    	//mParent.finish();  
-	        System.exit(0);
+	        goExit(0);
 
 	    } }); 
 	    alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
@@ -144,7 +145,15 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	  	alertDialog.show();
     }
     
-	 public boolean onKeyDown(int keyCode, android.view.KeyEvent event){
+    // A wrapper to to exit so that we can do something here.
+    private void goExit(int code) {
+    	if(mTrackHelper != null) {
+    		mTrackHelper.saveData();
+    	}
+    	System.exit(code);
+    }
+
+    public boolean onKeyDown(int keyCode, android.view.KeyEvent event){
 	        
 	    	if (keyCode == KeyEvent.KEYCODE_MENU) { 
 	    		floatingCursor.toggleMenuVisibility();
@@ -222,7 +231,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     		final boolean status = data.getBooleanExtra("quit", false);
 
     		if (status == true)
-    			System.exit(1);
+    			goExit(1);
     	}
     }
 
@@ -281,6 +290,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         // Update remote content if needed.
         Downloader.updateRemoteContentIfNeeded();
 
+        // We may need a data tracker.
+        if(TrackHelper.TRACKER_ENABLED) {
+        	mTrackHelper = TrackHelper.createInstance(this);
+        	mTrackHelper.submitSavedData(10);
+        }
+
         /*
         mHandler.postDelayed(new Runnable() {
        
@@ -301,7 +316,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			
         			public void run()
         			{
-        				System.exit(1);
+        				goExit(1);
         			}
 			
         		}, 30000);
