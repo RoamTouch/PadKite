@@ -460,18 +460,21 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			parkingRunnable = new Runnable(){
 
 				public void run() {
-					if(!mParent.isInParkingMode && parkTimerStarted && FloatingCursor.this.isFCOutofBounds()) {
+					if(!mParent.isInParkingMode && parkTimerStarted /*&& FloatingCursor.this.isFCOutofBounds()*/) {
 						parkTimerStarted = false;
-						if (mIsLoading)
-						{
+						if (mIsLoading) {
 							fcView.startScaleUpAndRotateAnimation(100);
 						}
-						mParent.enterParkingMode(false);
+						mParent.enterParkingMode(true);
+						updateFC();
 						checkFCParkingBounds();
+						// Reomve the callback to avoid always running in the
+						// background.
+						handler.removeCallbacks(parkingRunnable);
 					}
 					else {
 						parkTimerStarted = true;
-						handler.postDelayed(this,1000);
+						handler.postDelayed(this,2000);
 					}
 				}
 				
@@ -830,6 +833,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				//eventViewer.setText("");
 
 //				mParent.setTopBarVisibility(INVISIBLE);
+
+				// Since menu is hidden we start the timer to park the PadKite.
+				handler.removeCallbacks(parkingRunnable);
+				handler.post(parkingRunnable);
 			}		
 		}
 		
@@ -840,9 +847,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			fcPointerView.setPosition(w/2,h/2);
 			//fcProgressBar.setPosition(w/2, h/2);
 			fcMainMenu.setPosition(w/2, h/2);
+			scrollTo(0,0);
+			if(mParent.isInParkingMode) {
+				mParent.exitParkingMode();
+				fcView.setRadius(FC_RADIUS);
+			}
 			this.w=w;
 			this.h=h;
-			scrollTo(0,0);
 			if (w == oldw && h != oldh) {
 				if (h < oldh) { // Soft Keyboard now visible
 					mSoftKeyboardVisible = true;
@@ -850,6 +861,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				else { // Soft Keyboard now hidden
 					mSoftKeyboardVisible = false;
 				}
+			}
+
+			// Restart timer to park the mouse if needed.
+			if((oldw != 0 || oldh != 0) && !isMenuVisible() /*&& (h > oldh && w == oldw)*/ ) {
+				handler.removeCallbacks(parkingRunnable);
+				handler.post(parkingRunnable);
 			}
 			//Log.e("OnSizeChanged:(w,h,ow,oh)","("+w+","+h+","+oldw+","+oldh+")" );
 
@@ -1379,15 +1396,16 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 				//pointer.setImageResource(R.drawable.address_bar_cursor);
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
-			}
+			}*/
 		
-			if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
+			/*if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
-			/*	sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
+				eventViewer.setText("Executing link...");
+				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 				pointer.setImageResource(R.drawable.address_bar_cursor);
-				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);/
-			}
-			else {
+				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);
+			}*/
+			/*else {
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
 			}*/
@@ -2564,6 +2582,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				mIsLoading = false;
 				if(!mParent.isInParkingMode) {
 					fcView.startScaleUpAnimation(1000); //Restore original size if not in parking mode
+
+					// Here we start the timer to park the PadKite.
+					handler.removeCallbacks(parkingRunnable);
+					handler.postDelayed(parkingRunnable, 200);
 				}
 				
 				fcMainMenu.toggleCloseORRefresh(true);
@@ -2752,4 +2774,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 		};
 
+	public void stopFling() {
+        if (!mScroller.isFinished()) {
+            mScroller.abortAnimation();
+        }
+	}
 }

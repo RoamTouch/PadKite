@@ -889,11 +889,14 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 		//Shrink to a half the size
 		floatingCursor.enterParkingMode();
-		Display display = getWindowManager().getDefaultDisplay();
+        Display display = getWindowManager().getDefaultDisplay();
         final int w = display.getWidth();
         final int h = display.getHeight();
-		
+
 		if(moveToParkingPosition) {
+	        floatingCursor.stopFling();
+	        floatingCursor.scrollTo( -w/2 + 50, -h/2 + 50);
+			/*
 			ta = new TranslateAnimation(0, w/2 - 50, 0, h/2 - 50);
 	        ta.setDuration((long) 1000);
 	        ta.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -912,6 +915,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	            }
 	        });
 	        floatingCursor.startAnimation(ta);
+	        */
 		}
 	}
 	
