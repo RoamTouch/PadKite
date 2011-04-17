@@ -51,6 +51,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Scroller;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.roamtouch.view.EventViewerArea;
@@ -479,7 +480,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}
 				
 			};
-
+			
+			longTouchRunnable = new Runnable() {
+				public void run() {
+					// no-op
+				}
+			};
 			
 			//runnableKiteAni = new KiteRunnable();
 		}
@@ -1218,8 +1224,36 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		}
 
 		boolean mLongTouchEnabled = false;
+		boolean mLongTouchHack = false;
+		private WebHitTestResult mLongTouchHackObj = null;
+
 		private String selectedLink = "";
 		
+		public void onLongTouchHack(int fX, int fY)
+		{
+			int old_fcX = fcX;
+			int old_fcY = fcY;
+			
+			fcX = fX;
+			fcY = fY;
+			
+			// This is false by default for this case
+			mHitTestMode = true;
+
+			moveHitTest(fcX, fcY);
+			if (mWebHitTestResult != null) {
+				mLongTouchHack = true;
+				mLongTouchHackObj = mWebHitTestResult;
+				onLongTouch();
+			}
+			
+			fcX = old_fcX;
+			fcY = old_fcY;
+			moveHitTest(fcX, fcY);
+
+			mHitTestMode = false;
+		}
+
 		public void onLongTouch() 
 		{			
 			if(mWebHitTestResult == null)
@@ -1272,7 +1306,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 				mLongTouchEnabled = true;
 			}
-			else if ( mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE) {
+			else if ( mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE && !mLongTouchHack) {
 				eventViewer.setText("Detected Long-Touch. Pasting clipboard contents ...");
 
 				
@@ -1299,6 +1333,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 		public void onLongTouchUp() 
 		{
+			if (mLongTouchHack) {
+				mLongTouchHack = false;
+				// FIXME: Perhaps replace again at end of function
+				mWebHitTestResult = mLongTouchHackObj;
+			}
+			
 			if (!mLongTouchEnabled)
 			{
 				onClick();
@@ -1659,6 +1699,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		boolean mForwardTouch = false;
 		boolean mMenuDown = false;
 		int mOldTouchCount = 0;
+		private Runnable longTouchRunnable;
+		private boolean mLongTouchCheck;
 		
 		public boolean dispatchTouchEventFC(MotionEvent event) {
 			
@@ -1697,10 +1739,28 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				{
 					mForwardTouch = false;
 					fcView.setVisibility(View.VISIBLE);
+
+					if (mLongTouchHack) {
+						onLongTouchUp();
+						mLongTouchCheck = false;
+						return true;
+					} else if (mLongTouchCheck) {
+						handler.removeCallbacks(longTouchRunnable);
+						mLongTouchCheck = false;
+					}
+				}
+				
+				if (action == MotionEvent.ACTION_MOVE && mLongTouchCheck == true) {
+					float dX = Math.abs(X-mPrevX);
+					float dY = Math.abs(Y-mPrevY);
+
+					if ((dX > mTouchSlop || dY > mTouchSlop)) {
+						handler.removeCallbacks(longTouchRunnable);
+						mLongTouchCheck = false;
+					}
 				}
 
 				mWebView.dispatchTouchEvent(event);
-
 				return true;
 			}
 
@@ -1848,6 +1908,22 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					if (!mMenuDown)
 					{
 						mForwardTouch = true;
+						// Start timer for long touch
+						final int fX = X;
+						final int fY = Y;
+
+						longTouchRunnable = new Runnable() { 
+							
+							public void run() {
+								mLongTouchCheck = false;
+								onLongTouchHack(fX,fY);
+							}
+							
+						};
+						
+						handler.postDelayed(longTouchRunnable, 500);
+						mLongTouchCheck = true;
+
 						mWebView.dispatchTouchEvent(event);
 						return true;
 					}
