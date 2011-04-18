@@ -1429,6 +1429,22 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				return 1;
 			return 0;
 		}
+
+		class LinkExecution implements Runnable {
+			boolean mExecuting = false;
+			private int X, Y;
+			void setTouchPoint(int x, int y) {
+				this.X = x;
+				this.Y = y;
+			}
+			public void run() {
+				// TODO Auto-generated method stub
+				sendEvent(MotionEvent.ACTION_DOWN, this.X, this.Y);
+				sendEvent(MotionEvent.ACTION_UP, this.X, this.Y);
+			}
+			
+		}
+		private LinkExecution mLinkExecutionOnTouchUp = new LinkExecution();
 		public void onTouchUp()
 		{
 
@@ -1438,13 +1454,21 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
 			}*/
 		
-			/*if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
+			if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
 				eventViewer.setText("Executing link...");
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 				pointer.setImageResource(R.drawable.address_bar_cursor);
-				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);
-			}*/
+				//sendEvent(MotionEvent.ACTION_UP, fcX, fcY);
+
+				// Post to execute the link after a fixed time.
+				mLinkExecutionOnTouchUp.setTouchPoint(fcX, fcY);
+				if(mLinkExecutionOnTouchUp.mExecuting) {
+					handler.removeCallbacks(mLinkExecutionOnTouchUp);
+				}
+				mLinkExecutionOnTouchUp.mExecuting = true;
+				handler.postDelayed(mLinkExecutionOnTouchUp, 1200);
+			}
 			/*else {
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
@@ -1708,7 +1732,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 			//if (action == MotionEvent.ACTION_DOWN)
 				//runnableKiteAni.stop();
-			
+
+			// Remove the pending execution if any.
+			if(mLinkExecutionOnTouchUp.mExecuting) {
+				handler.removeCallbacks(mLinkExecutionOnTouchUp);
+				//eventViewer.setText("Link execution canceled.");
+			}
+
 			boolean status;
 
 			int X,Y;		
@@ -1843,7 +1873,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				parkTimerStarted = false;
 
 				handler.removeCallbacks(runnable);
-				handler.removeCallbacks(parkingRunnable);
+				//handler.removeCallbacks(parkingRunnable);
 				
                 if (!mScroller.isFinished()) {
                     mScroller.abortAnimation();
