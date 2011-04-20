@@ -556,6 +556,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		public void enterParkingMode() {
 			//Scale down cursor
 			fcView.setRadius(RADIUS*1/2);
+			// Reset the cursor.
+			pointer.setImageResource(R.drawable.kite_cursor);
 		}
 	
 		public void setWebView(WebView wv,boolean isFirst) {
@@ -947,7 +949,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}
 				case WebHitTestResult.VIDEO_TYPE: {
 					cursorImage = R.drawable.video_cursor;
-					WebVideoInfo videoInfo = mWebHitTestResult.getVideoInfo();					
+					//WebVideoInfo videoInfo = mWebHitTestResult.getVideoInfo();					
 					//eventViewer.splitText(WebHitTestResult.VIDEO_TYPE, "");
 					break;
 				}
@@ -985,6 +987,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				case WebHitTestResult.SRC_ANCHOR_TYPE: 
 				case WebHitTestResult.IMAGE_ANCHOR_TYPE:
 				{
+					if(!mExecutionTimerStarted) {
+						startLinkExecution();
+					}
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
 					String tooltip = mWebHitTestResult.getToolTip();
@@ -1003,7 +1008,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					else if (type == 2) { /* Video */
 						cursorImage = R.drawable.video_cursor;
 					}
-					
+
+					// Keep the armed cursor.
+					if(mExecutionTimerStarted && mReadyToExecute) {
+						cursorImage = R.drawable.link_cursor_armed;
+					}
 					break;
 				}
 	
@@ -1055,6 +1064,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}
 			}
 			
+			// Node changed:
+			if(WebHitTestResult.ANCHOR_TYPE != resultType && mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE) {
+				//if(mWebHitTestResultIdentifer != identifier) {
+Log.e("------", "remove in moveHitTest");
+					stopLinkExecution();
+				//}
+			}
+
 			/*if (mHitTestResult == HitTestResult.EDIT_TEXT_TYPE && mEditTextCancel == false)
 			{
 				sendEvent(MotionEvent.ACTION_CANCEL, X, Y);
@@ -1062,9 +1079,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 			else
 				mEditTextCancel = false;*/
-
 				pointer.setImageResource(cursorImage);
-				
+
 				// Was there a node change?
 
 				if (identifier != mWebHitTestResultIdentifer) {
@@ -1083,6 +1099,31 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	//			else
 //					focusNodeAt(-1,-1);					
 			}
+		}
+
+		boolean mExecutionTimerStarted = false;
+		boolean mReadyToExecute = false;
+		Runnable mExecutionTimer = new Runnable () {
+
+			public void run() {
+				// TODO Auto-generated method stub
+				pointer.setImageResource(R.drawable.link_cursor_armed);
+				mReadyToExecute = true;
+				//mExecutionTimerStarted = false;
+			}};
+
+		void startLinkExecution() {
+			mExecutionTimerStarted = true;
+			mReadyToExecute = false;
+			handler.postDelayed(mExecutionTimer, 1000);
+		}
+
+		void stopLinkExecution() {
+			mExecutionTimerStarted = false;
+			mReadyToExecute = false;
+			handler.removeCallbacks(mExecutionTimer);
+			// Reset the cursor
+			pointer.setImageResource(R.drawable.kite_cursor);
 		}
 
 		protected void startHitTest(int X, int Y)
@@ -1430,21 +1471,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			return 0;
 		}
 
-		class LinkExecution implements Runnable {
-			boolean mExecuting = false;
-			private int X, Y;
-			void setTouchPoint(int x, int y) {
-				this.X = x;
-				this.Y = y;
-			}
-			public void run() {
-				// TODO Auto-generated method stub
-				sendEvent(MotionEvent.ACTION_DOWN, this.X, this.Y);
-				sendEvent(MotionEvent.ACTION_UP, this.X, this.Y);
-			}
-			
-		}
-		private LinkExecution mLinkExecutionOnTouchUp = new LinkExecution();
 		public void onTouchUp()
 		{
 
@@ -1454,20 +1480,20 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
 			}*/
 		
-			if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
-			{
-				eventViewer.setText("Executing link...");
-				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
-				pointer.setImageResource(R.drawable.address_bar_cursor);
-				//sendEvent(MotionEvent.ACTION_UP, fcX, fcY);
-
-				// Post to execute the link after a fixed time.
-				mLinkExecutionOnTouchUp.setTouchPoint(fcX, fcY);
-				if(mLinkExecutionOnTouchUp.mExecuting) {
-					handler.removeCallbacks(mLinkExecutionOnTouchUp);
+			if(mReadyToExecute) {
+				if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
+				{
+					eventViewer.setText("Executing link...");
+					sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
+					pointer.setImageResource(R.drawable.address_bar_cursor);
+					sendEvent(MotionEvent.ACTION_UP, fcX, fcY);
 				}
-				mLinkExecutionOnTouchUp.mExecuting = true;
-				handler.postDelayed(mLinkExecutionOnTouchUp, 1200);
+				mReadyToExecute = false;
+				mExecutionTimerStarted = false;
+			}else {
+				if(mExecutionTimerStarted) {
+					stopLinkExecution();
+				}
 			}
 			/*else {
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
@@ -1733,12 +1759,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			//if (action == MotionEvent.ACTION_DOWN)
 				//runnableKiteAni.stop();
 
-			// Remove the pending execution if any.
-			if(mLinkExecutionOnTouchUp.mExecuting) {
-				handler.removeCallbacks(mLinkExecutionOnTouchUp);
-				//eventViewer.setText("Link execution canceled.");
-			}
-
 			boolean status;
 
 			int X,Y;		
@@ -1873,7 +1893,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				parkTimerStarted = false;
 
 				handler.removeCallbacks(runnable);
-				//handler.removeCallbacks(parkingRunnable);
+				handler.removeCallbacks(parkingRunnable);
 				
                 if (!mScroller.isFinished()) {
                     mScroller.abortAnimation();
