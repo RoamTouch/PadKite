@@ -936,7 +936,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				int resultType = mWebHitTestResult.getType();
 				
 				int identifier = mWebHitTestResult.getIdentifier();
-				
 			
 				int cursorImage = 0;
 			
@@ -989,6 +988,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				{
 					if(!mExecutionTimerStarted) {
 						startLinkExecution();
+					} else {
+						// If the focus is on another link we reset the armed state.
+						if(identifier != mWebHitTestResultIdentifer) {
+							stopLinkExecution();
+							startLinkExecution();
+						}
 					}
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
