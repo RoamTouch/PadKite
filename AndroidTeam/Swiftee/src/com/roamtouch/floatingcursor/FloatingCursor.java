@@ -498,10 +498,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			SwifteeApplication app = (SwifteeApplication)context.getApplicationContext();
 			dbConnector = app.getDatabase();
 		}
-        public String getCurrentURL(){
+        public String getCurrentURL(){ //JOSE USE TO SHARE PAGE
         	return mWebView.getUrl();
         }
-        public String getCurrentTitle(){
+        public String getCurrentTitle(){ //JOSE USE TO SHARE PAGE
         	return mWebView.getTitle();
         }
         public boolean inLoad() {
@@ -789,7 +789,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					public void onAnimationEnd(Animation animation) {
 						currentMenu.setVisibility(VISIBLE);
 						animationLock = false;
-						handler.postDelayed(runnable, 10000);
+						handler.postDelayed(runnable, 10000); 
 						handler.removeCallbacks(parkingRunnable);
 
 						if(currentMenu instanceof CircularLayout){
@@ -938,6 +938,17 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				int identifier = mWebHitTestResult.getIdentifier();
 			
 				int cursorImage = 0;
+				
+				
+				// If selection on a link selection removed.
+				if(mSelectionTimerStarted) {						
+					if(identifier != mWebHitTestResultIdentifer) {
+						stopLinkSelection();
+						startLinkSelection();									
+						removeSelection();
+					}
+				}
+				
 			
 			switch (resultType) {
 				
@@ -957,8 +968,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
 					String tooltip = mWebHitTestResult.getToolTip();
-					if (tooltip.length() > 5)
-						eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
+					//if (tooltip.length() > 10)
+					
+					eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
+					
 	/*				if(shouldLinkExec){
 						mWebView.loadUrl(extra);
 						shouldLinkExec = false; 
@@ -987,19 +1000,24 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				case WebHitTestResult.IMAGE_ANCHOR_TYPE:
 				{
 					if(!mExecutionTimerStarted) {
-						startLinkExecution();
+						startLinkExecution();												
 					} else {
 						// If the focus is on another link we reset the armed state.
 						if(identifier != mWebHitTestResultIdentifer) {
 							stopLinkExecution();
-							startLinkExecution();
+							startLinkExecution();						
 						}
+					}						
+					
+					if(!mSelectionTimerStarted) {
+						startLinkSelection();
 					}
+					
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
 					String tooltip = mWebHitTestResult.getToolTip();
-					if (tooltip.length() > 5)
-						eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
+					//if (tooltip.length() > 10)
+					eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
 					
 					selectedLink = mWebHitTestResult.getHref();
 					if (selectedLink == "")
@@ -1018,6 +1036,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					if(mExecutionTimerStarted && mReadyToExecute) {
 						cursorImage = R.drawable.link_cursor_armed;
 					}
+					// Keep the selected cursor.
+					if(mSelectionTimerStarted && mReadyToSelect) {
+						cursorImage = R.drawable.link_cursor_selected;
+					}
+					
 					break;
 				}
 	
@@ -1072,7 +1095,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			// Node changed:
 			if(WebHitTestResult.ANCHOR_TYPE != resultType && mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE) {
 				//if(mWebHitTestResultIdentifer != identifier) {
-Log.e("------", "remove in moveHitTest");
+				Log.e("------", "remove in moveHitTest");
 					stopLinkExecution();
 				//}
 			}
@@ -1108,26 +1131,58 @@ Log.e("------", "remove in moveHitTest");
 
 		boolean mExecutionTimerStarted = false;
 		boolean mReadyToExecute = false;
+		
+		boolean mSelectionTimerStarted = false;
+		boolean mReadyToSelect = false;
+		
+		/**
+		 * Arms link with link_cursor_armed icon after half a second passed after over on link.
+		 * Sets mReadyToExecute on onTouchUp().
+		 */
 		Runnable mExecutionTimer = new Runnable () {
 
 			public void run() {
 				// TODO Auto-generated method stub
 				pointer.setImageResource(R.drawable.link_cursor_armed);
 				mReadyToExecute = true;
-				//mExecutionTimerStarted = false;
-			}};
+				//mExecutionTimerStarted = false;			
+			}};			
+			
+		Runnable mSelectionTimer = new Runnable () {
 
+			public void run() {
+				// TODO Auto-generated method stub
+				pointer.setImageResource(R.drawable.link_cursor_selected);		
+				mReadyToSelect = true;
+				onLongTouch();
+				//mReadyToSelect = true;
+				//mExecutionTimerStarted = false;
+			}};	
+		
 		void startLinkExecution() {
 			mExecutionTimerStarted = true;
 			mReadyToExecute = false;
-			handler.postDelayed(mExecutionTimer, 1000);
+			handler.postDelayed(mExecutionTimer, 500);			
 		}
-
+		
 		void stopLinkExecution() {
 			mExecutionTimerStarted = false;
 			mReadyToExecute = false;
 			handler.removeCallbacks(mExecutionTimer);
 			// Reset the cursor
+			pointer.setImageResource(R.drawable.kite_cursor);
+		}
+		
+		void startLinkSelection() {
+			mSelectionTimerStarted = true;
+			mReadyToSelect = false;			
+			handler.postDelayed(mSelectionTimer, 2000);
+		}	
+		
+		void stopLinkSelection() {
+			mSelectionTimerStarted = false;
+			mReadyToSelect = false;
+			handler.removeCallbacks(mSelectionTimer);			
 			pointer.setImageResource(R.drawable.kite_cursor);
 		}
 
@@ -1339,6 +1394,7 @@ Log.e("------", "remove in moveHitTest");
 			}
 			else if ( mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 			{
+				Log.v("","ENTRA");
 				eventViewer.setText("Detected Long-Touch. Selecting link ...");
 				selectedLink = mWebHitTestResult.getHref();
 				if (selectedLink == "")
@@ -1485,6 +1541,7 @@ Log.e("------", "remove in moveHitTest");
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
 			}*/
 		
+			// Jose hack distinguish between execute and select. 	
 			if(mReadyToExecute) {
 				if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 				{
@@ -1499,6 +1556,28 @@ Log.e("------", "remove in moveHitTest");
 				if(mExecutionTimerStarted) {
 					stopLinkExecution();
 				}
+			}
+			
+			if (mReadyToSelect){
+				if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
+				{		
+					 				
+					
+					//JOSESELECT
+					/*eventViewer.setText("Executing link...");
+					sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
+					pointer.setImageResource(R.drawable.address_bar_cursor);
+					sendEvent(MotionEvent.ACTION_UP, fcX, fcY);*/
+					//Select link
+					
+				}
+				mReadyToSelect = false;
+				mSelectionTimerStarted = false;
+			}else {
+				if(mSelectionTimerStarted) {
+					stopLinkSelection();
+				}
+				
 			}
 			/*else {
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
