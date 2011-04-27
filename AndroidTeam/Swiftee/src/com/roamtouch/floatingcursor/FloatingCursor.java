@@ -1145,7 +1145,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				// TODO Auto-generated method stub
 				pointer.setImageResource(R.drawable.link_cursor_armed);
 				mReadyToExecute = true;
-				//mExecutionTimerStarted = false;			
+				mReadyToSelect = false;
 			}};			
 			
 		Runnable mSelectionTimer = new Runnable () {
@@ -1155,8 +1155,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				pointer.setImageResource(R.drawable.link_cursor_selected);		
 				mReadyToSelect = true;
 				onLongTouch();
-				//mReadyToSelect = true;
-				//mExecutionTimerStarted = false;
+				mReadyToExecute = false;				
 			}};	
 		
 		void startLinkExecution() {
@@ -1535,7 +1534,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		public void onTouchUp()
 		{
 
-/*			if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE){
+			/*if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE){
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 				//pointer.setImageResource(R.drawable.address_bar_cursor);
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
@@ -1561,23 +1560,16 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			if (mReadyToSelect){
 				if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 				{		
-					 				
-					
 					//JOSESELECT
-					/*eventViewer.setText("Executing link...");
-					sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
-					pointer.setImageResource(R.drawable.address_bar_cursor);
-					sendEvent(MotionEvent.ACTION_UP, fcX, fcY);*/
-					//Select link
-					
+					mParent.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);					
+					mParent.startGesture(true);										
 				}
 				mReadyToSelect = false;
 				mSelectionTimerStarted = false;
 			}else {
 				if(mSelectionTimerStarted) {
 					stopLinkSelection();
-				}
-				
+				}				
 			}
 			/*else {
 				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
