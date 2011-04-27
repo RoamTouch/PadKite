@@ -2020,8 +2020,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					//Toast.makeText(mContext, "Circular Menu", 100).show();
 					if (isCircularZoomEnabled())
 						disableCircularZoom();
-					else
+					else {
 						toggleMenuVisibility();
+						// Should return true here so touch event will not be 
+						// handled again by CircularLayout (in parking mode). 
+						return true;
+					}
 					
 					mHandleTouch = false; // FIXME: Change, do let user drag and fling menu
 				}
