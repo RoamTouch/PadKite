@@ -1070,7 +1070,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 					// HACK: Mobile YouTube images are not detected, fake it.
 
-					if (selectedLink.startsWith("http://i.ytimg.com/vi/")) {
+					if (selectedLink.startsWith("http://i.ytimg.com/vi/") || isYouTube(selectedLink) ) {
+						
 						// We fake a link to the current URL
 						resultType = WebHitTestResult.ANCHOR_TYPE;
 						mWebHitTestResult.setType(resultType);
