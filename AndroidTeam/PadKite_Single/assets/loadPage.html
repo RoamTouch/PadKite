@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>PadKite Start Page</title>
+<script type="text/javascript">
+function load(){
+    var theUrl = document.getElementById('urlform').url.value ;
+    if (theUrl != ""){
+            //location.href = theUrl ;
+            //window.navigate(theUrl);
+            var i = theUrl.search("http://")
+            if(i == -1)
+	    {
+            	var i = theUrl.search("\\.");
+		if (i != -1)
+	            	window.document.location.href="http://"+theUrl;
+		else
+	            	window.document.location.href="http://www.google.com/m/search?q="+theUrl;
+            }
+            else
+            	window.document.location.href=theUrl;
+    }
+	return false;
+}
+//-->
+</script>
+</head>
+<body>
+<br />
+<div class="logo" style="text-align: center;">
+	<a href="http://padkite.com/start">
+		<img src="images/PadKite-Logo.png" alt="PadKite Logo" width="150" />
+	</a>
+</div>
+<br />
+<div align="center">
+<form id="urlform" action="#" onsubmit="return load();">
+<label>Enter address</label><br>
+<input type="text" name="url"></input><br>
+<input type="button" value="Load Webpage" onclick="load()"></input>
+</form>
+<br />
+<!--<a href="http://padkite.com/start">PadKite Homepage</a>-->
+</div>
+<!-- Here goes the remote content -->
+<div align="center">
+<table border="0" height="30" width="360">
+		<tr>
+			<td align="center"><a href="http://m.facebook.com/">
+			<font style="font-size: 7">Facebook</font></a><font style="font-size: 7"><br>
+			<a href="http://twitter.com/">Twitter</a></font></td>
+			<td align="center"><a href="http://www.linkedin.com">
+			<font style="font-size: 7">LinkedIn</font></a><font style="font-size: 7"><br>
+			<a href="http://www.flickr.com">Flickr</a><br>&nbsp;</font></td>
+			<td align="center"><a href="http://www.apple.com">
+			<font style="font-size: 7">Apple</font></a><font style="font-size: 7"><br>
+			</font><a href="http://www.craigslist.org">
+			<font style="font-size: 7">Craigslist</font></a></td>
+			<td align="center"><a href="http://www.wordpress.com">
+			<font style="font-size: 7">Wordpress</font></a><font style="font-size: 7"><br>
+			</font><a href="http://www.ask.com"><font style="font-size: 7">Ask</font></a></td>
+			<td align="center"><a href="http://www.blogspot.com">
+			<font style="font-size: 7">BlogSpot</font></a><font style="font-size: 7"><br>
+			</font><a href="http://www.qq.com"><font style="font-size: 7">Qq</font></a></td>
+			<td align="center"><font style="font-size: 7">
+			<a href="http://www.cnnmobile.com/">CNN</a><br>
+			</font><a href="http://m.espn.go.com/wireless/index?w=1ajv8&i=COM">
+			<font style="font-size: 7">ESPN</font></a></td>
+			<td align="center"><font style="font-size: 7">
+			<a href="http://www.nytimes.com/">NY Times</a><br>
+			<a href="http://hp.mobileweb.ebay.com/home">eBay</a></font></td>
+			<td align="center"><font style="font-size: 7">
+			<a href="http://google.com/">Google</a><br>
+			<a href="http://picasaweb.google.com/m/viewer?source=androidclient">
+			Picassa</a></font></td>
+			<td width="56" align="center"><u>
+			<span style="text-decoration: none"><font style="font-size: 7">
+			<a href="http://www.m.amazon.com/">Amazon</a></font></span></u><font style="font-size: 7"><br>
+			<a href="http://mw.weather.com/">Weather Channel</a></font></td>
+			<td align="center"><font style="font-size: 7">
+			<a href="http://www.wikipedia.org/">Wikipedia</a><br>
+			<a href="http://www.bing.com/">Bing</a></font></td>
+			<td align="center"><font style="font-size: 7">
+			<a href="http://m.yahoo.com/">Yahoo</a><br>
+			</font><u><font style="font-size: 7">
+			<a href="http://extreme.mobile.msn.com/">MSN</a></font></u></td>
+		</tr>
+	</table>
+</div>
+<iframe src="file:///sdcard/Padkite/content.html" frameBorder="0" width="100%"></iframe>
+</body>
+</html>
