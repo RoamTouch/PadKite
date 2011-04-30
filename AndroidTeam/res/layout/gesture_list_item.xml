@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:background="#FFFFFF"
+    android:paddingLeft="10dip"
+    android:minHeight="?android:attr/listPreferredItemHeight">
+   
+<ImageView 
+	android:id="@+id/gestureImage"
+	android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    />    
+<TextView 
+	android:id="@+id/gestureText"
+    android:layout_width="200dip"
+    android:layout_height="wrap_content"
+    android:textSize="25sp"
+    android:paddingLeft="10dip"
+    android:textColor="#000000"
+   />
+  
+  
+<Button 
+	android:id="@+id/recordButton"
+	android:layout_width="80dip"
+    android:layout_height="60dip"
+    android:text="Change"
+    android:drawableTop="@drawable/red_dot"/>       
+</LinearLayout>
