@@ -54,7 +54,7 @@ public class GestureEditor extends Activity implements OnItemClickListener{
 		private int[] cursorgesturesImages= {R.drawable.text_cursor, R.drawable.link_cursor, R.drawable.image_cursor, 
 									   R.drawable.no_target_cursor,R.drawable.video_cursor};
 		
-		private int[] othergesturesImages= {R.drawable.ge_bookmark,R.drawable.ge_gesture };
+		private int[] othergesturesImages= {R.drawable.ge_bookmark,R.drawable.ge_share,R.drawable.ge_gesture };
 		
 		public GestureCategory(Context context){
 			mContext=context;
