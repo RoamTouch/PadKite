@@ -1,3 +1,8 @@
+//******************************************************************************** 
+//**	Copyright (c) 2011, Roaming Keyboards LLC doing business as RoamTouch®	**	       
+//**	All rights reserved.													**
+//********************************************************************************
+
 package com.roamtouch.swiftee;
 
 import java.net.MalformedURLException;
@@ -43,7 +48,7 @@ public class GestureActions {
 		
 		// Check selection for http
 		
-    	if (mSelection.contains("http://")) {
+		if (mSelection.contains("http://")) {
     		int start = mSelection.indexOf("http://");
     		int end;
     		int spaceIndex = mSelection.indexOf(' ', start);
@@ -72,7 +77,7 @@ public class GestureActions {
 	
     		String shortUrl = mParent.getShortLink(mLink);
     		mSelection = mSelection.replace(longUrl, shortUrl);
-//    		Toast.makeText(mParent, mSelection, Toast.LENGTH_LONG).show();
+    		// Toast.makeText(mParent, mSelection, Toast.LENGTH_LONG).show();
     	}
 	}
 	
@@ -223,7 +228,9 @@ public class GestureActions {
 	        final Intent intent = new Intent(Intent.ACTION_SEND);
 	        intent.setType("text/plain");
 	        
-	       	String sel = mSelection;
+	       	String sel = mSelection; 	
+	       	
+	       	
 	    	if (sel.startsWith("http://"))
 	    		sel = "Link: " + sel;
 	 
@@ -300,4 +307,10 @@ public class GestureActions {
 			e.printStackTrace();
 		}
 	}
+	
+	/*public void switchTutorToImage()
+	{
+		mParent.setEventViewer("VAMOSE");
+		mParent.flashTutor(1);
+	}*/
 }

@@ -1,9 +1,11 @@
+//******************************************************************************** 
+//**	Copyright (c) 2011, Roaming Keyboards LLC doing business as RoamTouch®	**	       
+//**	All rights reserved.													**
+//********************************************************************************
 package com.roamtouch.swiftee;
 
-//import java.io.File;
 //import java.net.URI;
 //import java.net.URL;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,7 +17,6 @@ import android.app.Application;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.os.Environment;
-//import android.os.Environment;
 
 public class SwifteeApplication extends Application{
 
@@ -25,8 +26,8 @@ public class SwifteeApplication extends Application{
 	public static final int CURSOR_NOTARGET_GESTURE = 4;
 	public static final int CURSOR_VIDEO_GESTURE = 5;
 	public static final int BOOKMARK_GESTURE = 7;
-	public static final int CUSTOM_GESTURE = 8;
-	public static final int MAIL_GESTURE = 8;
+	public static final int SHARE_GESTURE = 8;
+	public static final int CUSTOM_GESTURE = 9;	
 	
 	private DBConnector database;
 	
@@ -201,6 +202,11 @@ public class SwifteeApplication extends Application{
 			case BOOKMARK_GESTURE:
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.bookmarks);
 				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/bookmarks");
+				mLibrary.load();
+				break;
+			case SHARE_GESTURE:
+				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.bookmarks);
+				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/share_gestures");
 				mLibrary.load();
 				break;
 		}		

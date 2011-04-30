@@ -1,3 +1,8 @@
+//******************************************************************************** 
+//**	Copyright (c) 2011, Roaming Keyboards LLC doing business as RoamTouch®	**	       
+//**	All rights reserved.													**
+//********************************************************************************
+
 package com.roamtouch.floatingcursor;
 
 import java.net.URISyntaxException;
@@ -99,7 +104,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		private SettingsMenu fcSettingsMenu;
 		private WindowTabs fcWindowTabs;
 		private ZoomWebView zoomView;
-//		private ImageView menuBackground;
 				
 	/**
 	 *  integer showing which menu among main,settings and tabs is currently displayed 
@@ -477,8 +481,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						parkTimerStarted = true;
 						handler.postDelayed(this,2000);
 					}
-				}
-				
+				}				
 			};
 			
 			longTouchRunnable = new Runnable() {
@@ -809,8 +812,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				else if (currentMenu instanceof CircularTabsLayout)
 					eventViewer.setText(((CircularTabsLayout)currentMenu).getName());
 				
-				//				mParent.setTopBarVisibility(VISIBLE);
-//				mParent.setTopBarMode(TopBarArea.ADDR_BAR_MODE);
+				//mParent.setTopBarVisibility(VISIBLE);
+				//mParent.setTopBarMode(TopBarArea.ADDR_BAR_MODE);
 			}
 			else if(currentMenu.getVisibility() == VISIBLE){
 
@@ -840,7 +843,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				vibrator.vibrate(25);
 				//eventViewer.setText("");
 
-//				mParent.setTopBarVisibility(INVISIBLE);
+				//mParent.setTopBarVisibility(INVISIBLE);
 
 				// Since menu is hidden we start the timer to park the PadKite.
 				handler.removeCallbacks(parkingRunnable);
@@ -877,15 +880,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				handler.post(parkingRunnable);
 			}
 			//Log.e("OnSizeChanged:(w,h,ow,oh)","("+w+","+h+","+oldw+","+oldh+")" );
-
-			//			Log.d("OnSizeChanged:(w,h)","("+w+","+h+")" );
+			//Log.d("OnSizeChanged:(w,h)","("+w+","+h+")" );
 		}
 
 		private boolean mHandleTouch = false;
 	
 	
 		// FIXME: TODO: Put this into their own classes
-//		private boolean mSelectionMode = false;
+		// private boolean mSelectionMode = false;
 		private boolean mHitTestMode = false;
 	
 		private boolean mSelectionStarted = false;
@@ -924,169 +926,194 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				mHitTestMode = false;
 			}
 		}
-	
-//		private boolean mEditTextCancel = false;
+		// cType sets internal resultType 
+		private int cType; 
+		
+		/**
+		 * HitTestResult
+		 * @param X
+		 * @param Y
+		 * -----------------------------------------
+		 * No Target    	UNKNOWN_TYPE			= 0
+		 * Phone			PHONE_TYPE				= 2
+		 * Geo				GEO_TYPE				= 3
+		 * Mail				EMAIL_TYPE				= 4
+		 * Image			IMAGE_TYPE				= 5
+		 * Image in link	IMAGE_ANCHOR_TYPE 		= 6
+		 * Text link 		ANCHOR_TYPE 			= 7
+		 * Image link 		SRC_IMAGE_ANCHOR_TYPE 	= 8
+		 * Input text		EDIT_TEXT_TYPE 			= 9
+		 * Video 			VIDEO_TYPE              = 10	
+		 * Text 			TEXT_TYPE 				= 11 	  
+		 * -----------------------------------------
+		 * Button			INPUT_TYPE				= 12
+		 * CheckBox 		INPUT_TYPE				= 12
+		 * RadioButon		INPUT_TYPE				= 12
+		 * ComboBox 		SELECT_TYPE				= 13 
+		 * -----------------------------------------
+		 */		
 		protected void moveHitTest(int X, int Y)
 		{
 			if (mHitTestMode)
 			{
-//				sendEvent(MotionEvent.ACTION_DOWN, X, Y);
-
+	
 				mWebHitTestResult = mWebView.getHitTestResultAt(X,Y);
-				int resultType = mWebHitTestResult.getType();
+				int resultType = mWebHitTestResult.getType();			
+				int identifier = mWebHitTestResult.getIdentifier();			
+				int cursorImage = 0;	
 				
-				int identifier = mWebHitTestResult.getIdentifier();
-			
-				int cursorImage = 0;
+				//JV. Deselects selection if out current selection. 
+				deselectOnOutCursor(identifier);
 				
-				
-				// If selection on a link selection removed.
-				if(mSelectionTimerStarted) {						
-					if(identifier != mWebHitTestResultIdentifer) {
-						stopLinkSelection();
-						startLinkSelection();									
-						removeSelection();
-					}
-				}
-				
-			
+				eventViewer.setText("resultType: "+resultType);
+									
 			switch (resultType) {
-				
-				case WebHitTestResult.TEXT_TYPE: {
-					cursorImage = R.drawable.text_cursor;
-					//eventViewer.splitText(WebHitTestResult.TEXT_TYPE,"");
+			
+				case WebHitTestResult.TEXT_TYPE: 
+				{
+					cType=11;
+					cursorImage = R.drawable.text_cursor;					
 					break;
 				}
-				case WebHitTestResult.VIDEO_TYPE: {
+				case WebHitTestResult.VIDEO_TYPE: 
+				{
+					cType=10; //JV. HTML 5 tag only. 
 					cursorImage = R.drawable.video_cursor;
-					//WebVideoInfo videoInfo = mWebHitTestResult.getVideoInfo();					
-					//eventViewer.splitText(WebHitTestResult.VIDEO_TYPE, "");
+					//WebVideoInfo videoInfo = mWebHitTestResult.getVideoInfo();				
 					break;
 				}
-				
-				case WebHitTestResult.ANCHOR_TYPE: {
+				case WebHitTestResult.ANCHOR_TYPE: 
+				{
+					cType=7;
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
 					String tooltip = mWebHitTestResult.getToolTip();
-					//if (tooltip.length() > 10)
-					
-					eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
-					
-	/*				if(shouldLinkExec){
-						mWebView.loadUrl(extra);
-						shouldLinkExec = false; 
-					}  */
+					if (tooltip.length() > 10)					
+						eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);							
 					break;
 				}
-
 				case WebHitTestResult.EDIT_TEXT_TYPE: {
 					cursorImage = R.drawable.keyboard_cursor;
 					break;
 				}
-				
-				case WebHitTestResult.INPUT_TYPE: {
-					//eventViewer.setText("Type = " + mWebHitTestResult.getExtra());
-					cursorImage = R.drawable.link_cursor;
+				case WebHitTestResult.INPUT_TYPE: 
+				{	
+					cType=12;
+					cursorImage = R.drawable.link_button_cursor;
 					break;
 				}
-
-				case WebHitTestResult.SELECT_TYPE: {
-					cursorImage = R.drawable.link_cursor;
+				case WebHitTestResult.SELECT_TYPE: 
+				{
+					cType=13;
+					cursorImage = R.drawable.link_combo_cursor;
 					break;
-				}
-				
+				}	
+				//JV. Implemented image into link as image. It can be selected or executed. 
 				case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
-				case WebHitTestResult.SRC_ANCHOR_TYPE: 
+				{
+					cType=8;
+					setStartLinkExecution(identifier);
+					
+					//JV. Sets selection timer on link image.					
+					if(!mSelectionTimerStarted) {
+						startMediaSelection();
+					}
+					
+					cursorImage = R.drawable.link_image_cursor;
+					
+					//Keep cursors if still on top of image. 
+					cursorImage = persistCursors(cursorImage);
+					
+					break;
+				}	
+				case WebHitTestResult.SRC_ANCHOR_TYPE:
+				{
+					eventViewer.setText("SRC_ANCHOR_TYPE: "+WebHitTestResult.SRC_ANCHOR_TYPE);
+				}
 				case WebHitTestResult.IMAGE_ANCHOR_TYPE:
 				{
-					if(!mExecutionTimerStarted) {
-						startLinkExecution();												
-					} else {
-						// If the focus is on another link we reset the armed state.
-						if(identifier != mWebHitTestResultIdentifer) {
-							stopLinkExecution();
-							startLinkExecution();						
-						}
-					}						
+					cType=6;
+					setStartLinkExecution(identifier);
 					
+					//JV. Sets selection timer on link.
 					if(!mSelectionTimerStarted) {
-						startLinkSelection();
+						startMediaSelection();
 					}
 					
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
-					String tooltip = mWebHitTestResult.getToolTip();
-					//if (tooltip.length() > 10)
-					eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
-					
-					selectedLink = mWebHitTestResult.getHref();
+					//String tooltip = mWebHitTestResult.getToolTip();
+									
+					selectedLink = mWebHitTestResult.getHref();					
 					if (selectedLink == "")
 						selectedLink = mWebHitTestResult.getExtra();
-
-					int type = getLinkType(selectedLink);
-
+						eventViewer.setText(selectedLink);
+									
+					int type = getLinkType(selectedLink);										
 					if (type == 1) { /* Image */
+						cType=5;
 						cursorImage = R.drawable.image_cursor;
 					}
 					else if (type == 2) { /* Video */
+						cType=10;
 						cursorImage = R.drawable.video_cursor;
-					}
-
-					// Keep the armed cursor.
-					if(mExecutionTimerStarted && mReadyToExecute) {
-						cursorImage = R.drawable.link_cursor_armed;
-					}
-					// Keep the selected cursor.
-					if(mSelectionTimerStarted && mReadyToSelect) {
-						cursorImage = R.drawable.link_cursor_selected;
-					}
+					}			
+					
+					//Keep cursors if still on top of link. 
+					cursorImage = persistCursors(cursorImage);
 					
 					break;
-				}
-	
-				/*case WebHitTestResult.IMAGE_ANCHOR_TYPE: {
-					resultType = WebHitTestResult.ANCHOR_TYPE;
-					cursorImage = R.drawable.link_cursor;
-					
-					selectedLink = mWebHitTestResult.getExtra();
-					int type = getLinkType(selectedLink);
-
-					if (type == 1) { // Image 
-						cursorImage = R.drawable.image_cursor;
-					}
-					else if (type == 2) { // Video 
-						cursorImage = R.drawable.video_cursor;
-					}
-
-					String tooltip = mWebHitTestResult.getToolTip();
-					if (tooltip.length() > 5)
-						eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
-					break;
-				}*/
-	
-				case WebHitTestResult.IMAGE_TYPE: {
+				}	
+				case WebHitTestResult.IMAGE_TYPE: 
+				{
+					cType=5;
+					eventViewer.setText("IMAGE_TYPE: "+5+" "+WebHitTestResult.IMAGE_TYPE);
 					cursorImage = R.drawable.image_cursor;
 					selectedLink = mWebHitTestResult.getExtra();
 
 					// HACK: Mobile YouTube images are not detected, fake it.
-
 					if (selectedLink.startsWith("http://i.ytimg.com/vi/") || isYouTube(selectedLink) ) {
-						
 						// We fake a link to the current URL
+						cType=10;
 						resultType = WebHitTestResult.ANCHOR_TYPE;
 						mWebHitTestResult.setType(resultType);
 						mWebHitTestResult.setHref(mWebView.getUrl());
-
 						cursorImage = R.drawable.video_cursor;
 					}
-
-		//			eventViewer.splitText(WebHitTestResult.IMAGE_TYPE,"");
+					
+					//JV. Set selection timer to select image. 
+					if(!mSelectionTimerStarted) {
+						startMediaSelection();
+					}
+					//JV. Keep the image selected cursor.
+					if(mSelectionTimerStarted && mReadyToSelect) {
+						cursorImage = R.drawable.image_cursor_selected;
+					}					
+					break;
+				}			
+				case WebHitTestResult.PHONE_TYPE: 
+				{
+					cType=2; //JV. Phone not working, returning 0 however link is there and opens phone app.
+					cursorImage = R.drawable.phone_cursor;				
 					break;
 				}
-				default: {
+				case WebHitTestResult.GEO_TYPE: 
+				{
+					cType=3;
+					cursorImage = R.drawable.geo_cursor;				
+					break;
+				}				
+				case WebHitTestResult.EMAIL_TYPE: 
+				{
+					cType=4;
+					cursorImage = R.drawable.email_cursor;				
+					break;
+				}					
+				default: 
+				{
 					resultType = -1;
-					cursorImage = R.drawable.no_target_cursor;
-
+					deselectOnOutCursor(identifier);
+					cursorImage = R.drawable.no_target_cursor;					
 					// FIXME
 					//eventViewer.splitText(-1,"");
 					break;
@@ -1095,41 +1122,77 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 			// Node changed:
 			if(WebHitTestResult.ANCHOR_TYPE != resultType && mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE) {
-				//if(mWebHitTestResultIdentifer != identifier) {
-				Log.e("------", "remove in moveHitTest");
-					stopLinkExecution();
-				//}
+				stopLinkExecution();
 			}
 
-			/*if (mHitTestResult == HitTestResult.EDIT_TEXT_TYPE && mEditTextCancel == false)
-			{
-				sendEvent(MotionEvent.ACTION_CANCEL, X, Y);
-				mEditTextCancel = true;
-			}
-			else
-				mEditTextCancel = false;*/
-				pointer.setImageResource(cursorImage);
+			pointer.setImageResource(cursorImage);
 
-				// Was there a node change?
+			// Was there a node change?
 
-				if (identifier != mWebHitTestResultIdentifer) {
-					if (resultType == WebHitTestResult.ANCHOR_TYPE) {					
-						if (mSoftKeyboardVisible == false) {
-							mWebView.focusNodeAt(X,Y);
-						}
+			if (identifier != mWebHitTestResultIdentifer) {
+				if (resultType == WebHitTestResult.ANCHOR_TYPE) {					
+					if (mSoftKeyboardVisible == false) {
+						mWebView.focusNodeAt(X,Y);
 					}
-					else if (mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE)
-						sendEvent(MotionEvent.ACTION_CANCEL, X, Y); // FIXME: Use proper API for that
 				}
-				
-				mWebHitTestResultType = resultType;
-				mWebHitTestResultIdentifer = identifier;
-
-	//			else
-//					focusNodeAt(-1,-1);					
+				else if (mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE)
+					sendEvent(MotionEvent.ACTION_CANCEL, X, Y); // FIXME: Use proper API for that
+			}
+			
+			mWebHitTestResultType = resultType;
+			mWebHitTestResultIdentifer = identifier;
+			
 			}
 		}
-
+		
+		/**
+		 * JV. When media selected, if the user drags out the selection is removed. 
+		 * @param identifier
+		 */
+		void deselectOnOutCursor(int identifier){
+			if(mSelectionTimerStarted) {					
+				if(identifier != mWebHitTestResultIdentifer) {
+					stopMediaSelection();
+					startMediaSelection();									
+					removeSelection();
+				}
+			}
+		}
+		
+		/**
+		 * JV. When media selected, if the user drags out the selection is removed. 
+		 * @param identifier
+		 */
+		void setStartLinkExecution(int identifier)
+		{
+			if(!mExecutionTimerStarted) {
+				startLinkExecution();												
+			} else {
+				// If the focus is on another link we reset the armed state.
+				if(identifier != mWebHitTestResultIdentifer) {
+					stopLinkExecution();
+					startLinkExecution();						
+				}
+			}
+		}
+		/**
+		 * JV. When the cursor is moved on top of a media 
+		 * the same cursor remains. 
+		 * @param cursorImage
+		 * @return
+		 */
+		private int persistCursors(int cursorImage){
+			// Keep the armed cursor.
+			if(mExecutionTimerStarted && mReadyToExecute) {
+				cursorImage = R.drawable.link_cursor_armed;
+			}
+			//JV. Keep the selected cursor.
+			if(mSelectionTimerStarted && mReadyToSelect) {
+				cursorImage = R.drawable.link_cursor_selected;
+			}
+			return cursorImage;
+		}
+		
 		boolean mExecutionTimerStarted = false;
 		boolean mReadyToExecute = false;
 		
@@ -1137,27 +1200,64 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		boolean mReadyToSelect = false;
 		
 		/**
-		 * Arms link with link_cursor_armed icon after half a second passed after over on link.
+		 * Arms link with link_cursor_armed icon after 
+		 * half a second passed after over on link.
 		 * Sets mReadyToExecute on onTouchUp().
 		 */
 		Runnable mExecutionTimer = new Runnable () {
-
-			public void run() {
-				// TODO Auto-generated method stub
-				pointer.setImageResource(R.drawable.link_cursor_armed);
+			
+			public void run() {				
+				if ( cType==6			//IMAGE_ANCHOR_TYPE		| Image in link		 
+						|| cType==7 	//ANCHOR_TYPE 			| Text link	
+						|| cType==8 	//SRC_IMAGE_ANCHOR_TYPE	| Image link
+						|| cType==12 	//INPUT_TYPE 			| Button
+						|| cType==13 	//SELECT_TYPE 			| ComboBox
+				){ 
+					pointer.setImageResource(R.drawable.link_cursor_armed);
+				} else if (cType==2) {	//PHONE_TYPE 			| Phone
+					pointer.setImageResource(R.drawable.phone_cursor_armed);
+				} else if (cType==3) { 	//GEO_TYPE				| Geo
+					pointer.setImageResource(R.drawable.geo_cursor_armed);
+				} else if (cType==4) { 	//EMAIL_TYPE			| Mail
+					pointer.setImageResource(R.drawable.email_cursor_armed);
+				} else if (cType==9) {  //EDIT_TEXT_TYPE 		| Input text
+					pointer.setImageResource(R.drawable.keyboard_cursor_armed);
+				} else if (cType==10){ //VIDEO_TYPE				| Video
+					pointer.setImageResource(R.drawable.video_cursor_armed);
+				}			
 				mReadyToExecute = true;
 				mReadyToSelect = false;
 			}};			
 			
 		Runnable mSelectionTimer = new Runnable () {
 
-			public void run() {
-				// TODO Auto-generated method stub
-				pointer.setImageResource(R.drawable.link_cursor_selected);		
+			public void run() {				
+				if ( cType==6			//IMAGE_ANCHOR_TYPE		| Image in link	 
+						|| cType==7		//ANCHOR_TYPE 			| Text link	 
+						|| cType==8 	//SRC_IMAGE_ANCHOR_TYPE	| Image link
+						|| cType==10	//VIDEO_TYPE			| Video				 
+						|| cType==12 	//INPUT_TYPE 			| Button
+						|| cType==13 	//SELECT_TYPE 			| ComboBox
+				){
+					pointer.setImageResource(R.drawable.link_cursor_selected);
+				} else if (cType==2) {	//PHONE_TYPE 			| Phone	
+					pointer.setImageResource(R.drawable.phone_cursor_selected);
+				} else if (cType==3) {	//GEO_TYPE				| Geo
+					pointer.setImageResource(R.drawable.geo_cursor_selected);
+				} else if (cType==4) { 	//EMAIL_TYPE			| Mail
+					pointer.setImageResource(R.drawable.email_cursor_selected);
+				} else if (cType==5) {	//IMAGE_TYPE	 		| Image
+						pointer.setImageResource(R.drawable.image_cursor_selected);	
+				} else if (cType==9) {	//EDIT_TEXT_TYPE 		| Input text
+					pointer.setImageResource(R.drawable.keyboard_cursor_selected);
+				} else if (cType==11){  //TEXT_TYPE				| Text		
+					pointer.setImageResource(R.drawable.text_cursor_selected);
+				}									
 				mReadyToSelect = true;
 				onLongTouch();
 				mReadyToExecute = false;				
-			}};	
+			}
+		};	
 		
 		void startLinkExecution() {
 			mExecutionTimerStarted = true;
@@ -1173,13 +1273,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			pointer.setImageResource(R.drawable.kite_cursor);
 		}
 		
-		void startLinkSelection() {
+		void startMediaSelection() {
 			mSelectionTimerStarted = true;
 			mReadyToSelect = false;			
 			handler.postDelayed(mSelectionTimer, 2000);
 		}	
 		
-		void stopLinkSelection() {
+		void stopMediaSelection() {
 			mSelectionTimerStarted = false;
 			mReadyToSelect = false;
 			handler.removeCallbacks(mSelectionTimer);			
@@ -1361,7 +1461,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				return;
 			if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE)
 			{
-				eventViewer.setText("Detected Long-Touch. Selecting image ...");
+				//eventViewer.setText("Detected Long-Touch. Selecting image ...");
 			
 				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
 				//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
@@ -1373,7 +1473,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 			else if (mWebHitTestResult.getType() == WebHitTestResult.VIDEO_TYPE)
 			{
-				eventViewer.setText("Detected Long-Touch. Selecting video ...");
+				//eventViewer.setText("Detected Long-Touch. Selecting video ...");
 			
 				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
 				//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
@@ -1386,20 +1486,20 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 			else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE)
 			{
-				eventViewer.setText("Detected Long-Touch. Selecting word ...");
+				//eventViewer.setText("Detected Long-Touch. Selecting word ...");
 				
 				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD);
 				mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 				mLongTouchEnabled = true;
 			}
-			else if ( mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
-			{
-				Log.v("","ENTRA");
-				eventViewer.setText("Detected Long-Touch. Selecting link ...");
-				selectedLink = mWebHitTestResult.getHref();
+			else if ( mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE)
+			{				
+				//eventViewer.setText("Detected Long-Touch. Selecting link ...");
+			
+				selectedLink = mWebHitTestResult.getHref();								
 				if (selectedLink == "")
 					selectedLink = mWebHitTestResult.getExtra();
-				Point focusCenter = mWebHitTestResult.getPoint();
+					Point focusCenter = mWebHitTestResult.getPoint();
 
 				//Log.e("SELECT_LINK", "x: " + focusCenter.x + ", y: " + focusCenter.y + ", fcX: " + fcX + ", fcY: " + fcY);
 				mWebView.executeSelectionCommand(focusCenter.x, focusCenter.y, WebView.SELECT_LINK);
@@ -1409,8 +1509,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				mLongTouchEnabled = true;
 			}
 			else if ( mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE && !mLongTouchHack) {
-				eventViewer.setText("Detected Long-Touch. Pasting clipboard contents ...");
-
+				
+				//eventViewer.setText("Detected Long-Touch. Pasting clipboard contents ...");
 				
 				final String selection = (String) ((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).getText();
 
@@ -1425,9 +1525,25 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						}
 					}, 300);
 					mLongTouchEnabled = true;
-				}
+				}							
+			}
+			else if ( mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
+			{				
 				
-				//mLongTouchEnabled = true;
+				//eventViewer.setText("Detected Long-Touch. Selecting link ...");					
+			
+				String image = mWebHitTestResult.getExtra();
+				String href = mWebHitTestResult.getHref();
+				String image_href = image+"|"+href;
+				eventViewer.setText("image_href: "+image_href);
+				
+				Point focusCenter = mWebHitTestResult.getPoint();
+
+				//Log.e("SELECT_LINK", "x: " + focusCenter.x + ", y: " + focusCenter.y + ", fcX: " + fcX + ", fcY: " + fcY);
+				mWebView.executeSelectionCommand(focusCenter.x, focusCenter.y, WebView.SELECT_LINK);
+				((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).setText(image_href);
+				mParent.setSelection(image_href);				
+				mLongTouchEnabled = true;
 			}
 			
 			vibrator.vibrate(25);
@@ -1458,7 +1574,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			stopSelectionCommand();
 			startSelection(true);
 			
-//Added for distinguishing various selection
+			//Added for distinguishing various selection
 
 			boolean linkFlag = false;
 			
@@ -1473,7 +1589,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE) {
 				mParent.setGestureType(SwifteeApplication.CURSOR_TEXT_GESTURE);
 			}
-			else if ( mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
+			else if ( mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE)
 			{
 				int type = getLinkType(selectedLink);
 				if(type == 0)
@@ -1482,7 +1598,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					mParent.setGestureType(SwifteeApplication.CURSOR_IMAGE_GESTURE);
 				else 
 					mParent.setGestureType(SwifteeApplication.CURSOR_VIDEO_GESTURE);
-
+				
+				linkFlag = true;
+			} else if (mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
+				mParent.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);
 				linkFlag = true;
 			}
 
@@ -1540,8 +1659,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				//pointer.setImageResource(R.drawable.address_bar_cursor);
 				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
 			}*/
-		
-			// Jose hack distinguish between execute and select. 	
+						
 			if(mReadyToExecute) {
 				if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 				{
@@ -1561,15 +1679,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			if (mReadyToSelect){
 				if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 				{		
-					//JOSESELECT
-					mParent.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);					
-					mParent.startGesture(true);										
+					onLongTouchUp();
+					mParent.startGesture(true);
 				}
 				mReadyToSelect = false;
 				mSelectionTimerStarted = false;
 			}else {
 				if(mSelectionTimerStarted) {
-					stopLinkSelection();
+					stopMediaSelection();
 				}				
 			}
 			/*else {
@@ -2105,7 +2222,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					//stopSelection(fcX, fcY);
 					startHitTest(fcX, fcY);	
 				}
-/*				else
+				/*else
 				{
 					//Toast.makeText(mContext, "Selection or menu would start now", Toast.LENGTH_LONG).show();
 				
@@ -2332,6 +2449,15 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		 * Circular zoom functions 
 		 * 
 		 */
+		
+		//JV. Share current web page with share circular menu button.	ERASEME	
+		/*public void sharePage(){//caca				
+			String shortUrl = mParent.getShortLink(getCurrentURL());
+			((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).setText(shortUrl);
+			mParent.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);
+			mParent.startGesture(true);
+			mParent.stopGesture();
+		}*/
 		
 		boolean mZoomOpenMenu = true;
 			
@@ -2986,4 +3112,5 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
             mScroller.abortAnimation();
         }
 	}
+	
 }

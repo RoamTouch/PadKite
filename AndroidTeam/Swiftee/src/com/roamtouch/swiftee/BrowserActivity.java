@@ -1,3 +1,7 @@
+//******************************************************************************** 
+//**	Copyright (c) 2011, Roaming Keyboards LLC doing business as RoamTouch®	**	       
+//**	All rights reserved.													**
+//********************************************************************************
 package com.roamtouch.swiftee;
 
 import java.io.File;
@@ -466,7 +470,11 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     {
     	mSelection = selection;
     }
-
+       
+    public void setEventViewer(String msg)
+    {
+    	eventViewer.setText(msg);
+    }
     
     public void startGesture(boolean useSelection)
     {
@@ -503,7 +511,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		webLayout.setEnabled(true);
     	mSelection = null;
     }
-    
+       
     private boolean mCancelGesture = false;
     
     public void onGestureStarted(GestureOverlayView overlay, MotionEvent event) {
@@ -544,7 +552,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         }
         else
         {
-        	action = convertGestureItem(action);        	
+        	action = convertGestureItem(action);            	
         	eventViewer.setText("Detected " + action + " gesture.");      
         	cursorGestures(action);
         }
@@ -560,11 +568,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			if (tmp[0].replaceAll("\\d+","").length() <= 0)
 				s = tmp[1];
 		}
-		
 		return s;
 	}
     
 	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
+		
+		eventViewer.setText("Entra");
 		
 		TrackHelper.doTrack(TrackHelper.PERFORM_GESTURE, 1);
 
@@ -584,7 +593,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	private Handler mHandler = new Handler();
 	
-	public void cursorGestures(String action){
+	public void cursorGestures(String action){		
+		
 		final GestureActions actions = new GestureActions(this, mSelection);
 		
 		if ("Search".equals(action)) 
@@ -608,7 +618,6 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			actions.email();
         }
         else if("Calendar".equals(action)){
-
 			actions.calendar();
         }
         else if("Facebook".equals(action)){
@@ -619,6 +628,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         }
         else if("Blog".equals(action)) {
         	actions.blog();
+        }
+        else if("Image".equals(action)){ //JV. SRC_IMAGE_ANCHOR_TYPE
+        	//actions.switchTutorToImage();
         }
         else if("Translate".equals(action)) {
         	final String languageTo = sharedPreferences.getString("language_to", "ENGLISH").toUpperCase();
@@ -654,7 +666,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         }     
         else if("Copy".equals(action)){
 			actions.copy();
-        }
+        }        
         else {
 			eventViewer.setText("Unrecognized gesture: " + action);
         }
@@ -885,10 +897,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	}
 	
 	/*
-	 * Implemented relocation of the FC to the next convenient and proximate side.
+	 * JV. Implemented relocation of the FC to the next convenient and proximate side.
 	 * I divided the screen in four cuadrants and compare x,y distances to the x,y sides.
 	 * The FC snaps to the one near.
-	 * TODO, animate. Jose. 
+	 * TODO, animate. 
 	 */
 	public void enterParkingMode(boolean moveToParkingPosition) {
 		
@@ -907,6 +919,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		if(moveToParkingPosition) {	        
 			floatingCursor.stopFling();
 			
+				
 			//UPPER LEFT CUADRANT - C1.	 
 	        if (xLoc > 0 && yLoc > 0){	
 	        	//Fisrt cuadrant vars

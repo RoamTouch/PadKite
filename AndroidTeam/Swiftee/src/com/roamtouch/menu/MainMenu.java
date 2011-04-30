@@ -16,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 //import android.util.Log;
+import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,6 +33,7 @@ enum MainMenuFunctions {
 	zoom,
 	homepage,
 	windows,
+	share,
 	custom_gesture,
 	history,
 	download,
@@ -93,7 +95,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		mParent = parent;
 	}
 	public void setEventViewer(EventViewerArea ev){
-//		eventViewer = ev;
+		//		eventViewer = ev;
 	}
 	public void toggleCloseORRefresh(boolean isRefresh){
 		if(button == null)
@@ -159,7 +161,10 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			case windows:
 				mFloatingCursor.setEventText("Windows");
 				break;
-										
+			//Share	
+			case share:
+				mFloatingCursor.setEventText("Share page");
+				break;							
 			//Custom Gesture	
 			case custom_gesture:
 				mFloatingCursor.setEventText("Custom and Bookmark Gestures");
@@ -255,13 +260,21 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				mFloatingCursor.setCurrentMenu(2);
 				//mParent.setEventViewerMode(EventViewerArea.WINDOWS_MODE);
 				break;
-			
+			//Share	
+			case share:
+				this.setVisibility(INVISIBLE);
+				String currentUrl = mFloatingCursor.getCurrentURL(); 
+				if(currentUrl!=""){
+					mParent.setSelection(currentUrl);				
+				}				
+				mParent.setGestureType(SwifteeApplication.SHARE_GESTURE);
+				mParent.startGesture(false);
+				break;
 			//Backward	
 			case backward:
 				mFloatingCursor.goBackward();			
 				break;
 				
-			//forward	
 			case forward:
 				mFloatingCursor.goForward();				
 				break;
