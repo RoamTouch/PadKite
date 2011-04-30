@@ -20,11 +20,13 @@ import android.os.Environment;
 
 public class SwifteeApplication extends Application{
 
+	// POSITION 0 = "Cursor Gestures"	
 	public static final int CURSOR_TEXT_GESTURE = 1;
 	public static final int CURSOR_LINK_GESTURE = 2;
 	public static final int CURSOR_IMAGE_GESTURE = 3;
 	public static final int CURSOR_NOTARGET_GESTURE = 4;
 	public static final int CURSOR_VIDEO_GESTURE = 5;
+	// POSITION 6 = "Circular Menu Gestures"	
 	public static final int BOOKMARK_GESTURE = 7;
 	public static final int SHARE_GESTURE = 8;
 	public static final int CUSTOM_GESTURE = 9;	
@@ -204,7 +206,7 @@ public class SwifteeApplication extends Application{
 				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/bookmarks");
 				mLibrary.load();
 				break;
-			case SHARE_GESTURE:
+			case SHARE_GESTURE:				
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.bookmarks);
 				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/share_gestures");
 				mLibrary.load();

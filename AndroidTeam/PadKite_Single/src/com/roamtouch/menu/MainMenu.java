@@ -268,7 +268,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 					mParent.setSelection(currentUrl);				
 				}				
 				mParent.setGestureType(SwifteeApplication.SHARE_GESTURE);
-				mParent.startGesture(false);
+				mParent.startGesture(true);
 				break;
 			//Backward	
 			case backward:

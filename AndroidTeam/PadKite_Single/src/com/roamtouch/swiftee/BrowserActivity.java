@@ -443,6 +443,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     private String mSelection;
     
     public void initGestureLibrary(int id){
+    	String x = String.valueOf(id);
+    	eventViewer.setText("x: "+x);
     	currentGestureLibrary = id;
     	mLibrary = appState.getGestureLibrary(currentGestureLibrary);
     	

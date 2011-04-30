@@ -328,8 +328,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
                 int initialVelocityY = (int) velocityTracker.getYVelocity();
                 int initialVelocityX = (int) velocityTracker.getXVelocity();
             	//Toast.makeText(mContext, "fling: " + 
-            		//	getScrollX() + "," + getScrollY() + "-" + initialVelocityX + "," + initialVelocityY + "-" + 
-            			//getWidth() + "," + getHeight(), Toast.LENGTH_SHORT).show();
+            	//	getScrollX() + "," + getScrollY() + "-" + initialVelocityX + "," + initialVelocityY + "-" + 
+            	//getWidth() + "," + getHeight(), Toast.LENGTH_SHORT).show();
 
                 if ((Math.abs(initialVelocityY) > mMinimumVelocity) || (Math.abs(initialVelocityX) > mMinimumVelocity)) {
                 	fling(-initialVelocityX, -initialVelocityY);
@@ -360,8 +360,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			int hd_1 = r;
 			int hd_2 = r;
 
-//			if (currentMenu.getVisibility() == VISIBLE)
-	//			hd_2 = -80;
+			//	if (currentMenu.getVisibility() == VISIBLE)
+			//	hd_2 = -80;
 
 			// FIXME
 			/* ****************** CHANGED CODE END *******************/
@@ -2449,16 +2449,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		 * Circular zoom functions 
 		 * 
 		 */
-		
-		//JV. Share current web page with share circular menu button.	ERASEME	
-		/*public void sharePage(){//caca				
-			String shortUrl = mParent.getShortLink(getCurrentURL());
-			((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).setText(shortUrl);
-			mParent.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);
-			mParent.startGesture(true);
-			mParent.stopGesture();
-		}*/
-		
 		boolean mZoomOpenMenu = true;
 			
 			public void enableCircularZoom(boolean openMenuAfterFinish){

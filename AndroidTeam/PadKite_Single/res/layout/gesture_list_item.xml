@@ -26,6 +26,7 @@
 	android:id="@+id/recordButton"
 	android:layout_width="80dip"
     android:layout_height="60dip"
+    android:layout_alignParentRight="true"
     android:text="Change"
     android:drawableTop="@drawable/red_dot"/>       
 </LinearLayout>
