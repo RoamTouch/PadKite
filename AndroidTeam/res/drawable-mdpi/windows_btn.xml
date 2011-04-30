@@ -1,7 +1,0 @@
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:state_pressed="false" android:state_enabled="true" android:state_focused="false" android:drawable="@drawable/windows_normal" />
-	<item android:state_pressed="true" android:state_enabled="true" android:drawable="@drawable/windows_pressed" />
-	<item android:state_pressed="false" android:state_enabled="true" android:state_focused="true" android:drawable="@drawable/windows_selected" />
-	<item android:state_pressed="false" android:state_enabled="false" android:state_focused="false" android:drawable="@drawable/windows_disabled" />
-	<item android:state_pressed="false" android:state_enabled="false" android:state_focused="true" android:drawable="@drawable/windows_disabled_focused" />
-</selector>
