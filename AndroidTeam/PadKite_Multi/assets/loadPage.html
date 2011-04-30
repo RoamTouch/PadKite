@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>PadKite Start Page</title>
+<script type="text/javascript">
+function load(){
+    var theUrl = document.getElementById('urlform').url.value ;
+    if (theUrl != ""){
+            //location.href = theUrl ;
+            //window.navigate(theUrl);
+            var i = theUrl.search("http://")
+            if(i == -1)
+	    {
+            	var i = theUrl.search("\\.");
+		if (i != -1)
+	            	window.document.location.href="http://"+theUrl;
+		else
+	            	window.document.location.href="http://www.google.com/m/search?q="+theUrl;
+            }
+            else
+            	window.document.location.href=theUrl;
+    }
+	return false;
+}
+//-->
+</script>
+</head>
+<body>
+<br />
+<div class="logo" style="text-align: center;">
+	<a href="http://padkite.com/start">
+		<img src="images/PadKite-Logo.png" alt="PadKite Logo" width="150" />
+	</a>
+</div>
+<br />
+<div align="center">
+<form id="urlform" action="#" onsubmit="return load();">
+<label>Enter address</label><br>
+<input type="text" name="url"></input><br>
+<input type="button" value="Load Webpage" onclick="load()"></input>
+</form>
+<br />
+<a href="http://padkite.com/start">PadKite Homepage</a>
+</div>
+<!-- Here goes the remote content -->
+<iframe src="file:///sdcard/Padkite/content.html" frameBorder="0" width="100%"></iframe>
+</body>
+</html>
