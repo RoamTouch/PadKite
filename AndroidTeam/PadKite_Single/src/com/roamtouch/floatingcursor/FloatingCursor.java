@@ -1076,13 +1076,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}		
 			}
 			// SFOM: set execution and selection timers. 
-			if (SwifteeApplication.SINGLE_FINGER_OPERATION_MODE==true && resultType!=-1 ){					
-				if ( cType==10 || cType==7 || cType==12 || cType==13 || cType==2 || cType==3 ){
-					setSingleFingerTimers(identifier,true);					
-				} else if ( cType==11) {
-					setSingleFingerTimers(identifier,false);
-				}
-				if (cType==9 || cType==8 || cType==6 || cType==5){
+			if (SwifteeApplication.SINGLE_FINGER_OPERATION_MODE==true && resultType!=-1 ){
+				// Text cursors not persistent. 
+				if ( cType==11 ) {
+					setSingleFingerTimers(identifier,true);			
+				} else { 
+					//All the rest are persistent cursors.
 					setSingleFingerTimers(identifier,true);
 					if(mExecutionTimerStarted && mReadyToExecute) {
 						cursorImage = persistCursors(cursorImage, cType, true);						
@@ -1255,16 +1254,15 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			if (cType==9){
 				if (exe){cursorImage = R.drawable.keyboard_cursor_armed;
 				} else { cursorImage = R.drawable.keyboard_cursor_selected;	}
-			} else if (cType==8 || cType==6){
+			} else if (cType==8 || cType==6 || cType==12 || cType==13){
 				if (exe){cursorImage = R.drawable.link_cursor_armed;
 				} else { cursorImage = R.drawable.link_cursor_selected;	}			
 			} else if (cType==5){
 				if (exe){cursorImage = R.drawable.image_cursor_armed;
 				} else { cursorImage = R.drawable.image_cursor_selected; }			
-			}			
-			//cType==9 || cType==8 || cType==6 || cType==5
+			}		
 			return cursorImage;
-		}
+		};
 
 	
 		protected void startHitTest(int X, int Y)
