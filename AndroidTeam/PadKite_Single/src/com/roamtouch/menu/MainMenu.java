@@ -22,6 +22,7 @@ import android.content.SharedPreferences;
 //import android.util.Log;
 //import android.text.ClipboardManager;
 //import android.util.Log;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 //import android.view.Window;
@@ -44,7 +45,8 @@ enum MainMenuFunctions {
 	close,
 	new_window,
 	bookmark,
-	help_online
+	finger_model
+	//help_online
 }
 
 public class MainMenu extends CircularLayout implements OnTouchListener{
@@ -52,8 +54,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 	private FloatingCursor mFloatingCursor;
 	private BrowserActivity mParent;
 	public static boolean USER_REGISTERED = true;
-	private DBConnector database;
-	private MenuButton button,backButton,fwdButton;
+	//private DBConnector database;
+	private MenuButton button,backButton,fwdButton,fingerButton;
 	public static String PATH = BrowserActivity.THEME_PATH + "/";
 	
 //	private EventViewerArea eventViewer;
@@ -66,8 +68,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		//LayoutInflater.from(context).inflate(R.layout.main_menu, this);
 		MenuInflater.inflate(PATH + "main_menu.xml", context, this);
 		
-		SwifteeApplication appState = ((SwifteeApplication)context.getApplicationContext());
-    	database = appState.getDatabase();
+		//SwifteeApplication appState = ((SwifteeApplication)context.getApplicationContext());
+    	//database = appState.getDatabase();
     	
 		init();
 		
@@ -86,6 +88,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 					backButton = b;
 				if(b.getFunction().equals("forward"))
 					fwdButton = b;
+				if(b.getFunction().equals("finger_model"))
+					fingerButton = b;
 			}
 		}
 	}
@@ -113,6 +117,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			button.setFunction("stop");
 		}
 	}
+	
 	public boolean onTouch(View v, MotionEvent event) {
 
 		if (!(v instanceof MenuButton))
@@ -194,8 +199,12 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				mFloatingCursor.setEventText("Bookmark");
 				break;
 				
-			case help_online:
-				mFloatingCursor.setEventText("Help Online");
+			//case help_online:
+			//	mFloatingCursor.setEventText("Help Online");
+			//	break;
+			
+			case finger_model:
+				mFloatingCursor.setEventText("Finger model");
 				break;
 
 			case new_window:
@@ -306,16 +315,21 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				i.putExtra("isNewBookmark", true);
 				i.putExtra("Gesture_Type", SwifteeApplication.BOOKMARK_GESTURE);
 				mParent.startActivity(i);
-				break;
-			
-			case help_online:
+				break;			
+			/*case help_online:
 				if(mFloatingCursor.getWindowCount()>7){
 					mFloatingCursor.loadPage("file:///android_asset/Web Pages/help.html");
 				} else {
 					mFloatingCursor.addNewWindow("file:///android_asset/Web Pages/help.html");
 				}
-				break;
-				
+				break;*/
+			case finger_model:
+				if (SwifteeApplication.getFingerMode()){
+					toggleSingleOrMulti(false);									
+				}else{
+					toggleSingleOrMulti(true);
+				}
+				break;				
 			case new_window:
 				TrackHelper.doTrack(TrackHelper.NEW_PAGE, 1);
 				mFloatingCursor.addNewWindow(false);
@@ -332,6 +346,26 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		}
 		return false;
 	}
+	
+	public void toggleSingleOrMulti(boolean isSingle){
+		if(fingerButton == null)
+			return;
+		if(isSingle){		
+			SwifteeApplication.setFingerMode(true);
+			fingerButton.setDrawables(PATH+"Finger_model_single.png",PATH+"Finger_model_single.png"); //TODO put final design.
+			//fingerButton.setFunction("single");			
+		}
+		else{
+			SwifteeApplication.setFingerMode(false);
+			fingerButton.setDrawables(PATH+"Finger_model_multi.png",PATH+"Finger_model_multi.png"); //TODO put final design.
+			//fingerButton.setFunction("multi");
+		}
+		/*String t = String.valueOf(isSingle);
+		Log.v("","isSingle: "+t);
+		String x = String.valueOf(SwifteeApplication.getFingerMode());
+		Log.v("","Is: "+x);*/
+	}
+	
 	public void setBackEabled(boolean b){
 		if(backButton!=null)
 			backButton.setEnabled(b);

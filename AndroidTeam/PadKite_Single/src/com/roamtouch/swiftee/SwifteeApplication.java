@@ -20,9 +20,7 @@ import android.os.Environment;
 
 public class SwifteeApplication extends Application {
 	
-	//Single or multi finger operations enabled defaul. 
-	public static boolean SINGLE_FINGER_OPERATION_MODE = true; //SFOM
-
+	
 	// POSITION 0 = "Cursor Gestures"	
 	public static final int CURSOR_TEXT_GESTURE = 1;
 	public static final int CURSOR_LINK_GESTURE = 2;
@@ -33,6 +31,11 @@ public class SwifteeApplication extends Application {
 	public static final int BOOKMARK_GESTURE = 7;
 	public static final int SHARE_GESTURE = 8;
 	public static final int CUSTOM_GESTURE = 9;	
+	
+	//Single or multi finger operations, true defaul. //SFOM 
+	private static boolean finger_mode = true;   
+	public static boolean getFingerMode() {return finger_mode; }
+    public static void setFingerMode(boolean mode) { finger_mode = mode; }    
 	
 	private DBConnector database;
 	

@@ -5,6 +5,7 @@
 
 package com.roamtouch.floatingcursor;
 
+
 import java.net.URISyntaxException;
 
 import org.metalev.multitouch.controller.MultiTouchController;
@@ -74,11 +75,8 @@ import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
 import com.roamtouch.swiftee.TrackHelper;
 
-import android.text.ClipboardManager;
-
 
 public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanvas<FloatingCursor.FCObj> {
-	
 	
 		private DBConnector dbConnector;		
 	 	private BrowserActivity mParent;	 	
@@ -953,12 +951,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				int identifier = mWebHitTestResult.getIdentifier();			
 				int cursorImage = 0;	
 				
-				//SFOM: reset timers on change identifier. 	
-				if (SwifteeApplication.SINGLE_FINGER_OPERATION_MODE){
-					resetTimersOnChangeId(identifier);
-				}			
+								
+				//SFOM: reset timers on change identifier.			
+				if (SwifteeApplication.getFingerMode()){resetTimersOnChangeId(identifier);}			
 				
-				eventViewer.setText("RT: "+resultType+" id: "+identifier);	
+				eventViewer.setText("FUCK: "+SwifteeApplication.getFingerMode());	
+				
+				//eventViewer.setText("RT: "+resultType+" id: "+identifier);
 									
 			switch (resultType) {
 			
@@ -1076,7 +1075,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}		
 			}
 			// SFOM: set execution and selection timers. 
-			if (SwifteeApplication.SINGLE_FINGER_OPERATION_MODE==true && resultType!=-1 ){
+			if (SwifteeApplication.getFingerMode()==true && resultType!=-1 ){
 				// Text cursors not persistent. 
 				if ( cType==11 ) {
 					setSingleFingerTimers(identifier,true);			
@@ -1094,7 +1093,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				if(WebHitTestResult.ANCHOR_TYPE != resultType && mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE) {
 					stopMediaExecution();
 				}
-			}	
+			}
 			//Apply pointer after all.
 			pointer.setImageResource(cursorImage);
 			// Was there a node change?

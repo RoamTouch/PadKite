@@ -114,7 +114,7 @@ public class MenuButton extends Button{
 		}
 
 		public void setHotkey(boolean isHotkey) {
-			this.isHotkey = isHotkey;
+			this.isHotkey = isHotkey; 
 		}
 
 		public boolean isHotkey() {
