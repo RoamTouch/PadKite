@@ -1,26 +1,30 @@
+//******************************************************************************** 
+//**	Copyright (c) 2011, Roaming Keyboards LLC doing business as RoamTouch®	**	       
+//**	All rights reserved.													**
+//********************************************************************************
 package com.roamtouch.menu;
 
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.settings.GestureRecorder;
-import com.roamtouch.settings.RegisterActivity;
+//import com.roamtouch.settings.RegisterActivity;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.SwifteeApplication;
 import com.roamtouch.swiftee.TrackHelper;
 import com.roamtouch.view.EventViewerArea;
-import com.roamtouch.view.WebPage;
+//import com.roamtouch.view.WebPage;
 
-import android.app.AlertDialog;
+//import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
+//import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 //import android.util.Log;
-import android.text.ClipboardManager;
-import android.util.Log;
+//import android.text.ClipboardManager;
+//import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
+//import android.view.Window;
 import android.view.View.OnTouchListener;
 
 enum MainMenuFunctions {

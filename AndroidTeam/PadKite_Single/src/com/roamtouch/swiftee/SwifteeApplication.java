@@ -8,7 +8,7 @@ package com.roamtouch.swiftee;
 //import java.net.URL;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
+//import java.io.IOException;
 import java.io.InputStream;
 
 import com.roamtouch.database.DBConnector;
@@ -18,7 +18,10 @@ import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.os.Environment;
 
-public class SwifteeApplication extends Application{
+public class SwifteeApplication extends Application {
+	
+	//Single or multi finger operations enabled defaul. 
+	public static boolean SINGLE_FINGER_OPERATION_MODE = true; //SFOM
 
 	// POSITION 0 = "Cursor Gestures"	
 	public static final int CURSOR_TEXT_GESTURE = 1;
@@ -76,7 +79,6 @@ public class SwifteeApplication extends Application{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 	
 	public void copyHomepagetoSdcard(boolean force){
