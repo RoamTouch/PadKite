@@ -1,3 +1,7 @@
+//******************************************************************************** 
+//**	Copyright (c) 2011, Roaming Keyboards LLC doing business as RoamTouch®	**	       
+//**	All rights reserved.													**
+//********************************************************************************
 package com.roamtouch.menu;
 
 import com.roamtouch.floatingcursor.FloatingCursor;
@@ -190,8 +194,7 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 			case history:		
 				mFloatingCursor.loadPage("file:///android_asset/Web Pages/history.html");
 				//WebPage page = new WebPage();
-				//mFloatingCursor.loadData(page.getBrowserHistory(mParent));
-				
+				//mFloatingCursor.loadData(page.getBrowserHistory(mParent));				
 				break;
 
 			case none:

@@ -316,13 +316,6 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				i.putExtra("Gesture_Type", SwifteeApplication.BOOKMARK_GESTURE);
 				mParent.startActivity(i);
 				break;			
-			/*case help_online:
-				if(mFloatingCursor.getWindowCount()>7){
-					mFloatingCursor.loadPage("file:///android_asset/Web Pages/help.html");
-				} else {
-					mFloatingCursor.addNewWindow("file:///android_asset/Web Pages/help.html");
-				}
-				break;*/
 			case finger_model:
 				if (SwifteeApplication.getFingerMode()){
 					toggleSingleOrMulti(false);									
@@ -345,7 +338,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			}
 		}
 		return false;
-	}
+	};
 	
 	public void toggleSingleOrMulti(boolean isSingle){
 		if(fingerButton == null)

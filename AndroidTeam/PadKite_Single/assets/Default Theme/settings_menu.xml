@@ -1,3 +1,7 @@
+<!--*************************************************************************** 
+**	Copyright (c) 2011, Roaming Keyboards LLC doing business as RoamTouch®	**	       
+**	All rights reserved.													**
+******************************************************************************-->
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
    		
    		<MenuButton android:button_image="browsersettings_normal.png"
@@ -27,11 +31,7 @@
 		
 		<MenuButton android:button_image="history_normal.png"
 					android:button_highlightImage="history_pressed.png"
-                    android:button_function="history"/>
-                  
-<!--		<MenuButton android:button_image="help_normal.png"
-					android:button_highlightImage="help_pressed.png"
-					android:button_function="help_online"
-		/>-->
+                    android:button_function="history"/>                  
+
 	
 </merge>
