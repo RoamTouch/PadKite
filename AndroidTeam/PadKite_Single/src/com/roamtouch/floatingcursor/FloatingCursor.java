@@ -2,9 +2,7 @@
 //**	Copyright (c) 2011, Roaming Keyboards LLC doing business as RoamTouch®	**	       
 //**	All rights reserved.													**
 //********************************************************************************
-
 package com.roamtouch.floatingcursor;
-
 
 import java.net.URISyntaxException;
 
@@ -12,6 +10,7 @@ import org.metalev.multitouch.controller.MultiTouchController;
 import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCanvas;
 import org.metalev.multitouch.controller.MultiTouchController.PointInfo;
 import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale;
+
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -43,26 +42,22 @@ import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import roamtouch.webkit.CookieSyncManager;
-import roamtouch.webkit.WebChromeClient;
-import roamtouch.webkit.WebHitTestResult;
-import roamtouch.webkit.WebVideoInfo;
-import roamtouch.webkit.WebView;
-import roamtouch.webkit.WebViewClient;
-//import roamtouch.webkit.WebView.HitTestResult;
 import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Scroller;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
-import com.roamtouch.view.EventViewerArea;
-import com.roamtouch.view.SelectionGestureView;
-import com.roamtouch.view.WebPage;
+import roamtouch.webkit.CookieSyncManager;
+import roamtouch.webkit.JsResult;
+import roamtouch.webkit.WebChromeClient;
+import roamtouch.webkit.WebHitTestResult;
+import roamtouch.webkit.WebView;
+import roamtouch.webkit.WebViewClient;
+
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.menu.CircularLayout;
 import com.roamtouch.menu.CircularTabsLayout;
@@ -74,7 +69,9 @@ import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
 import com.roamtouch.swiftee.TrackHelper;
-
+import com.roamtouch.view.EventViewerArea;
+import com.roamtouch.view.SelectionGestureView;
+import com.roamtouch.view.WebPage;
 
 public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanvas<FloatingCursor.FCObj> {
 	
@@ -572,6 +569,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			mWebView = wv;
 			mWebView.setDrawingCacheEnabled(true);
 			mWebView.setWebChromeClient(new WebClient());
+			mWebView.getSettings().setJavaScriptEnabled(true);
 			mWebView.setWebViewClient(new GestureWebViewClient());	
 			
 			fcMainMenu.setBackEabled(mWebView.canGoBack());
@@ -2309,9 +2307,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 				// FF: This will not work ...
 				
-				int r = fcPointerView.getRadius();
-				
-				
+				int r = fcPointerView.getRadius();			
 				
 				if((fcX+r) > this.w)
 					scrollWebView(10, 0);
@@ -2333,8 +2329,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				else if ((Y-(r)) <= 0)
 					scrollWebView(-10, 1);
 			}
-			/*
-			 
+			/*			 
 			 if(action == MotionEvent.ACTION_POINTER_DOWN){
 				
 				stopHitTest(fcX,fcY,false);
@@ -2342,20 +2337,17 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 			if(action == MotionEvent.ACTION_POINTER_UP){
 				checkClickSelection(fcX, fcY);
-			}
-			
+			}			
 			*/
 			/* FC: Drag + Fling Support */
 			
 			/* If there is a second finger press, ignore */
 			//if (touchCount == 2)
 				//return false;
-
 			/*if (touchCount == 2)
 			{
 				Toast.makeText(mContext, "0: " + event.getX(0) + "," + event.getY(0) + "- 1: " +  event.getX(1) + "," + event.getY(1), Toast.LENGTH_SHORT).show();
-			}*/
-			
+			}*/		
 			
 			status = onInterceptTouchEventFC(event);
 			
@@ -2531,6 +2523,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	
 		public class WebClient extends WebChromeClient
 		{
+			//JavaScritp Bridge.
+			@Override
+			public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+				Log.v("Alert", "Alert:::: "+message);
+				result.confirm();
+				return true;
+			};			
 			 // Class used to use a dropdown for a <select> element
 		    private class InvokeListBox implements Runnable {
 		        // Whether the listbox allows multiple selection.
@@ -2753,11 +2752,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		                                EventHub.SINGLE_LISTBOX_CHOICE, -2, 0);*/
 		                }
 		            });
-		            dialog.show();
-		            
-		            Looper.loop();
-		            
-		        }
+		            dialog.show();		            
+		            Looper.loop();		            
+		        }		             
 		    }
 		    
 			public void onProgressChanged  (WebView  view, int newProgress) {
@@ -2894,7 +2891,36 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					WebPage page = new WebPage();
 					loadData(page.getDownloadHistory(mParent, url, start));
 	            }
-			}
+	            
+	            final String snippet = 
+					"javascript:"+
+					"function whereInWorld(x,y) {"+
+						"var obj = { \"type\": null, \"content\": null };"+
+	                
+						"var elem = document.elementFromPoint(x,y);"+
+						""+
+						"obj.type = elem.tagName;"+
+
+						"if (elem.tagName == \"IMG\")"+
+							"obj = {\"type\": \"image\", \"content\": elem.src };"+
+						"else if (elem.tagName == \"INPUT\")"+
+							"obj = {\"type\": \"input\", \"content\": \"XYZ\" };"+
+						"else if (elem.tagName == \"P\" || elem.tagName == \"DIV\")"+
+						"{"+
+	                        "var html = elem.innerHTML;"+
+	                        "var newh = \"<span>\" + html.replace(/[ \\n]/g,\"</span> <span>\") + \"</span>\";"+
+	                        "elem.innerHTML=newh;"+
+	                        "var newElem = document.elementFromPoint(x,y);"+
+	                        "obj.type=\"text\";"+
+	                        "obj.content = newElem.innerHTML;"+
+	                        "elem.innerHTML=html;"+ 		                                             
+	                	"}"+                            
+	                	"if (obj.content != null)"+
+							"pBridge.type(obj.type, obj.content);"+
+					"}";
+			
+	            view.loadUrl(snippet);	            
+			};
 			
 			public Bitmap getCircleBitmap(WebView view){
 				Picture thumbnail = view.capturePicture();
@@ -2922,8 +2948,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		        
 		        System.gc();
 		        return bm;
-			}
-/*			
+			};
+			/*			
 			public Bitmap getCircleBitmap(WebView view){
 				 Bitmap sourceBitmap = view.getDrawingCache();
 				 Bitmap bm = Bitmap.createBitmap(50,
@@ -2938,7 +2964,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					//sourceBitmap.recycle();
 			    return bm;
 			}
-*/			
+			 */			
 			public void onPageStarted(WebView view, String url,Bitmap b) {
 				mIsLoading = true;
 
@@ -2951,8 +2977,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 	            // reset sync timer to avoid sync starts during loading a page
 	            CookieSyncManager.getInstance().resetSync();
-			}
-		}
+			};	
+		};
 		
 		/* MT Stuff */
 		
