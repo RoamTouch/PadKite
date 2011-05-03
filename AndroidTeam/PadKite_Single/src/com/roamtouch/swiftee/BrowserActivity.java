@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -55,6 +56,7 @@ import android.os.Handler;
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -82,6 +84,7 @@ public class BrowserActivity extends Activity implements
 		OnGesturePerformedListener, OnGestureListener {
 
 	public static int DEVICE_WIDTH, DEVICE_HEIGHT;
+	
 
 	public static String version = "Version RC8-v1.00-eclair build #086962/b73262";
 	public static String version_code = "Version RC8-v1.00";
@@ -384,6 +387,7 @@ public class BrowserActivity extends Activity implements
 		mGestures.setGestureColor(Color.BLACK);
 		mGestures.setGestureStrokeWidth(15.0f);
 
+			
 		mTutor = (HorizontalScrollView) findViewById(R.id.gestureScrollView);
 
 		mTutor.setVisibility(View.INVISIBLE);
@@ -435,7 +439,8 @@ public class BrowserActivity extends Activity implements
 		currentGestureLibrary = id;
 		mLibrary = appState.getGestureLibrary(currentGestureLibrary);
 
-		TutorArea tArea = (TutorArea) mTutor.getChildAt(0);
+		TutorArea tArea = (TutorArea) mTutor.getChildAt(0);		
+		//tArea.setGravity(Gravity.VERTICAL_GRAVITY_MASK);
 		tArea.setGestureLibrary(mLibrary);
 		tArea.setParent(this);
 	}
@@ -855,92 +860,57 @@ public class BrowserActivity extends Activity implements
 	 * Implemented relocation of the FC to the next convenient and proximate
 	 * side. I divided the screen in four cuadrants and compare x,y distances to
 	 * the x,y sides. The FC snaps to the one near. TODO, animate. Jose.
-	 */
+	 */	
 	public void enterParkingMode(boolean moveToParkingPosition) {
 
 		isInParkingMode = true;
 
 		// Shrink to a half the size
 		floatingCursor.enterParkingMode();
-		Display display = getWindowManager().getDefaultDisplay();
-
+		int dims[] = getDeviceWidthHeight(); 
+		
 		// General location vars.
-		final int w = display.getWidth();
-		final int h = display.getHeight();
+		final int w = dims[0];
+		final int h = dims[1];
 		final int xLoc = floatingCursor.getScrollX();
 		final int yLoc = floatingCursor.getScrollY();
-
+				
+		int coords[] = getFCLocation(xLoc,yLoc,w,h);		
+		
 		if (moveToParkingPosition) {
 			floatingCursor.stopFling();
-
+			coords = getFCLocation(xLoc,yLoc,w,h);
+			int cX = coords[1];
+			int cY = coords[2];
 			// UPPER LEFT CUADRANT - C1.
-			if (xLoc > 0 && yLoc > 0) {
-				// Fisrt cuadrant vars
-				final int c1X;
-				final int c1Y;
-				// Calculate distance to upper right corner.
-				c1X = w / 2 - xLoc;
-				c1Y = h / 2 - yLoc;
-				if (c1X >= c1Y) { // y is shorter, snap y.
-					// Log.v("","y is shorter, snap x");
+			if (coords[0]==1) {				
+				if (cX >= cY) { // y is shorter, snap y.
 					floatingCursor.scrollTo(xLoc, h / 2);
-				} else if (c1X <= c1Y) { // x is shorter snap to y.
-					// Log.v("","x is shorter, snap y");
+				} else if (cX <= cY) { // x is shorter snap to y.					
 					floatingCursor.scrollTo(w / 2, yLoc);
-				}
-			}
-
+				}};
 			// UPPER RIGHT CUADRANT - C2.
-			if (xLoc < 0 && yLoc > 0) {
-				// Second cuadrant vars.
-				final int c2X;
-				final int c2Y;
-				// Calculate distance to upper right corner.
-				c2X = w / 2 + xLoc;
-				c2Y = h / 2 - yLoc;
-				if (c2X >= c2Y) { // y is shorter snap to x.
-					// Log.v("","y is shorter, snap x");
+			if (coords[0]==2) {			
+				if (cX >= cY) { // y is shorter snap to x.
 					floatingCursor.scrollTo(xLoc, h / 2);
-				} else if (c2X <= c2Y) { // x is shorter snap to y.
-					// Log.v("","x is shorter, snap y");
+				} else if (cX <= cY) { // x is shorter snap to y.
 					floatingCursor.scrollTo(-w / 2, yLoc);
-				}
-			}
-
+				}};
 			// DOWN LEFT CUADRANT - C3.
-			if (xLoc > 0 && yLoc < 0) {
-				// Third cuadrant vars.
-				final int c3X;
-				final int c3Y;
-				// Calculate distance to upper right corner.
-				c3X = w / 2 - xLoc;
-				c3Y = h / 2 + yLoc;
-				if (c3X >= c3Y) { // y is shorter snap to x.
-					// Log.v("","y is shorter, snap x");
+			if (coords[0]==3) {			
+				if (cX >= cY) { // y is shorter snap to x.
 					floatingCursor.scrollTo(xLoc, -h / 2);
-				} else if (c3X <= c3Y) { // x is shorter snap to x.
-					// Log.v("","x is shorter, snap y");
+				} else if (cX <= cY) { // x is shorter snap to x.					
 					floatingCursor.scrollTo(w / 2, yLoc);
-				}
-			}
-
+				}};
 			// DOWN RIGHT CUADRANT - C4.
-			if (xLoc < 0 && yLoc < 0) {
-				// Fourth cuadrant vars.
-				final int c4X;
-				final int c4Y;
-				// Calculate distance to upper right corner.
-				c4X = w / 2 + xLoc;
-				c4Y = h / 2 + yLoc;
-				if (c4X >= c4Y) { // y is shorter snap to x.
-					// Log.v("","y is shorter, snap x");
+			if (coords[0]==4) {
+				
+				if (cX >= cY) { // y is shorter snap to x.
 					floatingCursor.scrollTo(xLoc, -h / 2);
-				} else if (c4X <= c4Y) { // x is shorter snap to x.
-					// Log.v("","x is shorter, snap y");
+				} else if (cX <= cY) { // x is shorter snap to x.
 					floatingCursor.scrollTo(-w / 2, yLoc);
-				}
-			}
-
+				}};
 			// TODO ANIMATE DOCKING here.
 			/*
 			 * ta = new TranslateAnimation(0, w/2 - 50, 0, h/2 - 50);
@@ -957,7 +927,45 @@ public class BrowserActivity extends Activity implements
 			 * floatingCursor.startAnimation(ta);
 			 */
 		}
+	};	
+	//Provides the windows size. 
+	public int[] getDeviceWidthHeight(){
+			int dims[] = new int[2];	
+			Display display = getWindowManager().getDefaultDisplay();
+			dims[0] = display.getWidth();
+			dims[1] = display.getHeight();
+			return dims;
 	};
+	
+	//Return the cuadrant where the FC is located.
+	public int[] getFCLocation(int xLoc, int yLoc, int w, int h){
+		int coords[] = new int[3];
+		int cX;
+		int cY;
+		if (xLoc > 0 && yLoc > 0) {
+			cX = w / 2 - xLoc;
+			cY = h / 2 - yLoc;
+			coords[0] = 1;	
+			coords[1] = cX;	
+			coords[2] = cY;	
+		} else if (xLoc < 0 && yLoc > 0) {
+			coords[0] = 2;
+			coords[1] = cX = w / 2 + xLoc;
+			coords[2] = cY = h / 2 - yLoc;			
+		} else if (xLoc > 0 && yLoc < 0) {		
+			coords[0] = 3;
+			coords[1] = w / 2 - xLoc;
+			coords[2] = h / 2 + yLoc;			
+		} else if (xLoc < 0 && yLoc < 0) {
+			coords[0] = 4;
+			coords[1] = w / 2 + xLoc;
+			coords[2] = h / 2 + yLoc;			
+		} else if (xLoc == 0 && yLoc == 0){
+			//CENTER
+		}		
+		return coords;
+	};	
+	
 
 	public void exitParkingMode() {
 		isInParkingMode = false;

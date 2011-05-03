@@ -31,6 +31,7 @@ import android.os.Vibrator;
 import android.text.ClipboardManager;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -81,11 +82,13 @@ public class FloatingCursor extends FrameLayout implements
 	public int w = 0, h = 0;
 	/* Maximum jump that is tolerated */
 	private final int MAX_JUMP = 128;
+	
+	private final int FC_SCROLL_SPEED = 35; 
 
 	/**
 	 * Calculate the touching radius for FP
 	 */
-	private final float RADIUS_DIP = 120; // 64dip=10mm, 96dip=15mm, 192dip=30mm
+	private final float RADIUS_DIP = 90; // 64dip=10mm, 96dip=15mm, 192dip=30mm
 											// expressed in DIP
 	private final float scale = getContext().getResources().getDisplayMetrics().density;
 	private final int RADIUS = (int) (RADIUS_DIP * scale + 0.5f); // Converting
@@ -1095,7 +1098,7 @@ public class FloatingCursor extends FrameLayout implements
 				// Node changed:
 				if (WebHitTestResult.ANCHOR_TYPE != resultType
 						&& mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE) {
-					stopMediaExecution();
+					stopMediaExecution(true);
 				}
 			}
 			// Apply pointer after all.
@@ -1142,11 +1145,11 @@ public class FloatingCursor extends FrameLayout implements
 	void resetTimersOnChangeId(int identifier) {
 		if (identifier != mWebHitTestResultIdentifer) {
 			if (mSelectionTimerStarted) {
-				stopMediaSelection();
+				stopMediaSelection(false);
 				removeSelection();
 			}
 			if (mExecutionTimerStarted) {
-				stopMediaExecution();
+				stopMediaExecution(true);
 			}
 		}
 	};
@@ -1158,7 +1161,7 @@ public class FloatingCursor extends FrameLayout implements
 		} else {
 			// If the focus is on another link we reset the armed state.
 			if (identifier != mWebHitTestResultIdentifer) {
-				stopMediaExecution();
+				stopMediaExecution(true);
 				startMediaExecution();
 			}
 		}
@@ -1172,12 +1175,13 @@ public class FloatingCursor extends FrameLayout implements
 	};
 
 	// SFOM: Stop execution
-	void stopMediaExecution() {
+	void stopMediaExecution(boolean dragging) {
 		mExecutionTimerStarted = false;
 		mReadyToExecute = false;
 		handler.removeCallbacks(mExecutionTimer);
-		// Reset the cursor
-		pointer.setImageResource(R.drawable.kite_cursor);
+		if(!dragging){				
+			pointer.setImageResource(R.drawable.kite_cursor);
+		}
 	};
 
 	// SFOM: Set timer for selection
@@ -1195,11 +1199,13 @@ public class FloatingCursor extends FrameLayout implements
 	};
 
 	// SFOM: Stop selection
-	void stopMediaSelection() {
+	void stopMediaSelection(boolean dragging) {
 		mSelectionTimerStarted = false;
 		mReadyToSelect = false;
 		handler.removeCallbacks(mSelectionTimer);
-		pointer.setImageResource(R.drawable.kite_cursor);
+		if(!dragging){		
+			pointer.setImageResource(R.drawable.kite_cursor);
+		}
 	};
 
 	// SFOM: Execution flags
@@ -1623,7 +1629,7 @@ public class FloatingCursor extends FrameLayout implements
 			mExecutionTimerStarted = false;
 		} else {
 			if (mExecutionTimerStarted) {
-				stopMediaExecution();
+				stopMediaExecution(true);
 			}
 		}
 
@@ -1639,7 +1645,7 @@ public class FloatingCursor extends FrameLayout implements
 			mSelectionTimerStarted = false;
 		} else {
 			if (mSelectionTimerStarted) {
-				stopMediaSelection();
+				stopMediaSelection(false);
 			}
 		}
 		/*
@@ -2232,30 +2238,37 @@ public class FloatingCursor extends FrameLayout implements
 			moveSelection();
 			moveHitTest(fcX, fcY);
 
-			// FF: This will not work ...
-
 			int r = fcPointerView.getRadius();
 
-			if ((fcX + r) > this.w)
-				scrollWebView(10, 0);
-			else if (X + r > this.w)
-				scrollWebView(10, 0);
+			if ((fcX + r) > this.w-10)						//X
+				scrollWebView(FC_SCROLL_SPEED, 0);
+			else if (X + r > this.w-10)					
+				scrollWebView(FC_SCROLL_SPEED, 0);
 
-			if ((fcX - r) <= 0)
-				scrollWebView(-10, 0);
-			else if ((X - r) <= 0)
-				scrollWebView(-10, 0);
+			if ((fcX - r) <= 10)							//-X
+				scrollWebView(-FC_SCROLL_SPEED, 0);
+			else if ((X - r) <= 10)
+				scrollWebView(-FC_SCROLL_SPEED, 0);
 
-			if ((fcY + r) > this.h)
-				scrollWebView(10, 1);
-			else if (Y + r > this.h)
-				scrollWebView(10, 1);
+			if ((fcY + r) > this.h-10)						//Y
+				scrollWebView(FC_SCROLL_SPEED, 1);
+			else if (Y + r > this.h-10)
+				scrollWebView(FC_SCROLL_SPEED, 1);
 
-			if ((fcY - (r)) <= 0)
-				scrollWebView(-10, 1);
-			else if ((Y - (r)) <= 0)
-				scrollWebView(-10, 1);
+			if ((fcY - (r)) <= 10)						//-Y
+				scrollWebView(-FC_SCROLL_SPEED, 1);
+			else if ((Y - (r)) <= 10)
+				scrollWebView(-FC_SCROLL_SPEED, 1);
 		}
+		
+		
+		
+		int innerWidth = computeHorizontalScrollRange();
+		
+		 // position of the left side of the horizontal scrollbar
+		int scrollBarLeftPos = computeHorizontalScrollOffset();
+			
+		
 		/*
 		 * if(action == MotionEvent.ACTION_POINTER_DOWN){
 		 * 
@@ -2433,21 +2446,25 @@ public class FloatingCursor extends FrameLayout implements
 		 */
 		int sx = mWebView.getScrollX();
 		int sy = mWebView.getScrollY();
-
+		
+		final int xLoc = this.getScrollX();
+		final int yLoc = this.getScrollY();
+		
+		int dims[] = mParent.getDeviceWidthHeight();
+		int coords[] = mParent.getFCLocation(xLoc,yLoc,dims[0],dims[1]);	
+				
 		if (direction == 0) {
 			sx += value;
 
 			if (mWebView.getContentWidth() <= this.getWidth())
 				return;
-
-			// Log.i("scrollX","sx,gCW,gSX,tgW"+sx+","+mWebView.getContentWidth()
-			// + "," + mWebView.getScrollX() + "," + "," + this.getWidth());
-
+			
 			if (sx >= mWebView.getContentWidth())
 				sx = mWebView.getContentWidth();
 			if (sx < 0)
-				sx = 0;
-			mWebView.scrollTo(sx, sy);
+				sx = 0;					
+			mWebView.scrollTo(sx, sy);				
+			showScrollCursor(coords[0], direction, coords[1], coords[2]);			
 		} else {
 			if (mWebView.getContentHeight() <= this.getHeight())
 				return;
@@ -2456,15 +2473,51 @@ public class FloatingCursor extends FrameLayout implements
 			if (sy >= mWebView.getContentHeight())
 				sy = mWebView.getContentHeight();
 			if (sy < 0)
-				sy = 0;
-
+				sy = 0;			
+			
 			mWebView.scrollTo(sx, sy);
-		}
-		//caca
-		int cursorImage = R.drawable.scroll_cusror;
-		pointer.setImageResource(cursorImage);	
-		removeTouchPoint();
-		mHitTestMode=false;
+			showScrollCursor(coords[0], direction, coords[1], coords[2]);		
+		}		
+		//jose		
+	}
+	
+	//Scroll cursor in the middle while scrolling, no HitTest, better performance
+	void showScrollCursor(int cuadrant, int direction, int distToX, int distToY){	
+		int cursorImage = 0;
+		if ( direction==1 && cuadrant==1 || direction==1 && cuadrant==2){
+			if ( distToX < 200 && distToY < 200){
+				if (cuadrant==1){
+					cursorImage = R.drawable.scroll_diag_uprleft_cursor;
+				} else {
+					cursorImage = R.drawable.scroll_diag_upright_cursor;
+				}	
+			} else {
+				cursorImage = R.drawable.scroll_up_cursor;
+			}		
+		} else if ( direction==1 && cuadrant==3 || direction==1 && cuadrant==4){
+			if ( distToX < 200 && distToY < 200){
+				if (cuadrant==3){
+					cursorImage = R.drawable.scroll_diag_downleft_cursor;
+				} else {					
+					cursorImage = R.drawable.scroll_diag_downright_cursor;
+				}	
+			} else {
+				cursorImage = R.drawable.scroll_down_cursor;
+			}						
+		} else if ( direction==0 && cuadrant==1 || direction==0 && cuadrant==3){
+			cursorImage = R.drawable.scroll_left_cursor;
+		} else if ( direction==0 && cuadrant==2 || direction==0 && cuadrant==4){
+			cursorImage = R.drawable.scroll_right_cursor;
+		}	
+		
+		if (isFCOutofBounds()){			
+			pointer.setImageResource(cursorImage);	
+			stopHitTest(fcX, fcY, false);	
+			if (SwifteeApplication.getFingerMode()){
+				stopMediaSelection(true);
+				stopMediaExecution(true);
+			}		
+		} 
 	}
 
 	public class WebClient extends WebChromeClient {
@@ -3056,6 +3109,6 @@ public class FloatingCursor extends FrameLayout implements
 		if (!mScroller.isFinished()) {
 			mScroller.abortAnimation();
 		}
-	}
+	}	
 
 }
