@@ -51,6 +51,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Scroller;
+import android.widget.Toast;
 
 import roamtouch.webkit.CookieSyncManager;
 import roamtouch.webkit.JsResult;
@@ -67,6 +68,7 @@ import com.roamtouch.menu.SettingsMenu;
 import com.roamtouch.menu.TabButton;
 import com.roamtouch.menu.WindowTabs;
 import com.roamtouch.swiftee.BrowserActivity;
+import com.roamtouch.swiftee.BrowserActivity.ProxyBridge;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
 import com.roamtouch.swiftee.TrackHelper;
@@ -118,8 +120,6 @@ public class FloatingCursor extends FrameLayout implements
 	private boolean mIsLoading = false;
 
 	private WebView mWebView = null;
-
-	private WebView eWebView = null;
 
 	/**
 	 * Boundary conditions for scrolling web view with FloatingCursor
@@ -180,7 +180,9 @@ public class FloatingCursor extends FrameLayout implements
 	 * Vibrator for device vibration
 	 */
 	private Vibrator vibrator;
-
+	
+	private ProxyBridge pBridge;
+	
 	private void initScrollView() {
 		mScroller = new Scroller(mContext);
 		setFocusable(true);
@@ -567,7 +569,7 @@ public class FloatingCursor extends FrameLayout implements
 
 	public void enterParkingMode() {
 		// Scale down cursor
-		fcView.setRadius(RADIUS * 1 / 2);
+		fcView.setRadius(RADIUS * 1 / 2); 
 		// Reset the cursor.
 		pointer.setImageResource(R.drawable.kite_cursor);
 	}
@@ -582,8 +584,8 @@ public class FloatingCursor extends FrameLayout implements
 			mWebView.setDrawingCacheEnabled(true);
 			mWebView.setWebChromeClient(new WebClient());
 			mWebView.getSettings().setJavaScriptEnabled(true);
-			mWebView.setWebViewClient(new GestureWebViewClient());
-
+			mWebView.setWebViewClient(new GestureWebViewClient());				
+				
 			fcMainMenu.setBackEabled(mWebView.canGoBack());
 			fcMainMenu.setFwdEabled(mWebView.canGoForward());
 		}
@@ -634,9 +636,7 @@ public class FloatingCursor extends FrameLayout implements
 			fcSettingsMenu.setVisibility(INVISIBLE);
 			fcMainMenu.setVisibility(INVISIBLE);
 			break;
-
 		}
-
 	}
 
 	public void addNewWindow(boolean useSelection) {
@@ -977,6 +977,10 @@ public class FloatingCursor extends FrameLayout implements
 			}	
 
 			// eventViewer.setText("RT: "+resultType+" id: "+identifier);
+			
+			//caca		
+			//pBridge.type(type, content);
+			
 
 			switch (resultType) {
 
@@ -1908,7 +1912,10 @@ public class FloatingCursor extends FrameLayout implements
 
 		// Log.d("dispatchTouchEventFC", "X,Y,action" + X + "," + Y + "," +
 		// action);
-
+		
+		//Set X,Y for JavaScript snippet.
+		mWebView.loadUrl("javascript:whereInWorld("+event.getX()+","+event.getY()+")");		
+		
 		if (mMoveFrozen) {
 			// We continue the movement from MT
 			if (action == MotionEvent.ACTION_MOVE
@@ -2240,22 +2247,22 @@ public class FloatingCursor extends FrameLayout implements
 
 			int r = fcPointerView.getRadius();
 
-			if ((fcX + r) > this.w-10)						//X
+			if ((fcX + r) > this.w-10)						
 				scrollWebView(FC_SCROLL_SPEED, 0);
 			else if (X + r > this.w-10)					
 				scrollWebView(FC_SCROLL_SPEED, 0);
 
-			if ((fcX - r) <= 10)							//-X
+			if ((fcX - r) <= 10)							
 				scrollWebView(-FC_SCROLL_SPEED, 0);
 			else if ((X - r) <= 10)
 				scrollWebView(-FC_SCROLL_SPEED, 0);
 
-			if ((fcY + r) > this.h-10)						//Y
+			if ((fcY + r) > this.h-10)						
 				scrollWebView(FC_SCROLL_SPEED, 1);
 			else if (Y + r > this.h-10)
 				scrollWebView(FC_SCROLL_SPEED, 1);
 
-			if ((fcY - (r)) <= 10)						//-Y
+			if ((fcY - (r)) <= 10)						
 				scrollWebView(-FC_SCROLL_SPEED, 1);
 			else if ((Y - (r)) <= 10)
 				scrollWebView(-FC_SCROLL_SPEED, 1);
@@ -2481,7 +2488,14 @@ public class FloatingCursor extends FrameLayout implements
 		//jose		
 	}
 	
-	//Scroll cursor in the middle while scrolling, no HitTest, better performance
+	/**
+	 * Sets the proper drag cursor according to position and cuadrant. 
+	 * If distToX or distToY is smaller than 200 then shows diagonal.  
+	 * @param cuadrant
+	 * @param direction
+	 * @param distToX
+	 * @param distToY
+	 */
 	void showScrollCursor(int cuadrant, int direction, int distToX, int distToY){	
 		int cursorImage = 0;
 		if ( direction==1 && cuadrant==1 || direction==1 && cuadrant==2){
@@ -2517,7 +2531,9 @@ public class FloatingCursor extends FrameLayout implements
 				stopMediaSelection(true);
 				stopMediaExecution(true);
 			}		
-		} 
+		} else {
+			startHitTest(fcX, fcY);
+		}			
 	}
 
 	public class WebClient extends WebChromeClient {
@@ -3109,6 +3125,6 @@ public class FloatingCursor extends FrameLayout implements
 		if (!mScroller.isFinished()) {
 			mScroller.abortAnimation();
 		}
-	}	
-
+	}
+	
 }

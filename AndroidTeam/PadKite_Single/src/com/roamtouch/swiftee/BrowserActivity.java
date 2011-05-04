@@ -26,6 +26,7 @@ import org.apache.http.protocol.HTTP;
 
 import roamtouch.webkit.CookieManager;
 import roamtouch.webkit.CookieSyncManager;
+import roamtouch.webkit.WebSettings;
 import roamtouch.webkit.WebView;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -67,6 +68,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
+import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RemoteViews;
 
@@ -79,6 +81,7 @@ import com.roamtouch.view.SelectionGestureView;
 import com.roamtouch.view.SwifteeGestureView;
 import com.roamtouch.view.SwifteeOverlayView;
 import com.roamtouch.view.TutorArea;
+
 
 public class BrowserActivity extends Activity implements
 		OnGesturePerformedListener, OnGestureListener {
@@ -124,6 +127,8 @@ public class BrowserActivity extends Activity implements
 	private Notification mNf;
 	private RemoteViews mRv;
 
+	//private JSWebView jSView;
+	
 	// For data tracker
 	TrackHelper mTrackHelper;
 
@@ -334,13 +339,19 @@ public class BrowserActivity extends Activity implements
 		// webView.setDragTracker(tracker);
 		webLayout.addView(webView);
 		// webView.loadUrl("http://padkite.com/start");
-
+		
+		//JavaScript ProxyBridge
+		ProxyBridge pBridge = new ProxyBridge();
+		webView.addJavascriptInterface(pBridge, "pBridge");
+		WebSettings wSet = webView.getSettings();
+		wSet.setJavaScriptEnabled(true);	
+		
 		String data = getIntent().getDataString();
 		if (data != null) {
 			webView.loadUrl(data);
 		} else {
 			// webView.loadUrl("file:///android_asset/loadPage.html");
-			webView.loadUrl(SwifteeHelper.getHomepage());
+			webView.loadUrl(SwifteeHelper.getHomepage()); //ACA
 		}
 
 		webView.setSelectionColor(0xAAb4d5fe);
@@ -1105,11 +1116,28 @@ public class BrowserActivity extends Activity implements
 							SdCardError.class);
 					i.putExtra("isAppLaunched", true);
 					i.putExtra("numWindows", floatingCursor.getWindowCount());
-
 					startActivityForResult(i, SDCardRequestCode);
-				}
+					
+				}				
+				
+				
 			});
 
+		}
+	};
+	
+	/**
+	 * JScript Bridge 
+	 * On onPageFinished at FloatingCursor a Java script snippet is loaded. 
+	 * Also on FloatingCursor set the snippet cords mWebView.loadUrl("javascript:whereInWorld("+event.getX()+","+event.getY()+")");		
+	 */
+	public class ProxyBridge {		
+		public void type(final String type, final String content) {			
+			//HERE do something with content.
+			Log.v("", "Content: "+content);		
+		}		
+		public int one () {
+			return 1;
 		}
 	};
 
