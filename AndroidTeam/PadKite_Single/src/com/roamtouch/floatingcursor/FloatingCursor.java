@@ -181,7 +181,10 @@ public class FloatingCursor extends FrameLayout implements
 	 */
 	private Vibrator vibrator;
 	
+	
+	//JavaScript Proxy Bridge.
 	private ProxyBridge pBridge;
+	
 	
 	private void initScrollView() {
 		mScroller = new Scroller(mContext);
@@ -969,7 +972,8 @@ public class FloatingCursor extends FrameLayout implements
 			mWebHitTestResult = mWebView.getHitTestResultAt(X, Y);
 			int resultType = mWebHitTestResult.getType();
 			int identifier = mWebHitTestResult.getIdentifier();
-			int cursorImage = 0;
+			selectedLink = mWebHitTestResult.getExtra();
+	 		int cursorImage = 0; 
 
 			// SFOM: reset timers on change identifier.
 			if (SwifteeApplication.getFingerMode()) {
@@ -1024,14 +1028,19 @@ public class FloatingCursor extends FrameLayout implements
 				// Keep cursors if still on top of image.
 				break;
 			}
+
 			case WebHitTestResult.SRC_ANCHOR_TYPE:
 			case WebHitTestResult.IMAGE_ANCHOR_TYPE: {
 				cType = 6;
 				resultType = WebHitTestResult.ANCHOR_TYPE;
 				cursorImage = R.drawable.link_cursor;
 				// String tooltip = mWebHitTestResult.getToolTip();
-
-				selectedLink = mWebHitTestResult.getHref();
+				boolean contains;
+				contains = selectedLink.contains("padkite.local.contact");
+				if (contains){
+					String[] contactId = selectedLink.split("id=");					
+				}
+				
 				if (selectedLink == "")
 					selectedLink = mWebHitTestResult.getExtra();
 				// eventViewer.setText(selectedLink);
@@ -1048,8 +1057,7 @@ public class FloatingCursor extends FrameLayout implements
 			}
 			case WebHitTestResult.IMAGE_TYPE: {
 				cType = 5;
-				cursorImage = R.drawable.image_cursor;
-				selectedLink = mWebHitTestResult.getExtra();
+				cursorImage = R.drawable.image_cursor;				
 				// HACK: Mobile YouTube images are not detected, fake it.
 				if (selectedLink.startsWith("http://i.ytimg.com/vi/")
 						|| isYouTube(selectedLink)) {
