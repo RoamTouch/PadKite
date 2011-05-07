@@ -1123,8 +1123,6 @@ public class BrowserActivity extends Activity implements
 					startActivityForResult(i, SDCardRequestCode);
 					
 				}				
-				
-				
 			});
 
 		}
@@ -1136,10 +1134,15 @@ public class BrowserActivity extends Activity implements
 	 * Also on FloatingCursor set the snippet cords mWebView.loadUrl("javascript:whereInWorld("+event.getX()+","+event.getY()+")");		
 	 */
 	public class ProxyBridge {		
-		public void type(final String type, final String content) {			
-			//HERE do something with content.
-			Log.v("", "Content: "+content);		
-		}		
+		
+		
+		
+		public void type(final String content, final int id) {			
+			//HERE do something with content.}}			
+			Log.v("Bridge", "Content Type: "+content+" |  Bridge Id: "+id); 	
+			Log.v("Bridge", "--------------------------------");			
+		}			
+			
 		public int one () {
 			return 1;
 		}

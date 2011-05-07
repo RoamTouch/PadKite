@@ -973,6 +973,11 @@ public class FloatingCursor extends FrameLayout implements
 			int resultType = mWebHitTestResult.getType();
 			int identifier = mWebHitTestResult.getIdentifier();
 			selectedLink = mWebHitTestResult.getExtra();
+			
+			Log.v("Bridge", "HitTest Id: "+identifier); 
+			
+			mWebView.loadUrl("javascript:whereInWorld("+X+","+Y+","+identifier+")");
+			
 	 		int cursorImage = 0; 
 
 			// SFOM: reset timers on change identifier.
@@ -1129,7 +1134,7 @@ public class FloatingCursor extends FrameLayout implements
 			}
 			mWebHitTestResultType = resultType;
 			mWebHitTestResultIdentifer = identifier;
-		}
+		}	
 	};
 
 	/**
@@ -1923,7 +1928,7 @@ public class FloatingCursor extends FrameLayout implements
 		// action);
 		
 		//Set X,Y for JavaScript snippet.
-		mWebView.loadUrl("javascript:whereInWorld("+event.getX()+","+event.getY()+")");		
+		//mWebView.loadUrl("javascript:whereInWorld("+event.getX()+","+event.getY()+")");		
 		
 		if (mMoveFrozen) {
 			// We continue the movement from MT
@@ -2952,7 +2957,7 @@ public class FloatingCursor extends FrameLayout implements
 				loadData(page.getDownloadHistory(mParent, url, start));
 			}
 
-			final String snippet = "javascript:"
+			/*final String snippet = "javascript:"
 					+ "function whereInWorld(x,y) {"
 					+ "var obj = { \"type\": null, \"content\": null };"
 					+ "var elem = document.elementFromPoint(x,y);"					
@@ -2969,7 +2974,15 @@ public class FloatingCursor extends FrameLayout implements
 					+ "var newElem = document.elementFromPoint(x,y);"
 					+ "obj.type=\"text\";" + "obj.content = newElem.innerHTML;"
 					+ "elem.innerHTML=html;" + "}" + "if (obj.content != null)"
-					+ "pBridge.type(obj.type, obj.content);" + "}";
+					+ "pBridge.type(obj.type, obj.content);" + "}";*/
+			
+			final String snippet = "javascript:"
+				+ "function whereInWorld(x,y,id) {"
+				+ "var obj = { \"content\": null };"
+				+ "var elem = document.elementFromPoint(x,y);"	
+				+ "obj.content = elem.tagName;"
+				+ "if (obj.content != null)"
+				+ "pBridge.type(obj.content, id);" + "}";
 
 			view.loadUrl(snippet);
 		};
