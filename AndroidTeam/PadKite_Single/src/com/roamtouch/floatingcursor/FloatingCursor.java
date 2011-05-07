@@ -2977,12 +2977,20 @@ public class FloatingCursor extends FrameLayout implements
 					+ "pBridge.type(obj.type, obj.content);" + "}";*/
 			
 			final String snippet = "javascript:"
-				+ "function whereInWorld(x,y,id) {"
-				+ "var obj = { \"content\": null };"
-				+ "var elem = document.elementFromPoint(x,y);"	
-				+ "obj.content = elem.tagName;"
-				+ "if (obj.content != null)"
-				+ "pBridge.type(obj.content, id);" + "}";
+				+ "function whereInWorld(x,y,id) {"			
+				+ "var element = document.elementFromPoint(x,y);"
+				+ "if (element.getAttribute('href')){"
+					+ "var link = element.getAttribute('href');"				
+					+ "var domain = link.match(/:\\/\\/(.[^/]+)/)[1]).replace('www.','');" //http://w3guru.blogspot.com/2009/01/how-to-get-domain-name-from-url-using.html
+				+ "}"
+				+ "if (element.getAttribute('note')){"
+					+ "var note = element.getAttribute('note');"
+				+ "}"
+				+ "comodin = /<[^>]+>/g;" //http://www.forosdelweb.com/f13/innertext-solo-funciona-ie-346618/
+				+ "chain = htm.innerHTML;"					
+				+ "chain = chain(/(<br>)|(<br\\s\\x2F>)/gi , \\r\\n);"
+				+ "content = chain.replace(comodin, \"\");"						
+				+ "pBridge.type(content, link, domain, id);" + "}";
 
 			view.loadUrl(snippet);
 		};

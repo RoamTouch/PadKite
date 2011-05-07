@@ -1135,11 +1135,9 @@ public class BrowserActivity extends Activity implements
 	 */
 	public class ProxyBridge {		
 		
-		
-		
-		public void type(final String content, final int id) {			
+		public void type(final String type, final String content, final String note, int id) {			
 			//HERE do something with content.}}			
-			Log.v("Bridge", "Content Type: "+content+" |  Bridge Id: "+id); 	
+			Log.v("Bridge", "Type: "+type+" Content: "+content+" Note: "+note+" Id: "+id); 	
 			Log.v("Bridge", "--------------------------------");			
 		}			
 			
