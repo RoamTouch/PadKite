@@ -1038,8 +1038,9 @@ public class FloatingCursor extends FrameLayout implements
 				boolean contains;
 				contains = selectedLink.contains("padkite.local.contact");
 				if (contains){
-					String[] contactId = selectedLink.split("id=");					
-				}
+					String[] contactId = selectedLink.split("id=");
+					Log.v("CULO", ""+contactId[1]);
+				}			
 				
 				if (selectedLink == "")
 					selectedLink = mWebHitTestResult.getExtra();
@@ -2954,14 +2955,9 @@ public class FloatingCursor extends FrameLayout implements
 			final String snippet = "javascript:"
 					+ "function whereInWorld(x,y) {"
 					+ "var obj = { \"type\": null, \"content\": null };"
-					+
-
-					"var elem = document.elementFromPoint(x,y);"
-					+ ""
+					+ "var elem = document.elementFromPoint(x,y);"					
 					+ "obj.type = elem.tagName;"
-					+
-
-					"if (elem.tagName == \"IMG\")"
+					+ "if (elem.tagName == \"IMG\")"
 					+ "obj = {\"type\": \"image\", \"content\": elem.src };"
 					+ "else if (elem.tagName == \"INPUT\")"
 					+ "obj = {\"type\": \"input\", \"content\": \"XYZ\" };"

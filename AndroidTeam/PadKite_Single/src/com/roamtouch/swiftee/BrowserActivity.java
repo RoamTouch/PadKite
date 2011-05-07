@@ -1,9 +1,11 @@
+//******************************************************************************** 
+//**	Copyright (c) 2011, Roaming Keyboards LLC doing business as RoamTouch®	**	       
+//**	All rights reserved.													**
+//********************************************************************************
 package com.roamtouch.swiftee;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -352,19 +354,8 @@ public class BrowserActivity extends Activity implements
 		if (data != null) {
 			webView.loadUrl(data);
 		} else {
-			
-			try {
-				createLanding("sdcard/loadPage.html");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			//CACA
-			
-			//WRITE FILE.			
-			
-			webView.loadUrl(SwifteeHelper.getHomepage()); //ACA
+			// webView.loadUrl("file:///android_asset/loadPage.html");			
+			webView.loadUrl(SwifteeHelper.getHomepageUrl()); //ACA
 		}
 
 		webView.setSelectionColor(0xAAb4d5fe);
@@ -433,14 +424,6 @@ public class BrowserActivity extends Activity implements
 		registerReceiver(this.mSDInfoReceiver, new IntentFilter(filter));
 	}
 
-	
-	  public static void createLanding(String file) throws IOException {
-		  FileWriter fstream = new FileWriter(file);
-		  BufferedWriter out = new BufferedWriter(fstream);
-		  out.write("HOLA");
-		  out.close();
-	  }
-	
 	/*
 	 * public void setWebView(WebView wv){ webLayout.removeViewAt(0);
 	 * webLayout.addView(wv); floatingCursor.setWebView(wv,false); //
@@ -1154,8 +1137,7 @@ public class BrowserActivity extends Activity implements
 	 */
 	public class ProxyBridge {		
 		public void type(final String type, final String content) {			
-			//HERE do something with content.		
-			
+			//HERE do something with content.
 			Log.v("", "Content: "+content);		
 		}		
 		public int one () {

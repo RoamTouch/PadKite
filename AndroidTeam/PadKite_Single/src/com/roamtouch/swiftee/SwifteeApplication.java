@@ -6,17 +6,22 @@ package com.roamtouch.swiftee;
 
 //import java.net.URI;
 //import java.net.URL;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 //import java.io.IOException;
 import java.io.InputStream;
 
 import com.roamtouch.database.DBConnector;
+import com.roamtouch.swiftee.SwifteeHelper;
 
 import android.app.Application;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.os.Environment;
+import android.util.Log;
 
 public class SwifteeApplication extends Application {
 	
@@ -55,7 +60,33 @@ public class SwifteeApplication extends Application {
 			database.addBookmark();
 			copyBookmarksToSdcard();
 		}
+		
+		try {
+			createLanding(SwifteeHelper.getLandingPageString());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
+	
+	 public static void createLanding(String content) throws IOException {		 
+		 		 
+		 try {
+			    File root = Environment.getExternalStorageDirectory();
+			    if (root.canWrite()){
+			        File gpxfile = new File(root, "/PadKite/loadPage.html");			        
+			        FileWriter gpxwriter = new FileWriter(gpxfile);
+			        BufferedWriter out = new BufferedWriter(gpxwriter);
+			        out.write(content);
+			        out.close();
+			    }
+			} catch (IOException e) {
+			    Log.v("TAG", "Could not write file " + e.getMessage());
+			}
+		
+	  }
+	
 	public boolean isSdCardReady(){
 		return Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);  
 	}
@@ -86,8 +117,7 @@ public class SwifteeApplication extends Application {
 	
 	public void copyHomepagetoSdcard(boolean force){
 		try{
-			String arr[] = {/*"loadPage.html",*/ 
-					"content.html"};
+			String arr[] = {"loadPage.html", "content.html"};
 			
 			int count = arr.length;
 
@@ -98,7 +128,6 @@ public class SwifteeApplication extends Application {
 					continue;
 				}
 				InputStream is = getAssets().open(arr[i]);
-
 				FileOutputStream myOutput = new FileOutputStream(BrowserActivity.BASE_PATH + "/"+arr[i]);
 				byte[] buffer = new byte[1024];
 				int length;
