@@ -137,7 +137,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		webView.setLayoutParams(params);
 		if(url.equals(""))
 			//webView.loadUrl("file:///android_asset/loadPage.html");
-			webView.loadUrl(SwifteeHelper.getHomepage());
+			webView.loadUrl(SwifteeHelper.getHomepageUrl());
 		else
 			webView.loadUrl(url);
 		webView.setSelectionColor(0xAAb4d5fe);
