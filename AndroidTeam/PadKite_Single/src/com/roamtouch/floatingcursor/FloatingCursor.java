@@ -985,11 +985,7 @@ public class FloatingCursor extends FrameLayout implements
 				resetTimersOnChangeId(identifier);
 			}	
 
-			// eventViewer.setText("RT: "+resultType+" id: "+identifier);
-			
-			//caca		
-			//pBridge.type(type, content);
-			
+			// eventViewer.setText("RT: "+resultType+" id: "+identifier);	
 
 			switch (resultType) {
 
@@ -1100,7 +1096,22 @@ public class FloatingCursor extends FrameLayout implements
 			}
 			// SFOM: set execution and selection timers.
 			if (SwifteeApplication.getFingerMode() == true && resultType != -1) {
-				// Text cursors not persistent.
+				
+				setSingleFingerTimers(identifier, true);
+				
+				if (cType != 11) {
+					// All the rest are persistent cursors.					
+					if (mExecutionTimerStarted && mReadyToExecute) {
+						persistCursors(true);
+						//cursorImage = persistCursors(cursorImage, cType, true);
+					}
+					if (mSelectionTimerStarted && mReadyToSelect) {
+						persistCursors(false);
+						//cursorImage = persistCursors(cursorImage, cType, false);
+					}
+				}
+				
+				/*// Text cursors not persistent.
 				if (cType == 11) {
 					setSingleFingerTimers(identifier, true);
 				} else {
@@ -1112,7 +1123,8 @@ public class FloatingCursor extends FrameLayout implements
 					if (mSelectionTimerStarted && mReadyToSelect) {
 						cursorImage = persistCursors(cursorImage, cType, false);
 					}
-				}
+				}*/
+				
 				// Node changed:
 				if (WebHitTestResult.ANCHOR_TYPE != resultType
 						&& mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE) {
@@ -1169,7 +1181,10 @@ public class FloatingCursor extends FrameLayout implements
 			if (mExecutionTimerStarted) {
 				stopMediaExecution(true);
 			}
+			//Set gray back again. 
+			mParent.setRingcolor(1, mWebView);
 		}
+		
 	};
 
 	// SFOM: Set timer for execution
@@ -1236,7 +1251,10 @@ public class FloatingCursor extends FrameLayout implements
 	// onTouchUp().
 	Runnable mExecutionTimer = new Runnable() {
 		public void run() {
-			if (cType == 6 // IMAGE_ANCHOR_TYPE | Image in link
+			
+			mParent.setRingcolor(3, mWebView);
+			
+			/*if (cType == 6 // IMAGE_ANCHOR_TYPE | Image in link
 					|| cType == 7 // ANCHOR_TYPE | Text link
 					|| cType == 8 // SRC_IMAGE_ANCHOR_TYPE | Image link
 					|| cType == 12 // INPUT_TYPE | Button
@@ -1253,7 +1271,8 @@ public class FloatingCursor extends FrameLayout implements
 				pointer.setImageResource(R.drawable.keyboard_cursor_armed);
 			} else if (cType == 10) { // VIDEO_TYPE | Video
 				pointer.setImageResource(R.drawable.video_cursor_armed);
-			}
+			}*/
+			
 			mReadyToExecute = true;
 			mReadyToSelect = false;
 		}
@@ -1262,7 +1281,10 @@ public class FloatingCursor extends FrameLayout implements
 	// onTouchUp().
 	Runnable mSelectionTimer = new Runnable() {
 		public void run() {
-			if (cType == 6 // IMAGE_ANCHOR_TYPE | Image in link
+			
+			mParent.setRingcolor(2, mWebView);
+			
+			/*if (cType == 6 // IMAGE_ANCHOR_TYPE | Image in link
 					|| cType == 7 // ANCHOR_TYPE | Text link
 					|| cType == 8 // SRC_IMAGE_ANCHOR_TYPE | Image link
 					|| cType == 10 // VIDEO_TYPE | Video
@@ -1282,7 +1304,8 @@ public class FloatingCursor extends FrameLayout implements
 				pointer.setImageResource(R.drawable.keyboard_cursor_selected);
 			} else if (cType == 11) { // TEXT_TYPE | Text
 				pointer.setImageResource(R.drawable.text_cursor_selected);
-			}
+			}*/
+			
 			mReadyToSelect = true;
 			onLongTouch();
 			mReadyToExecute = false;
@@ -1291,8 +1314,15 @@ public class FloatingCursor extends FrameLayout implements
 
 	// SFOM: When the cursor is moved on top of the same media the same cursor
 	// remains.
-	private int persistCursors(int cursorImage, int cType, boolean exe) {
-		if (cType == 9) {
+	private void persistCursors(boolean exe) {
+		
+		if (exe) {
+			mParent.setRingcolor(3, mWebView);
+		} else {
+			mParent.setRingcolor(2, mWebView);
+		}
+		
+		/*if (cType == 9) {
 			if (exe) {
 				cursorImage = R.drawable.keyboard_cursor_armed;
 			} else {
@@ -1310,8 +1340,8 @@ public class FloatingCursor extends FrameLayout implements
 			} else {
 				cursorImage = R.drawable.image_cursor_selected;
 			}
-		}
-		return cursorImage;
+		}	
+		return cursorImage;*/
 	};
 
 	protected void startHitTest(int X, int Y) {
