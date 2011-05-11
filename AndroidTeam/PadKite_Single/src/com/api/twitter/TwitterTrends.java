@@ -12,12 +12,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import com.google.gson.Gson;
 import android.util.Log;
-import com.api.twitter.TwitterTrend;
+import com.api.twitter.TwitterTrendName;
 
 public class TwitterTrends {
 	
     private String as_of;
-    private List<TwitterTrend> trends;
+    private List<TwitterTrendName> trends;
     
     public String getAs_of() {
         return as_of;
@@ -25,10 +25,10 @@ public class TwitterTrends {
     public void setAs_of(String asOf) {
         as_of = asOf;
     }
-    public List<TwitterTrend> getTrends() {
+    public List<TwitterTrendName> getTrends() {
         return trends;
     }
-    public void setTrends(List<TwitterTrend> trends) {
+    public void setTrends(List<TwitterTrendName> trends) {
         this.trends = trends;
     } 
     
@@ -48,7 +48,7 @@ public class TwitterTrends {
 	        Log.i("MY INFO", ""+r.toString());
 	        TwitterTrends objs = gson.fromJson(r, TwitterTrends.class);
 	        Log.i("MY INFO", "CACA: "+objs.getTrends().size());
-	        for(TwitterTrend tr : objs.getTrends()){
+	        for(TwitterTrendName tr : objs.getTrends()){
 	            Log.i("TRENDS", tr.getName() + " - " + tr.getUrl());
 	        }
 	        }catch(Exception ex){
