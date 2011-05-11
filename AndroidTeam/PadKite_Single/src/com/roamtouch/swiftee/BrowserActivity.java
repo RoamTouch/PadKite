@@ -432,22 +432,24 @@ public class BrowserActivity extends Activity implements
 		
 		switch (colorId){
 			case 1: //gray
-				Log.v("caca", "gray");
+				//eventViewer.setText("gray");				
 				cWebView.setCursorOuterColors(0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0);
 				cWebView.setCursorInnerColors(0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0);
-				cWebView.setCursorPressedColors(0x80979797, 0x80979797);
+				//cWebView.setCursorPressedColors(0x80979797, 0x80979797);
 				break;
-			case 2: //blue
-				Log.v("caca", "blue");
+			case 2: //blue				
+				//eventViewer.setText("blue");
 				cWebView.setCursorOuterColors(0xff74b1fc, 0xff46b000, 0xff74b1fc, 0xff36c000);
 				cWebView.setCursorInnerColors(0xffa0c9fc, 0xff8cd900, 0xffa0c9fc, 0xff7ce900);
-				cWebView.setCursorPressedColors(0x80b4d5fe, 0x807ce900);
+				//cWebView.setCursorPressedColors(0x80b4d5fe, 0x807ce900);
 				break;
-			case 3: //green
-				Log.v("caca", "green");
-				cWebView.setCursorOuterColors(0xff3FB308, 0xffB04600, 0xff5CAD0A, 0xffC03600);
-				cWebView.setCursorInnerColors(0xff92FE30, 0xffd98c00, 0xffBDFE3A, 0xffe97c00);
-				cWebView.setCursorPressedColors(0x80C6FF4B, 0x80E97c00);
+			case 3: //green				
+				//eventViewer.setText("green");
+				//cWebView.setCursorOuterColors(0xff3FB308, 0xffB04600, 0xff5CAD0A, 0xffC03600);
+				//cWebView.setCursorInnerColors(0xff92FE30, 0xffd98c00, 0xffBDFE3A, 0xffe97c00);
+				cWebView.setCursorOuterColors(0xff55C951, 0xff55C951, 0xff55C951, 0xff55C951);
+				cWebView.setCursorInnerColors(0xffA0F59D, 0xffA0F59D, 0xffA0F59D, 0xffA0F59D);
+				//cWebView.setCursorPressedColors(0x80C6FF4B, 0x80E97c00);
 				break;
 		}
 	}

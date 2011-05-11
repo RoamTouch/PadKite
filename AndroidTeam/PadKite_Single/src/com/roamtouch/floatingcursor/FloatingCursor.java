@@ -1182,7 +1182,7 @@ public class FloatingCursor extends FrameLayout implements
 				stopMediaExecution(true);
 			}
 			//Set gray back again. 
-			mParent.setRingcolor(1, mWebView);
+			mParent.setRingcolor(1, mWebView);		
 		}
 		
 	};
@@ -1250,29 +1250,8 @@ public class FloatingCursor extends FrameLayout implements
 	// SFOM: Arms media cursors for execution. Sets mReadyToExecute on
 	// onTouchUp().
 	Runnable mExecutionTimer = new Runnable() {
-		public void run() {
-			
-			mParent.setRingcolor(3, mWebView);
-			
-			/*if (cType == 6 // IMAGE_ANCHOR_TYPE | Image in link
-					|| cType == 7 // ANCHOR_TYPE | Text link
-					|| cType == 8 // SRC_IMAGE_ANCHOR_TYPE | Image link
-					|| cType == 12 // INPUT_TYPE | Button
-					|| cType == 13 // SELECT_TYPE | ComboBox
-			) {
-				pointer.setImageResource(R.drawable.link_cursor_armed);
-			} else if (cType == 2) { // PHONE_TYPE | Phone
-				pointer.setImageResource(R.drawable.phone_cursor_armed);
-			} else if (cType == 3) { // GEO_TYPE | Geo
-				pointer.setImageResource(R.drawable.geo_cursor_armed);
-			} else if (cType == 4) { // EMAIL_TYPE | Mail
-				pointer.setImageResource(R.drawable.email_cursor_armed);
-			} else if (cType == 9) { // EDIT_TEXT_TYPE | Input text
-				pointer.setImageResource(R.drawable.keyboard_cursor_armed);
-			} else if (cType == 10) { // VIDEO_TYPE | Video
-				pointer.setImageResource(R.drawable.video_cursor_armed);
-			}*/
-			
+		public void run() {			
+			mParent.setRingcolor(3, mWebView);	
 			mReadyToExecute = true;
 			mReadyToSelect = false;
 		}
@@ -1280,32 +1259,8 @@ public class FloatingCursor extends FrameLayout implements
 	// SFOM: Arms media cursors for selection. Sets mReadyToSelect on
 	// onTouchUp().
 	Runnable mSelectionTimer = new Runnable() {
-		public void run() {
-			
+		public void run() {			
 			mParent.setRingcolor(2, mWebView);
-			
-			/*if (cType == 6 // IMAGE_ANCHOR_TYPE | Image in link
-					|| cType == 7 // ANCHOR_TYPE | Text link
-					|| cType == 8 // SRC_IMAGE_ANCHOR_TYPE | Image link
-					|| cType == 10 // VIDEO_TYPE | Video
-					|| cType == 12 // INPUT_TYPE | Button
-					|| cType == 13 // SELECT_TYPE | ComboBox
-			) {
-				pointer.setImageResource(R.drawable.link_cursor_selected);
-			} else if (cType == 2) { // PHONE_TYPE | Phone
-				pointer.setImageResource(R.drawable.phone_cursor_selected);
-			} else if (cType == 3) { // GEO_TYPE | Geo
-				pointer.setImageResource(R.drawable.geo_cursor_selected);
-			} else if (cType == 4) { // EMAIL_TYPE | Mail
-				pointer.setImageResource(R.drawable.email_cursor_selected);
-			} else if (cType == 5) { // IMAGE_TYPE | Image
-				pointer.setImageResource(R.drawable.image_cursor_selected);
-			} else if (cType == 9) { // EDIT_TEXT_TYPE | Input text
-				pointer.setImageResource(R.drawable.keyboard_cursor_selected);
-			} else if (cType == 11) { // TEXT_TYPE | Text
-				pointer.setImageResource(R.drawable.text_cursor_selected);
-			}*/
-			
 			mReadyToSelect = true;
 			onLongTouch();
 			mReadyToExecute = false;
@@ -1320,28 +1275,7 @@ public class FloatingCursor extends FrameLayout implements
 			mParent.setRingcolor(3, mWebView);
 		} else {
 			mParent.setRingcolor(2, mWebView);
-		}
-		
-		/*if (cType == 9) {
-			if (exe) {
-				cursorImage = R.drawable.keyboard_cursor_armed;
-			} else {
-				cursorImage = R.drawable.keyboard_cursor_selected;
-			}
-		} else if (cType == 8 || cType == 6 || cType == 12 || cType == 13) {
-			if (exe) {
-				cursorImage = R.drawable.link_cursor_armed;
-			} else {
-				cursorImage = R.drawable.link_cursor_selected;
-			}
-		} else if (cType == 5) {
-			if (exe) {
-				cursorImage = R.drawable.image_cursor_armed;
-			} else {
-				cursorImage = R.drawable.image_cursor_selected;
-			}
 		}	
-		return cursorImage;*/
 	};
 
 	protected void startHitTest(int X, int Y) {
