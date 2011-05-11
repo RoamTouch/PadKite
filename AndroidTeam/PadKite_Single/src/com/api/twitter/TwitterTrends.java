@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -51,31 +52,46 @@ public class TwitterTrends {
      **/
     
     public void runJSONParser(){
+    	ArrayList<String> NAMES = new ArrayList<String>();
         try{
 	        Log.i("MY INFO", "Json Parser started..");
-	        Gson gsonName = new Gson();
-	        Gson gsonImage = new Gson();
-	        Reader rName = new InputStreamReader(getJSONData("http://api.twitter.com/1/trends.json"));     
-	        
-	        //'http://api.twitter.com/1/users/profile_image/' . $name . '.json?size=mini';	
-	        
+	        Gson gsonName = new Gson();  
+	        Reader rName = new InputStreamReader(getJSONData("http://api.twitter.com/1/trends.json"));                
 	        TwitterTrends objsNames = gsonName.fromJson(rName, TwitterTrends.class);
-	        for(TwitterTrendName trName : objsNames.getTrends()){
-	            Log.i("TRENDS", trName.getName());
-	            String[] name = trName.getName().split("#");     
-	            Log.i("TRENDS", "name: "+name[1]);    
-	            Log.i("TRENDS", "---------------");
-	            Reader rImage = new InputStreamReader(getJSONData("http://api.twitter.com/1/users/profile_image/"+name[1]+".json?size=mini"));   
-	            TwitterTrends objsImages = gsonImage.fromJson(rImage, TwitterTrends.class);
-	            for(TwitterTrendImage trImage : objsImages.getTrendsImages()){
-	            	Log.i("TRENDS", trImage.getImage() + " - " + trName.getUrl());
-	            }            
-	        }
+	        for(TwitterTrendName trName : objsNames.getTrends()){	            
+	            String name;
+	            if (trName.getName().contains("#")){
+	            	String[] namePer = trName.getName().split("#");
+	            	name = namePer[1];
+	            } else {
+	            	name = trName.getName();
+	            }   
+	            NAMES.add("http://api.twitter.com/1/users/profile_image/"+name+".json?size=mini");
+	            Log.i("TRENDS", "http://api.twitter.com/1/users/profile_image/"+name+".json?size=mini");
+	        }       
         }
         catch(Exception exName){
         	Log.i("MY INFO", "exName: "+exName);
         	exName.printStackTrace();
         }
+        
+        /*try {
+        	Gson gsonImage = new Gson();       	
+        	Object ia[] = NAMES.toArray();       	 
+        	for(int i=0; i<ia.length; i++){ 
+        		String imageUrl = (String) ia[i];
+        		Log.i("TRENDS", "imageSgon: "+imageUrl);
+        		Reader rImage = new InputStreamReader(getJSONData(imageUrl)); 
+        		TwitterTrends objsImages = gsonImage.fromJson(rImage, TwitterTrends.class);
+                for(TwitterTrendImage trImage : objsImages.getTrendsImages()){
+                 	Log.i("TRENDS", trImage.getImage());
+                 }
+        	}         
+        }
+        catch(Exception exImage){
+        	Log.i("MY INFO", "exName: "+exImage);
+        	exImage.printStackTrace();
+        }*/
     }
     
     public InputStream getJSONData(String url){
