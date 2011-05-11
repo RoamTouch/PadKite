@@ -9,8 +9,7 @@ public class TwitterTrendName {
 
 	private String name;
 	private String url;
-	private String query;
-
+	
 	public String getName() {
 		return name;
 	}

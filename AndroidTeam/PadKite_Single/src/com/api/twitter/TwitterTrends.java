@@ -18,6 +18,7 @@ public class TwitterTrends {
 	
     private String as_of;
     private List<TwitterTrendName> trends;
+    private List<TwitterTrendImage> images;
     
     public String getAs_of() {
         return as_of;
@@ -25,6 +26,8 @@ public class TwitterTrends {
     public void setAs_of(String asOf) {
         as_of = asOf;
     }
+    
+    //NAME
     public List<TwitterTrendName> getTrends() {
         return trends;
     }
@@ -32,28 +35,46 @@ public class TwitterTrends {
         this.trends = trends;
     } 
     
+    //IMAGE
+    public List<TwitterTrendImage> getTrendsImages() {
+        return images;
+    }
+    public void setTrendsImages(List<TwitterTrendImage> images) {
+        this.images = images;
+    }
+    
+    /**
+     * TODO http://api.twitter.com/1/trends/"+location+".json (44418)
+     * While using this trend with location parameter the result is an object 
+     * MyObject[] jsonObjects = gson.fromJson(jsonText, MyObject[].class); or
+     * Map<String, Object>[] result = gson.fromJson(jsonText, HashMap[].class);
+     **/
+    
     public void runJSONParser(){
         try{
 	        Log.i("MY INFO", "Json Parser started..");
-	        Gson gson = new Gson();
-	        Reader r = new InputStreamReader(getJSONData("http://api.twitter.com/1/trends.json"));
+	        Gson gsonName = new Gson();
+	        Gson gsonImage = new Gson();
+	        Reader rName = new InputStreamReader(getJSONData("http://api.twitter.com/1/trends.json"));     
 	        
-	        /**
-	         * TODO http://api.twitter.com/1/trends/"+location+".json (44418)
-	         * While using this trend with location parameter the result is an object 
-	         * MyObject[] jsonObjects = gson.fromJson(jsonText, MyObject[].class); or
-	         * Map<String, Object>[] result = gson.fromJson(jsonText, HashMap[].class);
-	         **/
+	        //'http://api.twitter.com/1/users/profile_image/' . $name . '.json?size=mini';	
 	        
-	        Log.i("MY INFO", ""+r.toString());
-	        TwitterTrends objs = gson.fromJson(r, TwitterTrends.class);
-	        Log.i("MY INFO", "CACA: "+objs.getTrends().size());
-	        for(TwitterTrendName tr : objs.getTrends()){
-	            Log.i("TRENDS", tr.getName() + " - " + tr.getUrl());
+	        TwitterTrends objsNames = gsonName.fromJson(rName, TwitterTrends.class);
+	        for(TwitterTrendName trName : objsNames.getTrends()){
+	            Log.i("TRENDS", trName.getName());
+	            String[] name = trName.getName().split("#");     
+	            Log.i("TRENDS", "name: "+name[1]);    
+	            Log.i("TRENDS", "---------------");
+	            Reader rImage = new InputStreamReader(getJSONData("http://api.twitter.com/1/users/profile_image/"+name[1]+".json?size=mini"));   
+	            TwitterTrends objsImages = gsonImage.fromJson(rImage, TwitterTrends.class);
+	            for(TwitterTrendImage trImage : objsImages.getTrendsImages()){
+	            	Log.i("TRENDS", trImage.getImage() + " - " + trName.getUrl());
+	            }            
 	        }
-	        }catch(Exception ex){
-	        	Log.i("MY INFO", "ex: "+ex);
-	            ex.printStackTrace();
+        }
+        catch(Exception exName){
+        	Log.i("MY INFO", "exName: "+exName);
+        	exName.printStackTrace();
         }
     }
     
