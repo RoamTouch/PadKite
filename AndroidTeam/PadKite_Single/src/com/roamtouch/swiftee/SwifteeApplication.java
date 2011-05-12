@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.roamtouch.database.DBConnector;
-import com.roamtouch.swiftee.SwifteeHelper;
+import com.roamtouch.landingpage.LandingPage;
 
 import android.app.Application;
 import android.gesture.GestureLibraries;
@@ -61,8 +61,9 @@ public class SwifteeApplication extends Application {
 			copyBookmarksToSdcard();
 		}
 		
+		LandingPage.loadTrends();
 		try {
-			createLanding(SwifteeHelper.getLandingPageString());
+			createLanding(LandingPage.getLandingPageString());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
