@@ -345,24 +345,18 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			return;
 		if(isSingle){		
 			SwifteeApplication.setFingerMode(true);
-			fingerButton.setDrawables(PATH+"Finger_model_single.png",PATH+"Finger_model_single.png"); //TODO put final design.
-			//fingerButton.setFunction("single");			
+			fingerButton.setDrawables(PATH+"Finger_model_single.png",PATH+"Finger_model_single_pressed.png");						
 		}
 		else{
 			SwifteeApplication.setFingerMode(false);
-			fingerButton.setDrawables(PATH+"Finger_model_multi.png",PATH+"Finger_model_multi.png"); //TODO put final design.
-			//fingerButton.setFunction("multi");
-		}
-		/*String t = String.valueOf(isSingle);
-		Log.v("","isSingle: "+t);
-		String x = String.valueOf(SwifteeApplication.getFingerMode());
-		Log.v("","Is: "+x);*/
-	}
-	
+			fingerButton.setDrawables(PATH+"Finger_model_multi.png",PATH+"Finger_model_multi_pressed.png"); 	
+		
+		}		
+	};	
 	public void setBackEabled(boolean b){
 		if(backButton!=null)
 			backButton.setEnabled(b);
-	}
+	};
 	public void setFwdEabled(boolean b){
 		if(fwdButton!=null)
 			fwdButton.setEnabled(b);

@@ -53,8 +53,8 @@
 					android:button_highlightImage="bookmark_edit_pressed.png"
                     android:button_function="bookmark"/>
 
-		<MenuButton android:button_image="Finger_model_single.png"
-					android:button_highlightImage="Finger_model_single.png"
+		<MenuButton android:button_image="Finger_model_multi.png"
+					android:button_highlightImage="Finger_model_multi.png"
                     android:button_function="finger_model"/>    	
 
    		<MenuButton android:button_image="settings_normal.png"
