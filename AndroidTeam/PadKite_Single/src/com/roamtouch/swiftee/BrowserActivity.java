@@ -147,7 +147,6 @@ public class BrowserActivity extends Activity implements
 			public void onClick(DialogInterface dialog, int which) {
 				// mParent.finish();
 				goExit(0);
-
 			}
 		});
 		alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
@@ -431,20 +430,20 @@ public class BrowserActivity extends Activity implements
 	public void setRingcolor(int colorId, WebView cWebView){		
 		
 		switch (colorId){
-			case 1: //gray					
+			case 1: //red					
 				cWebView.invalidate();
-				cWebView.setCursorOuterColors(0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0);
-				cWebView.setCursorInnerColors(0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0);				
+				cWebView.setCursorOuterColors(0xffFF2A00, 0xffFF2A00, 0xffFF2A00, 0xffFF2A00);
+				cWebView.setCursorInnerColors(0xffFFCEC4, 0xffFFCEC4, 0xffFFCEC4, 0xffFFCEC4);				
 				break;
 			case 2: //blue			
 				cWebView.invalidate();
-				cWebView.setCursorOuterColors(0xff74b1fc, 0xff46b000, 0xff74b1fc, 0xff36c000);
-				cWebView.setCursorInnerColors(0xffa0c9fc, 0xff8cd900, 0xffa0c9fc, 0xff7ce900);
+				cWebView.setCursorOuterColors(0xff0072FF, 0xff0072FF, 0xff0072FF, 0xff0072FF);
+				cWebView.setCursorInnerColors(0xffA3CCFF, 0xffA3CCFF, 0xffA3CCFF, 0xffA3CCFF);
 				break;
 			case 3: //green				
 				cWebView.invalidate();
-				cWebView.setCursorOuterColors(0xff55C951, 0xff55C951, 0xff55C951, 0xff55C951);
-				cWebView.setCursorInnerColors(0xffA0F59D, 0xffA0F59D, 0xffA0F59D, 0xffA0F59D);				
+				cWebView.setCursorOuterColors(0xff06A800, 0xff06A800, 0xff06A800, 0xff06A800);
+				cWebView.setCursorInnerColors(0xffA9FFA6, 0xffA9FFA6, 0xffA9FFA6, 0xffA9FFA6);				
 				break;
 		}
 	}

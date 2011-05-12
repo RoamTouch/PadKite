@@ -980,10 +980,13 @@ public class FloatingCursor extends FrameLayout implements
 			
 	 		int cursorImage = 0; 
 
-			// SFOM: reset timers on change identifier.
+			// Single Finger: reset timers on change identifier.
 			if (SwifteeApplication.getFingerMode()) {
 				resetTimersOnChangeId(identifier);
-			}	
+			} else {
+				//Set color ring to permanent blue if multifinger. 
+				mParent.setRingcolor(2, mWebView);
+			}
 
 			// eventViewer.setText("RT: "+resultType+" id: "+identifier);	
 
@@ -1094,7 +1097,7 @@ public class FloatingCursor extends FrameLayout implements
 				break;
 			}
 			}
-			// SFOM: set execution and selection timers.
+			// Single Finger: set execution and selection timers.
 			if (SwifteeApplication.getFingerMode() == true && resultType != -1) {
 				
 				setSingleFingerTimers(identifier, true);
@@ -1109,22 +1112,7 @@ public class FloatingCursor extends FrameLayout implements
 						persistCursors(false);
 						//cursorImage = persistCursors(cursorImage, cType, false);
 					}
-				}
-				
-				/*// Text cursors not persistent.
-				if (cType == 11) {
-					setSingleFingerTimers(identifier, true);
-				} else {
-					// All the rest are persistent cursors.
-					setSingleFingerTimers(identifier, true);
-					if (mExecutionTimerStarted && mReadyToExecute) {
-						cursorImage = persistCursors(cursorImage, cType, true);
-					}
-					if (mSelectionTimerStarted && mReadyToSelect) {
-						cursorImage = persistCursors(cursorImage, cType, false);
-					}
-				}*/
-				
+				}				
 				// Node changed:
 				if (WebHitTestResult.ANCHOR_TYPE != resultType
 						&& mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE) {
@@ -1171,7 +1159,7 @@ public class FloatingCursor extends FrameLayout implements
 		}
 	};
 
-	// SFOM: Reset SFOM timers
+	// Single Finger: Reset SFOM timers
 	void resetTimersOnChangeId(int identifier) {
 		if (identifier != mWebHitTestResultIdentifer) {
 			if (mSelectionTimerStarted) {
@@ -1181,13 +1169,12 @@ public class FloatingCursor extends FrameLayout implements
 			if (mExecutionTimerStarted) {
 				stopMediaExecution(true);
 			}
-			//Set gray back again. 
+			//Set reg color back again. 
 			mParent.setRingcolor(1, mWebView);		
-		}
-		
+		}		
 	};
 
-	// SFOM: Set timer for execution
+	// Single Finger: Set timer for execution
 	void setStartMediaExecution(int identifier) {
 		if (!mExecutionTimerStarted) {
 			startMediaExecution();
@@ -1200,14 +1187,14 @@ public class FloatingCursor extends FrameLayout implements
 		}
 	};
 
-	// SFOM: Start execution
+	// Single Finger: Start execution
 	void startMediaExecution() {
 		mExecutionTimerStarted = true;
 		mReadyToExecute = false;
-		handler.postDelayed(mExecutionTimer, 300);
+		handler.postDelayed(mExecutionTimer, 1000);
 	};
 
-	// SFOM: Stop execution
+	// Single Finger: Stop execution
 	void stopMediaExecution(boolean dragging) {
 		mExecutionTimerStarted = false;
 		mReadyToExecute = false;
@@ -1217,21 +1204,21 @@ public class FloatingCursor extends FrameLayout implements
 		}
 	};
 
-	// SFOM: Set timer for selection
+	// Single Finger: Set timer for selection
 	void setStartMediaSelection() {
 		if (!mSelectionTimerStarted) {
 			startMediaSelection();
 		}
 	};
 
-	// SFOM: Start selection
+	// Single Finger: Start selection
 	void startMediaSelection() {
 		mSelectionTimerStarted = true;
 		mReadyToSelect = false;
-		handler.postDelayed(mSelectionTimer, 1500);
+		handler.postDelayed(mSelectionTimer, 2000);
 	};
 
-	// SFOM: Stop selection
+	// Single Finger: Stop selection
 	void stopMediaSelection(boolean dragging) {
 		mSelectionTimerStarted = false;
 		mReadyToSelect = false;
@@ -1241,13 +1228,13 @@ public class FloatingCursor extends FrameLayout implements
 		}
 	};
 
-	// SFOM: Execution flags
+	// Single Finger: Execution flags
 	boolean mExecutionTimerStarted = false;
 	boolean mReadyToExecute = false;
-	// SFOM: Selection flags
+	// Single Finger: Selection flags
 	boolean mSelectionTimerStarted = false;
 	boolean mReadyToSelect = false;
-	// SFOM: Arms media cursors for execution. Sets mReadyToExecute on
+	// Single Finger: Arms media cursors for execution. Sets mReadyToExecute on
 	// onTouchUp().
 	Runnable mExecutionTimer = new Runnable() {
 		public void run() {			
@@ -1256,7 +1243,7 @@ public class FloatingCursor extends FrameLayout implements
 			mReadyToSelect = false;
 		}
 	};
-	// SFOM: Arms media cursors for selection. Sets mReadyToSelect on
+	// Single Finger: Arms media cursors for selection. Sets mReadyToSelect on
 	// onTouchUp().
 	Runnable mSelectionTimer = new Runnable() {
 		public void run() {			
@@ -1267,7 +1254,7 @@ public class FloatingCursor extends FrameLayout implements
 		}
 	};
 
-	// SFOM: When the cursor is moved on top of the same media the same cursor
+	// Single Finger: When the cursor is moved on top of the same media the same cursor
 	// remains.
 	private void persistCursors(boolean exe) {
 		
