@@ -432,7 +432,7 @@ public class BrowserActivity extends Activity implements
 		switch (colorId){
 			case 1: //red					
 				cWebView.invalidate();
-				cWebView.setCursorOuterColors(0xffFF2A00, 0xffFF2A00, 0xffFF2A00, 0xffFF2A00);
+				cWebView.setCursorOuterColors(0xffFF6A4D, 0xffFF6A4D, 0xffFF6A4D, 0xffFF6A4D);
 				cWebView.setCursorInnerColors(0xffFFCEC4, 0xffFFCEC4, 0xffFFCEC4, 0xffFFCEC4);				
 				break;
 			case 2: //blue			
