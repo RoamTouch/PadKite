@@ -28,6 +28,11 @@ public class SwifteeApplication extends Application{
 	public static final int CUSTOM_GESTURE = 8;
 	public static final int MAIL_GESTURE = 8;
 	
+	//Single or multi finger operations, true defaul. //SFOM 
+	private static boolean finger_mode = true;   
+	public static boolean getFingerMode() {return finger_mode; }
+    public static void setFingerMode(boolean mode) { finger_mode = mode; }   
+	
 	private DBConnector database;
 	
 	@Override

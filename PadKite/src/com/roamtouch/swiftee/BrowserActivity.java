@@ -350,14 +350,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			//webView.loadUrl("file:///android_asset/loadPage.html");
 			webView.loadUrl(SwifteeHelper.getHomepage());
 		}
-		
-		webView.setSelectionColor(0xAAb4d5fe);
-		webView.setSearchHighlightColor(0xAAb4d5fe);
-		
-		webView.setCursorOuterColors(0xff74b1fc, 0xff46b000, 0xff74b1fc, 0xff36c000);
-		webView.setCursorInnerColors(0xffa0c9fc, 0xff8cd900, 0xffa0c9fc, 0xff7ce900);
-		webView.setCursorPressedColors(0x80b4d5fe, 0x807ce900);
-		
+			
 		eventViewer= (EventViewerArea) findViewById(R.id.eventViewer);
 		eventViewer.setParent(this);
 		
@@ -1171,5 +1164,41 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 
 	    	}
 	 }; 
+	 
+	 /**
+	 * Sets the link ring color to blue, green and red
+	 * @param color
+	 */
+	public void setRingcolor(int colorId, WebView cWebView){		
+		
+		switch (colorId){
+			case 1: //red					
+				cWebView.invalidate();
+				cWebView.setCursorOuterColors(0xffFF6A4D, 0xffFF6A4D, 0xffFF6A4D, 0xffFF6A4D);
+				cWebView.setCursorInnerColors(0xffFFCEC4, 0xffFFCEC4, 0xffFFCEC4, 0xffFFCEC4);	
+				break;
+			case 2: //blue			
+				cWebView.invalidate();
+				cWebView.setSelectionColor(0xAAb4d5fe);
+				cWebView.setSearchHighlightColor(0xAAb4d5fe);	
+				cWebView.setCursorOuterColors(0xff0072FF, 0xff0072FF, 0xff0072FF, 0xff0072FF);
+				cWebView.setCursorInnerColors(0xffA3CCFF, 0xffA3CCFF, 0xffA3CCFF, 0xffA3CCFF);				
+				break;
+			case 3: //green				
+				cWebView.invalidate();
+				cWebView.setSelectionColor(0xAAD5B0);
+				cWebView.setSearchHighlightColor(0xAAD5AD);	
+				cWebView.setCursorOuterColors(0xff06A800, 0xff06A800, 0xff06A800, 0xff06A800);
+				cWebView.setCursorInnerColors(0xffA9FFA6, 0xffA9FFA6, 0xffA9FFA6, 0xffA9FFA6);	
+				break;
+		}
+	};	
 	
+	/*
+	webView.setSelectionColor(0xAAb4d5fe);
+	webView.setSearchHighlightColor(0xAAb4d5fe);		
+	webView.setCursorOuterColors(0xff74b1fc, 0xff46b000, 0xff74b1fc, 0xff36c000);
+	webView.setCursorInnerColors(0xffa0c9fc, 0xff8cd900, 0xffa0c9fc, 0xff7ce900);
+	webView.setCursorPressedColors(0x80b4d5fe, 0x807ce900);
+	*/
 }
