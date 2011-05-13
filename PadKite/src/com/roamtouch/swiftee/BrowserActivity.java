@@ -998,6 +998,51 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	        */
 		}
 	};
+
+	/**
+	 * Provides the windows size.
+	 * returns an array of coordinates.
+	 * User by FC scrollWebView(); 
+	 */
+	public int[] getDeviceWidthHeight(){
+			int dims[] = new int[2];	
+			Display display = getWindowManager().getDefaultDisplay();
+			dims[0] = display.getWidth();
+			dims[1] = display.getHeight();
+			return dims;
+	};	
+	/**
+	 * Return the cuadrant where the FC is located.
+	 * User by FC scrollWebView();
+	 */
+	public int[] getFCLocation(int xLoc, int yLoc, int w, int h){
+		int coords[] = new int[3];
+		int cX;
+		int cY;
+		if (xLoc > 0 && yLoc > 0) {
+			cX = w / 2 - xLoc;
+			cY = h / 2 - yLoc;
+			coords[0] = 1;	
+			coords[1] = cX;	
+			coords[2] = cY;	
+		} else if (xLoc < 0 && yLoc > 0) {
+			coords[0] = 2;
+			coords[1] = cX = w / 2 + xLoc;
+			coords[2] = cY = h / 2 - yLoc;			
+		} else if (xLoc > 0 && yLoc < 0) {		
+			coords[0] = 3;
+			coords[1] = w / 2 - xLoc;
+			coords[2] = h / 2 + yLoc;			
+		} else if (xLoc < 0 && yLoc < 0) {
+			coords[0] = 4;
+			coords[1] = w / 2 + xLoc;
+			coords[2] = h / 2 + yLoc;			
+		} else if (xLoc == 0 && yLoc == 0){
+			//CENTER
+		}		
+		return coords;
+	};
+	
 	
 	public void exitParkingMode() {
 		isInParkingMode = false;

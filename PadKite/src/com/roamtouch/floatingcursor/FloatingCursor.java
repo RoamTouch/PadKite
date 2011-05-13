@@ -82,11 +82,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	/**
 	 * Calculate the touching radius for FP 
 	 */
-		private final float RADIUS_DIP = 120; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
+		private final float RADIUS_DIP = 100; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
 		private final float scale = getContext().getResources().getDisplayMetrics().density;
 		private final int RADIUS = (int) (RADIUS_DIP * scale + 0.5f); //Converting to Pixel
 		private final int INNER_RADIUS = (int) (RADIUS*0.3f);
 		private final int FC_RADIUS = (int) (RADIUS*0.9f); //Converting to Pixel
+		
+		//Scroll speed 
+		private final int FC_SCROLL_SPEED = 35;
 
 	/**
 	 * 	FloatingCursor child views
@@ -558,6 +561,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			fcView.setRadius(RADIUS*1/2);
 			// Reset the cursor.
 			pointer.setImageResource(R.drawable.kite_cursor);
+			
 		}
 	
 		public void setWebView(WebView wv,boolean isFirst) {
@@ -2246,52 +2250,46 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 				// FF: This will not work ...
 				
-				int r = fcPointerView.getRadius();
+				int r = fcPointerView.getRadius();				
 				
-				
-				
-				if((fcX+r) > this.w)
-					scrollWebView(10, 0);
-				else if(X+r > this.w)
-					scrollWebView(10, 0);
-				
-				if((fcX-r) <= 0)
-					scrollWebView(-10, 0);
-				else if ((X-r) <= 0)
-					scrollWebView(-10, 0);
-				
-				if((fcY+r) > this.h)
-					scrollWebView(10, 1);
-				else if(Y+r > this.h)
-					scrollWebView(10, 1);
+				if ((fcX + r) > this.w-10)						
+					scrollWebView(FC_SCROLL_SPEED, 0, fcX, fcY);
+				else if (X + r > this.w-10)					
+					scrollWebView(FC_SCROLL_SPEED, 0, fcX, fcY);
 
-				if((fcY-(r)) <= 0)
-					scrollWebView(-10, 1);
-				else if ((Y-(r)) <= 0)
-					scrollWebView(-10, 1);
+				if ((fcX - r) <= 10)							
+					scrollWebView(-FC_SCROLL_SPEED, 0, fcX, fcY);
+				else if ((X - r) <= 10)
+					scrollWebView(-FC_SCROLL_SPEED, 0, fcX, fcY);
+
+				if ((fcY + r) > this.h-10)						
+					scrollWebView(FC_SCROLL_SPEED, 1, fcX, fcY);
+				else if (Y + r > this.h-10)
+					scrollWebView(FC_SCROLL_SPEED, 1, fcX, fcY);
+
+				if ((fcY - (r)) <= 10)						
+					scrollWebView(-FC_SCROLL_SPEED, 1, fcX, fcY);
+				else if ((Y - (r)) <= 10)
+					scrollWebView(-FC_SCROLL_SPEED, 1, fcX, fcY);
 			}
-			/*
+			
 			 
-			 if(action == MotionEvent.ACTION_POINTER_DOWN){
-				
-				stopHitTest(fcX,fcY,false);
-				startSelection(fcX, fcY);
-			}
-			if(action == MotionEvent.ACTION_POINTER_UP){
-				checkClickSelection(fcX, fcY);
-			}
-			
-			*/
+			/*
+			 * if(action == MotionEvent.ACTION_POINTER_DOWN){
+			 * 
+			 * stopHitTest(fcX,fcY,false); startSelection(fcX, fcY); } if(action ==
+			 * MotionEvent.ACTION_POINTER_UP){ checkClickSelection(fcX, fcY); }
+			 */
 			/* FC: Drag + Fling Support */
-			
-			/* If there is a second finger press, ignore */
-			//if (touchCount == 2)
-				//return false;
 
-			/*if (touchCount == 2)
-			{
-				Toast.makeText(mContext, "0: " + event.getX(0) + "," + event.getY(0) + "- 1: " +  event.getX(1) + "," + event.getY(1), Toast.LENGTH_SHORT).show();
-			}*/
+			/* If there is a second finger press, ignore */
+			// if (touchCount == 2)
+			// return false;
+			/*
+			 * if (touchCount == 2) { Toast.makeText(mContext, "0: " + event.getX(0)
+			 * + "," + event.getY(0) + "- 1: " + event.getX(1) + "," +
+			 * event.getY(1), Toast.LENGTH_SHORT).show(); }
+			 */
 			
 			
 			status = onInterceptTouchEventFC(event);
@@ -2428,43 +2426,98 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		/*
 		 * WebView scrolling with FloatingCursor
 		 */
-		public void scrollWebView(int value,int direction){
-		
-		/*
-		 * direction = 0 if web view scrolls along X axis
-		 * direction = 1 if web view scrolls along Y axis
-		 */
+		public void scrollWebView(int value, int direction, int _fcX, int _fcY) {
+			
+			stopHitTest(_fcX,_fcY,false);
+
+			/*
+			 * direction = 0 if web view scrolls along X axis direction = 1 if web
+			 * view scrolls along Y axis
+			 */
 			int sx = mWebView.getScrollX();
 			int sy = mWebView.getScrollY();
-
-			if(direction==0)
-			{
+			
+			final int xLoc = this.getScrollX();
+			final int yLoc = this.getScrollY();
+			
+			int dims[] = mParent.getDeviceWidthHeight();
+			int coords[] = mParent.getFCLocation(xLoc,yLoc,dims[0],dims[1]);	
+					
+			if (direction == 0) {
 				sx += value;
-				
-				if (mWebView.getContentWidth() <= this.getWidth() )
+
+				if (mWebView.getContentWidth() <= this.getWidth())
 					return;
-				
-				//Log.i("scrollX","sx,gCW,gSX,tgW"+sx+","+mWebView.getContentWidth() + "," + mWebView.getScrollX() + "," + "," + this.getWidth());
 				
 				if (sx >= mWebView.getContentWidth())
-					sx =  mWebView.getContentWidth();
+					sx = mWebView.getContentWidth();
 				if (sx < 0)
-					sx = 0;
-				mWebView.scrollTo(sx, sy);
-			}
-			else
-			{
-				if (mWebView.getContentHeight() <= this.getHeight() )
+					sx = 0;					
+				mWebView.scrollTo(sx, sy);				
+				showScrollCursor(coords[0], direction, coords[1], coords[2]);			
+			} else {
+				if (mWebView.getContentHeight() <= this.getHeight())
 					return;
-				
+
 				sy += value;
 				if (sy >= mWebView.getContentHeight())
 					sy = mWebView.getContentHeight();
 				if (sy < 0)
-					sy = 0;
-
+					sy = 0;			
+				
 				mWebView.scrollTo(sx, sy);
-			}
+				showScrollCursor(coords[0], direction, coords[1], coords[2]);		
+			}			
+			//TODO, the scrolling cursors are not applied per page moving but per scrollTo. 
+			//It will be better to show them on page movement listener rather than page to be moved.
+		}
+		
+		/**
+		 * Sets the proper drag cursor according to position and cuadrant. 
+		 * If distToX or distToY is smaller than 200 then shows diagonal.  
+		 * @param cuadrant
+		 * @param direction
+		 * @param distToX
+		 * @param distToY
+		 * FIXME, diagonal cursor shoudl be calculated with movement values rather than static distances.
+		 */
+		void showScrollCursor(int cuadrant, int direction, int distToX, int distToY){	
+			int cursorImage = 0;
+			if ( direction==1 && cuadrant==1 || direction==1 && cuadrant==2){
+				if ( distToX < 200 && distToY < 200){
+					if (cuadrant==1){
+						cursorImage = R.drawable.scroll_diag_uprleft_cursor;
+					} else {
+						cursorImage = R.drawable.scroll_diag_upright_cursor;
+					}	
+				} else {
+					cursorImage = R.drawable.scroll_up_cursor;
+				}		
+			} else if ( direction==1 && cuadrant==3 || direction==1 && cuadrant==4){
+				if ( distToX < 200 && distToY < 200){
+					if (cuadrant==3){
+						cursorImage = R.drawable.scroll_diag_downleft_cursor;
+					} else {					
+						cursorImage = R.drawable.scroll_diag_downright_cursor;
+					}	
+				} else {
+					cursorImage = R.drawable.scroll_down_cursor;
+				}						
+			} else if ( direction==0 && cuadrant==1 || direction==0 && cuadrant==3){
+				cursorImage = R.drawable.scroll_left_cursor;
+			} else if ( direction==0 && cuadrant==2 || direction==0 && cuadrant==4){
+				cursorImage = R.drawable.scroll_right_cursor;
+			}	
+			
+			if (isFCOutofBounds()){			
+				pointer.setImageResource(cursorImage);
+				/*if (SwifteeApplication.getFingerMode()){
+					stopMediaSelection(true);
+					stopMediaExecution(true);
+				}*/		
+			} else {
+				startHitTest(fcX, fcY);
+			}			
 		}
 	
 		public class WebClient extends WebChromeClient
