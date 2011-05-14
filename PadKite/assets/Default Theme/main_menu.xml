@@ -1,3 +1,7 @@
+<!--*************************************************************************** 
+**	Copyright (c) 2011, Roaming Keyboards LLC doing business as RoamTouch®	**	       
+**	All rights reserved.													**
+******************************************************************************-->
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
    		
    		<MenuButton android:button_image="backward_normal.png"
@@ -33,6 +37,10 @@
 					android:button_highlightImage="home_pressed.png"
 					android:button_function="homepage"/>  
 		
+		<MenuButton android:button_image="share_normal.png"
+					android:button_highlightImage="share_pressed.png"
+					android:button_function="share"/> 
+		
 		<MenuButton android:button_image="zoom_normal.png"
 					android:button_highlightImage="zoom_pressed.png"
                     android:button_function="zoom"/>
@@ -45,9 +53,9 @@
 					android:button_highlightImage="bookmark_edit_pressed.png"
                     android:button_function="bookmark"/>
 
-		<MenuButton android:button_image="help_normal.png"
-					android:button_highlightImage="help_pressed.png"
-                    android:button_function="help_online"/>
+		<MenuButton android:button_image="Finger_model_multi.png"
+					android:button_highlightImage="Finger_model_multi.png"
+                    android:button_function="finger_model"/>    	
 
    		<MenuButton android:button_image="settings_normal.png"
 					android:button_policy="keep"

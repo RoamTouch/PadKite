@@ -19,19 +19,21 @@ import android.os.Environment;
 
 public class SwifteeApplication extends Application{
 
+	// POSITION 0 = "Cursor Gestures"	
 	public static final int CURSOR_TEXT_GESTURE = 1;
 	public static final int CURSOR_LINK_GESTURE = 2;
 	public static final int CURSOR_IMAGE_GESTURE = 3;
 	public static final int CURSOR_NOTARGET_GESTURE = 4;
 	public static final int CURSOR_VIDEO_GESTURE = 5;
+	// POSITION 6 = "Circular Menu Gestures"	
 	public static final int BOOKMARK_GESTURE = 7;
-	public static final int CUSTOM_GESTURE = 8;
-	public static final int MAIL_GESTURE = 8;
+	public static final int SHARE_GESTURE = 8;
+	public static final int CUSTOM_GESTURE = 9;	
 	
 	//Single or multi finger operations, true defaul. //SFOM 
 	private static boolean finger_mode = true;   
 	public static boolean getFingerMode() {return finger_mode; }
-    public static void setFingerMode(boolean mode) { finger_mode = mode; }   
+    public static void setFingerMode(boolean mode) { finger_mode = mode; } 
 	
 	private DBConnector database;
 	
@@ -206,6 +208,11 @@ public class SwifteeApplication extends Application{
 			case BOOKMARK_GESTURE:
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.bookmarks);
 				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/bookmarks");
+				mLibrary.load();
+				break;
+			case SHARE_GESTURE:				
+				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.bookmarks);
+				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/share_gestures");
 				mLibrary.load();
 				break;
 		}		

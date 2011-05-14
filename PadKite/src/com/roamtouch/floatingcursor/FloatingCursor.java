@@ -1,6 +1,7 @@
 package com.roamtouch.floatingcursor;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 
 import org.metalev.multitouch.controller.MultiTouchController;
 import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCanvas;
@@ -21,6 +22,7 @@ import android.graphics.Region;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.text.ClipboardManager;
@@ -82,7 +84,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	/**
 	 * Calculate the touching radius for FP 
 	 */
-		private final float RADIUS_DIP = 100; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
+		private final float RADIUS_DIP = 110; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
 		private final float scale = getContext().getResources().getDisplayMetrics().density;
 		private final int RADIUS = (int) (RADIUS_DIP * scale + 0.5f); //Converting to Pixel
 		private final int INNER_RADIUS = (int) (RADIUS*0.3f);
@@ -124,6 +126,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 		static final int ANIMATED_SCROLL_GAP = 250;
 		static final float MAX_SCROLL_FACTOR = 0.5f;
+		private static final String FOCUS_NODE_HREF = null;
 	
 		private Scroller mScroller;
 	
@@ -499,7 +502,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			dbConnector = app.getDatabase();
 		}
         public String getCurrentURL(){ //JOSE USE TO SHARE PAGE
-        	return mWebView.getUrl();
+        	return mWebView.getUrl();        	
         }
         public String getCurrentTitle(){ //JOSE USE TO SHARE PAGE
         	return mWebView.getTitle();
@@ -1022,15 +1025,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 				case WebHitTestResult.SRC_ANCHOR_TYPE:
 				case WebHitTestResult.IMAGE_ANCHOR_TYPE: {
-					cType = 6;
+					cType = 6;		
 					resultType = WebHitTestResult.ANCHOR_TYPE;
 					cursorImage = R.drawable.link_cursor;
 					// String tooltip = mWebHitTestResult.getToolTip();
 					boolean contains;
 					contains = selectedLink.contains("padkite.local.contact");
 					if (contains){
-						String[] contactId = selectedLink.split("id=");
-						Log.v("CULO", ""+contactId[1]);
+						String[] contactId = selectedLink.split("id=");						
 					}			
 					
 					if (selectedLink == "")
@@ -1123,6 +1125,22 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				mWebHitTestResultIdentifer = identifier;
 			}	
 		};//end of moveHitTest
+		
+		
+		 /** 
+	     * Handle system messages here. 
+	     */ 
+		
+	    public void dispatchMessage(Message msg) { 
+	    	
+	    	String url = (String)msg.getData().get("url");
+	    	String title = (String)msg.getData().get("title");
+	    	Log.v("VER", "url: "+url);
+	    	Log.v("VER", "title: "+title);
+	    	
+	    	
+	       
+	    } 
 		
 		/**
 		 * SFOM If SINGLE_FINGER_OPERATION_MODE at SwifteeApplication is true the

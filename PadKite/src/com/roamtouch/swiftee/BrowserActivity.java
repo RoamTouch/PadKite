@@ -99,7 +99,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	private SelectionGestureView mSelectionGesture;
 
 	private FloatingCursor floatingCursor;
-	private EventViewerArea eventViewer;
+	public EventViewerArea eventViewer;
 	private GestureLibrary mLibrary;
 //	private TopBarArea mTopBarArea;
 	
