@@ -395,7 +395,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			pointer.setImageResource(R.drawable.kite_cursor);
 			pointer.setScaleType(ImageView.ScaleType.CENTER); 
 		
-			//pointer.setPadding(140, 140, 0, 0);
 			//pointer.scrollTo(-140, -140);
         
 			fcView = new FloatingCursorView(getContext());
@@ -431,8 +430,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			zoomView = new ZoomWebView(context);
 			zoomView.setFloatingCursor(this);
 			zoomView.setFCRadius(circRadius);
-			zoomView.setVisibility(INVISIBLE);
-			
+			zoomView.setVisibility(INVISIBLE);			
 
 			addView(fcView);
 			//addView(fcProgressBar);
@@ -442,6 +440,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			addView(fcSettingsMenu);
 			addView(fcWindowTabs);
 			addView(zoomView);
+			
 			
 			vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
 			
@@ -478,7 +477,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					}
 					else {
 						parkTimerStarted = true;
-						handler.postDelayed(this,2000);
+						handler.postDelayed(this,500); // Go parking mode timer faster  
 					}
 				}
 				
@@ -2135,7 +2134,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						return true;
 					}
 					
-					mHandleTouch = false; // FIXME: Change, do let user drag and fling menu
 				}
 				else if(isCircularZoomEnabled()){
 					zoomView.onTouchEvent(event);
@@ -2144,7 +2142,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				/*else if ((X < CircleX-r || X > CircleX+r || Y < CircleY-r || Y > CircleY+r) && mScroller.isFinished())*/
 				else if ((length >= (r*1.1f)) && mScroller.isFinished())
 				{		
-					fcView.setVisibility(View.INVISIBLE);
+					
+					//fcView.setVisibility(View.INVISIBLE); JOSE, allowing FC to stay visible while dragging. 
+					if(currentMenu.getVisibility() != View.VISIBLE){
+						handler.removeCallbacks(parkingRunnable);
+						handler.post(parkingRunnable);					
+					}
+					
+					
 					removeTouchPoint();
 					
 					mHandleTouch = false;

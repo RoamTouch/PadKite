@@ -900,8 +900,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		if(moveToParkingPosition) {	        
 			floatingCursor.stopFling();
 			
-			//UPPER LEFT CUADRANT - C1.	 
-	        if (xLoc > 0 && yLoc > 0){	
+			if ((xLoc > 0 && yLoc > 0)||(xLoc==0 && yLoc==0)) {	//UPPER LEFT CUADRANT - C1.	 
 	        	//Fisrt cuadrant vars
 	            final int c1X;        
 	            final int c1Y;
@@ -915,10 +914,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	        		//Log.v("","x is shorter, snap y");
 	        		floatingCursor.scrollTo(w/2, yLoc);
 	        	}
-	        }        
-	        
-	        //UPPER RIGHT CUADRANT - C2.	 
-	        if (xLoc < 0 && yLoc > 0){	        	
+	        } else if (xLoc < 0 && yLoc > 0){ //UPPER RIGHT CUADRANT - C2.        	        	
 	        	//Second cuadrant vars.
 	            final int c2X;        
 	            final int c2Y;
@@ -927,15 +923,14 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	        	c2Y = h/2 - yLoc;       		
         		if (c2X >= c2Y){ //y is shorter snap to x.
         			//Log.v("","y is shorter, snap x");	        			
-        			floatingCursor.scrollTo(xLoc, h/2);
+        			//floatingCursor.scrollTo(xLoc, h/2);
+        			animateDocking(xLoc, yLoc, xLoc, h/2);
         		} else if (c2X <= c2Y) { //x is shorter snap to y.
         			//Log.v("","x is shorter, snap y");
-        			floatingCursor.scrollTo(-w/2, yLoc);
+        			//floatingCursor.scrollTo(-w/2, yLoc);
+        			animateDocking(xLoc, yLoc, -w/2, yLoc);
         		}        		
-	        }
-	               			
-			//DOWN LEFT CUADRANT - C3.	 			
-			if (xLoc > 0 && yLoc < 0){
+	        } else if (xLoc > 0 && yLoc < 0){ //DOWN LEFT CUADRANT - C3.		
 				//Third cuadrant vars.
 	            final int c3X;        
 	            final int c3Y;
@@ -945,14 +940,13 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         		if (c3X >= c3Y){ //y is shorter snap to x.
         			//Log.v("","y is shorter, snap x");	
         			floatingCursor.scrollTo( xLoc, -h/2);
+        			//animateDocking(xLoc, -w/2, yLoc, -h/2);
         		} else if (c3X <= c3Y) { //x is shorter snap to x.
         			//Log.v("","x is shorter, snap y");
+        			//animateDocking(xLoc, -w/2, yLoc, yLoc);
         			floatingCursor.scrollTo( w/2, yLoc);
         		}
-			}    
-
-			//DOWN RIGHT CUADRANT - C4.	 			
-			if (xLoc < 0 && yLoc < 0){
+			} else if (xLoc < 0 && yLoc < 0){ //DOWN RIGHT CUADRANT - C4.		
 				//Fourth cuadrant vars.
 	            final int c4X;        
 	            final int c4Y;
@@ -961,36 +955,35 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	        	c4Y = h/2 + yLoc;        	
         		if (c4X >= c4Y){ //y is shorter snap to x.
         			//Log.v("","y is shorter, snap x");	
+        			//animateDocking(xLoc, xLoc, yLoc, -h/2);
         			floatingCursor.scrollTo( xLoc, -h/2);
         		} else if (c4X <= c4Y) { //x is shorter snap to x.
         			//Log.v("","x is shorter, snap y");
+        			//animateDocking(xLoc, -w/2, yLoc, yLoc);
         			floatingCursor.scrollTo( -w/2, yLoc);
         		}
 			}		
-
-			// TODO ANIMATE DOCKING here.		
-			/*
-			ta = new TranslateAnimation(0, w/2 - 50, 0, h/2 - 50);
-	        ta.setDuration((long) 1000);
-	        ta.setInterpolator(new AccelerateDecelerateInterpolator());
-	        ta.setAnimationListener(new AnimationListener(){
-	        	
-	        	public void onAnimationEnd(Animation arg0) {
-	        		floatingCursor.scrollTo( -w/2 + 50, -h/2 + 50);
-	     	   }
-	     	   
-	     	   public void onAnimationRepeat(Animation arg0) {
-	     		   //Do nothing
-	            }
-
-	            public void onAnimationStart(Animation arg0) {
-	            	//Do nothing
-	            }
-	        });
-	        floatingCursor.startAnimation(ta);
-	        */
 		}
 	};
+	
+	public void animateDocking(int xOr, int yOr, int xDe, int yDe){
+    	ta = new TranslateAnimation(xOr, yOr, xDe, yDe);
+    	ta.setFillAfter(true);
+        ta.setDuration((long) 1000);
+        ta.setInterpolator(new AccelerateDecelerateInterpolator());
+        /*ta.setAnimationListener(new AnimationListener(){
+	        public void onAnimationEnd(Animation arg0) {
+	        	//floatingCursor.scrollTo( -w/2 + 50, -h/2 + 50);
+	     	}
+	     	public void onAnimationRepeat(Animation arg0) {
+	     	//Do nothing
+	        }
+	        public void onAnimationStart(Animation arg0) {
+	        //Do nothing
+	        }
+        });*/
+        floatingCursor.startAnimation(ta);        
+    }
 
 	/**
 	 * Provides the windows size.
