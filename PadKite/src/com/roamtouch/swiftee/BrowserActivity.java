@@ -923,12 +923,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	        	c2Y = h/2 - yLoc;       		
         		if (c2X >= c2Y){ //y is shorter snap to x.
         			//Log.v("","y is shorter, snap x");	        			
-        			//floatingCursor.scrollTo(xLoc, h/2);
-        			animateDocking(xLoc, yLoc, xLoc, h/2);
+        			floatingCursor.scrollTo(xLoc, h/2);
+        			//animateDocking(xLoc, yLoc, xLoc, h/2);
         		} else if (c2X <= c2Y) { //x is shorter snap to y.
         			//Log.v("","x is shorter, snap y");
-        			//floatingCursor.scrollTo(-w/2, yLoc);
-        			animateDocking(xLoc, yLoc, -w/2, yLoc);
+        			floatingCursor.scrollTo(-w/2, yLoc);
+        			//animateDocking(xLoc, yLoc, -w/2, yLoc);
         		}        		
 	        } else if (xLoc > 0 && yLoc < 0){ //DOWN LEFT CUADRANT - C3.		
 				//Third cuadrant vars.
