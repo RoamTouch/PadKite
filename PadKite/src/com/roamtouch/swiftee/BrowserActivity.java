@@ -288,7 +288,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         
         }
         // Update remote content if needed.
-        Downloader.updateRemoteContentIfNeeded();
+        //Downloader.updateRemoteContentIfNeeded();
 
         // We may need a data tracker.
         if(TrackHelper.TRACKER_ENABLED) {
