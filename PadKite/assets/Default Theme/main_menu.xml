@@ -43,11 +43,7 @@
 		
 		<MenuButton android:button_image="zoom_normal.png"
 					android:button_highlightImage="zoom_pressed.png"
-                    android:button_function="zoom"/>
-
-		<MenuButton android:button_image="download_normal.png"
-					android:button_highlightImage="download_pressed.png"
-                    android:button_function="download"/>
+                    android:button_function="zoom"/>		
         		             
 		<MenuButton android:button_image="bookmark_edit_normal.png"
 					android:button_highlightImage="bookmark_edit_pressed.png"
