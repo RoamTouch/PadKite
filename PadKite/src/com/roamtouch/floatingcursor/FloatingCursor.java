@@ -1125,22 +1125,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}	
 		};//end of moveHitTest
 		
-		
-		 /** 
-	     * Handle system messages here. 
-	     */ 
-		
-	    public void dispatchMessage(Message msg) { 
-	    	
-	    	String url = (String)msg.getData().get("url");
-	    	String title = (String)msg.getData().get("title");
-	    	Log.v("VER", "url: "+url);
-	    	Log.v("VER", "title: "+title);
-	    	
-	    	
-	       
-	    } 
-		
 		/**
 		 * SFOM If SINGLE_FINGER_OPERATION_MODE at SwifteeApplication is true the
 		 * timers on execute are not enabled therefore the mouse has to be operated
@@ -1659,10 +1643,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			if(mReadyToExecute) {
 				if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 				{
-					eventViewer.setText("Executing link...");
+					//eventViewer.setText("Executing link...");
 					sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 					pointer.setImageResource(R.drawable.address_bar_cursor);
 					sendEvent(MotionEvent.ACTION_UP, fcX, fcY);
+					mParent.isWebLoadingInParkingMode=false; //if executing dont go parking mode landing type but aside
 				}
 				mReadyToExecute = false;
 				mExecutionTimerStarted = false;
@@ -2517,7 +2502,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
             }			
 		}
 
-		public void loadPage(String url){			
+		public void loadPage(String url){
 			mWebView.loadUrl(url);
 		}
 		

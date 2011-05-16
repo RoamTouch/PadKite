@@ -38,7 +38,12 @@ public class SwifteeApplication extends Application{
 	//Single or multi finger operations, true defaul. //SFOM 
 	private static boolean finger_mode = true;   
 	public static boolean getFingerMode() {return finger_mode; }
-    public static void setFingerMode(boolean mode) { finger_mode = mode; } 
+    public static void setFingerMode(boolean mode) { finger_mode = mode; }
+    
+  //Search parameter for landing page Twitter trends.
+	private static String twitter_search = "padkite";   
+	public static String getTwitterSearch() {return twitter_search; }
+    public static void getTwitterSearch(String search) { twitter_search = search; }
 	
 	private DBConnector database;
 	
@@ -59,7 +64,7 @@ public class SwifteeApplication extends Application{
 			copyBookmarksToSdcard();
 		}
 		
-		LandingPage.loadTrends();		
+		LandingPage.loadTwitterSearch(twitter_search);		
 		String landingString = LandingPage.getLandingPageString();			
 		try {
 			createLanding(landingString);

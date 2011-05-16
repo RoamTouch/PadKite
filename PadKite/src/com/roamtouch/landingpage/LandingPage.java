@@ -20,14 +20,15 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.roamtouch.landingpage.Result;
 import com.roamtouch.landingpage.NameResponse;
+import com.roamtouch.swiftee.SwifteeApplication;
 
 public class LandingPage {
 		
 	private static  String landing;
 	static ArrayList<String> twitter = new ArrayList<String>();
 	
-    public static void loadTrends(){
-    	String url = "http://search.twitter.com/search.json?q=javacodegeeks";
+    public static void loadTwitterSearch(String search){
+    	String url = "http://search.twitter.com/search.json?q="+search;
     	//String url = "http://search.twitter.com/search.json?q=josevigil";
         InputStream source = retrieveStream(url);        
         Gson gsonName = new Gson();        
@@ -39,17 +40,7 @@ public class LandingPage {
         	String ImageUrl = result.profileImageUrl;
         	String both = User+"|"+ImageUrl;       
         	twitter.add(both);
-
-        };      
-        /*Gson gsonImage = new Gson();       	
-        Object ia[] = NAMES.toArray();       	 
-    	for(int i=0; i<ia.length; i++){ 
-    		Reader imageReader = new InputStreamReader("http://api.twitter.com/1/users/profile_image/"+ia[i][0]+".json?size=mini");
-    		ImageResponse responseImage = gsonName.fromJson(imageReader, ImageResponse.class);
-    		NameResponse responseName = gsonName.fromJson(nameReader, NameResponse.class);         
-            List<Result> resultsName = responseName.results;        
-    	}*/	
-    	   
+        };   	   
     }
     
     private static InputStream retrieveStream(String url) {

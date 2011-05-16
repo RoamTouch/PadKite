@@ -88,6 +88,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	final public static boolean developerMode = false;
 	public boolean isInParkingMode = false;
+	public boolean isWebLoadingInParkingMode = true;
 	
 	final public static String BASE_PATH = "/sdcard/PadKite";
 	final public static String THEME_PATH = BASE_PATH + "/Default Theme";
@@ -124,6 +125,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 
 	// For data tracker
 	TrackHelper mTrackHelper;
+	
+	private boolean NEW_WINDOW = true;
 	
     public void closeDialog()
     {
@@ -245,7 +248,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     		enterParkingMode(true);
     	}
 		
-    	if(data!=null)
+    	if(data!=null)    		
 			floatingCursor.loadPage(data);
 	}
 
@@ -340,14 +343,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 		//webView.setDragTracker(tracker);	
 		webLayout.addView(webView);
-		//webView.loadUrl("http://padkite.com/start");
 		
 		String data = getIntent().getDataString();
 		if(data!=null) {
 			webView.loadUrl(data);
 		}
 		else {
-			//webView.loadUrl("file:///android_asset/loadPage.html");
 			webView.loadUrl(SwifteeHelper.getHomepage());
 		}
 			
@@ -654,8 +655,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		stopGesture();
 	}
 	
-	private void bookmarkGestures(String action){
-		
+	private void bookmarkGestures(String action){		
 		String url = appState.getDatabase().getBookmark(action);
 		if(url!= null && !url.equals("Gesture cancelled"))
 			floatingCursor.loadPage(url);
@@ -897,72 +897,82 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         final int xLoc = floatingCursor.getScrollX();        
         final int yLoc = floatingCursor.getScrollY();	     
                 
-		if(moveToParkingPosition) {	        
+		if(moveToParkingPosition) {        
 			floatingCursor.stopFling();
 			
-			if ((xLoc > 0 && yLoc > 0)||(xLoc==0 && yLoc==0)) {	//UPPER LEFT CUADRANT - C1.	 
-	        	//Fisrt cuadrant vars
-	            final int c1X;        
-	            final int c1Y;
-	            //Calculate distance to upper right corner. 
-	        	c1X = w/2 - xLoc;
-	        	c1Y = h/2 - yLoc;        	
-	        	if (c1X >= c1Y){ // y is shorter, snap y. 
-	        		//Log.v("","y is shorter, snap x");
-	        		floatingCursor.scrollTo(xLoc, h/2);
-	        	} else if (c1X <= c1Y) { // x is shorter snap to y.
-	        		//Log.v("","x is shorter, snap y");
-	        		floatingCursor.scrollTo(w/2, yLoc);
-	        	}
-	        } else if (xLoc < 0 && yLoc > 0){ //UPPER RIGHT CUADRANT - C2.        	        	
-	        	//Second cuadrant vars.
-	            final int c2X;        
-	            final int c2Y;
-	            //Calculate distance to upper right corner. 
-	        	c2X = w/2 + xLoc;
-	        	c2Y = h/2 - yLoc;       		
-        		if (c2X >= c2Y){ //y is shorter snap to x.
-        			//Log.v("","y is shorter, snap x");	        			
-        			floatingCursor.scrollTo(xLoc, h/2);
-        			//animateDocking(xLoc, yLoc, xLoc, h/2);
-        		} else if (c2X <= c2Y) { //x is shorter snap to y.
-        			//Log.v("","x is shorter, snap y");
-        			floatingCursor.scrollTo(-w/2, yLoc);
-        			//animateDocking(xLoc, yLoc, -w/2, yLoc);
-        		}        		
-	        } else if (xLoc > 0 && yLoc < 0){ //DOWN LEFT CUADRANT - C3.		
-				//Third cuadrant vars.
-	            final int c3X;        
-	            final int c3Y;
-	            //Calculate distance to upper right corner. 
-	        	c3X = w/2 - xLoc;
-	        	c3Y = h/2 + yLoc;       		
-        		if (c3X >= c3Y){ //y is shorter snap to x.
-        			//Log.v("","y is shorter, snap x");	
-        			floatingCursor.scrollTo( xLoc, -h/2);
-        			//animateDocking(xLoc, -w/2, yLoc, -h/2);
-        		} else if (c3X <= c3Y) { //x is shorter snap to x.
-        			//Log.v("","x is shorter, snap y");
-        			//animateDocking(xLoc, -w/2, yLoc, yLoc);
-        			floatingCursor.scrollTo( w/2, yLoc);
-        		}
-			} else if (xLoc < 0 && yLoc < 0){ //DOWN RIGHT CUADRANT - C4.		
-				//Fourth cuadrant vars.
-	            final int c4X;        
-	            final int c4Y;
-	            //Calculate distance to upper right corner. 
-	        	c4X = w/2 + xLoc;
-	        	c4Y = h/2 + yLoc;        	
-        		if (c4X >= c4Y){ //y is shorter snap to x.
-        			//Log.v("","y is shorter, snap x");	
-        			//animateDocking(xLoc, xLoc, yLoc, -h/2);
-        			floatingCursor.scrollTo( xLoc, -h/2);
-        		} else if (c4X <= c4Y) { //x is shorter snap to x.
-        			//Log.v("","x is shorter, snap y");
-        			//animateDocking(xLoc, -w/2, yLoc, yLoc);
-        			floatingCursor.scrollTo( -w/2, yLoc);
-        		}
-			}		
+			String currentPage = webView.getUrl();
+			String landingPage = SwifteeHelper.getHomepage();
+			Log.v("VAMOS", "isWebLoadingInParkingMode: "+isWebLoadingInParkingMode);
+			if (currentPage.equals(landingPage) && isWebLoadingInParkingMode==true){				
+				floatingCursor.scrollTo(w/4, h/3);
+			} else {			
+				if ((xLoc > 0 && yLoc > 0)||(xLoc==0 && yLoc==0)) {	//UPPER LEFT CUADRANT - C1.	 
+		        	//Fisrt cuadrant vars
+		            final int c1X;        
+		            final int c1Y;
+		            //Calculate distance to upper right corner. 
+		        	c1X = w/2 - xLoc;
+		        	c1Y = h/2 - yLoc;        	
+		        	if (c1X >= c1Y){ // y is shorter, snap y. 
+		        		//Log.v("","y is shorter, snap x");
+		        		floatingCursor.scrollTo(xLoc, h/2);
+		        	} else if (c1X <= c1Y) { // x is shorter snap to y.
+		        		//Log.v("","x is shorter, snap y");
+		        		floatingCursor.scrollTo(w/2, yLoc);
+		        	}
+		        } else if (xLoc < 0 && yLoc > 0){ //UPPER RIGHT CUADRANT - C2.        	        	
+		        	//Second cuadrant vars.
+		            final int c2X;        
+		            final int c2Y;
+		            //Calculate distance to upper right corner. 
+		        	c2X = w/2 + xLoc;
+		        	c2Y = h/2 - yLoc;       		
+	        		if (c2X >= c2Y){ //y is shorter snap to x.
+	        			//Log.v("","y is shorter, snap x");	        			
+	        			floatingCursor.scrollTo(xLoc, h/2);
+	        			//animateDocking(xLoc, yLoc, xLoc, h/2);
+	        		} else if (c2X <= c2Y) { //x is shorter snap to y.
+	        			//Log.v("","x is shorter, snap y");
+	        			floatingCursor.scrollTo(-w/2, yLoc);
+	        			//animateDocking(xLoc, yLoc, -w/2, yLoc);
+	        		}        		
+		        } else if (xLoc > 0 && yLoc < 0){ //DOWN LEFT CUADRANT - C3.		
+					//Third cuadrant vars.
+		            final int c3X;        
+		            final int c3Y;
+		            //Calculate distance to upper right corner. 
+		        	c3X = w/2 - xLoc;
+		        	c3Y = h/2 + yLoc;       		
+	        		if (c3X >= c3Y){ //y is shorter snap to x.
+	        			//Log.v("","y is shorter, snap x");	
+	        			floatingCursor.scrollTo( xLoc, -h/2);
+	        			//animateDocking(xLoc, -w/2, yLoc, -h/2);
+	        		} else if (c3X <= c3Y) { //x is shorter snap to x.
+	        			//Log.v("","x is shorter, snap y");
+	        			//animateDocking(xLoc, -w/2, yLoc, yLoc);
+	        			floatingCursor.scrollTo( w/2, yLoc);
+	        		}
+				} else if (xLoc < 0 && yLoc < 0){ //DOWN RIGHT CUADRANT - C4.		
+					//Fourth cuadrant vars.
+		            final int c4X;        
+		            final int c4Y;
+		            //Calculate distance to upper right corner. 
+		        	c4X = w/2 + xLoc;
+		        	c4Y = h/2 + yLoc;        	
+	        		if (c4X >= c4Y){ //y is shorter snap to x.
+	        			//Log.v("","y is shorter, snap x");	
+	        			//animateDocking(xLoc, xLoc, yLoc, -h/2);
+	        			floatingCursor.scrollTo( xLoc, -h/2);
+	        		} else if (c4X <= c4Y) { //x is shorter snap to x.
+	        			//Log.v("","x is shorter, snap y");
+	        			//animateDocking(xLoc, -w/2, yLoc, yLoc);
+	        			floatingCursor.scrollTo( -w/2, yLoc);
+	        		}
+				}		
+			}
+			if (isWebLoadingInParkingMode==false){
+				isWebLoadingInParkingMode=true;
+			}
 		}
 	};
 	
