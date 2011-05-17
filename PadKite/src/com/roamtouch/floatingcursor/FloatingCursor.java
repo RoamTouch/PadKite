@@ -126,8 +126,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 		static final int ANIMATED_SCROLL_GAP = 250;
 		static final float MAX_SCROLL_FACTOR = 0.5f;
-		private static final String FOCUS_NODE_HREF = null;
-	
+		
 		private Scroller mScroller;
 	
     /**
@@ -176,6 +175,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	 */
 		private Vibrator vibrator;
 		
+		// Message Ids
+	    private static final int FOCUS_NODE_HREF         = 102;
+ 
+	    
 		private void initScrollView() {
 			mScroller = new Scroller(mContext);
 			setFocusable(true);
@@ -333,7 +336,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
                 if ((Math.abs(initialVelocityY) > mMinimumVelocity) || (Math.abs(initialVelocityX) > mMinimumVelocity)) {
                 	fling(-initialVelocityX, -initialVelocityY);
                 }
-
+                
                 if (mVelocityTracker != null) {
                     mVelocityTracker.recycle();
                     mVelocityTracker = null;
@@ -966,8 +969,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				int identifier = mWebHitTestResult.getIdentifier();
 				selectedLink = mWebHitTestResult.getExtra();
 				
-				Log.v("Bridge", "HitTest Id: "+identifier); 
+				//Log.v("Bridge", "HitTest Id: "+identifier);
 				
+				 //final HashMap hrefMap = new HashMap();
+	             //   hrefMap.put("webview", mWebView);
+	             final Message msg = mHandler.obtainMessage(
+	                        FOCUS_NODE_HREF, 0, 0, 0);
+	                mWebView.requestFocusNodeHref(msg);
+	                				
 				int cursorImage = 0; 
 
 				// Single Finger: reset timers on change identifier.
@@ -1125,6 +1134,25 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				mWebHitTestResultIdentifer = identifier;
 			}	
 		};//end of moveHitTest
+		
+		
+		private Handler mHandler = new Handler() {
+			
+	        public void handleMessage(Message msg) {
+	            switch (msg.what) {
+	                case FOCUS_NODE_HREF:
+	                {
+	                	String url = (String) msg.getData().get("url");	                	
+	                    if (url == null || url.length() == 0) {
+	                        break;
+	                    }
+	                    String title = (String) msg.getData().get("title");
+	                    Log.v("EXTRA", "title: "+title+" url: "+url);
+	                                    
+	                }	               
+	            }
+	        }
+	    };
 		
 		/**
 		 * SFOM If SINGLE_FINGER_OPERATION_MODE at SwifteeApplication is true the
@@ -1456,6 +1484,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 		public void onLongTouch() 
 		{			
+			
 			if(mWebHitTestResult == null)
 				return;
 			if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE)
@@ -1661,7 +1690,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			if (mReadyToSelect){
 				if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
 				{		
-					//JOSESELECT
 					mParent.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);					
 					mParent.startGesture(true);										
 				}
@@ -2995,6 +3023,26 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	            final String currentWeb = "javascript:"
 				+ "pBridge.currentPage(location.href);";	
 		        view.loadUrl(currentWeb);   
+		        
+		        
+		        /*final String snippet = "javascript:"
+				+ "function whereInWorld(x,y) {"
+				+ "var obj = { \"type\": null, \"content\": null };"
+				+ "var elem = document.elementFromPoint(x,y);"					
+				+ "obj.type = elem.tagName;"
+				+ "if (elem.tagName == \"IMG\")"
+				+ "obj = {\"type\": \"image\", \"content\": elem.src };"
+				+ "else if (elem.tagName == \"INPUT\")"
+				+ "obj = {\"type\": \"input\", \"content\": \"XYZ\" };"
+				+ "else if (elem.tagName == \"P\" || elem.tagName == \"DIV\")"
+				+ "{"
+				+ "var html = elem.innerHTML;"
+				+ "var newh = \"<span>\" + html.replace(/[ \\n]/g,\"</span> <span>\") + \"</span>\";"
+				+ "elem.innerHTML=newh;"
+				+ "var newElem = document.elementFromPoint(x,y);"
+				+ "obj.type=\"text\";" + "obj.content = newElem.innerHTML;"
+				+ "elem.innerHTML=html;" + "}" + "if (obj.content != null)"
+				+ "pBridge.type(obj.type, obj.content);" + "}";*/
 	            
 			}
 			
