@@ -15,17 +15,20 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.roamtouch.landingpage.Result;
 import com.roamtouch.landingpage.NameResponse;
-import com.roamtouch.swiftee.SwifteeApplication;
+import com.roamtouch.view.WebPage;
 
 public class LandingPage {
 		
 	private static  String landing;
 	static ArrayList<String> twitter = new ArrayList<String>();
+	static ArrayList<String> popUrl = new ArrayList<String>();
+	static ArrayList<String> history = new ArrayList<String>();
 	
     public static void loadTwitterSearch(String search){
     	String url = "http://search.twitter.com/search.json?q="+search;
@@ -41,35 +44,32 @@ public class LandingPage {
         	String both = User+"|"+ImageUrl;       
         	twitter.add(both);
         };   	   
+    }       
+    
+    public static void loadLandingPageHistroy(Context context){
+    	String history = WebPage.getLandingPageHistory(context);
+    	Log.v("HISTORY", "HT: "+history);
+    	
     }
     
-    private static InputStream retrieveStream(String url) {
-    	
-    	DefaultHttpClient client = new DefaultHttpClient(); 
-        
-        HttpGet getRequest = new HttpGet(url);
-          
-        try {
-           
+    private static InputStream retrieveStream(String url) {    	
+    	DefaultHttpClient client = new DefaultHttpClient();         
+        HttpGet getRequest = new HttpGet(url);          
+        try {           
            HttpResponse getResponse = client.execute(getRequest);
-           final int statusCode = getResponse.getStatusLine().getStatusCode();
-           
+           final int statusCode = getResponse.getStatusLine().getStatusCode();           
            if (statusCode != HttpStatus.SC_OK) { 
               //Log.w(getClass().getSimpleName(), "Error " + statusCode + " for URL " + url); 
               return null;
            }
-
            HttpEntity getResponseEntity = getResponse.getEntity();
-           return getResponseEntity.getContent();
-           
+           return getResponseEntity.getContent();           
         } 
         catch (IOException e) {
            getRequest.abort();
            //Log.w(getClass().getSimpleName(), "Error for URL " + url, e);
-        }
-        
-        return null;
-        
+        }        
+        return null;        
      }
 
 	public static String getLandingPageString() {	
@@ -98,7 +98,7 @@ public class LandingPage {
 			+"            	window.document.location.href=theUrl;"
 			+"    }"
 			+"	return false;"
-			+"}"
+			+"}"			
 			+"</script>"
 			+"<style>"
 			+"body {"
@@ -146,7 +146,7 @@ public class LandingPage {
 			+"}"
 			+"</style>"
 			+"</head>"
-			+"<body>"
+			+"<body onLoad=\"pBridge.landingIsLoaded(true)\">"
 			+"<br />"
 			+"<div>"
 			+"  <div class=\"logo\" style=\"text-align:right\"><a href=\"http://padkite.com/start\"> <img src=\"http://padkite.com/app/padkite-brand.gif\" alt=\"PadKite Logo\" width=\"125\" height=\"61\" border=\"0\" /></a>"

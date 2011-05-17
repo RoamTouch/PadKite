@@ -561,6 +561,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			// Reset the cursor.
 			pointer.setImageResource(R.drawable.kite_cursor);
 			
+			
 		}
 	
 		public void setWebView(WebView wv,boolean isFirst) {
@@ -1647,7 +1648,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 					pointer.setImageResource(R.drawable.address_bar_cursor);
 					sendEvent(MotionEvent.ACTION_UP, fcX, fcY);
-					mParent.isWebLoadingInParkingMode=false; //if executing dont go parking mode landing type but aside
+					mParent.isLanding=false; //if executing don't go parking mode landing type but aside
 				}
 				mReadyToExecute = false;
 				mExecutionTimerStarted = false;
@@ -1991,6 +1992,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 
 			//Log.d("dispatchTouchEventFC", "X,Y,action" + X + "," + Y + "," + action);
+			
+			//Set X,Y for JavaScript snippet.
+			mWebView.loadUrl("javascript:whereInWorld("+event.getX()+","+event.getY()+")");
 
 			if (mMoveFrozen)
 			{
@@ -2932,7 +2936,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			@Override
 			public void doUpdateVisitedHistory (WebView view, String url, boolean isReload){
 				if(!isReload && !url.startsWith("data:text/html") && !url.startsWith("file:///android_asset/")){
-//					Log.d("---History--------", "url = "+url+"  Title ="+ view.getTitle());
+					Log.d("---History--------", "url = "+url+"  Title ="+ view.getTitle());
 					dbConnector.addToHistory(System.currentTimeMillis()+"", url, view.getTitle(), 1);
 				}
 			}
@@ -2985,7 +2989,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	            	}
 					WebPage page = new WebPage();
 					loadData(page.getDownloadHistory(mParent, url, start));
-	            }
+	            }	   
+	            
+	            //Send Javascript for proxy bridge to identify page. webview.
+	            final String currentWeb = "javascript:"
+				+ "pBridge.currentPage(location.href);";	
+		        view.loadUrl(currentWeb);   
+	            
 			}
 			
 			public Bitmap getCircleBitmap(WebView view){

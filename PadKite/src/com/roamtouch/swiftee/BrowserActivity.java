@@ -25,6 +25,7 @@ import org.apache.http.protocol.HTTP;
 
 import roamtouch.webkit.CookieManager;
 import roamtouch.webkit.CookieSyncManager;
+import roamtouch.webkit.WebSettings;
 import roamtouch.webkit.WebView;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -88,7 +89,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	final public static boolean developerMode = false;
 	public boolean isInParkingMode = false;
-	public boolean isWebLoadingInParkingMode = true;
+	public boolean isLanding = true;
 	
 	final public static String BASE_PATH = "/sdcard/PadKite";
 	final public static String THEME_PATH = BASE_PATH + "/Default Theme";
@@ -102,7 +103,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	private FloatingCursor floatingCursor;
 	public EventViewerArea eventViewer;
 	private GestureLibrary mLibrary;
-//	private TopBarArea mTopBarArea;
+	//	private TopBarArea mTopBarArea;
 	
 	private FrameLayout webLayout;
 	private SwifteeGestureView mGestures;
@@ -126,7 +127,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	// For data tracker
 	TrackHelper mTrackHelper;
 	
-	private boolean NEW_WINDOW = true;
+	private boolean landingLoaded=false;
+	private String currentPageBridge;
 	
     public void closeDialog()
     {
@@ -343,6 +345,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 		//webView.setDragTracker(tracker);	
 		webLayout.addView(webView);
+		
+		//JavaScript ProxyBridge
+		ProxyBridge pBridge = new ProxyBridge();
+		webView.addJavascriptInterface(pBridge, "pBridge");
+		WebSettings wSet = webView.getSettings();
+		wSet.setJavaScriptEnabled(true);	
 		
 		String data = getIntent().getDataString();
 		if(data!=null) {
@@ -885,7 +893,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	 */
 	public void enterParkingMode(boolean moveToParkingPosition) {
 		
-		isInParkingMode = true;
+		isInParkingMode = true;		
 		
 		//Shrink to a half the size
 		floatingCursor.enterParkingMode();		
@@ -897,14 +905,15 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         final int xLoc = floatingCursor.getScrollX();        
         final int yLoc = floatingCursor.getScrollY();	     
                 
-		if(moveToParkingPosition) {        
-			floatingCursor.stopFling();
+		if(moveToParkingPosition) {   
 			
-			String currentPage = webView.getUrl();
-			String landingPage = SwifteeHelper.getHomepage();
-			Log.v("VAMOS", "isWebLoadingInParkingMode: "+isWebLoadingInParkingMode);
-			if (currentPage.equals(landingPage) && isWebLoadingInParkingMode==true){				
-				floatingCursor.scrollTo(w/4, h/3);
+			floatingCursor.stopFling();	
+			
+			Log.v("CACA", "CP: "+currentPageBridge);
+			
+			eventViewer.setText("l: "+currentPageBridge);
+			if ( isLanding == true && landingLoaded == true ){
+				floatingCursor.scrollTo(w/4, h/3);					
 			} else {			
 				if ((xLoc > 0 && yLoc > 0)||(xLoc==0 && yLoc==0)) {	//UPPER LEFT CUADRANT - C1.	 
 		        	//Fisrt cuadrant vars
@@ -969,10 +978,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	        			floatingCursor.scrollTo( -w/2, yLoc);
 	        		}
 				}		
-			}
-			if (isWebLoadingInParkingMode==false){
-				isWebLoadingInParkingMode=true;
-			}
+			}		
 		}
 	};
 	
@@ -1196,12 +1202,28 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 				break;
 		}
 	};	
-	
-	/*
-	webView.setSelectionColor(0xAAb4d5fe);
-	webView.setSearchHighlightColor(0xAAb4d5fe);		
-	webView.setCursorOuterColors(0xff74b1fc, 0xff46b000, 0xff74b1fc, 0xff36c000);
-	webView.setCursorInnerColors(0xffa0c9fc, 0xff8cd900, 0xffa0c9fc, 0xff7ce900);
-	webView.setCursorPressedColors(0x80b4d5fe, 0x807ce900);
-	*/
+	/**
+	 * JScript Bridge 
+	 * On onPageFinished at FloatingCursor a Java script snippet is loaded. 
+	 * Also on FloatingCursor set the snippet cords mWebView.loadUrl("javascript:whereInWorld("+event.getX()+","+event.getY()+")");		
+	 */
+	public class ProxyBridge {	
+		
+		public void type(final String type, final String content, final String note, int id) {			
+			//HERE do something with content.}}			
+			Log.v("Bridge", "Type: "+type+" Content: "+content+" Note: "+note+" Id: "+id); 	
+			Log.v("Bridge", "--------------------------------");			
+		}	
+		
+		public void landingIsLoaded(boolean loaded){
+			//Log.v("CACA", "loaded: "+ loaded);
+			landingLoaded=loaded;
+		}
+		
+		public void currentPage(String url){
+			//Log.v("CACA", "url: "+ url);
+			currentPageBridge=url;
+		}
+	};
+
 }
