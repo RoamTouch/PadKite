@@ -1,5 +1,7 @@
 package com.roamtouch.database;
 
+import com.roamtouch.swiftee.SwifteeHelper;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -209,13 +211,16 @@ public class DBConnector {
 		 * @param type 0 for browser history, 1 for down-load history and 2 for event history
 		 */
 		public void addToHistory(String timestamp,String url,String title,int type){
-			try
-			{
-				mDatabase.execSQL("INSERT INTO padkite_history(timestamp,url,title,type) VALUES('"+timestamp+"','"+url+"','"+title+"',"+type+")");			
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
+			//Log.v("HISTORY", "url: "+url+" HOME_PAGE_PATH : "+SwifteeHelper.HOME_PAGE_PATH);
+			if (!url.equals(SwifteeHelper.HOME_PAGE_PATH)){			
+				try
+				{
+					mDatabase.execSQL("INSERT INTO padkite_history(timestamp,url,title,type) VALUES('"+timestamp+"','"+url+"','"+title+"',"+type+")");			
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 		
