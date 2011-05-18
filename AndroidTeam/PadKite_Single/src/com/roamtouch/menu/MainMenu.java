@@ -40,8 +40,7 @@ enum MainMenuFunctions {
 	windows,
 	share,
 	custom_gesture,
-	history,
-	download,
+	history,	
 	close,
 	new_window,
 	bookmark,
@@ -177,11 +176,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			//Custom Gesture	
 			case custom_gesture:
 				mFloatingCursor.setEventText("Custom and Bookmark Gestures");
-				break;	
-
-			case download:
-				mFloatingCursor.setEventText("Download");
-				break;	
+				break;				
 
 			case forward:
 				mFloatingCursor.setEventText("Forward");
@@ -297,16 +292,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				this.setVisibility(INVISIBLE);
 				mParent.setGestureType(SwifteeApplication.BOOKMARK_GESTURE);
 				mParent.startGesture(false);
-				break;
-				
-			case download:
-				//Intent i = new Intent(mParent,WebPage.class);
-				//i.putExtra("webUrl", "http://www.padkite.com/downloads");
-				//mParent.startActivity(i);
-				mFloatingCursor.loadPage("file:///android_asset/Web Pages/download.html");
-				//WebPage page = new WebPage();
-				//mFloatingCursor.loadData(page.getDownLoadHistory(mParent));
-				break;
+				break;			
 			
 			case bookmark:
 				Intent i = new Intent(mParent,GestureRecorder.class);

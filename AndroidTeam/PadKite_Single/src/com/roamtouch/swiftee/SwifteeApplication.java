@@ -84,8 +84,7 @@ public class SwifteeApplication extends Application {
 			    }
 			} catch (IOException e) {
 			    Log.v("TAG", "Could not write file " + e.getMessage());
-			}
-		
+			}	
 	  }
 	
 	public boolean isSdCardReady(){
@@ -118,7 +117,7 @@ public class SwifteeApplication extends Application {
 	
 	public void copyHomepagetoSdcard(boolean force){
 		try{
-			String arr[] = {"loadPage.html", "content.html"};
+			String arr[] = {"loadPage.html"};
 			
 			int count = arr.length;
 

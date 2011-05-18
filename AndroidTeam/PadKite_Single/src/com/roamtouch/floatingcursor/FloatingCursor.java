@@ -2944,6 +2944,9 @@ public class FloatingCursor extends FrameLayout implements
 				+ "pBridge.type(content, link, domain, id);" + "}";
 
 			view.loadUrl(snippet);
+			
+		
+			view.loadUrl(snippet);
 		};
 
 		public Bitmap getCircleBitmap(WebView view) {
