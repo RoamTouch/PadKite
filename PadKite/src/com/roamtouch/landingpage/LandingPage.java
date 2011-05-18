@@ -47,7 +47,7 @@ public class LandingPage {
     }       
     
     public static void loadLandingPageHistroy(Context context){
-    	String history = WebPage.getLandingPageHistory(context);
+    	//String history = WebPage.getLandingPageHistory(context);
     	Log.v("HISTORY", "HT: "+history);
     	
     }

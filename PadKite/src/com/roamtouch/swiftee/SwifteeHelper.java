@@ -5,8 +5,8 @@ import android.os.Environment;
 
 public class SwifteeHelper {
 	
-	private static String HOME_PAGE_PATH;
-	private static final String HOME_PAGE = "loadPage.html";
+	public static String HOME_PAGE_PATH;
+	public static final String HOME_PAGE = "loadPage.html";
 	
 	// A unique method to get homepage.
 	public static String getHomepage() {
