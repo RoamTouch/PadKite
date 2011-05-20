@@ -147,6 +147,14 @@ public class GestureActions {
     	intent.putExtra("description", mSelection);
     	mParent.startActivity(intent);
 	}
+	
+	public void sms()
+	{
+    	Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+		sendIntent.putExtra("sms_body", mSelection); 
+		sendIntent.setType("vnd.android-dir/mms-sms");
+		mParent.startActivity(sendIntent);
+	}
 
 	public void oldFacebook(String accessToken, long accessExpires)
 	{
@@ -272,8 +280,7 @@ public class GestureActions {
 	
 	public void openLink(FloatingCursor floatingCursor)
 	{
-		
-    	floatingCursor.addNewWindow(true);
+		floatingCursor.addNewWindow(true);
 	}
 	
 	public void send()

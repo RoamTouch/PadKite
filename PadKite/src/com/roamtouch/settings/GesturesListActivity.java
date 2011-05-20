@@ -78,7 +78,7 @@ public class GesturesListActivity extends Activity{
 				tv.setText("Bookmark gestures");
 				break;
 			case 8:
-				tv.setText("Custom gestures");
+				tv.setText("Share gestures");
 				break;
 			
 			}

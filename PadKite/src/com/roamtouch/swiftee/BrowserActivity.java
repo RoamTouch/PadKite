@@ -485,7 +485,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 		mGestures.setEnabled(true);
 		if(sharedPreferences.getBoolean("enable_tutor", true))
-			mTutor.setVisibility(View.VISIBLE);
+			mTutor.setVisibility(View.VISIBLE);	
 	}
     
     public void cancelGesture(boolean show)
@@ -606,11 +606,15 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		}
         else if ("Email".equals(action) || "Mail".equals(action))
         {
-			eventViewer.setText("M (eMail) gesture done");
+			eventViewer.setText("@ (eMail) gesture done");
 			actions.email();
         }
+        else if ("SMS".equals(action) || "SMS".equals(action))
+        {
+			eventViewer.setText("M (SMS) gesture done");
+			actions.sms();
+        }
         else if("Calendar".equals(action)){
-
 			actions.calendar();
         }
         else if("Facebook".equals(action)){
@@ -657,6 +661,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         else if("Copy".equals(action)){
 			actions.copy();
         }
+        else if("SMS".equals(action)){
+			actions.sms();
+        }
         else {
 			eventViewer.setText("Unrecognized gesture: " + action);
         }
@@ -679,10 +686,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		ArrayList<GesturePoint> points =generateGesturePoints(strokes.get(0).points);
     //    ArrayList<GesturePoint> points = strokes.get(0).getGesturePoints();
 		     
-		if (currentGestureLibrary == SwifteeApplication.BOOKMARK_GESTURE)
+		if (currentGestureLibrary == SwifteeApplication.BOOKMARK_GESTURE){
 	        eventViewer.setText("Detected " + action + " gesture.");
-		else
+		} else {
 			eventViewer.setText("Detected " + convertGestureItem(action) + " gesture.");
+			cursorGestures(action);
+		}
         
         mGestures.drawGesture(points,action);
                         // mGestures.setGesture(gesture);
@@ -907,9 +916,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
                 
 		if(moveToParkingPosition) {   
 			
-			floatingCursor.stopFling();	
-			
-			Log.v("CACA", "CP: "+currentPageBridge);
+			floatingCursor.stopFling();
 			
 			eventViewer.setText("l: "+currentPageBridge);
 			if ( isLanding == true && landingLoaded == true ){

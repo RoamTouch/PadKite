@@ -24,6 +24,7 @@
     	
     	<string-array name="other_gestures_array">     	
         	<item>Bookmark Gestures</item>
+        	<item>Share Gestures</item>
         	<item>Custom Gestures</item>
         </string-array>
     
