@@ -690,7 +690,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	        eventViewer.setText("Detected " + action + " gesture.");
 		} else {
 			eventViewer.setText("Detected " + convertGestureItem(action) + " gesture.");
-			cursorGestures(action);
+			//cursorGestures(action);
 		}
         
         mGestures.drawGesture(points,action);
