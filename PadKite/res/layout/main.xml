@@ -51,14 +51,10 @@
 
 </com.roamtouch.view.SwifteeOverlayView>
 
-<LinearLayout  android:layout_width="fill_parent" android:layout_height="fill_parent" 
-			 android:gravity="center_horizontal" 
-			 android:orientation="vertical">
-	
-     <LinearLayout  
+<LinearLayout  
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    android:layout_gravity="top" 
+    android:layout_gravity="bottom" 
     android:gravity="center"
     android:orientation="vertical"
 	>
@@ -110,5 +106,4 @@
     			 />	-->
     </LinearLayout>
     
-</LinearLayout>
 </FrameLayout>
