@@ -87,11 +87,14 @@ public class SwifteeApplication extends Application{
 	}
 	
 	public static void remoteConnections(){		
-		LandingPage.loadRemoteData(1, "urlAssets.json");
-		LandingPage.loadRemoteData(2, "popularSites.json");
-		Log.v("ORTO", "TS: "+twitter_search);
-		//LandingPage.loadRemoteData(3, twitter_search);				
-		String landingString = LandingPage.getLandingPageString();			
+		boolean as = false;
+		boolean pop = false;
+		boolean tw = false;
+		String landingString = null;
+		as = LandingPage.loadRemoteData(1, "urlAssets.json");
+		if (as){ pop = LandingPage.loadRemoteData(2, "popularSites.json"); }
+		if (pop){ tw = LandingPage.loadRemoteData(3, twitter_key); }
+		if (tw){ landingString = LandingPage.getLandingPageString(); }	
 		try {
 			createLanding(landingString);
 		} catch (IOException e) {

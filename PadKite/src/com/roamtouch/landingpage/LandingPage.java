@@ -30,10 +30,10 @@ public class LandingPage {
 	static ArrayList<String> twitter = new ArrayList<String>();
 	static ArrayList<String> popSites = new ArrayList<String>();	
 		
-    public static void loadRemoteData(int resource, String search){    	
+    public static boolean loadRemoteData(int resource, String search){    	
     	String url = null;    	
     	if (resource == 1 || resource == 2){
-    		url = "http://padkite.com/app/json/"+search;
+    		url = "http://padkite.com/app/json/"+search;    		
     	} else {
     		url = SwifteeApplication.getTwitterSearch()+search;
     	}   		
@@ -42,7 +42,8 @@ public class LandingPage {
         Gson gsonName = new Gson();      
         Reader nameReader = new InputStreamReader(source);        
         NameResponse responseName = gsonName.fromJson(nameReader, NameResponse.class);         
-        List<Result> resultsName = responseName.results;        
+        List<Result> resultsName = responseName.results;         
+        //if (responseName.results.size()<6 && resource == 3){ return false; }        
         for (Result result : resultsName) {
         	switch (resource) {
 	        	case 1:
@@ -60,38 +61,39 @@ public class LandingPage {
 	        		String pTooltip = null;
 	        		pTooltip = result.p_Tooltip;
 	        		String all = pPage+"|"+pUrl+"|"+pTooltip;
-	            	Log.v("ENTRA", "all: "+all);
+	            	//Log.v("ENTRA", "all: "+all);
 	            	popSites.add(all);
 	        		break;
 	        	case 3:
 	        		String User = result.fromUser;
 		        	String ImageUrl = result.profileImageUrl;
-		        	String both = User+"|"+ImageUrl;       
+		        	String both = User+"|"+ImageUrl;  
+		        	//Log.v("BOTH", "both: " + both);
 		        	twitter.add(both);
 	        		break;        		
 	        }    	
-        }   	
+        } 
+        return true;
     }
     
     private static void setSettings(String sett, String data){
-    	Log.v("URL",data);
     	if (sett.equals("message") && !data.equals("")){ 
     		//DIALOG HERE
     	}    	
-    	if (sett=="twitter_search"){
-    		Log.v("RES","twitter_search");
+    	if (sett.equals("twitter_search")){
+    		//Log.v("RES","twitter_search");
     		SwifteeApplication.setTwitterSearch(data);
-    	} else if (sett=="twitter_key") {
-    		Log.v("RES","twitter_key");
+    	} else if (sett.equals("twitter_key")) {
+    		//Log.v("RES","twitter_key");
     		SwifteeApplication.setTwitterKey(data);   	
-    	} else if (sett=="google_search") {
-    		Log.v("RES","google_search");
+    	} else if (sett.equals("google_search")) {
+    		//Log.v("RES","google_search");
     		SwifteeApplication.setGoogleSearch(data);    		
-    	} else if (sett=="google_image"){
-    		Log.v("RES","google_image");
+    	} else if (sett.equals("google_image")) {
+    		//Log.v("RES","google_image");
     		SwifteeApplication.setImageSearch(data);
-    	} else if (sett=="youyube_search"){
-    		Log.v("RES","youyube_search");
+    	} else if (sett.equals("youyube_search")) {
+    		//Log.v("RES","youyube_search");
     		SwifteeApplication.setYouTubeSearch(data);
     	}
     }
