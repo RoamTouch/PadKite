@@ -4,9 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class Result {
 	
-	@SerializedName("from_user_id_str")
-	public String fromUserIdStr;
-	
 	@SerializedName("profile_image_url")
 	public String profileImageUrl;
 	
@@ -14,29 +11,19 @@ public class Result {
 	public String createdAt;
 	
 	@SerializedName("from_user")
-	public String fromUser;
+	public String fromUser;	
 	
-	@SerializedName("id_str")
-	public String idStr;
+	public String text;	
 	
-	public Metadata metadata;
+	/////////////////////////////
 	
-	@SerializedName("to_user_id")
-	public String toUserId;
+	@SerializedName("pPage")
+	public String p_Page;
 	
-	public String text;
+	@SerializedName("pUrl")
+	public String p_Url;
 	
-	public long id;
-	
-	@SerializedName("from_user_id")
-	public String from_user_id;
-
-	@SerializedName("iso_language_code")
-	public String isoLanguageCode;
-
-	@SerializedName("to_user_id_str")
-	public String toUserIdStr;
-
-	public String source;
+	@SerializedName("pTooltip")
+	public String p_Tooltip;
 	
 }

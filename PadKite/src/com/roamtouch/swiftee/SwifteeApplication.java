@@ -40,11 +40,26 @@ public class SwifteeApplication extends Application{
 	public static boolean getFingerMode() {return finger_mode; }
     public static void setFingerMode(boolean mode) { finger_mode = mode; }
     
-  //Search parameter for landing page Twitter trends.
+    //Search parameter for landing page Twitter trends.
 	private static String twitter_search = "padkite";   
 	public static String getTwitterSearch() {return twitter_search; }
-    public static void getTwitterSearch(String search) { twitter_search = search; }
+    public static void setTwitterSearch(String search) { twitter_search = search; }
 	
+    //Search page for Images.
+	private static String image_search;   
+	public static String getImageSearch() {return image_search; }
+    public static void setImageSearch(String search) { image_search = search; }
+    
+   //Search page for Google.
+	private static String google_search;   
+	public static String getGoogleSearch() {return google_search; }
+    public static void setGoogleSearch(String search) { google_search = search; }
+    
+    //Search page for YouTube.
+	private static String youtube_search;   
+	public static String getYouTubeSearch() {return youtube_search; }
+    public static void setYouTubeSearch(String search) { youtube_search = search; }
+    
 	private DBConnector database;
 	
 	@Override
@@ -63,16 +78,17 @@ public class SwifteeApplication extends Application{
 			database.addBookmark();
 			copyBookmarksToSdcard();
 		}
-		
-		LandingPage.loadTwitterSearch(twitter_search);		
+		LandingPage.loadRemoteData(1, "urlAssets.json");
+		//LandingPage.loadRemoteData(2, "popularSites.json");
+		Log.v("ORTO", "TS: "+twitter_search);
+		//LandingPage.loadRemoteData(3, twitter_search);				
 		String landingString = LandingPage.getLandingPageString();			
 		try {
 			createLanding(landingString);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
+		}		
 	}
 	
 	 public static void createLanding(String content) throws IOException {		 
