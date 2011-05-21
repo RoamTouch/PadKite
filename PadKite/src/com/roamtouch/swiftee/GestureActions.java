@@ -109,18 +109,21 @@ public class GestureActions {
 	
 	public void search(FloatingCursor fc)
 	{
-		fc.loadPage("http://www.google.com/m/search?q=" + URLEncoder.encode(mSelection));
+		//fc.loadPage("http://www.google.com/m/search?q=" + URLEncoder.encode(mSelection));
+		fc.loadPage(SwifteeApplication.getGoogleSearch()+URLEncoder.encode(mSelection));
 	}
 
 	public void searchPicture(FloatingCursor fc)
 	{
-		fc.loadPage("http://www.google.com/m/search?site=images&q=" + URLEncoder.encode(mSelection));
+		//fc.loadPage("http://www.google.com/m/search?site=images&q=" + URLEncoder.encode(mSelection));
+		fc.loadPage(SwifteeApplication.getImageSearch()+URLEncoder.encode(mSelection));
 	}
 
 	
 	public void searchYouTube(FloatingCursor fc)
 	{
-		fc.loadPage("http://m.youtube.com/results?search_query=" + URLEncoder.encode(mSelection));
+		//fc.loadPage("http://m.youtube.com/results?search_query=" + URLEncoder.encode(mSelection));
+		fc.loadPage(SwifteeApplication.getYouTubeSearch()+ URLEncoder.encode(mSelection));
 	}
 
 	public void email()
@@ -280,7 +283,8 @@ public class GestureActions {
 	
 	public void openLink(FloatingCursor floatingCursor)
 	{
-		floatingCursor.addNewWindow(true);
+		
+    	floatingCursor.addNewWindow(true);
 	}
 	
 	public void send()
