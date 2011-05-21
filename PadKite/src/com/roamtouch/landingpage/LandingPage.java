@@ -15,10 +15,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -123,22 +119,36 @@ public class LandingPage {
 		landing = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">"
 			+"<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><title>"
 			+"PadKite Start Page</title><script type=\"text/javascript\">"				
-			+"function setFocus(id){"	
-			//+"	pBridge.llega();"
-			+"	URLType=id;"
-			+"	document.forms['urlform'].elements['box'].focus();"
-			+"	pBridge.searchType(id);"
-			+"}"
-			+"function handleKeyPress(e,form){"
-			+"	var key=e.keyCode || e.which;"
-			+"	if (key==13){"
-			+"		form.submit();"
-			+"	}"
-			+"}"
-			+"function getVerticalMargin(){"
-			+"var ver = screen.width/6;"
-			+"return ver;"
-			+ "}"
+			+"var type;"
+			+"function loadSearch(){"		
+			+"var url = document.forms['urlform'].elements['box'].value;"
+			+"var theUrl;"
+			+"switch(type){"
+			+"	case 'url':" 
+			+"		theUrl = 'http://'+url;"
+			+"	break;"
+			+"	case 'search':" 
+			+"		theUrl = '"+SwifteeApplication.getGoogleSearch()+"\"'+url;"		
+			+"	break;"
+			+"	case 'image':" 
+			+"		theUrl = '"+SwifteeApplication.getImageSearch()+"\"'+url;"		
+			+"	break;"
+			+"	case \"video\":"
+			+"		theUrl = '"+SwifteeApplication.getYouTubeSearch()+"\"'+url;"	
+			+"	break;"
+			+"	default:"
+			+"		theUrl = '"+SwifteeApplication.getGoogleSearch()+"\"'+url;"
+			+"	break;"
+			+"};"				
+			+"window.document.location.href=theUrl;"	
+			+"type='';"
+			+"url='';"
+			+"return false;"
+			+"}"					
+			+"function setFocus(id){"			
+			+"type=id;"
+			+"document.forms['urlform'].elements['box'].focus();"			
+			+"}"		
 			+"</script>"
 			+"<style>"
 			+"body {"
@@ -221,12 +231,12 @@ public class LandingPage {
 			+"	<br clear=\"all\"/>"
 			+"	<div class=\"middle\" align=\"center\" style=\"padding-top:15px;\">"
 			+"		<div style=\"padding:10px;\">" 
-			+"			<a href=\"#\" name=\"URLink\" onclick=\"setFocus(1)\">URL</a>" 
-			+"			<a href=\"#\" name=\"SearchLink\" onclick=\"setFocus(2)\">Search</a>" 
-			+"			<a href=\"#\" name=\"ImageLink\" onclick=\"setFocus(3)\">Image</a>" 
-			+"			<a href=\"#\" name=\"VideoLink\" onclick=\"setFocus(4)\">Video</a><br>"			 
+			+"			<a href=\"#\" name=\"URLink\" onclick=\"setFocus('url')\">URL</a>" 
+			+"			<a href=\"#\" name=\"SearchLink\" onclick=\"setFocus('search')\">Search</a>" 
+			+"			<a href=\"#\" name=\"ImageLink\" onclick=\"setFocus('image')\">Image</a>" 
+			+"			<a href=\"#\" name=\"VideoLink\" onclick=\"setFocus('video')\">Video</a><br>"			 
 			+"		</div>" 		 
-			+"	<form id=\"urlform\" action=\"#\" onSubmit=\"return load();\" onkeypress=\"handleKeyPress(event,this.form)\">"    
+			+"	<form id=\"urlform\" action=\"#\" onSubmit=\"return loadSearch()\">" //handleKeyPress(event,this.form)\">"    
 			+"		<input name=\"box\" class=\"input\" type=\"text\" size=\"40\"></input><br>" //Isolating the input in order to have the "Go" alone. 			
 			+"	</form><br />";
 		  for (int i = 0; i < twitter.size(); i++) {
