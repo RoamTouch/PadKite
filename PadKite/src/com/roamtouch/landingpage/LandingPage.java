@@ -15,6 +15,10 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -24,95 +28,93 @@ public class LandingPage {
 		
 	private static  String landing;	
 	static ArrayList<String> twitter = new ArrayList<String>();
-	static ArrayList<String> popSites = new ArrayList<String>();
-	
-    public static void loadRemoteData(int resource, String search){
+	static ArrayList<String> popSites = new ArrayList<String>();	
+		
+    public static void loadRemoteData(int resource, String search){    	
     	String url = null;    	
-    	switch (resource){
-    		case 1:
-    			url = "http://padkite.com/app/json/"+search;
-			break;	
-    		case 2:
-    			url = "http://padkite.com/app/json/"+search;
-    			break;					
-    		case 3:
-				url = SwifteeApplication.getTwitterSearch()+search;
-				break;			
-		}   	
+    	if (resource == 1 || resource == 2){
+    		url = "http://padkite.com/app/json/"+search;
+    	} else {
+    		url = SwifteeApplication.getTwitterSearch()+search;
+    	}   		
     	Log.v("URL", url);
         InputStream source = retrieveStream(url);        
         Gson gsonName = new Gson();      
         Reader nameReader = new InputStreamReader(source);        
         NameResponse responseName = gsonName.fromJson(nameReader, NameResponse.class);         
         List<Result> resultsName = responseName.results;        
-        for (Result result : resultsName) {   	
-        	if (resource == 1 || resource == 2){
-        		String pPage = null;
-        		pPage = result.p_Page;
-        		String pUrl = null;
-            	pUrl = result.p_Url;
-            	String pTooltip = null;
-            	pTooltip = result.p_Tooltip;  
-        		//setURls(pUrl, pTooltip);
-            	Log.v("ACA", "aca: "+pPage+"|"+pUrl+"|"+pTooltip);
-	            if (resource == 2){	            
-	            	String all = pPage+"|"+pUrl+"|"+pTooltip;
+        for (Result result : resultsName) {
+        	switch (resource) {
+	        	case 1:
+	        		String sett = null;
+	        		sett = result.r_setting;
+	        		String data = null;
+	        		data = result.r_data;      	  
+	        		setSettings(sett, data);	            	
+	        		break;
+	        	case 2: 
+	        		String pPage = null;
+	        		pPage = result.p_Page;
+	        		String pUrl = null;
+	        		pUrl = result.p_Url;      
+	        		String pTooltip = null;
+	        		pTooltip = result.p_Tooltip;
+	        		String all = pPage+"|"+pUrl+"|"+pTooltip;
 	            	Log.v("ENTRA", "all: "+all);
 	            	popSites.add(all);
-	            }
-	        } else {
-	        	String User = result.fromUser;
-	        	String ImageUrl = result.profileImageUrl;
-	        	String both = User+"|"+ImageUrl;       
-	        	twitter.add(both);
+	        		break;
+	        	case 3:
+	        		String User = result.fromUser;
+		        	String ImageUrl = result.profileImageUrl;
+		        	String both = User+"|"+ImageUrl;       
+		        	twitter.add(both);
+	        		break;        		
 	        }    	
         }   	
     }
     
-    private static void setURls(String pUrl, String pTooltip){
-    	Log.v("URL",pTooltip);
-    	if (pTooltip=="searchTwitter"){
-    		Log.v("URL","searchTwitter");
-    		SwifteeApplication.setTwitterSearch(pUrl);
-    	} else if (pTooltip=="searchGoogle") {
-    		Log.v("URL","searchKeyword");
-    		SwifteeApplication.setGoogleSearch(pUrl);
-    	} else if  (pTooltip=="searchImage"){
-    		Log.v("URL","searchImage");
-    		SwifteeApplication.setImageSearch(pUrl);
-    	} else if (pTooltip=="searchYouTube"){
-    		Log.v("URL","searchYouTube");
-    		SwifteeApplication.setYouTubeSearch(pUrl);
+    private static void setSettings(String sett, String data){
+    	Log.v("URL",data);
+    	if (sett.equals("message") && !data.equals("")){ 
+    		//DIALOG HERE
+    	}    	
+    	if (sett=="twitter_search"){
+    		Log.v("RES","twitter_search");
+    		SwifteeApplication.setTwitterSearch(data);
+    	} else if (sett=="twitter_key") {
+    		Log.v("RES","twitter_key");
+    		SwifteeApplication.setTwitterKey(data);   	
+    	} else if (sett=="google_search") {
+    		Log.v("RES","google_search");
+    		SwifteeApplication.setGoogleSearch(data);    		
+    	} else if (sett=="google_image"){
+    		Log.v("RES","google_image");
+    		SwifteeApplication.setImageSearch(data);
+    	} else if (sett=="youyube_search"){
+    		Log.v("RES","youyube_search");
+    		SwifteeApplication.setYouTubeSearch(data);
     	}
     }
     
-    private static InputStream retrieveStream(String url) {
-    	
-    	DefaultHttpClient client = new DefaultHttpClient(); 
-        
-        HttpGet getRequest = new HttpGet(url);
-          
-        try {
-           
+    private static InputStream retrieveStream(String url) {    	
+    	DefaultHttpClient client = new DefaultHttpClient();       
+        HttpGet getRequest = new HttpGet(url);         
+        try {           
            HttpResponse getResponse = client.execute(getRequest);
-           final int statusCode = getResponse.getStatusLine().getStatusCode();
-           
+           final int statusCode = getResponse.getStatusLine().getStatusCode();           
            if (statusCode != HttpStatus.SC_OK) { 
               //Log.w(getClass().getSimpleName(), "Error " + statusCode + " for URL " + url); 
               return null;
            }
-
            HttpEntity getResponseEntity = getResponse.getEntity();
-           return getResponseEntity.getContent();
-           
+           return getResponseEntity.getContent();           
         } 
         catch (IOException e) {
            getRequest.abort();
            //Log.w(getClass().getSimpleName(), "Error for URL " + url, e);
-        }
-        
-        return null;        
-     }
+        }        
+        return null;       
+     };
 
 	public static String getLandingPageString() {	
 		

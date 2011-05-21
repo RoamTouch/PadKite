@@ -17,6 +17,14 @@ public class Result {
 	
 	/////////////////////////////
 	
+	@SerializedName("setting")
+	public String r_setting;
+
+	@SerializedName("data")
+	public String r_data;
+		
+	/////////////////////////////
+	
 	@SerializedName("pPage")
 	public String p_Page;
 	
@@ -25,5 +33,6 @@ public class Result {
 	
 	@SerializedName("pTooltip")
 	public String p_Tooltip;
+
 	
 }

@@ -286,15 +286,16 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         	dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
         			public void onClick(DialogInterface dialog, int id) {
         		
-        			}
-        		
+        			}        		
         	});
-        	dialog.show();
-        
-        }
+        	dialog.show();        
+        } 
         // Update remote content if needed.
         //Downloader.updateRemoteContentIfNeeded();
-
+        
+        //After connection proove connect to padkite server to fetch data
+        SwifteeApplication.remoteConnections();
+        
         // We may need a data tracker.
         if(TrackHelper.TRACKER_ENABLED) {
         	mTrackHelper = TrackHelper.createInstance(this);

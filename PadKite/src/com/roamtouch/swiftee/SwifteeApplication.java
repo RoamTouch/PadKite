@@ -16,6 +16,7 @@ import com.roamtouch.database.DBConnector;
 import com.roamtouch.landingpage.LandingPage;
 
 import android.app.Application;
+import android.content.Context;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.os.Environment;
@@ -41,9 +42,14 @@ public class SwifteeApplication extends Application{
     public static void setFingerMode(boolean mode) { finger_mode = mode; }
     
     //Search parameter for landing page Twitter trends.
-	private static String twitter_search = "padkite";   
+	private static String twitter_key;   
+	public static String getTwitterKey() {return twitter_key; }
+    public static void setTwitterKey(String key) { twitter_key = key; }
+    
+    //Search page for Twitter JSON.
+	private static String twitter_search;   
 	public static String getTwitterSearch() {return twitter_search; }
-    public static void setTwitterSearch(String search) { twitter_search = search; }
+    public static void setTwitterSearch(String search) { twitter_search = search; } 
 	
     //Search page for Images.
 	private static String image_search;   
@@ -77,9 +83,12 @@ public class SwifteeApplication extends Application{
 		if(database.checkIfBookmarkAdded()) {
 			database.addBookmark();
 			copyBookmarksToSdcard();
-		}
+		}		
+	}
+	
+	public static void remoteConnections(){		
 		LandingPage.loadRemoteData(1, "urlAssets.json");
-		//LandingPage.loadRemoteData(2, "popularSites.json");
+		LandingPage.loadRemoteData(2, "popularSites.json");
 		Log.v("ORTO", "TS: "+twitter_search);
 		//LandingPage.loadRemoteData(3, twitter_search);				
 		String landingString = LandingPage.getLandingPageString();			
@@ -91,7 +100,7 @@ public class SwifteeApplication extends Application{
 		}		
 	}
 	
-	 public static void createLanding(String content) throws IOException {		 
+	public static void createLanding(String content) throws IOException {		 
 		 File landing = null;
 		 try {
 			 File root = Environment.getExternalStorageDirectory();
