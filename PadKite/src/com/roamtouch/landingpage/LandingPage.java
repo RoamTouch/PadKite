@@ -229,15 +229,15 @@ public class LandingPage {
 			+"	<form id=\"urlform\" action=\"#\" onSubmit=\"return load();\" onkeypress=\"handleKeyPress(event,this.form)\">"    
 			+"		<input name=\"box\" class=\"input\" type=\"text\" size=\"40\"></input><br>" //Isolating the input in order to have the "Go" alone. 			
 			+"	</form><br />";
-		    for (int i = 0; i < twitter.size(); i++) {
+		  for (int i = 0; i < twitter.size(); i++) {
 		    	String tw = twitter.get(i);		    	
-		    	StringTokenizer tokens = new StringTokenizer(tw, "|");
-		    	String name = tokens.nextToken();// this will contain "Fruit"
-		    	String url = tokens.nextToken();// this will contain " they taste good"    		    	
+		    	StringTokenizer tTok = new StringTokenizer(tw, "|");
+		    	String name = tTok.nextToken();// this will contain "Fruit"
+		    	String url = tTok.nextToken();// this will contain " they taste good"    		    	
 		    	landing += "<a href=\""+url+"\"><img src=\""+url+"\" title=\""+name+" width=\"20\" height=\"20\" border=\"0\"></a>";  	
 		    }		
 			landing += "<div align=\"center\">"  
-			+"		<table border=\"0\" height=\"30\" width=\"360\" class=\"small-links\" cellspacing=\"10\">"
+			+"		<table border=\"0\" height=\"30\" width=\"100%\" class=\"small-links\" cellspacing=\"10\">"
 			+"		<tr valign=\"top\">"   
 			+"			<td align=\"center\">"
 			+"				<div class=\"colum-title\">Bookmarks</div>" 
@@ -253,32 +253,28 @@ public class LandingPage {
 			+"					<a href=\"padkite.local.contact?id=bien\">Sample_3</a><br>"  
 			+"					<span style=\"text-decoration: none\"><a href=\"padkite.local.contact?id=bien\">Sample_4</a></span><br>"  
 			+"			</td>"      			    
-			+"			<td align=\"center\">" 
-			+"				<a href=\"padkite.local.contact?id=bien\"> Facebook</a><br>"        
-			+"				<a href=\"http://twitter.com/\">Twitter</a><br>" 
-			+"				<a href=\"http://www.linkedin.com\"> LinkedIn</a><br>"        
-			+"				<a href=\"http://www.flickr.com\">Flickr</a><br>"        
-			+"				<a href=\"http://www.apple.com\"> Apple</a><br>"             
-			+"				<a href=\"http://m.espn.go.com/wireless/index?w=1ajv8&i=COM\"> ESPN</a><br>"        
-			+"				<a href=\"http://www.nytimes.com/\">NY Times</a><br>"        
-			+"				<a href=\"http://hp.mobileweb.ebay.com/home\">eBay</a><br>" 
-			+"				<a href=\"http://google.com/\">Google</a><br>"       
-			+"				<a href=\"http://picasaweb.google.com/m/viewer?source=androidclient\"> Picassa</a><br>" 
-			+"				<span style=\"text-decoration: none\"><a href=\"http://www.m.amazon.com/\">Amazon</a></span><br>"      
-			+"			</td>"      
-			+"			<td align=\"center\">"        
-			+"				<a href=\"http://mw.weather.com/\">Weather</a><br>"         
-			+"				<a href=\"http://www.wikipedia.org/\">Wikipedia</a><br>"        
-			+"				<a href=\"http://www.bing.com/\">Bing</a><br>"  
-			+"				<a href=\"http://m.yahoo.com/\">Yahoo</a><br>"        
-			+"				<a href=\"http://extreme.mobile.msn.com/\">MSN</a><br>"      
-			+"				<a href=\"http://www.craigslist.org\"> Craigslist</a><br>"          
-			+"				<a href=\"http://www.wordpress.com\"> Wordpress</a><br>"        
-			+"				<a href=\"http://www.ask.com\">Ask</a><br>"  
-			+"				<a href=\"http://www.blogspot.com\"> BlogSpot</a><br>"        
-			+"				<a href=\"http://www.qq.com\">Qq</a><br>"  
-			+"				<a href=\"http://www.cnnmobile.com/\">CNN</a><br>"     
-			+"			</td>"    
+			+"			<td align=\"left\">";
+			int popSize = popSites.size();
+			for (int j = 0; j < popSize/2; j++) {
+		    	String pop_1 = popSites.get(j);		    	
+		    	StringTokenizer pTok_1 = new StringTokenizer(pop_1, "|");
+		    	String pPage_1 = pTok_1.nextToken();
+		    	String pUrl_1 = pTok_1.nextToken(); 		    	
+		    	//String pTooltip_1 = pTok_1.nextToken();		    			    	
+		    	landing += "<a href=\""+pUrl_1+"\">"+pPage_1+"</a><br>";		    		
+		    	   
+			} 	
+			landing += "</td>"      
+			+"			<td align=\"left\">";
+			for (int k = popSize/2; k < popSize; k++) {
+				String pop_2 = popSites.get(k);		    	
+		    	StringTokenizer pTok_2 = new StringTokenizer(pop_2, "|");
+		    	String pPage_2 = pTok_2.nextToken();
+		    	String pUrl_2 = pTok_2.nextToken(); 		    	
+		    	//String pTooltip_2 = pTok_2.nextToken();		    			    	
+		    	landing += "<a href=\""+pUrl_2+"\">"+pPage_2+"</a><br>";	    				    	   
+			}	 
+			landing += "</td>"    
 			+"		</tr>"  
 			+"		</table>"
 			+"		<img src=\"http://padkite.com/app/Roamtouch-logo.jpg\" width=\"120\" height=\"42\" align=\"left\">"
