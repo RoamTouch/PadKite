@@ -15,16 +15,20 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.roamtouch.swiftee.SwifteeApplication;
+import com.roamtouch.view.WebPage;
 
-public class LandingPage {
+public class LandingPage extends Activity {
 		
 	private static  String landing;	
 	static ArrayList<String> twitter = new ArrayList<String>();
-	static ArrayList<String> popSites = new ArrayList<String>();	
+	static ArrayList<String> popSites = new ArrayList<String>();
+	static ArrayList<String> history = new ArrayList<String>();	
 		
     public static boolean loadRemoteData(int resource, String search){    	
     	String url = null;    	
@@ -72,6 +76,13 @@ public class LandingPage {
         return true;
     }
     
+    public static boolean getLandingPageHistory(Context context){
+    	WebPage page = new WebPage();
+    	ArrayList<String> hist = page.getLandingHistory(context);
+    	history = hist;
+    	return true;
+    }
+    	    
     private static void setSettings(String sett, String data){
     	if (sett.equals("message") && !data.equals("")){ 
     		//DIALOG HERE
@@ -200,9 +211,13 @@ public class LandingPage {
 			+"	font-size:15px;"
 			+"	top:200px;"
 			+"}"
-			+".colum-title {"
+			+".column-title {"
 			+"	color: #999999;"
 			+"	font-size:9px;"
+			+"}"
+			+".history-date {"
+			+"	color: #999999;"
+			+"	font-size:4px;"
 			+"}"
 			+"</style>"
 			+"</head>"
@@ -239,30 +254,37 @@ public class LandingPage {
 			+"	<form id=\"urlform\" action=\"#\" onSubmit=\"return loadSearch()\">" //handleKeyPress(event,this.form)\">"    
 			+"		<input name=\"box\" class=\"input\" type=\"text\" size=\"40\"></input><br>" //Isolating the input in order to have the "Go" alone. 			
 			+"	</form><br />";
-		  for (int i = 0; i < twitter.size(); i++) {
+		  	for (int i = 0; i < twitter.size(); i++) {
 		    	String tw = twitter.get(i);		    	
 		    	StringTokenizer tTok = new StringTokenizer(tw, "|");
-		    	String name = tTok.nextToken();// this will contain "Fruit"
-		    	String url = tTok.nextToken();// this will contain " they taste good"    		    	
+		    	String name = tTok.nextToken();
+		    	String url = tTok.nextToken();    		    	
 		    	landing += "<a href=\""+url+"\"><img src=\""+url+"\" title=\""+name+" width=\"20\" height=\"20\" border=\"0\"></a>";  	
 		    }		
 			landing += "<div align=\"center\">"  
 			+"		<table border=\"0\" height=\"30\" width=\"100%\" class=\"small-links\" cellspacing=\"10\">"
 			+"		<tr valign=\"top\">"   
 			+"			<td align=\"center\">"
-			+"				<div class=\"colum-title\">Bookmarks</div>" 
+			+"				<div class=\"column-title\">Bookmarks</div>" 
 			+"					<a href=\"padkite.local.contact?id=bien\">Sample_1</a><br>"  
 			+"					<a href=\"padkite.local.contact?id=bien\">Sample_2</a><br>"  
 			+"					<a href=\"padkite.local.contact?id=bien\">Sample_3</a><br>"  
 			+"					<a href=\"padkite.local.contact?id=bien\">Sample_4</a><br>"  
 			+"			</td>"      
-			+"			<td align=\"center\">"   			
-			+"				<div class=\"colum-title\">History</div>" 
-			+"					<a href=\"padkite.local.contact?id=bien\">Sample_1</a><br>"
-			+"					<a href=\"padkite.local.contact?id=bien\">Sample_2</a><br>"  
-			+"					<a href=\"padkite.local.contact?id=bien\">Sample_3</a><br>"  
-			+"					<span style=\"text-decoration: none\"><a href=\"padkite.local.contact?id=bien\">Sample_4</a></span><br>"  
-			+"			</td>"      			    
+			+"			<td align=\"left\">"   			
+			+"				<div class=\"column-title\">Recent History</div>"; 
+			for (int l = 0; l < history.size(); l++) {
+		    	String hi = history.get(l);		    	
+		    	StringTokenizer hTok = new StringTokenizer(hi, "|");
+		    	String id = hTok.nextToken();
+		    	String name = hTok.nextToken();    		    	
+		    	String link = hTok.nextToken();
+		    	String date = hTok.nextToken();
+		    	if (name.equals("null")){ name = link; }
+		    	landing += "<a href=\""+link+"\" id=\""+id+"\">"+name+"</a><br>";
+		    	landing += "<div class=\"history-date\">"+date+"</div>";		    
+		    }			  
+			landing += "</td>"     			    
 			+"			<td align=\"left\">";
 			int popSize = popSites.size();
 			for (int j = 0; j < popSize/2; j++) {

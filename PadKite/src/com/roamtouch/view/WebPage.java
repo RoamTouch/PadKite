@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.swiftee.SwifteeApplication;
@@ -24,12 +26,38 @@ public class WebPage {
 		return getHistory(context, url, start, 2, "download.html");
 	}
 	
+	public ArrayList<String> getLandingHistory(Context context) {
+		ArrayList<String> history = new ArrayList<String>();
+		SwifteeApplication appState = ((SwifteeApplication)context.getApplicationContext());
+    	DBConnector database = appState.getDatabase();
+    	Cursor c = database.getFromHistory(1);    	
+    	c.moveToPosition(0);
+    	int count = c.getCount();
+    	int num = 0;
+    	String hi = null;
+    	if (count > 6){ count=6; }   
+		while (!c.isAfterLast() && num < count){
+			Date date = new Date(Long.parseLong(c.getString(1)));
+ 			SimpleDateFormat formatter = new SimpleDateFormat("EEE, d, h:mm a");
+ 			String id = c.getString(1);
+ 			String link = c.getString(2);
+ 			String name = c.getString(3);
+ 			hi = id+"|"+name+"|"+link+"|"+formatter.format(date);
+ 			history.add(hi);
+			Log.v("VER", "id: "+id+ "  name:  "+name+"  link:  "+link+"  date:  "+date);
+			c.moveToNext();
+			num++;
+		}
+		return history;
+	}
+	
 	public String getHistory(Context context, String url, int start, int type, String file){
+		
 		SwifteeApplication appState = ((SwifteeApplication)context.getApplicationContext());
     	DBConnector database = appState.getDatabase();
     	Cursor c = database.getFromHistory(type);
     	String data = "Could not open " + file + ". Please contact support.";
-    	
+    	    	
     	try {
     		InputStream is = appState.getAssets().open("Web Pages/" + file);
     		byte[] bytes=new byte[is.available()];
@@ -61,6 +89,7 @@ public class WebPage {
                 	   "<td ><font color=\"#000000\" align=\"justify\" size=\"2px\">"+formatter.format(date)+"</font></td>"+
                 	   "<td ><font color=\"#F2A31C\" size=\"2px\">"+c.getString(3)+"</font><br><font size=\"2px\"><a href=\""+c.getString(2)+"\">"+c.getString(2)+"</a></font></td>" +
                 	   "</tr>";*/
+     			
      			if (type == 2) {
      				String filename = c.getString(3);
      				if (filename.equals("")) { // TODO: Remove this later

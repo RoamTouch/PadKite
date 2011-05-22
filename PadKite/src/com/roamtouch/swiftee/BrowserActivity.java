@@ -71,6 +71,7 @@ import android.widget.RemoteViews;
 
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.floatingcursor.FloatingCursor;
+import com.roamtouch.landingpage.LandingPage;
 import com.roamtouch.menu.TabButton;
 import com.roamtouch.menu.WindowTabs;
 import com.roamtouch.view.EventViewerArea;
@@ -290,11 +291,22 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         	});
         	dialog.show();        
         } 
-        // Update remote content if needed.
-        //Downloader.updateRemoteContentIfNeeded();
         
+        // Update remote content if needed.
+        //Downloader.updateRemoteContentIfNeeded();        
         //After connection proove connect to padkite server to fetch data
-        SwifteeApplication.remoteConnections();
+        
+        boolean rm = SwifteeApplication.remoteConnections();
+        String history = null;
+        String landingString = null;       
+        if (rm){ LandingPage.getLandingPageHistory(this); }
+		landingString = LandingPage.getLandingPageString();
+		try {
+			SwifteeApplication.createLanding(landingString);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
         
         // We may need a data tracker.
         if(TrackHelper.TRACKER_ENABLED) {

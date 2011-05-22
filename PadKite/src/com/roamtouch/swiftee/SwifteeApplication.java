@@ -1,9 +1,5 @@
 package com.roamtouch.swiftee;
 
-//import java.io.File;
-//import java.net.URI;
-//import java.net.URL;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,14 +12,13 @@ import com.roamtouch.database.DBConnector;
 import com.roamtouch.landingpage.LandingPage;
 
 import android.app.Application;
-import android.content.Context;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.os.Environment;
 //import android.os.Environment;
 import android.util.Log;
 
-public class SwifteeApplication extends Application{
+public class SwifteeApplication extends Application {
 
 	// POSITION 0 = "Cursor Gestures"	
 	public static final int CURSOR_TEXT_GESTURE = 1;
@@ -86,21 +81,15 @@ public class SwifteeApplication extends Application{
 		}		
 	}
 	
-	public static void remoteConnections(){		
+	public static boolean remoteConnections(){		
 		boolean as = false;
-		boolean pop = false;
+		boolean pop = false;		
 		boolean tw = false;
-		String landingString = null;
 		as = LandingPage.loadRemoteData(1, "urlAssets.json");
 		if (as){ pop = LandingPage.loadRemoteData(2, "popularSites.json"); }
 		if (pop){ tw = LandingPage.loadRemoteData(3, twitter_key); }
-		if (tw){ landingString = LandingPage.getLandingPageString(); }	
-		try {
-			createLanding(landingString);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
+		if(tw)return tw;
+		else return false;
 	}
 	
 	public static void createLanding(String content) throws IOException {		 

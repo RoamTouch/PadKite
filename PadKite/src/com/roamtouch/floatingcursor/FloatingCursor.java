@@ -69,6 +69,7 @@ import com.roamtouch.menu.WindowTabs;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
+import com.roamtouch.swiftee.SwifteeHelper;
 import com.roamtouch.swiftee.TrackHelper;
 
 
@@ -2963,7 +2964,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 			@Override
 			public void doUpdateVisitedHistory (WebView view, String url, boolean isReload){
-				if(!isReload && !url.startsWith("data:text/html") && !url.startsWith("file:///android_asset/")){
+				if(!isReload && !url.startsWith("data:text/html") && !url.startsWith("file:///android_asset/") && !url.equals(SwifteeHelper.HOME_PAGE_PATH)) {
 					Log.d("---History--------", "url = "+url+"  Title ="+ view.getTitle());
 					dbConnector.addToHistory(System.currentTimeMillis()+"", url, view.getTitle(), 1);
 				}

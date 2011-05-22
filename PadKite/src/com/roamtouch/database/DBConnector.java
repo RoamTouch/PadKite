@@ -210,18 +210,15 @@ public class DBConnector {
 		 * @param title
 		 * @param type 0 for browser history, 1 for down-load history and 2 for event history
 		 */
-		public void addToHistory(String timestamp,String url,String title,int type){
-			//Log.v("HISTORY", "url: "+url+" HOME_PAGE_PATH : "+SwifteeHelper.HOME_PAGE_PATH);
-			if (!url.equals(SwifteeHelper.HOME_PAGE_PATH)){			
-				try
-				{
-					mDatabase.execSQL("INSERT INTO padkite_history(timestamp,url,title,type) VALUES('"+timestamp+"','"+url+"','"+title+"',"+type+")");			
-				}
-				catch(Exception e)
-				{
-					e.printStackTrace();
-				}
+		public void addToHistory(String timestamp,String url,String title,int type){					
+			try
+			{
+				mDatabase.execSQL("INSERT INTO padkite_history(timestamp,url,title,type) VALUES('"+timestamp+"','"+url+"','"+title+"',"+type+")");			
 			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}			
 		}
 		
 		public Cursor getFromHistory(int type){
