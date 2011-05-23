@@ -2232,7 +2232,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					scrollY *= (radFact/length);
 					
 					pointer.scrollTo(scrollX, scrollY);
-					fcPointerView.scrollTo(scrollX, scrollY);
+					fcPointerView.scrollTo(-scrollX, -scrollY);
 					//fcProgressBar.scrollTo(scrollX, scrollY);
 			
 					//fcTouchView.scrollTo(CircleX - X, CircleY - Y);

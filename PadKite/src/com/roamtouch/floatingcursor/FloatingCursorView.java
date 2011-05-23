@@ -19,6 +19,8 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.view.animation.Animation.AnimationListener;
 
+import com.roamtouch.floatingcursor.FloatingCursorInnerView;;
+
 public class FloatingCursorView extends View{
 	
 	public static final String TAG = "FloatingCursorView";
@@ -46,10 +48,13 @@ public class FloatingCursorView extends View{
     private boolean isLoadingAnimationShown = false;
     
     private boolean isSmall = false;
+    
+    private FloatingCursorInnerView innerCircle;
 
     public FloatingCursorView(Context context) {
         super(context);
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.outer_circle);
+        innerCircle = new FloatingCursorInnerView(context);
     }
 
 

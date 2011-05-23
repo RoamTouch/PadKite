@@ -1,13 +1,18 @@
 package com.roamtouch.floatingcursor;
 
-//import com.roamtouch.swiftee.R;
+import com.roamtouch.swiftee.R;
 
 import android.content.Context;
-//import android.graphics.Bitmap;
-//import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 
-//import android.graphics.Rect;
+import android.graphics.Rect;
 import android.view.View;
 
 public class FloatingCursorInnerView extends View {
@@ -16,15 +21,15 @@ public class FloatingCursorInnerView extends View {
 	private float y = 0;
 	private int r = 25;
 	
-//	private Bitmap bitmap;
-//	private Rect rect;
+	private Bitmap bitmap;
+	private Rect rect;
 
+	 Paint paint = new Paint();
 	
 	public FloatingCursorInnerView(Context context) {
 		super(context);
-//		bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.inner_circle); 
+		//bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.inner_circle); 
 	}
-
 	
 	protected void setPosition(float x, float y)
 	{
@@ -50,10 +55,14 @@ public class FloatingCursorInnerView extends View {
 	 protected void onDraw(Canvas canvas) {
 	     super.onDraw(canvas);
 	     //Toast.makeText(getContext(), "Hello Draw", Toast.LENGTH_SHORT).show();
-	     //rect = new Rect((int)x-r,(int)y-r,(int)x+r,(int)y+r);
-	     //if (bitmap != null)
-	    //	 canvas.drawBitmap(bitmap, x-r, y-r, null);
-	    	//w canvas.drawBitmap(bitmap, null, rect, null);
-        //canvas.drawCircle(x, y, r, mPaint);
+	     
+	     rect = new Rect((int)x-r,(int)y-r,(int)x+r,(int)y+r);
+	     if (bitmap != null)
+	    	 //canvas.drawBitmap(bitmap, x-r, y-r, null);
+	    	 //canvas.drawBitmap(bitmap, null, rect, null);
+	    	 paint.setAntiAlias(true);
+	     	//#D1D6CC
+	    	 paint.setColor(Color.rgb(231, 231, 231));
+             canvas.drawCircle(x, y, r-1, paint);
 	 }
 }
