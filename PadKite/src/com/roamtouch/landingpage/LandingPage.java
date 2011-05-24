@@ -153,7 +153,8 @@ public class LandingPage {
 			+"}"
 			+".column-title {"
 			+"	color: #999999;"
-			+"	font-size:9px;"
+			+"	font-weight:bold;"
+			+"	font-size:11px;"
 			+"}"
 			+".small-date {"
 			+"	color: #999999;"
@@ -203,7 +204,7 @@ public class LandingPage {
 			    	landing += "<a href=\""+url+"\"><img src=\""+url+"\" title=\""+name+" width=\"20\" height=\"20\" border=\"0\"></a>";  	
 			    }
 			}
-			landing += "<br><div align=\"center\">"  
+			landing += "<br><br><div align=\"center\">"  
 			+"		<table border=\"0\" width=\"100%\" class=\"small-links\" cellspacing=\"5\">"
 			+"		<tr valign=\"top\" width=\"30%\">"   
 			+"			<td align=\"left\">"
@@ -241,13 +242,27 @@ public class LandingPage {
 			    		}
 			    		name = link; 
 			    	}
-			    	landing += "<a href=\""+link+"\" id=\""+id+"\">"+name+"</a><br>";
-			    	landing += "<div class=\"small-date\">"+date+"</div>";		    
+			    	landing += "<div id=\"history\"><a href=\""+link+"\" id=\""+id+"\">"+name+"</a><br>";
+			    	landing += "<div class=\"small-date\">"+date+"</div></div>";		    
 			    }
 				String more = "file:///android_asset/Web Pages/history.html";
 				landing += "<a href=\""+more+"\" id=\"more\">More...</a><br>";
 			}
-			landing += "</td>"     			    
+			landing += "    </div><br>" 
+			+"				<div class=\"column-title\">Call Log</div>";			
+			int callSize = callLogs.size();			 
+			if ( callSize > 0){				
+				for (int s = 0; s < callSize; s++) {
+					String call = callLogs.get(s);		    	
+			    	StringTokenizer cTok = new StringTokenizer(call, "|");
+			    	String number = cTok.nextToken();
+			    	String name = cTok.nextToken();
+			    	String date = cTok.nextToken();			    	
+			    	landing += "<a href=\""+name+"\">"+name+"</a><div class=\"small-date\">"+number+"</div>";			    	
+			    	//landing += "<div class=\"small-date\">"+date+"</div>";
+			    }		
+			}		
+			landing += "</div></td>"     			    
 			+"			<td align=\"left\" width=\"20%\">"
 			+"				<div class=\"column-title\">Starred Contacts</div>"; 
 			int starSize = starContacts.size();
@@ -259,28 +274,14 @@ public class LandingPage {
 			    	String name = sTok.nextToken();			    		    	
 			    	String image = sTok.nextToken();
 			    	Log.v("B", "image: " +image);
-			    	if (image!=null || !image.equals("null")){
-			    		landing += "<img src=\""+image+"\" width=\"15\" height=\"15\" border=\"0\"><a href=local.contact."+id+"> "+name+"</a><br>";
+			    	if (!isNullOrBlank(image)){
+			    		landing += "<a href=local.contact."+id+"> "+name+"<img src=\""+image+"\" width=\"15\" height=\"15\" border=\"0\"></a><br>";
 			    	} else {
 			    		landing += "<a href=local.contact."+id+"> "+name+"</a><br>";
 			    	}
 				}		
 			}
-			landing +="     </div><br>"	
-			+"				<div class=\"column-title\">Call Log</div>";			
-			int callSize = callLogs.size();			 
-			if ( callSize > 0){				
-				for (int s = 0; s < callSize; s++) {
-					String call = callLogs.get(s);		    	
-			    	StringTokenizer cTok = new StringTokenizer(call, "|");
-			    	String number = cTok.nextToken();
-			    	String name = cTok.nextToken();
-			    	String date = cTok.nextToken();			    	
-			    	landing += "<a href=\""+name+"\">"+name+"</a><br>";			    	
-			    	landing += "<div class=\"small-date\">"+date+"</div>";
-			    }		
-			}
-			landing += "    </div>" 
+			landing +="     </div><br>"		
 			+"			</td>"   
 			+"			<td align=\"left\" width=\"20%\">"
 			+"				<div class=\"column-title\">Popular Sites</div>";
@@ -308,6 +309,10 @@ public class LandingPage {
 			 
 			return landing;
 	}
+	
+	private static boolean isNullOrBlank(String s){
+	  return (s==null || s.trim().equals("") || s.trim().equals("null"));
+	}
 		
 	public boolean loadRemoteData(int resource, String search){    	
     	String url = null;    	
@@ -319,7 +324,10 @@ public class LandingPage {
     	Log.v("URL", url);
         InputStream source = retrieveStream(url);        
         Gson gsonName = new Gson();      
-        Reader nameReader = new InputStreamReader(source);        
+        Reader nameReader = new InputStreamReader(source);   
+        if (nameReader==null){
+        	return false;
+        }
         NameResponse responseName = gsonName.fromJson(nameReader, NameResponse.class);         
         List<Result> resultsName = responseName.results;         
         //if (responseName.results.size()<6 && resource == 3){ return false; }        
@@ -453,9 +461,10 @@ public class LandingPage {
 	            String id = curStar.getString(curStar.
 	            		getColumnIndex(ContactsContract.Contacts._ID));  
 	            String name = curStar.getString(curStar.
-	            		getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+	            		getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));  
+	                 
 	            
-	          String image = getContactPicture(id);           
+	            String image = getContactPicture(id);           
 	            
 	            star = id+"|"+name+"|"+image;
 	            starContacts.add(star);
@@ -467,7 +476,8 @@ public class LandingPage {
 				CallLog.Calls.NUMBER, 
 				CallLog.Calls.TYPE,
 				CallLog.Calls.CACHED_NAME,
-				CallLog.Calls.DATE
+				CallLog.Calls.DATE,
+				CallLog.Calls._ID
         };
 		
 		String strOrder = CallLog.Calls.DATE + " DESC"; 
@@ -485,7 +495,7 @@ public class LandingPage {
 		if (callCursor.getCount() > 0) {  
 			int top = 0;
 			String call = null;
-			while (callCursor.moveToNext() && top < 10 ) { 					
+			while (callCursor.moveToNext() && top < 5 ) { 					
 				
 	            String number = callCursor.getString(callCursor.
 	            		getColumnIndex(CallLog.Calls.NUMBER));  
@@ -493,13 +503,18 @@ public class LandingPage {
 	            		getColumnIndex(CallLog.Calls.CACHED_NAME));
 	           	                  	            
 	            Long longTime = callCursor.getLong(callCursor.
-	            		getColumnIndex(CallLog.Calls.CACHED_NAME));         
+	            		getColumnIndex(CallLog.Calls.CACHED_NAME));
+	            
+	            String id = callCursor.getString(callCursor.
+	            		getColumnIndex(CallLog.Calls._ID));
+	            
+	            String image = getContactPicture(id);      
 	           
 	            //Date date = new Date(longTime);
 	            SimpleDateFormat formatter = new SimpleDateFormat("EEE, d, h:mm a");
 	            String callTime = formatter.format(longTime);
-	            
-	            call = number+"|"+cacheName+"|"+callTime;	            
+	            Log.v("A","longTime: "+longTime+" callTime :"+callTime);
+	            call = number+"|"+cacheName+"|"+image+"|"+callTime;	            
 	            
 	            callLogs.add(call);	            
 	            
@@ -519,17 +534,31 @@ public class LandingPage {
 	    	String path = null;	
 	    	String home_path = Environment.getExternalStorageDirectory()+"/PadKite/";
 	    	path = home_path + "Contacts/images/" + contactID + ".png";
-			try {
-				contactPhoto.compress(CompressFormat.PNG, 95, new FileOutputStream(path));
-				ret = path;
-			} catch (FileNotFoundException e) {	
-				e.printStackTrace();
-			}	  	
+	    	boolean exist = fileExists(mParent, path);
+			if (exist==false){ 
+				try {
+					contactPhoto.compress(CompressFormat.PNG, 95, new FileOutputStream(path));
+					ret = path;
+				} catch (FileNotFoundException e) {	
+					e.printStackTrace();
+				}	 
+			}
 		 } else {
 			 ret =  null;
 		 }    	
 		return ret;
     };	
+    
+    public static boolean fileExists(Context context, String f) {
+        String[] filenames = context.fileList();
+        for (String name : filenames) {
+          if (name.equals(f)) {
+            return true;
+          }
+        }
+        return false;
+    };
+    
 }; //End of LandingPage Class
 
 
