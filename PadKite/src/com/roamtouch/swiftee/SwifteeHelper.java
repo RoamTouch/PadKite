@@ -1,4 +1,3 @@
-
 package com.roamtouch.swiftee;
 
 import android.os.Environment;

@@ -41,8 +41,7 @@ public class GesturesListActivity extends Activity{
 			setTitle(gestureCategory);
 			
 			list.addHeaderView(tv);
-			
-						
+									
 		}
 		
 		@Override

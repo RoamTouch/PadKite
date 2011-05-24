@@ -9,10 +9,10 @@ import java.util.Date;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.swiftee.SwifteeApplication;
+import com.roamtouch.landingpage.LandingPage;
 
 public class WebPage {
 
@@ -26,29 +26,45 @@ public class WebPage {
 		return getHistory(context, url, start, 2, "download.html");
 	}
 	
-	public ArrayList<String> getLandingHistory(Context context) {
+	public boolean getLandingHistory(Context context) {
+		
+		boolean ret = false;
 		ArrayList<String> history = new ArrayList<String>();
 		SwifteeApplication appState = ((SwifteeApplication)context.getApplicationContext());
     	DBConnector database = appState.getDatabase();
     	Cursor c = database.getFromHistory(1);    	
-    	c.moveToPosition(0);
+    	if (c==null){ 
+    		return ret; 
+    	}    	
     	int count = c.getCount();
+    	c.moveToPosition(0);    	
     	int num = 0;
-    	String hi = null;
-    	if (count > 6){ count=6; }   
+    	String hi = null;    
+    	
+    	if (count > 6){ count=6; }
+    	
 		while (!c.isAfterLast() && num < count){
+			
 			Date date = new Date(Long.parseLong(c.getString(1)));
  			SimpleDateFormat formatter = new SimpleDateFormat("EEE, d, h:mm a");
+ 			
  			String id = c.getString(1);
  			String link = c.getString(2);
  			String name = c.getString(3);
+ 			
  			hi = id+"|"+name+"|"+link+"|"+formatter.format(date);
  			history.add(hi);
-			Log.v("VER", "id: "+id+ "  name:  "+name+"  link:  "+link+"  date:  "+date);
+			
+ 			//Log.v("VER", "id: "+id+ "  name:  "+name+"  link:  "+link+"  date:  "+date);
 			c.moveToNext();
 			num++;
+			
 		}
-		return history;
+		if (num==count){ 
+			LandingPage.setHistory(history);
+			ret=true;			
+		}
+		return ret;		
 	}
 	
 	public String getHistory(Context context, String url, int start, int type, String file){

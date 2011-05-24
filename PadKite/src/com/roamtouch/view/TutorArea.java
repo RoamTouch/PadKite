@@ -114,7 +114,8 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 			//b.setBackgroundResource(R.drawable.tutor_button_1);
 			b.setLayoutParams(params);
 			//b.setText(BrowserActivity.convertGestureItem(str[i]));
-			ArrayList<Gesture> list = mLibrary.getGestures(str[i].toString());
+			String caca= str[i].toString();
+			ArrayList<Gesture> list = mLibrary.getGestures(caca);
 			Bitmap bit = toBitmap(list.get(0), imageWidth, imageWidth, 10, Color.BLACK);
 			BitmapDrawable d = new BitmapDrawable(bit);
 			//b.setCompoundDrawablesWithIntrinsicBounds(null,d, null, null);

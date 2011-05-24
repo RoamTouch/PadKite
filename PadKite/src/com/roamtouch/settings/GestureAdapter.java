@@ -1,18 +1,27 @@
 package com.roamtouch.settings;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Set;
+
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
+import com.roamtouch.swiftee.SwifteeHelper;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.gesture.Gesture;
 import android.gesture.GestureLibrary;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,16 +36,16 @@ import android.widget.TextView;
 
 public class GestureAdapter extends BaseAdapter{
 
-		private GestureLibrary mLibrary;
-		private Context mContext;	
+		private static GestureLibrary mLibrary;
+		private static Context mContext;	
 		private int gestureCount;
-		private String str[];
+		private static String str[];
 		private OnClickListener listener;
-		private OnLongClickListener longListener;
-		private OnLongClickListener editLongListener;
-		public OnKeyListener newGestureListener;
+		private static OnLongClickListener longListener;
+		private static OnLongClickListener editLongListener;
+		public static OnKeyListener newGestureListener;
 
-		private int gestureType;
+		private static int gestureType;
 		private DBConnector database;
 		
 		private GesturesListActivity mList;
@@ -55,10 +64,10 @@ public class GestureAdapter extends BaseAdapter{
 		protected void refresh(boolean update)
 		{
 			Object tmp[] = mLibrary.getGestureEntries().toArray();
-			
+					
 			str = new String[tmp.length];
 			
-			for (int i = 0; i < tmp.length; i++)
+			for (int i = 0; i < tmp.length; i++) 
 				str[i] = tmp[i].toString();
 			
 			java.util.Arrays.sort( str );
@@ -68,6 +77,8 @@ public class GestureAdapter extends BaseAdapter{
 			if (update)
 				mList.refrshList();
 		}
+		
+		
 		
 		public GestureAdapter(Context context,int type,final GesturesListActivity list){
 			mContext=context;
@@ -162,9 +173,7 @@ public class GestureAdapter extends BaseAdapter{
 					mContext.startActivity(i);
 					refresh(true);
 				}
-			};
-			
-    		
+			};    		
 
 		}
 		public int getCount() {
@@ -191,8 +200,7 @@ public class GestureAdapter extends BaseAdapter{
 		}
 
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = convertView;
-			
+			View v = convertView;		
 			
             if (v == null) {
             	LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -206,14 +214,13 @@ public class GestureAdapter extends BaseAdapter{
         	else if (BrowserActivity.developerMode)
         	{
         		v.setOnLongClickListener(editLongListener);
-        		v.setOnKeyListener(newGestureListener);
-        		
+        		v.setOnKeyListener(newGestureListener);        		
         	}
             ImageView gestureImage = (ImageView)v.findViewById(R.id.gestureImage);
             ArrayList<Gesture> list = mLibrary.getGestures(str[position]);
 			Bitmap bit = list.get(0).toBitmap(70, 70, 0, Color.BLACK);
 			BitmapDrawable d = new BitmapDrawable(bit);
-			gestureImage.setBackgroundDrawable(d);
+			gestureImage.setBackgroundDrawable(d);	
 			           
 			TextView v1= (TextView) v.findViewById(R.id.gestureText);			
 			v1.setText(convertItem(str[position]));  
@@ -232,5 +239,32 @@ public class GestureAdapter extends BaseAdapter{
 			return v;
 		}
 		
+		public static ArrayList<String> getBookMarkImages(Context context, View convertView) {
+			
+			ArrayList<String> bookmarkImages = new ArrayList<String>();			
+			SwifteeApplication appState = ((SwifteeApplication)context.getApplicationContext());
+			GestureLibrary bookmarksLibrary = appState.getGestureLibrary(SwifteeApplication.BOOKMARK_GESTURE);			
+			Object tmp[] = bookmarksLibrary.getGestureEntries().toArray();			
+			
+			String path = null;		
+			String home_path = Environment.getExternalStorageDirectory()+"/PadKite/";
+			
+			for (int i = 0; i < tmp.length; i++) {				
+				
+				String gesture = tmp[i].toString();				
+				ArrayList<Gesture> list = bookmarksLibrary.getGestures(gesture);			
+				Bitmap bit = list.get(0).toBitmap(30, 30, 0, Color.BLACK);							
+				path = home_path + "Gesture Library/images/" + gesture + ".png";
+				
+				try {
+					bit.compress(CompressFormat.PNG, 95, new FileOutputStream(path));					
+				} catch (FileNotFoundException e) {				
+					e.printStackTrace();
+				}
+				bookmarkImages.add(path);
+				path="";
+			}		
+			return bookmarkImages;
+		}		
 }
 

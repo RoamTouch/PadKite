@@ -6,12 +6,10 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-
 import com.roamtouch.database.DBConnector;
 
-import com.roamtouch.landingpage.LandingPage;
-
 import android.app.Application;
+
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.os.Environment;
@@ -37,7 +35,7 @@ public class SwifteeApplication extends Application {
     public static void setFingerMode(boolean mode) { finger_mode = mode; }
     
     //Search parameter for landing page Twitter trends.
-	private static String twitter_key;   
+	public static String twitter_key;   
 	public static String getTwitterKey() {return twitter_key; }
     public static void setTwitterKey(String key) { twitter_key = key; }
     
@@ -61,7 +59,7 @@ public class SwifteeApplication extends Application {
 	public static String getYouTubeSearch() {return youtube_search; }
     public static void setYouTubeSearch(String search) { youtube_search = search; }
     
-	private DBConnector database;
+	public static DBConnector database;
 	
 	@Override
 	public void onCreate(){
@@ -74,22 +72,13 @@ public class SwifteeApplication extends Application {
 			copyFilestoSdcard("Default Theme", true);
 			copyFilestoSdcard("Gesture Library", false);
 			//copyHomepagetoSdcard(false);//home page
+			createFolder("/PadKite/Gesture Library/images");
+			createFolder("/PadKite/Contacts/images");			
 		}
 		if(database.checkIfBookmarkAdded()) {
 			database.addBookmark();
-			copyBookmarksToSdcard();
+			copyBookmarksToSdcard();			
 		}		
-	}
-	
-	public static boolean remoteConnections(){		
-		boolean as = false;
-		boolean pop = false;		
-		boolean tw = false;
-		as = LandingPage.loadRemoteData(1, "urlAssets.json");
-		if (as){ pop = LandingPage.loadRemoteData(2, "popularSites.json"); }
-		if (pop){ tw = LandingPage.loadRemoteData(3, twitter_key); }
-		if(tw)return tw;
-		else return false;
 	}
 	
 	public static void createLanding(String content) throws IOException {		 
@@ -138,8 +127,20 @@ public class SwifteeApplication extends Application {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-
+		}	
+	}
+	
+	public void createFolder(String imagesPath){
+		try {
+			//String imagesPath = "/PadKite/Gesture Library/images";
+			String imagesFullPath = Environment.getExternalStorageDirectory()+imagesPath;
+			File ImagesDir = new File(imagesFullPath);
+			ImagesDir.mkdirs();    			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			//Log.v("CACA","e "+e);
+			e.printStackTrace();
+		}	
 	}
 	
 	/*public void copyHomepagetoSdcard(boolean force){

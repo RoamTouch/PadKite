@@ -107,8 +107,7 @@ public class GestureRecorder extends Activity {
 							else{
 								mLibrary.removeGesture(gestureName, mLibrary.getGestures(gestureName).get(0));
 								mLibrary.addGesture(s, mGesture);
-							}
-							
+							}							
 							mLibrary.save();							
 						}
 						finish();

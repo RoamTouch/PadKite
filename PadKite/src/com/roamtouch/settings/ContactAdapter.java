@@ -1,7 +1,5 @@
 package com.roamtouch.settings;
 
-
-
 import com.roamtouch.swiftee.R;
 import android.app.Dialog;
 import android.content.Context;

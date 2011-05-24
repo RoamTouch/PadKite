@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -61,8 +60,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
@@ -158,8 +155,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	}
     	System.exit(code);
     }
-
-    public boolean onKeyDown(int keyCode, android.view.KeyEvent event){
+    
+      public boolean onKeyDown(int keyCode, android.view.KeyEvent event){
 	        
 	    	if (keyCode == KeyEvent.KEYCODE_MENU) { 
 	    		floatingCursor.toggleMenuVisibility();
@@ -280,7 +277,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 
 		// FIXME: First show loading screen ...
         setContentView(R.layout.main);
-        
+        Log.v("A", "Llega1");
         if(!isOnline()){
         	AlertDialog.Builder dialog= new AlertDialog.Builder(this);
         	dialog.setMessage("Network not available");
@@ -294,19 +291,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         
         // Update remote content if needed.
         //Downloader.updateRemoteContentIfNeeded();        
-        //After connection proove connect to padkite server to fetch data
-        
-        boolean rm = SwifteeApplication.remoteConnections();
-        String history = null;
-        String landingString = null;       
-        if (rm){ LandingPage.getLandingPageHistory(this); }
-		landingString = LandingPage.getLandingPageString();
-		try {
-			SwifteeApplication.createLanding(landingString);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
+        //After connection proove connect to padkite server to fetch data       
         
         // We may need a data tracker.
         if(TrackHelper.TRACKER_ENABLED) {
@@ -412,30 +397,41 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 		mTutor.setVisibility(View.INVISIBLE);
 		
-/*		mTopBarArea=(TopBarArea)this.findViewById(R.id.topbararea);
+		/*mTopBarArea=(TopBarArea)this.findViewById(R.id.topbararea);
 		mTopBarArea.setVisibility(View.GONE);
-		mTopBarArea.setWebView(webView);
-*/		
-		
-		
+		mTopBarArea.setWebView(webView);*/		
+				
 		//This is a dummy user entry...neeed to remove after
 		appState.getDatabase().registerUser("dummy", "dummy", "dummy@example.com");
 		//appState.getDatabase().deleteAllBookmarks();
-		//appState.getDatabase().addBookmark();
+		//sappState.getDatabase().addBookmark();
 		
 		IntentFilter filter = new IntentFilter (Intent.ACTION_MEDIA_UNMOUNTED); 
 		filter.addDataScheme("file"); 
-		registerReceiver(this.mSDInfoReceiver, new IntentFilter(filter));
+		registerReceiver(this.mSDInfoReceiver, new IntentFilter(filter));	
+		
+		/**
+		 * Landing page load DATA to HTML file. 
+		 */
+		Log.v("A", "Llega2");
+		final LandingPage lp = new LandingPage(this);    	
+    	String landingString = null;
+		lp.remoteConnections();               
+		lp.getLandingPageHistory();        
+		boolean bo = SwifteeApplication.database.getBookmarks();
+		if (bo) { lp.setBookmarksImages(this); }	
+		lp.getStarredContacts();
+		landingString = lp.getLandingPageString();
+		try {
+			SwifteeApplication.createLanding(landingString);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
     }
-   
-/*    public void setWebView(WebView wv){
-    	webLayout.removeViewAt(0);
-    	webLayout.addView(wv);
-    	floatingCursor.setWebView(wv,false);
-//    	mTopBarArea.setWebView(wv);
-    }
-*/    
     
+   
     public void startTextGesture()
     {
 		eventViewer.setText("Please make text selection gesture now.");
@@ -697,7 +693,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	public void drawGestureToEducate(Gesture gesture, String action){
 		ArrayList<GestureStroke> strokes = gesture.getStrokes();
 		ArrayList<GesturePoint> points =generateGesturePoints(strokes.get(0).points);
-    //    ArrayList<GesturePoint> points = strokes.get(0).getGesturePoints();
+		//ArrayList<GesturePoint> points = strokes.get(0).getGesturePoints();
 		     
 		if (currentGestureLibrary == SwifteeApplication.BOOKMARK_GESTURE){
 	        eventViewer.setText("Detected " + action + " gesture.");
@@ -1186,7 +1182,6 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	    			Intent i = new Intent(BrowserActivity.this,SdCardError.class);
 					i.putExtra("isAppLaunched", true);
 					i.putExtra("numWindows", floatingCursor.getWindowCount());
-
 					startActivityForResult(i, SDCardRequestCode);
 	    		}
 	    	});
@@ -1245,5 +1240,4 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			currentPageBridge=url;
 		}
 	};
-
 }

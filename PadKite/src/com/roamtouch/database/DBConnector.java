@@ -1,5 +1,8 @@
 package com.roamtouch.database;
 
+import java.util.ArrayList;
+
+import com.roamtouch.landingpage.LandingPage;
 import com.roamtouch.swiftee.SwifteeHelper;
 
 import android.content.Context;
@@ -204,6 +207,45 @@ public class DBConnector {
 			}
 		}
 		
+		public boolean getBookmarks(){
+			try{
+				boolean ret = false;
+				ArrayList<String> books = new ArrayList<String>();				
+				Cursor cursor = mDatabase.rawQuery("SELECT name, url FROM bookmarks", null);				
+				if (cursor==null){ 
+		    		return ret; 
+		    	}  
+				int count = cursor.getCount();
+				//Log.v("VER", "count: "+count);
+		    	int num = 1;
+		    	String bo = null;	
+		    	cursor.moveToPosition(1); //Skipping Cancel Gesture
+				if(cursor!=null){
+					while ( !cursor.isAfterLast() && num < count ) {					
+						String name = cursor.getString(cursor.getColumnIndex("name"));						
+						String url = cursor.getString(cursor.getColumnIndex("url"));
+						bo = name+"|"+url;
+						//Log.v("VER", "bo: "+bo);
+						books.add(bo);
+						num++;
+						cursor.moveToNext();
+					}
+					cursor.close();
+				}
+				if (num==count){ 
+					LandingPage.setBookmark(books);
+					ret=true;			
+				}
+				return ret;
+			}
+			catch(Exception e){
+//				System.out.println("-------------exception "+  e  +" while getting bookmarks ------------");
+				Log.v("VER", "e: "+e);
+				e.printStackTrace();
+				return false;
+			}
+		}
+		
 		/**
 		 * @param timestamp
 		 * @param url
@@ -224,15 +266,17 @@ public class DBConnector {
 		public Cursor getFromHistory(int type){
 			try
 			{
-				Cursor c = mDatabase.rawQuery("SELECT * FROM padkite_history WHERE type="+type + " ORDER BY timestamp DESC", null);
-				if(c!=null)
-					if(c.getCount()>0)
+				Cursor c = mDatabase.rawQuery("SELECT * FROM padkite_history WHERE type="+type+ " ORDER BY timestamp DESC", null);
+				if(c!=null){
+					int count = c.getCount(); 
+					if(count>0){
 						return c;
-				
+					}
+				}
 				return null;
 			}
 			catch(Exception e)
-			{
+			{				
 				e.printStackTrace();
 				return null;
 			}
