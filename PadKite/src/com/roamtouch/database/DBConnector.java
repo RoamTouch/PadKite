@@ -1,5 +1,6 @@
 package com.roamtouch.database;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import com.roamtouch.landingpage.LandingPage;
@@ -35,7 +36,12 @@ public class DBConnector {
 		  "url text not null ," +
 		  "title text not null ," +
 		  "type int);" ;
-
+		
+		private static final String DATABASE_CREATE4 = "create table padkite_landing_page (_id integer primary key autoincrement, "+
+		 "timestamp text not null ," +
+		  "html text not null ," +
+		  "twitterSearch text not null);";
+		
 		private static final String DATABASE_NAME = "padkiteDB";
 		private static final int DATABASE_VERSION = 1;
 
@@ -53,6 +59,7 @@ public class DBConnector {
 				db.execSQL(DATABASE_CREATE1);
 				db.execSQL(DATABASE_CREATE2);
 				db.execSQL(DATABASE_CREATE3);
+				db.execSQL(DATABASE_CREATE4);				
 			}
 
 			@Override
@@ -86,6 +93,35 @@ public class DBConnector {
 				e.printStackTrace();
 			}
     	}
+		
+		public void writeLandingPage(Timestamp currentTimestamp,String html,String twitterSearch){
+			try
+			{
+				mDatabase.execSQL("INSERT INTO padkite_landing_page(timestamp,html,twitterSearch) VALUES('"+currentTimestamp+"','"+html+"','"+twitterSearch+"')");			
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+    	}
+		
+		public String checkLandingPage(){
+			String land = null;
+			try{
+				Cursor c = mDatabase.rawQuery("SELECT timestamp,twitterSearch FROM padkite_landing_page", null);				
+				if(c!=null){
+					c.moveToFirst();
+					String timestamp = c.getString(0);
+					String twitterSearch = c.getString(1);
+					land = timestamp+""+twitterSearch;
+				}				
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				land = null;
+			}
+			return land;
+		}
 		
 		public boolean checkUserRegistered(){
 			try{
@@ -131,8 +167,7 @@ public class DBConnector {
 			try
 			{
 				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Cancel','Gesture cancelled')");
-				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Padkite','http://padkite.com')");
-				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('PadKite','http://padkite.com')");
+				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Padkite','http://padkite.com')");				
 				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Google','http://www.google.com')");
 				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Calendar','http://calendar.google.com')");
 				mDatabase.execSQL("INSERT INTO bookmarks(name,url) VALUES ('Facebook','http://www.facebook.com')");

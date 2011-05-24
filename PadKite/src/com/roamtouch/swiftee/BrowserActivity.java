@@ -10,6 +10,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.StringTokenizer;
 
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -413,7 +415,22 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		/**
 		 * Landing page load DATA to HTML file. 
 		 */
-		Log.v("A", "Llega2");
+		
+		Calendar calendar = Calendar.getInstance();	
+		java.util.Date now = calendar.getTime();	
+		java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime());
+		
+		Log.v("A", "currentTimestamp:"+currentTimestamp);
+		String l_timestamp = null;
+		String l_twitterSearch = null;
+		String lastLanding = SwifteeApplication.database.checkLandingPage();
+		
+		if (isNullOrBlank(lastLanding)==false){
+			StringTokenizer tTok = new StringTokenizer(lastLanding, "|");
+			l_timestamp = tTok.nextToken();
+			l_twitterSearch = tTok.nextToken();
+		}	
+		
 		final LandingPage lp = new LandingPage(this);    	
     	String landingString = null;
 		lp.remoteConnections();               
@@ -422,13 +439,18 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		if (bo) { lp.setBookmarksImages(this); }	
 		lp.getStarredContacts();
 		landingString = lp.getLandingPageString();
+		
 		try {
 			SwifteeApplication.createLanding(landingString);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		SwifteeApplication.database.writeLandingPage(currentTimestamp, landingString, l_twitterSearch);
+    }
+    
+    private static boolean isNullOrBlank(String s){
+      return (s==null || s.trim().equals(""));
     }
     
    
