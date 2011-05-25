@@ -41,7 +41,7 @@ public class WebPage {
     	int num = 0;
     	String hi = null;    
     	
-    	if (count > 6){ count=6; }
+    	if (count > 5){ count=5; }
     	
 		while (!c.isAfterLast() && num < count){
 			
