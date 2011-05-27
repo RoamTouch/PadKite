@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import com.roamtouch.landingpage.LandingPage;
 import com.roamtouch.swiftee.SwifteeHelper;
 
+import com.roamtouch.database.DBHelper;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,61 +22,23 @@ import android.util.Log;
 public class DBConnector {
 
 		
-		private DatabaseHelper mDbHelper;
+		private DBHelper mDbHelper;
 		private SQLiteDatabase mDatabase;
 
-		private static final String DATABASE_CREATE1 = "create table user_profiles (_id integer primary key autoincrement, "+
-													  "email text not null ," +
-													  "username text not null ," +
-													  "password text not null);" ;
 		
-		private static final String DATABASE_CREATE2 = "create table bookmarks (name text not null ," +
-													  "url text not null);" ;
-		
-		private static final String DATABASE_CREATE3 = "create table padkite_history (_id integer primary key autoincrement, "+
-		  "timestamp text not null ," +
-		  "url text not null ," +
-		  "title text not null ," +
-		  "type int);" ;
-		
-		private static final String DATABASE_CREATE4 = "create table padkite_landing_page (_id integer primary key autoincrement, "+
-		 "timestamp text not null ," +
-		  "html text not null ," +
-		  "twitterSearch text not null);";
 		
 		private static final String DATABASE_NAME = "padkiteDB";
 		private static final int DATABASE_VERSION = 1;
 
 		private final Context mContext;
-
-		private static class DatabaseHelper extends SQLiteOpenHelper {
-
-			DatabaseHelper(Context context) {
-				super(context, DATABASE_NAME, null, DATABASE_VERSION);
-			}
-
-			@Override
-			public void onCreate(SQLiteDatabase db) {
-
-				db.execSQL(DATABASE_CREATE1);
-				db.execSQL(DATABASE_CREATE2);
-				db.execSQL(DATABASE_CREATE3);
-				db.execSQL(DATABASE_CREATE4);				
-			}
-
-			@Override
-			public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-			}
-		}
-
+		
 		public DBConnector(Context ctx) {
 			this.mContext = ctx;
 		}
 
 		public DBConnector open() {
-			mDbHelper = new DatabaseHelper(mContext);
-			mDatabase = mDbHelper.getWritableDatabase();
+			mDbHelper = new DBHelper(mContext);
+			//mDatabase = mDbHelper.getWritableDatabase();
 			return this;
 		}
 
