@@ -438,7 +438,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		boolean bo = SwifteeApplication.database.getBookmarks();
 		if (bo) { lp.setBookmarksImages(this); }	
 		lp.getStarredContacts();
-		landingString = lp.getLandingPageString();
+		landingString = lp.generateLandingPageString();
 		
 		try {
 			SwifteeApplication.createLanding(landingString);
