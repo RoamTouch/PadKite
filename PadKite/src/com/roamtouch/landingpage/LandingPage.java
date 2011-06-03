@@ -1,5 +1,5 @@
 //******************************************************************************** 
-//**	Copyright (c) 2011, Roaming Keyboards LLC doing business as RoamTouch®	**	       
+//**	Copyright (c) 2011, Roaming Keyboards LLC doing business as RoamTouchï¿½	**	       
 //**	All rights reserved.													**
 //********************************************************************************
 package com.roamtouch.landingpage;
@@ -23,6 +23,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 import twitter4j.Status;
 import twitter4j.TwitterException;
@@ -483,6 +486,9 @@ public class LandingPage {
     	}   		
     	Log.v("URL", url);
         InputStream source = retrieveStream(url);        
+        if(source == null) {
+        	return false;
+        }
         Gson gsonName = new Gson();      
         Reader nameReader = new InputStreamReader(source);   
         if (nameReader==null){
@@ -586,7 +592,12 @@ public class LandingPage {
     }
     
     private InputStream retrieveStream(String url) {    	
-    	DefaultHttpClient client = new DefaultHttpClient();       
+        HttpParams params = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(params, 10 * 1000);
+        HttpConnectionParams.setSoTimeout(params, 10 * 1000);
+        HttpConnectionParams.setSocketBufferSize(params, 8192);
+
+        DefaultHttpClient client = new DefaultHttpClient(params);       
         HttpGet getRequest = new HttpGet(url);         
         try {           
            HttpResponse getResponse = client.execute(getRequest);

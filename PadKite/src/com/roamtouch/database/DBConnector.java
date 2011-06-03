@@ -38,7 +38,7 @@ public class DBConnector {
 
 		public DBConnector open() {
 			mDbHelper = new DBHelper(mContext);
-			//mDatabase = mDbHelper.getWritableDatabase();
+			mDatabase = mDbHelper.getWritableDatabase();
 			return this;
 		}
 
@@ -73,7 +73,7 @@ public class DBConnector {
 			String land = null;
 			try{
 				Cursor c = mDatabase.rawQuery("SELECT timestamp,twitterSearch FROM padkite_landing_page", null);				
-				if(c!=null){
+				if(c!=null && c.getCount()>0){
 					c.moveToFirst();
 					String timestamp = c.getString(0);
 					String twitterSearch = c.getString(1);
