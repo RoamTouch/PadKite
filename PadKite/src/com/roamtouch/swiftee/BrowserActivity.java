@@ -447,6 +447,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			e.printStackTrace();
 		}
 		SwifteeApplication.database.writeLandingPage(currentTimestamp, landingString, l_twitterSearch);
+		
+		// Get display size
+		Display display = getWindowManager().getDefaultDisplay(); 
+		SwifteeApplication.setWidth(display.getWidth());
+		SwifteeApplication.setHeight(display.getHeight());
+		 		 
     }
     
     private static boolean isNullOrBlank(String s){

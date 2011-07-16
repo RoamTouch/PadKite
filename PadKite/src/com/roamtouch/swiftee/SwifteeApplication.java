@@ -15,6 +15,7 @@ import android.gesture.GestureLibrary;
 import android.os.Environment;
 //import android.os.Environment;
 import android.util.Log;
+import android.view.Display;
 
 public class SwifteeApplication extends Application {
 
@@ -58,7 +59,17 @@ public class SwifteeApplication extends Application {
 	private static String youtube_search;   
 	public static String getYouTubeSearch() {return youtube_search; }
     public static void setYouTubeSearch(String search) { youtube_search = search; }
-    
+
+    //Screen Height.
+	private static int height;   
+	public static int getHeight() {return height; }
+    public static void setHeight(int h) { height = h; }
+       
+    //Screen Height.
+	private static int width;   
+	public static int getWidth() {return width; }
+    public static void setWidth(int w) { width = w; }
+
 	public static DBConnector database;
 	
 	@Override
