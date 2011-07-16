@@ -136,7 +136,7 @@ public class LandingPage {
 			+"			<a href=\"#\" name=\"Twitter\" onclick=\"setFocus('twitter')\">Twitter</a><br>"
 			+"		</div>" 		 
 			+"	<form id=\"urlform\" action=\"#\" onSubmit=\"return loadSearch()\">" //handleKeyPress(event,this.form)\">"    
-			+"		<input name=\"box\" class=\"input\" type=\"text\" size=\"40\"></input><br>" //Isolating the input in order to have the "Go" alone.
+			+"		<input name=\"box\" class=\"input\" type=\"text\" size=\"35\"></input><br>" //Isolating the input in order to have the "Go" alone.
 			+"	</form><br>"
 			+"<button id=\"opener\">Open Dialog</button>"			
 			+"<!--twitter--><div id='twConteiner'><div id='tw'>";			
@@ -305,9 +305,9 @@ public class LandingPage {
 			+"}"
 			+".input {"
 			+"	position:absolute;"
-			+"	margin-left:\"200px\";"
+			+"	margin-left:\"150px\";"
 			+"	font-size:15px;"
-			+"	top:200px;"
+			+"	top:150px;"
 			+"}"
 			+".column-title {"
 			+"	color: #999999;"
