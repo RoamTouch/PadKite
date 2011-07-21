@@ -179,6 +179,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		// Message Ids
 	    private static final int FOCUS_NODE_HREF         = 102;
  
+	    private long lastTouchTime = -1;	
 	    
 		private void initScrollView() {
 			mScroller = new Scroller(mContext);
@@ -406,7 +407,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	
 			removeTouchPoint();
 		
-			fcPointerView = new FloatingCursorInnerView(getContext());
+			fcPointerView = new FloatingCursorInnerView(getContext(), this);
 			fcPointerView.setRadius(INNER_RADIUS);
 //			fcPointerView.setQuality(0);
 			
@@ -2140,8 +2141,39 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				int scrollX = X - CircleX;
 				int scrollY = Y - CircleY;
 				double length = Math.hypot(scrollX, scrollY);
+				
+				
+				//Double TAP
+				long thisTime = System.currentTimeMillis();			
+				if (thisTime - lastTouchTime < 250) {
+					// Double tap
+					//this.getController().zoomInFixing((int) ev.getX(), (int) ev.getY());
+					lastTouchTime = -1;
+					if (isCircularZoomEnabled()){
+						//fcView.showCircle();
+						//fcPointerView.shrinkRect();
+						
 					
-				if(X > innerCircleX-innerCirRad && X < innerCircleX+innerCirRad && Y > innerCircleY-innerCirRad && Y < innerCircleY+innerCirRad){
+						
+						//disableCircularZoom();
+						
+					} else {
+						//fcView.hideCircle();
+						
+						
+						//toggleMenuVisibility();
+						
+						// Should return true here so touch event will not be
+						// handled again by CircularLayout (in parking mode).
+						return true;
+					}
+				} else {
+					// Too slow :)
+					lastTouchTime = thisTime;
+				}
+				
+				
+				/*if(X > innerCircleX-innerCirRad && X < innerCircleX+innerCirRad && Y > innerCircleY-innerCirRad && Y < innerCircleY+innerCirRad){
 					//Toast.makeText(mContext, "Circular Menu", 100).show();
 					if (isCircularZoomEnabled())
 						disableCircularZoom();
@@ -2152,8 +2184,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						return true;
 					}
 					
-				}
-				else if(isCircularZoomEnabled()){
+				}*/
+				
+				
+				if(isCircularZoomEnabled()){
 					zoomView.onTouchEvent(event);
 					return true;
 				}
