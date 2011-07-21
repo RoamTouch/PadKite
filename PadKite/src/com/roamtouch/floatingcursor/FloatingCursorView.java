@@ -1,6 +1,7 @@
 package com.roamtouch.floatingcursor;
 
 import com.roamtouch.swiftee.R;
+import com.roamtouch.swiftee.SwifteeApplication;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -54,7 +55,7 @@ public class FloatingCursorView extends View{
     public FloatingCursorView(Context context) {
         super(context);
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.outer_circle);
-        innerCircle = new FloatingCursorInnerView(context);
+        innerCircle = new FloatingCursorInnerView(context, this);
     }
 
 
@@ -85,6 +86,8 @@ public class FloatingCursorView extends View{
             invalidate();
         }
     }
+    
+  
 
     protected int getRadius()
     {
@@ -92,16 +95,20 @@ public class FloatingCursorView extends View{
     }
 
     @Override
-        protected void onDraw(Canvas canvas) {
+    protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         //Toast.makeText(getContext(), "Hello Draw", Toast.LENGTH_SHORT).show();
-
+         
+        
+		//rect = new Rect(0,0,SwifteeApplication.getWidth(), SwifteeApplication.getHeight());
+        
         rect = new Rect((int)x-r,(int)y-r,(int)x+r,(int)y+r);
+        
+        
         if (bitmap != null) {
             canvas.drawBitmap(bitmap, null, rect, null);
         }
     }
-
     
     protected void startRotateAnimation() {
     	ra = null;

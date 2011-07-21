@@ -1,6 +1,7 @@
 package com.roamtouch.floatingcursor;
 
 import com.roamtouch.swiftee.R;
+import com.roamtouch.swiftee.SwifteeApplication;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -24,10 +25,16 @@ public class FloatingCursorInnerView extends View {
 	private Bitmap bitmap;
 	private Rect rect;
 
+	private View pView;
+	
+	int vHeight;
+	int vWidth;
+	
 	 Paint paint = new Paint();
 	
-	public FloatingCursorInnerView(Context context) {
+	public FloatingCursorInnerView(Context context, View parentView) {
 		super(context);
+		pView = parentView;
 		//bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.inner_circle); 
 	}
 	
@@ -50,19 +57,20 @@ public class FloatingCursorInnerView extends View {
 	{
 		return this.r;
 	}
-
+	
 	 @Override
 	 protected void onDraw(Canvas canvas) {
 	     super.onDraw(canvas);
 	     //Toast.makeText(getContext(), "Hello Draw", Toast.LENGTH_SHORT).show();
 	     
-	     rect = new Rect((int)x-r,(int)y-r,(int)x+r,(int)y+r);
-	     if (bitmap != null)
-	    	 //canvas.drawBitmap(bitmap, x-r, y-r, null);
-	    	 //canvas.drawBitmap(bitmap, null, rect, null);
-	    	 paint.setAntiAlias(true);
-	     	//#D1D6CC
-	    	 paint.setColor(Color.rgb(231, 231, 231));
-             canvas.drawCircle(x, y, r-1, paint);
+	     //rect = new Rect(0,0,SwifteeApplication.getWidth(), SwifteeApplication.getHeight());
+	     
+	     rect = new Rect((int)x-r,(int)y-r,(int)x+r,(int)y+r);  
+	     
+	     //if (bitmap != null) 
+	    	//paint.setAntiAlias(true);     
+	     	//paint.setColor(Color.rgb(231, 231, 231));
+            //canvas.drawCircle(x, y, r-1, paint);
 	 }
 }
+
