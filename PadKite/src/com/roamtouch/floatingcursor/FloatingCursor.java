@@ -1188,8 +1188,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				if (mExecutionTimerStarted) {
 					stopMediaExecution(true);
 				}
-				//Set reg color back again. 
-				mParent.setRingcolor(1, mWebView);		
+				//Set reg color back again.				
+				/* Notice that three steps turns first one to green. */ 
+				if (SwifteeApplication.getSingleFingerSteps()== 3){
+					mParent.setRingcolor(1, mWebView);		
+				} else if (SwifteeApplication.getSingleFingerSteps()== 2){
+					mParent.setRingcolor(2, mWebView);						
+				}
+				
 			}		
 		};
 
@@ -1210,7 +1216,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		void startMediaExecution() {
 			mExecutionTimerStarted = true;
 			mReadyToExecute = false;
-			handler.postDelayed(mExecutionTimer, 1000);
+			int time = 0;
+			if (SwifteeApplication.getSingleFingerSteps()== 3){
+				time = 1000;
+			} else if (SwifteeApplication.getSingleFingerSteps()== 2){
+				time = 0;				
+			}
+			handler.postDelayed(mExecutionTimer, time);
 		};
 
 		// Single Finger: Stop execution
@@ -1233,8 +1245,15 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		// Single Finger: Start selection
 		void startMediaSelection() {
 			mSelectionTimerStarted = true;
-			mReadyToSelect = false;
-			handler.postDelayed(mSelectionTimer, 2000);
+			mReadyToSelect = false;			
+			int time = 0;
+			if (SwifteeApplication.getSingleFingerSteps()== 3){
+				time = 2000;
+			} else if (SwifteeApplication.getSingleFingerSteps()== 2){
+				time = 1500;				
+			}
+			handler.postDelayed(mSelectionTimer, time);
+			
 		};
 
 		// Single Finger: Stop selection

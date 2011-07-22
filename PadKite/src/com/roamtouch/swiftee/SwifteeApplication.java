@@ -69,6 +69,11 @@ public class SwifteeApplication extends Application {
 	private static int width;   
 	public static int getWidth() {return width; }
     public static void setWidth(int w) { width = w; }
+    
+    //Sets steps, ring colors for single finger operation, 2 and 3.
+	private static int single_finger_steps = 3;   
+	public static int getSingleFingerSteps() {return single_finger_steps; }
+    public static void setSingleFingerSteps(int sfs) { single_finger_steps = sfs; }
 
 	public static DBConnector database;
 	
