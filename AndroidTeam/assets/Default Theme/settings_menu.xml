@@ -1,0 +1,37 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+   		
+   		<MenuButton android:button_image="browsersettings_normal.png"
+					android:button_highlightImage="browsersettings_pressed.png" 
+					android:button_function="browser_settings"
+					android:button_policy="keep"
+		/>  
+		
+		<MenuButton android:button_image="miscellaneous_normal.png"
+					android:button_highlightImage="miscellaneous_pressed.png"
+					android:button_function="miscellaneous"
+					android:button_policy="keep"
+		/>
+		
+		<MenuButton android:button_image="sethomepage_normal.png"
+					android:button_highlightImage="sethomepage_pressed.png"
+					android:button_function="set_homepage"
+					android:button_policy="keep"
+		/>  
+
+		<MenuButton android:button_image="gesturekiteditor_normal.png"
+					android:button_highlightImage="gesturekiteditor_pressed.png"
+					android:button_function="gesture_kit_editor"
+					android:button_policy="keep"
+		/>  
+	
+		
+		<MenuButton android:button_image="history_normal.png"
+					android:button_highlightImage="history_pressed.png"
+                    android:button_function="history"/>
+                  
+		<MenuButton android:button_image="help_normal.png"
+					android:button_highlightImage="help_pressed.png"
+					android:button_function="help_online"
+		/>
+	
+</merge>
