@@ -34,17 +34,23 @@ public class SwifteeApplication extends Application{
 	 * **/
 	
 	//Sets and gets the diameter of the dots of the FC.
-    private static double fc_dots_diam = 4;   
+    private static double fc_dots_initial_diam = 5;   
+	public static double getFCDotInitialDiam() {return fc_dots_initial_diam; }    
+	
+	//Sets and gets the diameter of the dots of the FC.
+    private static double fc_dots_diam = fc_dots_initial_diam;   
 	public static double getFCDotDiam() {return fc_dots_diam; }
     public static void setFCDotDiam(double d) { fc_dots_diam = d; }
-    
+        
     //Sets and gets the FC visible.
     private static boolean fc_circle_visible = true;   
 	public static boolean getFCVisible() {return fc_circle_visible; }
     public static void setFCVisible(boolean FCV) { fc_circle_visible = FCV; }
     
-	
-	
+    //Landing page path. 
+    private static String landing_page_path = "file:///android_asset/loadPage.html";   
+    public static String getLandingPagePath() {return landing_page_path; }
+        
 	@Override
 	public void onCreate(){
 		super.onCreate(); 

@@ -96,10 +96,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	 *  integer showing which menu among main,settings and tabs is currently displayed 
 	 */
 		private ViewGroup currentMenu;
-
-		
 		private boolean mIsDisabled = false;
-		
+		private boolean mIsLoading = false;
 		private WebView mWebView = null;
 	
 	/**
@@ -163,6 +161,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	 */
 		private Vibrator vibrator;
 		
+		protected boolean animationLock = false;
+		private boolean mSoftKeyboardVisible = false;
+		
 		private void initScrollView() {
 			mScroller = new Scroller(mContext);
 			setFocusable(true);
@@ -222,6 +223,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
                 break;
 
             case MotionEvent.ACTION_DOWN:
+            	
+            	//Set FC dots smaller while dragging.
+    			SwifteeApplication.setFCDotDiam(2.5);
+            	
                 /* Remember location of down touch */
                 mLastMotionY = y;
                 mLastMotionX = x;
@@ -236,6 +241,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
+            	
+            	//Set FC dot to original size again.
+    			SwifteeApplication.setFCDotDiam(SwifteeApplication.getFCDotInitialDiam());
+    			
             	final boolean oldDrag = mIsBeingDragged;
                 /* Release the drag */
                 mIsBeingDragged = false;
@@ -448,20 +457,27 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 			};
 
-			parkingRunnable = new Runnable(){
+			parkingRunnable = new Runnable() {
 
 				public void run() {
-					if(!mParent.isInParkingMode && parkTimerStarted && FloatingCursor.this.isFCOutofBounds()) {
+					if (!mParent.isInParkingMode && parkTimerStarted ) {						
 						parkTimerStarted = false;
-						mParent.enterParkingMode(false);
+						if (mIsLoading) {
+							fcView.startScaleUpAndRotateAnimation(100);
+						}
+						mParent.enterParkingMode(true);
+						updateFC();
 						checkFCParkingBounds();
-					}
-					else {
+						// Reomve the callback to avoid always running in the
+						// background.
+						handler.removeCallbacks(parkingRunnable);
+					} else {
 						parkTimerStarted = true;
-						handler.postDelayed(this,2000);
+						handler.postDelayed(this, 2000); // Go parking mode timer
+														// faster
 					}
 				}
-				
+
 			};
 
 			
@@ -482,6 +498,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
         public String getCurrentTitle(){
         	return mWebView.getTitle();
         }
+        
+        public boolean inLoad() {
+    		return mIsLoading;
+    	}
+        
 		public void gestureDisableFC()
 		{
 			//mCanBeDisabled  = true;
@@ -529,8 +550,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		}
 		
 		public void enterParkingMode() {
-			//Scale down cursor
-			fcView.setRadius(RADIUS*1/2);
+			// Scale down cursor
+			fcView.setRadius(RADIUS * 1 / 2);
+			// Reset the cursor.
+			pointer.setImageResource(R.drawable.kite_cursor);
 		}
 	
 		public void setWebView(WebView wv,boolean isFirst) {
@@ -694,37 +717,38 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			removeTouchPoint();
 		}
 		
-		protected boolean animationLock = false;
+		public void toggleMenuVisibility() {
 
-		public void toggleMenuVisibility(){
-			
 			if (animationLock)
 				return;
-			
+
 			animationLock = true;
-			
+
 			eventViewer.setMode(EventViewerArea.TEXT_ONLY_MODE);
 			AlphaAnimation menuAnimation;
-			
+
 			// Reset FC
 			removeTouchPoint();
 
-			if(currentMenu.getVisibility() == INVISIBLE){
-				
-				// FC was touched, get out of parking mode
-				if(mParent.isInParkingMode) {
-					mParent.exitParkingMode();
-					fcView.setRadius(FC_RADIUS); //Restore radius size
-				}
+			if (currentMenu.getVisibility() == INVISIBLE) {
 
+				// Reset menu to Main menu (as WM sometimes gives wrong occurence)
+				currentMenu = fcMainMenu;
+
+				// FC was touched, get out of parking mode
+				if (mParent.isInParkingMode) {
+					mParent.exitParkingMode();
+					fcView.setRadius(FC_RADIUS); // Restore radius size
+				}
+				
 				pointer.setImageResource(R.drawable.kite_cursor);
 				mMenuDown = true;
 				fcView.setVisibility(View.INVISIBLE);
 				checkFCMenuBounds();
-				
+
 				menuAnimation = new AlphaAnimation(0.0f, 1.0f);
 				menuAnimation.setDuration(250);
-				menuAnimation.setAnimationListener(new AnimationListener(){
+				menuAnimation.setAnimationListener(new AnimationListener() {
 
 					public void onAnimationEnd(Animation animation) {
 						currentMenu.setVisibility(VISIBLE);
@@ -732,27 +756,30 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						handler.postDelayed(runnable, 10000);
 						handler.removeCallbacks(parkingRunnable);
 
-						if(currentMenu instanceof CircularLayout){
+						if (currentMenu instanceof CircularLayout) {
 							((CircularLayout) currentMenu).resetMenu();
-							//Log.d("Reset menu", "---------------------------");
+							// Log.d("Reset menu", "---------------------------");
 						}
 					}
-					public void onAnimationRepeat(Animation animation) {}
 
-					public void onAnimationStart(Animation animation) {}
-					
+					public void onAnimationRepeat(Animation animation) {
+					}
+
+					public void onAnimationStart(Animation animation) {
+					}
+
 				});
 				currentMenu.startAnimation(menuAnimation);
 				vibrator.vibrate(25);
 				if (currentMenu instanceof CircularLayout)
-					eventViewer.setText(((CircularLayout)currentMenu).getName());
+					eventViewer.setText(((CircularLayout) currentMenu).getName());
 				else if (currentMenu instanceof CircularTabsLayout)
-					eventViewer.setText(((CircularTabsLayout)currentMenu).getName());
-				
-				//				mParent.setTopBarVisibility(VISIBLE);
-//				mParent.setTopBarMode(TopBarArea.ADDR_BAR_MODE);
-			}
-			else if(currentMenu.getVisibility() == VISIBLE){
+					eventViewer.setText(((CircularTabsLayout) currentMenu)
+							.getName());
+
+				// mP.setTopBarVisibility(VISIBLE);
+				// mP.setTopBarMode(TopBarArea.ADDR_BAR_MODE);
+			} else if (currentMenu.getVisibility() == VISIBLE) {
 
 				mMenuDown = false;
 				pointer.setImageResource(R.drawable.kite_cursor);
@@ -760,41 +787,70 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 				menuAnimation = new AlphaAnimation(1.0f, 0.0f);
 				menuAnimation.setDuration(250);
-				menuAnimation.setAnimationListener(new AnimationListener(){
-					
+				menuAnimation.setAnimationListener(new AnimationListener() {
+
 					public void onAnimationEnd(Animation animation) {
 						currentMenu.setVisibility(INVISIBLE);
 						currentMenu = fcMainMenu;
 						animationLock = false;
 						handler.removeCallbacks(runnable);
 
-						//runnableKiteAni.start();
+						// runnableKiteAni.start();
 					}
-					
-					public void onAnimationRepeat(Animation animation) {}
 
-					public void onAnimationStart(Animation animation) {}
-					
+					public void onAnimationRepeat(Animation animation) {
+					}
+
+					public void onAnimationStart(Animation animation) {
+					}
+
 				});
 				currentMenu.startAnimation(menuAnimation);
 				vibrator.vibrate(25);
-				//eventViewer.setText("");
+				// eventViewer.setText("");
 
-//				mParent.setTopBarVisibility(INVISIBLE);
-			}		
+				// mP.setTopBarVisibility(INVISIBLE);
+
+				// Since menu is hidden we start the timer to park the PadKite.
+				handler.removeCallbacks(parkingRunnable);
+				handler.post(parkingRunnable);
+			}
 		}
 		
-		@Override 
-		protected void onSizeChanged(int w, int h, int oldw, int oldh) { 
+		@Override
+		protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 			super.onSizeChanged(w, h, oldw, oldh);
-			fcView.setPosition(w/2,h/2);
-			fcPointerView.setPosition(w/2,h/2);
-			//fcProgressBar.setPosition(w/2, h/2);
-			fcMainMenu.setPosition(w/2, h/2);
-			this.w=w;
-			this.h=h;
-			scrollTo(0,0);
-//			Log.d("OnSizeChanged:(w,h)","("+w+","+h+")" );
+			
+			fcView.setPosition(w / 2, h / 2);
+			fcPointerView.setPosition(w / 2, h / 2);
+			// fcProgressBar.setPosition(w/2, h/2);
+			fcMainMenu.setPosition(w / 2, h / 2);
+			scrollTo(0, 0);
+			
+			if (mParent.isInParkingMode) {
+				mParent.exitParkingMode();
+				fcView.setRadius(FC_RADIUS);
+			}
+			
+			this.w = w;
+			this.h = h;
+			if (w == oldw && h != oldh) {
+				if (h < oldh) { // Soft Keyboard now visible
+					mSoftKeyboardVisible = true;
+				} else { // Soft Keyboard now hidden
+					mSoftKeyboardVisible = false;
+				}
+			}
+
+			// Restart timer to park the mouse if needed.
+			if ((oldw != 0 || oldh != 0) && !isMenuVisible()) {
+				handler.removeCallbacks(parkingRunnable);
+				handler.post(parkingRunnable);
+			}
+			// Log.e("OnSizeChanged:(w,h,ow,oh)","("+w+","+h+","+oldw+","+oldh+")"
+			// );
+
+			// Log.d("OnSizeChanged:(w,h)","("+w+","+h+")" );
 		}
 
 		private boolean mHandleTouch = false;
@@ -944,15 +1000,18 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			else
 				mEditTextCancel = false;*/
 
+			// Apply pointer after all.
 				pointer.setImageResource(cursorImage);
-				
 				// Was there a node change?
-
 				if (identifier != mWebHitTestResultIdentifer) {
-					if (resultType == WebHitTestResult.ANCHOR_TYPE)
-						mWebView.focusNodeAt(X,Y);
-					else if (mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE)
-						sendEvent(MotionEvent.ACTION_CANCEL, X, Y); // FIXME: Use proper API for that
+					if (resultType == WebHitTestResult.ANCHOR_TYPE) {
+						if (mSoftKeyboardVisible == false) {
+							mWebView.focusNodeAt(X, Y);
+						}
+					} else if (mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE)
+						sendEvent(MotionEvent.ACTION_CANCEL, X, Y); // FIXME: Use
+																	// proper API
+																	// for that
 				}
 				
 				mWebHitTestResultType = resultType;
@@ -1694,6 +1753,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						radFact = 0.6f*r;
 					}
 				
+					if (mIsLoading) {
+						fcView.startScaleUpAndRotateAnimation(100);
+					}
+					
 					// Save coordinates
 					//				mLastTouchX = X;
 					//				mLastTouchY = Y;
@@ -1811,9 +1874,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}
 				
 				removeTouchPoint();
+				
 				//checkFCMenuBounds();
-				if(currentMenu.getVisibility() != View.VISIBLE)
+				if (currentMenu.getVisibility() != View.VISIBLE)
 					handler.post(parkingRunnable);
+
+				if (mIsLoading) {
+					fcView.startScaleDownAndRotateAnimation(100);
+				}
 				
 				//fcTouchView.setVisibility(View.INVISIBLE);
 
@@ -2320,6 +2388,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			public void onPageFinished(WebView view, String url) {
 				
 				fcView.stopAllAnimation(); //Stop 'loading' animation
+				mIsLoading = false;
 				if(!mParent.isInParkingMode) {
 					fcView.startScaleUpAnimation(1000); //Restore original size if not in parking mode
 				}
@@ -2379,6 +2448,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 */			
 			public void onPageStarted(WebView view, String url,Bitmap b) {
+				mIsLoading = true;
 				if(!mParent.isInParkingMode) {
 					fcView.startScaleDownAndRotateAnimation(1000);
 				} else {
@@ -2476,5 +2546,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				started = false;
 			}
 		};
+		
+		public void stopFling() {
+			if (!mScroller.isFinished()) {
+				mScroller.abortAnimation();
+			}
+		}
 
 }

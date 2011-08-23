@@ -308,7 +308,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			webView.loadUrl(data);
 		}
 		else {
-			webView.loadUrl("file:///android_asset/loadPage.html");
+			webView.loadUrl(SwifteeApplication.getLandingPagePath());
 		}
 		
 		webView.setSelectionColor(0xAAb4d5fe);
@@ -836,36 +836,103 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		return charset;
 	}
 	
+	/*
+	 * Implemented relocation of the FC to the next convenient and proximate side.
+	 * I divided the screen in four cuadrants and compare x,y distances to the x,y sides.
+	 * The FC snaps to the one near.
+	 * TODO, animate. Jose. 
+	 */
 	public void enterParkingMode(boolean moveToParkingPosition) {
-		isInParkingMode = true;
+		
+		isInParkingMode = true;		
 		
 		//Shrink to a half the size
-		floatingCursor.enterParkingMode();
-		Display display = getWindowManager().getDefaultDisplay();
+		floatingCursor.enterParkingMode();		
+        Display display = getWindowManager().getDefaultDisplay();
+        
+        //General location vars.
         final int w = display.getWidth();
         final int h = display.getHeight();
-		
-		if(moveToParkingPosition) {
-			ta = new TranslateAnimation(0, w/2 - 50, 0, h/2 - 50);
-	        ta.setDuration((long) 1000);
-	        ta.setInterpolator(new AccelerateDecelerateInterpolator());
-	        ta.setAnimationListener(new AnimationListener(){
-	        	
-	        	public void onAnimationEnd(Animation arg0) {
-	        		floatingCursor.scrollTo( -w/2 + 50, -h/2 + 50);
-	     	   }
-	     	   
-	     	   public void onAnimationRepeat(Animation arg0) {
-	     		   //Do nothing
-	            }
-
-	            public void onAnimationStart(Animation arg0) {
-	            	//Do nothing
-	            }
-	        });
-	        floatingCursor.startAnimation(ta);
+        final int xLoc = floatingCursor.getScrollX();        
+        final int yLoc = floatingCursor.getScrollY();	 
+        
+        WindowTabs.getCurrentTab();
+        
+        String currentURL = webView.getUrl();
+                
+		if(moveToParkingPosition) {   
+			
+			floatingCursor.stopFling();
+					
+			if ((xLoc > 0 && yLoc > 0)
+					||(xLoc==0 && yLoc==0)) {	//UPPER LEFT CUADRANT - C1.
+				
+	        	//Fisrt cuadrant vars
+	            final int c1X;        
+	            final int c1Y;
+	            //Calculate distance to upper right corner. 
+	        	c1X = w/2 - xLoc;
+	        	c1Y = h/2 - yLoc;        	
+	        	if (c1X >= c1Y){ // y is shorter, snap y. 
+	        		//Log.v("","y is shorter, snap x");
+	        		floatingCursor.scrollTo(xLoc, h/2);
+	        	} else if (c1X <= c1Y) { // x is shorter snap to y.
+	        		//Log.v("","x is shorter, snap y");
+	        		floatingCursor.scrollTo(w/2, yLoc);
+	        	}
+	        } else if (xLoc < 0 && yLoc > 0){ //UPPER RIGHT CUADRANT - C2.        	        	
+	        	//Second cuadrant vars.
+	            final int c2X;        
+	            final int c2Y;
+	            //Calculate distance to upper right corner. 
+	        	c2X = w/2 + xLoc;
+	        	c2Y = h/2 - yLoc;       		
+        		if (c2X >= c2Y){ //y is shorter snap to x.
+        			//Log.v("","y is shorter, snap x");	        			
+        			floatingCursor.scrollTo(xLoc, h/2);
+        			//animateDocking(xLoc, yLoc, xLoc, h/2);
+        		} else if (c2X <= c2Y) { //x is shorter snap to y.
+        			//Log.v("","x is shorter, snap y");
+        			floatingCursor.scrollTo(-w/2, yLoc);
+        			//animateDocking(xLoc, yLoc, -w/2, yLoc);
+        		}        		
+	        } else if (xLoc > 0 && yLoc < 0){ //DOWN LEFT CUADRANT - C3.		
+				//Third cuadrant vars.
+	            final int c3X;        
+	            final int c3Y;
+	            //Calculate distance to upper right corner. 
+	        	c3X = w/2 - xLoc;
+	        	c3Y = h/2 + yLoc;       		
+        		if (c3X >= c3Y){ //y is shorter snap to x.
+        			//Log.v("","y is shorter, snap x");	
+        			floatingCursor.scrollTo( xLoc, -h/2);
+        			//animateDocking(xLoc, -w/2, yLoc, -h/2);
+        		} else if (c3X <= c3Y) { //x is shorter snap to x.
+        			//Log.v("","x is shorter, snap y");
+        			//animateDocking(xLoc, -w/2, yLoc, yLoc);
+        			floatingCursor.scrollTo( w/2, yLoc);
+        		}
+			} else if (xLoc < 0 && yLoc < 0){ //DOWN RIGHT CUADRANT - C4.		
+				//Fourth cuadrant vars.
+	            final int c4X;        
+	            final int c4Y;
+	            //Calculate distance to upper right corner. 
+	        	c4X = w/2 + xLoc;
+	        	c4Y = h/2 + yLoc;        	
+        		if (c4X >= c4Y){ //y is shorter snap to x.
+        			//Log.v("","y is shorter, snap x");	
+        			//animateDocking(xLoc, xLoc, yLoc, -h/2);
+        			floatingCursor.scrollTo( xLoc, -h/2);
+        		} else if (c4X <= c4Y) { //x is shorter snap to x.
+        			//Log.v("","x is shorter, snap y");
+        			//animateDocking(xLoc, -w/2, yLoc, yLoc);
+        			floatingCursor.scrollTo( -w/2, yLoc);
+        		}
+			}		
+			//}		
 		}
-	}
+	};
+		
 	
 	public void exitParkingMode() {
 		isInParkingMode = false;
