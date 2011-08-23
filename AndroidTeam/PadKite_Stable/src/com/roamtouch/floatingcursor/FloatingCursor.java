@@ -2321,7 +2321,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 				fcView.stopAllAnimation(); //Stop 'loading' animation
 				if(!mParent.isInParkingMode) {
-					fcView.startScaleUpAnimation(); //Restore original size if not in parking mode
+					fcView.startScaleUpAnimation(1000); //Restore original size if not in parking mode
 				}
 				
 				fcMainMenu.toggleCloseORRefresh(true);
@@ -2380,7 +2380,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 */			
 			public void onPageStarted(WebView view, String url,Bitmap b) {
 				if(!mParent.isInParkingMode) {
-					fcView.startScaleDownAndRotateAnimation();
+					fcView.startScaleDownAndRotateAnimation(1000);
 				} else {
 					fcView.startRotateAnimation();
 				}

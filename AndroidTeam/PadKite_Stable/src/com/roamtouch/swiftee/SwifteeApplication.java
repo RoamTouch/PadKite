@@ -29,6 +29,22 @@ public class SwifteeApplication extends Application{
 	
 	private DBConnector database;
 	
+	/**
+	 * GLOBAL VARIABLES
+	 * **/
+	
+	//Sets and gets the diameter of the dots of the FC.
+    private static double fc_dots_diam = 4;   
+	public static double getFCDotDiam() {return fc_dots_diam; }
+    public static void setFCDotDiam(double d) { fc_dots_diam = d; }
+    
+    //Sets and gets the FC visible.
+    private static boolean fc_circle_visible = true;   
+	public static boolean getFCVisible() {return fc_circle_visible; }
+    public static void setFCVisible(boolean FCV) { fc_circle_visible = FCV; }
+    
+	
+	
 	@Override
 	public void onCreate(){
 		super.onCreate(); 

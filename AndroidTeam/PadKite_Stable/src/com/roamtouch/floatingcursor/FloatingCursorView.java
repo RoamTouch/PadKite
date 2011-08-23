@@ -1,12 +1,18 @@
 package com.roamtouch.floatingcursor;
 
 import com.roamtouch.swiftee.R;
+import com.roamtouch.swiftee.SwifteeApplication;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +25,9 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.view.animation.Animation.AnimationListener;
 
+
+import com.roamtouch.floatingcursor.FloatingCursorInnerView;;
+
 public class FloatingCursorView extends View{
 	
 	public static final String TAG = "FloatingCursorView";
@@ -28,7 +37,7 @@ public class FloatingCursorView extends View{
 
     private float x = 0;
     private float y = 0;
-    private int r = 25;
+    private int rad = 25;
     
     private static final float smallFact = 0.5f;
     
@@ -44,12 +53,20 @@ public class FloatingCursorView extends View{
     private TranslateAnimation ta;
 
     private boolean isLoadingAnimationShown = false;
+    
+    private boolean isSmall = false;
+    
+    private FloatingCursorInnerView innerCircle;
+    
+    public double dD;
+    
+    int n = 40;
 
     public FloatingCursorView(Context context) {
         super(context);
-        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.outer_circle);
+        //bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.outer_circle);        
+        innerCircle = new FloatingCursorInnerView(context);
     }
-
 
     protected void setPosition(float x, float y)
     {
@@ -59,7 +76,12 @@ public class FloatingCursorView extends View{
         //Make sure animation follows new co-ordiantes, just restart animation.
         if (isLoadingAnimationShown) {
         	this.clearAnimation();
-        	this.startScaleDownAndRotateAnimation();
+        	// Force isSmall to be false otherwise we may 
+        	// fail to call startScaleDownAndRotateAnimation.
+        	// See ticket #506, in which animations are cleared but
+        	// startScaleDownAndRotateAnimation is not really invoked.
+        	this.isSmall = false;
+        	this.startScaleDownAndRotateAnimation(1000);
         }
         
         invalidate();
@@ -67,8 +89,8 @@ public class FloatingCursorView extends View{
 
     protected void setRadius(int r)
     {
-        if (this.r != r) {
-            this.r = r;
+        if (this.rad != r) {
+            this.rad = r;
 
             invalidate();
         }
@@ -76,22 +98,62 @@ public class FloatingCursorView extends View{
 
     protected int getRadius()
     {
-        return this.r;
-    }
-
-
+        return this.rad;
+    }  
+    
     @Override
-        protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        //Toast.makeText(getContext(), "Hello Draw", Toast.LENGTH_SHORT).show();
-
-        rect = new Rect((int)x-r,(int)y-r,(int)x+r,(int)y+r);
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);       
+        
+        if (SwifteeApplication.getFCVisible()){        	
+        
+	        dD = SwifteeApplication.getFCDotDiam();       
+	        rect = new Rect((int)x-rad,(int)y-rad,(int)x+rad,(int)y+rad);
+	        
+	        Paint pF = new Paint();   
+	        pF.setStyle(Paint.Style.FILL);
+	        pF.setAntiAlias(true);
+	        
+	        Paint lF = new Paint();   
+	        lF.setStyle(Paint.Style.STROKE);        
+	        lF.setStrokeWidth(1);
+	        lF.setColor(0xFFF5CD31);	          
+	        
+	        for (int i = 0; i < n; i++) {
+	            double t = 2 * Math.PI * i / n;
+	            int x = (int) Math.round(rect.exactCenterX() + rad * Math.cos(t));
+	            int y = (int) Math.round(rect.exactCenterY() + rad * Math.sin(t));
+	            if (isOdd(i)){
+	            	pF.setColor(0xFF303030);
+	            	canvas.drawCircle(x, y, (float) dD, pF);
+	            	pF.setColor(0xFF919191);
+	            	canvas.drawCircle(x, y, (float) (dD-1), pF);
+	            	pF.setColor(0xFFB3B3B3);
+	            	canvas.drawCircle(x, y, (float) (dD-2), pF);
+	            } else {
+	            	lF.setColor(0xFFC9C9C9);
+	            	canvas.drawCircle(x, y, (float) (dD-1.5), lF);
+	            	pF.setColor(0xFFFFFFFF);
+	            	canvas.drawCircle(x, y, (float) (dD-2), pF);            	
+	            }
+	                    
+	        }  
+	    }
+        
+		//rect = new Rect(0,0,SwifteeApplication.getWidth(), SwifteeApplication.getHeight());
+        
+        /*rect = new Rect((int)x-r,(int)y-r,(int)x+r,(int)y+r);
         if (bitmap != null) {
             canvas.drawBitmap(bitmap, null, rect, null);
-        }
-    }
-
+        }*/
+    }   
     
+    private boolean isOdd( int val ) 
+    {
+    	return (val & 0x01) != 0; 
+    }
+   
+
     protected void startRotateAnimation() {
     	ra = null;
     	this.clearAnimation();
@@ -104,25 +166,36 @@ public class FloatingCursorView extends View{
     }
 
     protected void startScaleDownAnimation() {
+    	if (isSmall)
+    		return;
+    	
     	sa = null; //Clear previous reference
     	sa = new ScaleAnimation(1.0f,smallFact,1.0f,smallFact,
     			Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
     	sa.setDuration((long) 1000);
     	sa.setInterpolator(new LinearInterpolator());
         this.startAnimation(sa);
+        isSmall = true;
     }
     
-    protected void startScaleUpAnimation() {
+    protected void startScaleUpAnimation(long duration) {
+    	if (!isSmall)
+    		return;
+    	
     	sa = null; //Clear previous reference
     	sa = new ScaleAnimation(smallFact,1f,smallFact,1f,
     			Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-    	sa.setDuration((long) 1000);
+    	sa.setDuration(duration);
     	sa.setInterpolator(new LinearInterpolator());
         this.startAnimation(sa);
+        isSmall = false;
     }
     
     // Combined scale-down and rotate operation
-    protected void startScaleDownAndRotateAnimation() {
+    protected void startScaleDownAndRotateAnimation(long duration) {
+    	
+    	if (isSmall)
+    		return;
     	
     	this.clearAnimation();
     	isLoadingAnimationShown = true;
@@ -134,14 +207,52 @@ public class FloatingCursorView extends View{
     	
     	sa = new ScaleAnimation(1.0f,smallFact,1.0f,smallFact,
     			Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-    	sa.setDuration((long) 1000);
+    	sa.setDuration((long) duration);
     	
     	set = new AnimationSet(true);
     	set.setInterpolator(new LinearInterpolator());
     	set.addAnimation(ra);
-        set.addAnimation(sa);
+    	if (isSmall) {
+    		sa = null; // trigger gc
+    	}
+    	else {
+    		set.addAnimation(sa);
+    	}
         this.startAnimation(set);
+        isSmall = true;
     }
+
+    protected void startScaleUpAndRotateAnimation(long duration) {
+ 
+       	if (!isSmall)
+    		return;
+ 
+    	this.clearAnimation();
+    	isLoadingAnimationShown = true;
+    	
+    	ra = new RotateAnimation(ROTATE_FROM, ROTATE_TO, Animation.RELATIVE_TO_SELF,
+                0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+    	ra.setDuration((long) 1000); // 1 sec/rotation @ 0% loading
+    	ra.setRepeatCount(Animation.INFINITE);
+    	
+    	sa = new ScaleAnimation(smallFact,1f,smallFact,1f,
+    			Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+    	sa.setDuration(duration);
+    	
+    	set = new AnimationSet(true);
+    	set.setInterpolator(new LinearInterpolator());
+    	set.addAnimation(ra);
+    	if (isSmall) {
+    		sa = null; // trigger gc
+    	}
+    	else {
+    		set.addAnimation(sa);
+    	}
+        this.startAnimation(set);
+        isSmall = false;
+    }
+
+    
     
     public void setProgress(int progress){
     	Log.v(TAG,"Progress is " + progress);
@@ -237,5 +348,7 @@ public class FloatingCursorView extends View{
 	public void stopAllAnimation() {
 		this.clearAnimation();
 		isLoadingAnimationShown = false;
-	}
+	}	
+
+ 
 }
