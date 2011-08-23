@@ -16,8 +16,9 @@ import android.gesture.GestureLibrary;
 import android.os.Environment;
 //import android.os.Environment;
 
+import org.acra.*;
+import org.acra.annotation.*;
 public class SwifteeApplication extends Application{
-
 	public static final int CURSOR_TEXT_GESTURE = 1;
 	public static final int CURSOR_LINK_GESTURE = 2;
 	public static final int CURSOR_IMAGE_GESTURE = 3;
@@ -53,6 +54,7 @@ public class SwifteeApplication extends Application{
         
 	@Override
 	public void onCreate(){
+		ACRA.init(this);
 		super.onCreate(); 
 		database = new DBConnector(this);
 		database.open();

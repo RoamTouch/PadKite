@@ -8,6 +8,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+
+import org.acra.ErrorReporter;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -287,22 +289,30 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         
         webLayout = (FrameLayout) findViewById(R.id.webviewLayout);
         
-        webView = new WebView(this);
-        webView.setScrollbarFadingEnabled(true);
-        webView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
-        webView.setMapTrackballToArrowKeys(false); // use trackball directly
-        // Enable the built-in zoom
-        webView.getSettings().setBuiltInZoomControls(false);
-        webView.getSettings().setJavaScriptEnabled(true);
-		LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
-		//params.setMargins(0, 20, 0, 0);
-		
-		webView.setLayoutParams(params);
-		
-		//webView.setDragTracker(tracker);	
-		webLayout.addView(webView);
-		//webView.loadUrl("http://padkite.com/start");
-		
+        try {
+        
+	        webView = new WebView(this);
+	        webView.setScrollbarFadingEnabled(true);
+	        webView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
+	        webView.setMapTrackballToArrowKeys(false); // use trackball directly
+	        // Enable the built-in zoom
+	        webView.getSettings().setBuiltInZoomControls(false);
+	        webView.getSettings().setJavaScriptEnabled(true);
+			LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
+			//params.setMargins(0, 20, 0, 0);
+			
+			webView.setLayoutParams(params);
+			
+			//webView.setDragTracker(tracker);	
+			
+			webLayout.addView(webView);
+			//webView.loadUrl("http://padkite.com/start");
+        } 
+       	catch(Exception e)
+       	{
+        	ErrorReporter.getInstance().handleException(e);
+    	}
+       	
 		String data = getIntent().getDataString();
 		if(data!=null) {
 			webView.loadUrl(data);
