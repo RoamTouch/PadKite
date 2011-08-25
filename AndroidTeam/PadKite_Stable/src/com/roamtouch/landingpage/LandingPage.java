@@ -122,7 +122,7 @@ public class LandingPage {
 		int block = popSize/3;	
 		boolean block1=true, block2=true, block3=true;
 		if (popSize>0){
-			popularSites += "<div><table><tr align=\"center\">";		
+			popularSites += "<div><table><tr align=\"center\"><font size=2>";		
 			for (int j = 0; j < popSize ; j++) {
 				String pop = popSites.get(j);		    	
 		    	StringTokenizer pTok = new StringTokenizer(pop, "|");
@@ -159,7 +159,7 @@ public class LandingPage {
 					}
 				}
 			}
-			popularSites += "</tr></table></div>";
+			popularSites += "</font></tr></table></div>";
 		}		
 		return popularSites;
 	}
