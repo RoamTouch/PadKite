@@ -4,8 +4,11 @@ package com.roamtouch.swiftee;
 //import java.net.URI;
 //import java.net.URL;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 
 import com.roamtouch.database.DBConnector;
@@ -14,6 +17,7 @@ import android.app.Application;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.os.Environment;
+import android.util.Log;
 //import android.os.Environment;
 
 import org.acra.*;
@@ -49,8 +53,40 @@ public class SwifteeApplication extends Application{
     public static void setFCVisible(boolean FCV) { fc_circle_visible = FCV; }
     
     //Landing page path. 
-    private static String landing_page_path = "file:///android_asset/loadPage.html";   
-    public static String getLandingPagePath() {return landing_page_path; }
+    //private static String landing_page_load_path = "file:///android_asset/loadPage.html";
+    //public static String getLandingPageLoadPath() {return landing_page_load_path; }
+    public static String landing_page_store_path = Environment.getExternalStorageDirectory()+"/PadKite/loadPage.html";
+    public static String getLandingPageStorePath() {return landing_page_store_path; }
+    
+    public static String landingPath = Environment.getExternalStorageDirectory()+"/PadKite/Web Assets/loadPage.html";
+    
+    
+    /**GLOBAL SEARCH VARIABLES**/
+	//Search parameter for landing page Twitter trends.
+	public static String twitter_key;   
+	public static String getTwitterKey() {return twitter_key; }
+    public static void setTwitterKey(String key) { twitter_key = key; }
+    
+    //Search page for Twitter JSON.
+	private static String twitter_search;   
+	public static String getTwitterSearch() {return twitter_search; }
+    public static void setTwitterSearch(String search) { twitter_search = search; } 
+	
+    //Search page for Images.
+	private static String image_search;   
+	public static String getImageSearch() {return image_search; }
+    public static void setImageSearch(String search) { image_search = search; }
+    
+   //Search page for Google.
+	private static String google_search;   
+	public static String getGoogleSearch() {return google_search; }
+    public static void setGoogleSearch(String search) { google_search = search; }
+    
+    //Search page for YouTube.
+	private static String youtube_search;   
+	public static String getYouTubeSearch() {return youtube_search; }
+    public static void setYouTubeSearch(String search) { youtube_search = search; }    
+    
         
 	@Override
 	public void onCreate(){
@@ -63,13 +99,16 @@ public class SwifteeApplication extends Application{
 			// FIXME: For now force an update!		
 			copyFilestoSdcard("Default Theme", true);
 			copyFilestoSdcard("Gesture Library", false);
+			copyFilestoSdcard("Web Assets", true);
 		}
-		if(database.checkIfBookmarkAdded())
+		if(database.checkIfBookmarkAdded()){
 			database.addBookmark();
+		}
 	}
 	public boolean isSdCardReady(){
 		return Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);  
 	}
+	
 	public void copyFilestoSdcard(String dir, boolean force){
 		try{
 			String arr[] = getAssets().list(dir);
@@ -159,8 +198,26 @@ public class SwifteeApplication extends Application{
 				mLibrary.load();
 				break;
 		}		
-		return mLibrary;
-		
-	}
+		return mLibrary;		
+	}	
+	
+	public static void createWebAssets(String path, String content) throws IOException {		 
+		 File landing = null;
+		 try {
+			 File root = Environment.getExternalStorageDirectory();
+			    if (root.canWrite()){
+			       String destination = path;		       
+			       landing = new File(destination);
+			       landing.delete();						       
+			       landing.createNewFile();		            
+			    }			
+	        FileWriter gpxwriter = new FileWriter(landing);
+	        BufferedWriter out = new BufferedWriter(gpxwriter);
+	        out.write(content);
+	        out.close();
+		} catch (IOException e) {
+		    Log.v("TAG", "Error" + e);			
+		}		
+	 }
 	
 }

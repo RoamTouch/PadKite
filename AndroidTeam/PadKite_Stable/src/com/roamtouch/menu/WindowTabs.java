@@ -6,6 +6,7 @@ import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
+import com.roamtouch.swiftee.SwifteeHelper;
 import com.roamtouch.view.EventViewerArea;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -117,30 +118,34 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 	}
 	
 	public WebView createWebView(String url){
+		
 		WebView webView = new WebView(mContext);
 		webView.setId(mParent.getActiveWebViewIndex()+1);
 		webView.setScrollbarFadingEnabled(true);
         webView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
         webView.setMapTrackballToArrowKeys(false); // use trackball directly
+        
         // Enable the built-in zoom
         webView.getSettings().setBuiltInZoomControls(false);
         webView.getSettings().setJavaScriptEnabled(true);
         LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
 		webView.setLayoutParams(params);
-		if(url.equals(""))
-			webView.loadUrl(SwifteeApplication.getLandingPagePath());
-		else
-			webView.loadUrl(url);
-		webView.setSelectionColor(0xAAb4d5fe);
-		webView.setSearchHighlightColor(0xAAb4d5fe);
-
-		webView.setCursorOuterColors(0xff74b1fc, 0xff46b000, 0xff74b1fc, 0xff36c000);
-		webView.setCursorInnerColors(0xffa0c9fc, 0xff8cd900, 0xffa0c9fc, 0xff7ce900);
-		webView.setCursorPressedColors(0x80b4d5fe, 0x807ce900);
 		
-		//webView.loadUrl("http://padkite.com/start");
-
+		if(url.equals("")){
+			String _url = SwifteeHelper.getHomepage();
+			webView.loadUrl(_url);
+		} else {
+			webView.loadUrl(url);
+			webView.setSelectionColor(0xAAb4d5fe);
+			webView.setSearchHighlightColor(0xAAb4d5fe);
+	
+			webView.setCursorOuterColors(0xff74b1fc, 0xff46b000, 0xff74b1fc, 0xff36c000);
+			webView.setCursorInnerColors(0xffa0c9fc, 0xff8cd900, 0xffa0c9fc, 0xff7ce900);
+			webView.setCursorPressedColors(0x80b4d5fe, 0x807ce900);
+		}
+		
 		return webView;
+		
 	}
 	public void removeWindow(){
 		if(getChildCount()>5){

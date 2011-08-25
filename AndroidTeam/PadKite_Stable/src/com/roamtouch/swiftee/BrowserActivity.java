@@ -33,7 +33,7 @@ import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SelectionGestureView;
 import com.roamtouch.view.SwifteeGestureView;
 import com.roamtouch.view.SwifteeOverlayView;
-//import com.roamtouch.view.TopBarArea;
+import com.roamtouch.landingpage.LandingPage;
 import com.roamtouch.view.TutorArea;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -51,6 +51,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.text.ClipboardManager;
 import android.util.Log;
@@ -92,8 +93,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 
 	private FloatingCursor floatingCursor;
 	private EventViewerArea eventViewer;
-	private GestureLibrary mLibrary;
-//	private TopBarArea mTopBarArea;
+	private GestureLibrary mLibrary;	
 	
 	private FrameLayout webLayout;
 	private SwifteeGestureView mGestures;
@@ -107,6 +107,11 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     private SharedPreferences sharedPreferences;
     
     private TranslateAnimation ta;
+    
+    public final LandingPage lp = new LandingPage(this); //HERE ONLY PLACE TO INSTANSIATE LANDINGPAGE.
+    
+    private String landingPath = Environment.getExternalStorageDirectory()+"/PadKite/Web Assets/loadPage.html";
+    
     
     public void closeDialog()
     {
@@ -232,6 +237,18 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         appState = ((SwifteeApplication)getApplicationContext());
       
+        /** LANDING PAGE **/		
+		String landingString = null;
+		boolean re = lp.remoteConnections();
+		landingString = lp.generateLandingPageString();
+		
+		try {			
+			SwifteeApplication.createWebAssets(landingPath, landingString);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
         
 //    	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -317,8 +334,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		if(data!=null) {
 			webView.loadUrl(data);
 		}
-		else {
-			webView.loadUrl(SwifteeApplication.getLandingPagePath());
+		else {			
+			webView.loadUrl(SwifteeHelper.getHomepage());
 		}
 		
 		webView.setSelectionColor(0xAAb4d5fe);
