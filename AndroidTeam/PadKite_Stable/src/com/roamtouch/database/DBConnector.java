@@ -104,20 +104,28 @@ public class DBConnector {
 		}
 		
 		public boolean checkIfBookmarkAdded(){
+			
+			boolean check = false;
+			Cursor cursor = null;
 			try{
-				Cursor c = mDatabase.rawQuery("SELECT count(*) FROM bookmarks", null);
-				if(c!=null){
-					c.moveToFirst();
-					int count = c.getInt(0);
-					if(count<2)
-						return true;
+				cursor = mDatabase.rawQuery("SELECT count(*) FROM user_profiles", null);
+				if(cursor!=null){
+					cursor.moveToFirst();
+					int count = cursor.getInt(0);
+					if(count>0){
+						check = true;
+					} else {
+						check = false;
+					}
 				}
-				return false;
-			}
-			catch(Exception e){
-				e.printStackTrace();
-				return false;
-			}		}
+				
+			}	
+			finally { if (cursor != null) {
+					cursor.close();
+				}	
+		    }			
+		    return check;
+		}
 
 		public void addBookmark(){
 			try
