@@ -22,6 +22,9 @@ import android.util.Log;
 
 import org.acra.*;
 import org.acra.annotation.*;
+
+@ReportsCrashes(formKey = "dFZDbUZHbnVGamZqdDJQQUlZX2tzc1E6MQ") 
+
 public class SwifteeApplication extends Application{
 	public static final int CURSOR_TEXT_GESTURE = 1;
 	public static final int CURSOR_LINK_GESTURE = 2;
