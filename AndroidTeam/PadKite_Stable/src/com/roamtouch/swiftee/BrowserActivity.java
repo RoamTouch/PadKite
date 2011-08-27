@@ -1023,5 +1023,55 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 
 	    	}
 	 }; 
+	 
+	 public static final int PAINT_RING_COLOR_RED	= 600;
+	 public static final int PAINT_RING_COLOR_GRAY 	= 601;
+	 public static final int PAINT_RING_COLOR_BLUE	= 602;
+	 public static final int PAINT_RING_COLOR_GREEN	= 603;
+
+	 
+	 /**
+		 * Sets the link ring color to blue, green and red
+		 * @param color
+		 */
+		public void setRingcolor(int colorId, WebView cWebView){		
+			
+			switch (colorId){
+			
+				case PAINT_RING_COLOR_GRAY: //gray	
+					
+					cWebView.invalidate();
+					cWebView.setCursorOuterColors(0xffFF6A4D, 0xffFF6A4D, 0xffFF6A4D, 0xffFF6A4D);
+					cWebView.setCursorInnerColors(0xffFFCEC4, 0xffFFCEC4, 0xffFFCEC4, 0xffFFCEC4);	
+					break;
+					
+				case 1: //red	
+					
+					cWebView.invalidate();
+					cWebView.setCursorOuterColors(0xffFF6A4D, 0xffFF6A4D, 0xffFF6A4D, 0xffFF6A4D);
+					cWebView.setCursorInnerColors(0xffFFCEC4, 0xffFFCEC4, 0xffFFCEC4, 0xffFFCEC4);	
+					break;
+					
+				case 2: //blue	
+					
+					cWebView.invalidate();
+					cWebView.setSelectionColor(0xAAb4d5fe);
+					cWebView.setSearchHighlightColor(0xAAb4d5fe);	
+					cWebView.setCursorOuterColors(0xff0072FF, 0xff0072FF, 0xff0072FF, 0xff0072FF);
+					cWebView.setCursorInnerColors(0xffA3CCFF, 0xffA3CCFF, 0xffA3CCFF, 0xffA3CCFF);				
+					break;
+					
+				case 3: //green	
+					
+					cWebView.invalidate();
+					cWebView.setSelectionColor(0xAAD5B0);
+					cWebView.setSearchHighlightColor(0xAAD5AD);	
+					cWebView.setCursorOuterColors(0xff06A800, 0xff06A800, 0xff06A800, 0xff06A800);
+					cWebView.setCursorInnerColors(0xffA9FFA6, 0xffA9FFA6, 0xffA9FFA6, 0xffA9FFA6);	
+					break;
+					
+			}
+		};	
+
 	
 }

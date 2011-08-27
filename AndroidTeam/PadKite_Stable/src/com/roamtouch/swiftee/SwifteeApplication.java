@@ -41,6 +41,16 @@ public class SwifteeApplication extends Application{
 	 * GLOBAL VARIABLES
 	 * **/
 	
+	//Single or multi finger operations, true defaul. //SFOM 
+	private static boolean finger_mode = true;   
+	public static boolean getFingerMode() {return finger_mode; }
+    public static void setFingerMode(boolean mode) { finger_mode = mode; }
+    
+    //Sets steps, ring colors for single finger operation, 2 and 3.
+	private static int single_finger_steps = 3;   
+	public static int getSingleFingerSteps() {return single_finger_steps; }
+    public static void setSingleFingerSteps(int sfs) { single_finger_steps = sfs; }    
+	
 	//Sets and gets the diameter of the dots of the FC.
     private static double fc_dots_initial_diam = 5;   
 	public static double getFCDotInitialDiam() {return fc_dots_initial_diam; }    
