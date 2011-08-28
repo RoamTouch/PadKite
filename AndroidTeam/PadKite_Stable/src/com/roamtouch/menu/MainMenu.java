@@ -1,21 +1,30 @@
+//******************************************************************************** 
+//**	Copyright (c) 2011, Roaming Keyboards LLC doing business as RoamTouch®	**	       
+//**	All rights reserved.													**
+//********************************************************************************
 package com.roamtouch.menu;
 
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.settings.GestureRecorder;
-import com.roamtouch.settings.RegisterActivity;
+//import com.roamtouch.settings.RegisterActivity;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.SwifteeApplication;
 import com.roamtouch.view.EventViewerArea;
-import com.roamtouch.view.WebPage;
+//import com.roamtouch.view.WebPage;
 
+//import android.app.AlertDialog;
 import android.content.Context;
+//import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+//import android.util.Log;
+//import android.text.ClipboardManager;
 //import android.util.Log;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+//import android.view.Window;
 import android.view.View.OnTouchListener;
 
 enum MainMenuFunctions {
@@ -28,6 +37,7 @@ enum MainMenuFunctions {
 	zoom,
 	homepage,
 	windows,
+	share,
 	custom_gesture,
 	history,
 	download,
@@ -35,6 +45,7 @@ enum MainMenuFunctions {
 	new_window,
 	bookmark,
 	finger_model
+	//help_online
 }
 
 public class MainMenu extends CircularLayout implements OnTouchListener{
@@ -42,7 +53,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 	private FloatingCursor mFloatingCursor;
 	private BrowserActivity mParent;
 	public static boolean USER_REGISTERED = true;
-	private DBConnector database;
+	//private DBConnector database;
 	private MenuButton button,backButton,fwdButton,fingerButton;
 	public static String PATH = BrowserActivity.THEME_PATH + "/";
 	
@@ -56,8 +67,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		//LayoutInflater.from(context).inflate(R.layout.main_menu, this);
 		MenuInflater.inflate(PATH + "main_menu.xml", context, this);
 		
-		SwifteeApplication appState = ((SwifteeApplication)context.getApplicationContext());
-    	database = appState.getDatabase();
+		//SwifteeApplication appState = ((SwifteeApplication)context.getApplicationContext());
+    	//database = appState.getDatabase();
     	
 		init();
 		
@@ -91,7 +102,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		mParent = parent;
 	}
 	public void setEventViewer(EventViewerArea ev){
-//		eventViewer = ev;
+		//		eventViewer = ev;
 	}
 	public void toggleCloseORRefresh(boolean isRefresh){
 		if(button == null)
@@ -105,6 +116,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			button.setFunction("stop");
 		}
 	}
+	
 	public boolean onTouch(View v, MotionEvent event) {
 
 		if (!(v instanceof MenuButton))
@@ -157,7 +169,10 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			case windows:
 				mFloatingCursor.setEventText("Windows");
 				break;
-										
+			//Share	
+			case share:
+				mFloatingCursor.setEventText("Share page");
+				break;							
 			//Custom Gesture	
 			case custom_gesture:
 				mFloatingCursor.setEventText("Custom and Bookmark Gestures");
@@ -183,14 +198,18 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				mFloatingCursor.setEventText("Bookmark");
 				break;
 				
-			case new_window:
-				mFloatingCursor.setEventText("New Window");
-				break;
-				
+			//case help_online:
+			//	mFloatingCursor.setEventText("Help Online");
+			//	break;
+			
 			case finger_model:
 				mFloatingCursor.setEventText("Finger model");
 				break;
-				
+
+			case new_window:
+				mFloatingCursor.setEventText("New Window");
+				break;
+					
 			default:
 				mFloatingCursor.setEventText("No function defined for: " + b.getFunction());
 				break;
@@ -213,14 +232,16 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			
 			//Settings
 			case settings:
-				boolean is_registered = database.checkUserRegistered();
+				mFloatingCursor.setCurrentMenu(1);
+
+				/*boolean is_registered = database.checkUserRegistered();
 
 				if(is_registered)
 					mFloatingCursor.setCurrentMenu(1);
 				else{
 					Intent i = new Intent(mParent,RegisterActivity.class);
 					mParent.startActivity(i);
-				}
+				}*/
 				break;
 				
 			//Refresh
@@ -246,18 +267,30 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				String url = sharedPreferences.getString("home_page","http://www.padkite.com");
 				mFloatingCursor.loadPage(url);				
 				break;
+				
 			//Windows	
 			case windows:
 				mFloatingCursor.setCurrentMenu(2);
 				//mParent.setEventViewerMode(EventViewerArea.WINDOWS_MODE);
 				break;
-			
+				
+			//Share	
+			case share:
+				this.setVisibility(INVISIBLE);
+				String currentUrl = mFloatingCursor.getCurrentURL(); 
+				mParent.eventViewer.setText("web:"+currentUrl); 
+				if(currentUrl!=""){
+					mParent.setSelection(currentUrl);				
+				}				
+				mParent.setGestureType(SwifteeApplication.SHARE_GESTURE);
+				mParent.startGesture(true);
+				break;
+				
 			//Backward	
 			case backward:
 				mFloatingCursor.goBackward();			
 				break;
 				
-			//forward	
 			case forward:
 				mFloatingCursor.goForward();				
 				break;
@@ -273,9 +306,9 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				//Intent i = new Intent(mParent,WebPage.class);
 				//i.putExtra("webUrl", "http://www.padkite.com/downloads");
 				//mParent.startActivity(i);
-				//mFloatingCursor.loadPage("file:///android_asset/Web Pages/download.html");
-				WebPage page = new WebPage();
-				mFloatingCursor.loadData(page.getDownLoadHistory(mParent));
+				mFloatingCursor.loadPage("file:///android_asset/Web Pages/download.html");
+				//WebPage page = new WebPage();
+				//mFloatingCursor.loadData(page.getDownLoadHistory(mParent));
 				break;
 			
 			case bookmark:
@@ -285,8 +318,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				i.putExtra("isNewBookmark", true);
 				i.putExtra("Gesture_Type", SwifteeApplication.BOOKMARK_GESTURE);
 				mParent.startActivity(i);
-				break;
-				
+				break;			
 			case finger_model:
 				if (SwifteeApplication.getFingerMode()){
 					toggleSingleOrMulti(false);									
@@ -294,8 +326,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 					toggleSingleOrMulti(true);
 				}
 				break;				
-			
-			case new_window:
+			case new_window:				
 				mFloatingCursor.addNewWindow(false);
 				break;
 				
@@ -309,7 +340,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			}
 		}
 		return false;
-	}
+	};
 	
 	public void toggleSingleOrMulti(boolean isSingle){
 		if(fingerButton == null)
@@ -323,11 +354,10 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			fingerButton.setDrawables(PATH+"Finger_model_single.png",PATH+"Finger_model_single_pressed.png");	
 		}		
 	};	
-	
 	public void setBackEabled(boolean b){
 		if(backButton!=null)
 			backButton.setEnabled(b);
-	}
+	};
 	public void setFwdEabled(boolean b){
 		if(fwdButton!=null)
 			fwdButton.setEnabled(b);

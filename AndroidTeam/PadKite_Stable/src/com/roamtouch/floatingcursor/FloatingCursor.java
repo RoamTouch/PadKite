@@ -1,12 +1,16 @@
 package com.roamtouch.floatingcursor;
 
+import java.net.URISyntaxException;
+
 import org.metalev.multitouch.controller.MultiTouchController;
 import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCanvas;
 import org.metalev.multitouch.controller.MultiTouchController.PointInfo;
 import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -1157,7 +1161,15 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}
 				if (mExecutionTimerStarted) {
 					stopMediaExecution(true);
-				}				
+				}		
+				//Set reg color back again.				
+				/* Notice that three steps turns first one to green. */ 
+				if (SwifteeApplication.getSingleFingerSteps()== 3){
+					mParent.setRingcolor(1, mWebView);		
+				} else if (SwifteeApplication.getSingleFingerSteps()== 2){
+					mParent.setRingcolor(2, mWebView);						
+				}
+
 			}		
 		};	
 		
@@ -1233,16 +1245,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		 * over on link. Sets mReadyToExecute on onTouchUp().
 		 */
 		Runnable mExecutionTimer = new Runnable() {
-			public void run() {		
+			public void run() {
 				if (resultType!=WebHitTestResult.TEXT_TYPE){
 					mReadyToExecute = true;				
 					mReadyToSelect = false;
 				}
 			}		
 		};
-
-		
-		
+	
 		/**
 		 * Single Finger: Arms media cursors for selection. Sets mReadyToSelect on.
 		 * Sets mReadyToExecute on onTouchUp().
@@ -1255,7 +1265,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				onLongTouch(); //SELECT TEXT AFTER TIMEOUT.
 				
 			}
-		};		
+		};
 		
 		void startLinkExecution() {
 			mExecutionTimerStarted = true;
@@ -2378,6 +2388,34 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 		public void setEventText(String str){
 			eventViewer.setText(str);
+		}
+		
+		public void showVideo(String videoId, boolean showAlert) {
+			if (showAlert){
+				eventViewer.setText("Download not yet implemented. Showing video instead ...");
+			}
+			String url = "vnd.youtube:"
+					+ videoId
+					+ "?vndapp=youtube_mobile&vndclient=mv-google&vndel=watch&vndxl=xl_blazer";
+			Intent intent;
+
+			try {
+				intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+			} catch (URISyntaxException ex) {
+				return;
+			}
+
+			if (mParent.getPackageManager().resolveActivity(intent, 0) == null)
+				return;
+
+			// Security settings - Sanitize access
+			intent.addCategory(Intent.CATEGORY_BROWSABLE);
+			intent.setComponent(null);
+
+			try {
+				mParent.startActivity(intent);
+			} catch (ActivityNotFoundException e) {
+			}
 		}
 		
 		public void loadPage(String url){

@@ -168,9 +168,10 @@ public class CircularLayout extends ViewGroup {
 			   cone.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
 			   //cone.setClickable(false);
 		   }
-		   MenuButton hotKey = (MenuButton)getChildAt(childEndPoint+1);
+		   
+		   MenuButton hotKey = (MenuButton)getChildAt(childEndPoint+1);		   
 		   if(hotKey.getVisibility() != GONE){
-			   int diff = BUTTON_RADIUS*2/3;
+			   int diff = (int) (BUTTON_RADIUS*1.3);
 			   hotKey.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
 		   }
 

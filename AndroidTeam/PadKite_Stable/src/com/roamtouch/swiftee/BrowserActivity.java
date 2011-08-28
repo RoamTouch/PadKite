@@ -92,7 +92,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	private SelectionGestureView mSelectionGesture;
 
 	private FloatingCursor floatingCursor;
-	private EventViewerArea eventViewer;
+	public static EventViewerArea eventViewer;
 	private GestureLibrary mLibrary;	
 	
 	private FrameLayout webLayout;
@@ -101,7 +101,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 		
 	private int currentGestureLibrary;
-	private int mGestureType = SwifteeApplication.CURSOR_TEXT_GESTURE;
+	private static int mGestureType = SwifteeApplication.CURSOR_TEXT_GESTURE;
 	
 	private SwifteeApplication appState;
     private SharedPreferences sharedPreferences;
@@ -437,6 +437,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		tArea.setGestureLibrary(mLibrary);
 		tArea.setParent(this);
     }
+    
+    public static int getGestureType()
+    {
+    	return mGestureType;
+    }
+
     
     public void setGestureType(int gestureType)
     {

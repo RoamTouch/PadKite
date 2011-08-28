@@ -10,11 +10,15 @@ import com.api.twitter.TwitterActivity;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.settings.GestureRecorder;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.gesture.GestureLibraries;
 import android.net.Uri;
+import android.text.ClipboardManager;
+import android.util.Log;
 
 public class GestureActions {
 
@@ -30,6 +34,7 @@ public class GestureActions {
  	}
 	
 	String mLink = null;
+	String mVideoId = null;
 	
 	public GestureActions(BrowserActivity parent, String selection)
 	{
@@ -74,28 +79,52 @@ public class GestureActions {
 	
 	public String checkMobileTube(String link) {
 		
-		if (link.contains("m.youtube.com")) {
+		if (link.contains("m.youtube.com") || link.contains("youtube.com/watch")) {
 			String[] parts = link.split("=");
 			String videoId = parts[parts.length-1];
-			link = "http://www.youtube.com/watch?v=" + videoId;
+			try {
+				String[] t = link.split("?");
+				t = t[1].split("&");
+				for (int i = 0; i < t.length; i++)
+				{
+					parts = t[i].split("=");
+					if (parts[0].equals("v"))
+						videoId = parts[1];
+				}
+
+			}
+			catch (Exception e) {
+
+			}
+			if (link.contains("m.youtube.com"))
+					link = "http://www.youtube.com/watch?v=" + videoId;
+			mVideoId = videoId;
 		}
 		return link;
 	}
 	
+	public void copy() 
+	{
+		((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).setText(mSelection);
+	}
+	
 	public void search(FloatingCursor fc)
 	{
-		fc.loadPage("http://www.google.com/m/search?q=" + URLEncoder.encode(mSelection));
+		//fc.loadPage("http://www.google.com/m/search?q=" + URLEncoder.encode(mSelection));
+		fc.loadPage(SwifteeApplication.getGoogleSearch()+URLEncoder.encode(mSelection));
 	}
 
 	public void searchPicture(FloatingCursor fc)
 	{
-		fc.loadPage("http://www.google.com/m/search?site=images&q=" + URLEncoder.encode(mSelection));
+		//fc.loadPage("http://www.google.com/m/search?site=images&q=" + URLEncoder.encode(mSelection));
+		fc.loadPage(SwifteeApplication.getImageSearch()+URLEncoder.encode(mSelection));
 	}
 
 	
 	public void searchYouTube(FloatingCursor fc)
 	{
-		fc.loadPage("http://m.youtube.com/results?search_query=" + URLEncoder.encode(mSelection));
+		//fc.loadPage("http://m.youtube.com/results?search_query=" + URLEncoder.encode(mSelection));
+		fc.loadPage(SwifteeApplication.getYouTubeSearch()+ URLEncoder.encode(mSelection));
 	}
 
 	public void email()
@@ -114,13 +143,57 @@ public class GestureActions {
 
 	public void calendar()
 	{
-    	Intent intent = new Intent(Intent.ACTION_EDIT);
+		//BrowserActivity.jScriptPopUp(true);	
+    	//String pS = "javascript:window.open(\"http://roamtouch.com/html_app/popup.html\",\"mywindow\",\"menubar=1,resizable=1,width=100,height=100\")";
+			
+		//String BaseURL = "http://roamtouch.com/padkite/app/editor/edit.php?";
+		
+		
+		/*int gestureType = BrowserActivity.getGestureType();		
+			switch(gestureType){
+			case SwifteeApplication.CURSOR_TEXT_GESTURE:
+				break;
+			case SwifteeApplication.CURSOR_LINK_GESTURE:
+				link = true;
+				break;
+			case SwifteeApplication.CURSOR_IMAGE_GESTURE:		
+				break;
+			case SwifteeApplication.CURSOR_NOTARGET_GESTURE:
+				break;
+			case SwifteeApplication.CURSOR_VIDEO_GESTURE:
+				link = true;
+				break;
+			case SwifteeApplication.CUSTOM_GESTURE:
+				break;
+			case SwifteeApplication.BOOKMARK_GESTURE:
+				break;
+			case SwifteeApplication.SHARE_GESTURE:				
+				break;
+		}*/		
+		String selection = null;
+		String title = "Hola";
+		
+		if ( BrowserActivity.getGestureType() == SwifteeApplication.CURSOR_LINK_GESTURE ){
+			selection = mLink + "\n\n" + "Shrinked: \n" + mSelection; 
+		} else {
+			selection = mSelection;
+		}
+		
+		/*Intent intent = new Intent(Intent.ACTION_EDIT);
     	intent.setType("vnd.android.cursor.item/event");
 
     	if (mTitle != null)
         	intent.putExtra("title", mTitle);
     	intent.putExtra("description", mSelection);
-    	mParent.startActivity(intent);
+    	mParent.startActivity(intent);*/
+	}
+	
+	public void sms()
+	{
+    	Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+		sendIntent.putExtra("sms_body", mSelection); 
+		sendIntent.setType("vnd.android-dir/mms-sms");
+		mParent.startActivity(sendIntent);
 	}
 
 	public void oldFacebook(String accessToken, long accessExpires)
@@ -225,12 +298,14 @@ public class GestureActions {
 	
 	public String translate(String languageTo)
 	{	
-    	return Translater.text(mSelection, "ENGLISH", languageTo);
+    	String translated = Translater.text(mSelection, "ENGLISH", languageTo);
+		((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).setText(translated);
+		return translated;
 	}
 
 	public void wikipedia(FloatingCursor fc)
 	{	
-    	fc.loadPage("http://en.wikipedia.org/wiki/"+URLEncoder.encode(mSelection));
+    	fc.loadPage("http://en.wikipedia.org/w/index.php?search=" + URLEncoder.encode(mSelection) + "&go=Go");
 	}
 
 	public void addLink()
@@ -245,6 +320,7 @@ public class GestureActions {
 	
 	public void openLink(FloatingCursor floatingCursor)
 	{
+		
     	floatingCursor.addNewWindow(true);
 	}
 	
@@ -258,10 +334,15 @@ public class GestureActions {
         mParent.startActivity(Intent.createChooser(intent, "Share ..."));		
 	}
 
-	public void download()
+	public void download(FloatingCursor floatingCursor)
 	{
+		// Just show the video instead of downloading for now ...
+		if (mVideoId != null) {
+			floatingCursor.showVideo(mVideoId, true);
+			return;
+		}
 		try {
-			mParent.new DownloadFilesTask().execute(new URL(mSelection), null, null);
+			mParent.new DownloadFilesTask().execute(new URL(mLink), null, null);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
