@@ -33,7 +33,8 @@ enum MainMenuFunctions {
 	download,
 	close,
 	new_window,
-	bookmark
+	bookmark,
+	finger_model
 }
 
 public class MainMenu extends CircularLayout implements OnTouchListener{
@@ -42,7 +43,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 	private BrowserActivity mParent;
 	public static boolean USER_REGISTERED = true;
 	private DBConnector database;
-	private MenuButton button,backButton,fwdButton;
+	private MenuButton button,backButton,fwdButton,fingerButton;
 	public static String PATH = BrowserActivity.THEME_PATH + "/";
 	
 //	private EventViewerArea eventViewer;
@@ -75,6 +76,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 					backButton = b;
 				if(b.getFunction().equals("forward"))
 					fwdButton = b;
+				if(b.getFunction().equals("finger_model"))
+					fingerButton = b;
 			}
 		}
 	}
@@ -183,7 +186,11 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			case new_window:
 				mFloatingCursor.setEventText("New Window");
 				break;
-					
+				
+			case finger_model:
+				mFloatingCursor.setEventText("Finger model");
+				break;
+				
 			default:
 				mFloatingCursor.setEventText("No function defined for: " + b.getFunction());
 				break;
@@ -279,6 +286,14 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				i.putExtra("Gesture_Type", SwifteeApplication.BOOKMARK_GESTURE);
 				mParent.startActivity(i);
 				break;
+				
+			case finger_model:
+				if (SwifteeApplication.getFingerMode()){
+					toggleSingleOrMulti(false);									
+				}else{
+					toggleSingleOrMulti(true);
+				}
+				break;				
 			
 			case new_window:
 				mFloatingCursor.addNewWindow(false);
@@ -295,6 +310,20 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		}
 		return false;
 	}
+	
+	public void toggleSingleOrMulti(boolean isSingle){
+		if(fingerButton == null)
+			return;
+		if(isSingle){		
+			SwifteeApplication.setFingerMode(true);
+			fingerButton.setDrawables(PATH+"Finger_model_multi.png",PATH+"Finger_model_multi_pressed.png"); 						
+		}
+		else{
+			SwifteeApplication.setFingerMode(false);
+			fingerButton.setDrawables(PATH+"Finger_model_single.png",PATH+"Finger_model_single_pressed.png");	
+		}		
+	};	
+	
 	public void setBackEabled(boolean b){
 		if(backButton!=null)
 			backButton.setEnabled(b);
