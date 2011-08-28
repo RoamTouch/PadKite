@@ -1157,15 +1157,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}
 				if (mExecutionTimerStarted) {
 					stopMediaExecution(true);
-				}		
-				//Set reg color back again.				
-				/* Notice that three steps turns first one to green. */ 
-				if (SwifteeApplication.getSingleFingerSteps()== 3){
-					mParent.setRingcolor(1, mWebView);		
-				} else if (SwifteeApplication.getSingleFingerSteps()== 2){
-					mParent.setRingcolor(2, mWebView);						
-				}
-
+				}				
 			}		
 		};	
 		
@@ -1241,25 +1233,57 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		 * over on link. Sets mReadyToExecute on onTouchUp().
 		 */
 		Runnable mExecutionTimer = new Runnable() {
-			public void run() {
+			public void run() {		
 				if (resultType!=WebHitTestResult.TEXT_TYPE){
 					mReadyToExecute = true;				
 					mReadyToSelect = false;
 				}
 			}		
 		};
-	
+
+		
+		
 		/**
 		 * Single Finger: Arms media cursors for selection. Sets mReadyToSelect on.
 		 * Sets mReadyToExecute on onTouchUp().
 		 */
 		Runnable mSelectionTimer = new Runnable() {
-			public void run() {				
-				mReadyToSelect = true;				
-				onLongTouch(); //SELECT TEXT AFTER TIMEOUT.							
+			public void run() {	
+				
+				mReadyToSelect = true;		
+				mReadyToExecute = false;
+				onLongTouch(); //SELECT TEXT AFTER TIMEOUT.
+				
 			}
-		};
+		};		
 		
+		void startLinkExecution() {
+			mExecutionTimerStarted = true;
+			mReadyToExecute = false;
+			handler.postDelayed(mExecutionTimer, 150);
+		}
+
+		void stopLinkExecution() {
+			mExecutionTimerStarted = false;
+			mReadyToExecute = false;
+			handler.removeCallbacks(mExecutionTimer);
+			// Reset the cursor
+			pointer.setImageResource(R.drawable.kite_cursor);
+		}
+
+		void startLinkSelection() {
+			mSelectionTimerStarted = true;
+			mReadyToSelect = false;
+			handler.postDelayed(mSelectionTimer, 1200);
+		}
+
+		void stopLinkSelection() {
+			mSelectionTimerStarted = false;
+			mReadyToSelect = false;
+			handler.removeCallbacks(mSelectionTimer);
+			pointer.setImageResource(R.drawable.kite_cursor);
+		}
+
 		private boolean isYouTube(String lselectedLink) {
 			if (lselectedLink.contains("youtube.com/watch")
 					|| lselectedLink.contains("m.youtube.com/#/watch"))
@@ -1561,23 +1585,52 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		public void onTouchUp()
 		{
 
-/*			if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE){
-				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
-				//pointer.setImageResource(R.drawable.address_bar_cursor);
-				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
-			}
-		
-			if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
-			{
-			/*	sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
-				pointer.setImageResource(R.drawable.address_bar_cursor);
-				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);/
-			}
-			else {
-				sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
-				sendEvent(MotionEvent.ACTION_UP, fcX, fcY);	
-			}*/
+			/*
+			 * if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE){
+			 * sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
+			 * //pointer.setImageResource(R.drawable.address_bar_cursor);
+			 * sendEvent(MotionEvent.ACTION_UP, fcX, fcY); }
+			 */
+
+			// Jose hack distinguish between execute and select.
 			
+			if (mReadyToExecute) {
+				if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE
+						|| mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE
+						|| mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE
+						|| mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE) {
+					// eventViewer.setText("Executing link...");
+					sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
+					pointer.setImageResource(R.drawable.address_bar_cursor);
+					sendEvent(MotionEvent.ACTION_UP, fcX, fcY);					
+				}
+				mReadyToExecute = false;
+				mExecutionTimerStarted = false;
+			} else {
+				if (mExecutionTimerStarted) {
+					stopLinkExecution();
+				}
+			}
+
+			if (mReadyToSelect) {
+				if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE
+						|| mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE
+						|| mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
+					mParent.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);
+					mParent.startGesture(true);
+				}
+				mReadyToSelect = false;
+				mSelectionTimerStarted = false;
+			} else {
+				if (mSelectionTimerStarted) {
+					stopLinkSelection();
+				}
+			}
+			/*
+			 * else { sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
+			 * sendEvent(MotionEvent.ACTION_UP, fcX, fcY); }
+			 */
+
 			pointer.setImageResource(R.drawable.kite_cursor);
 			
 		}
