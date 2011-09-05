@@ -5,12 +5,11 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
     
-	<com.roamtouch.view.WebLayoutView 
-		android:id="@+id/webviewLayout"
+	<com.roamtouch.view.WebLayoutView android:id="@+id/webviewLayout"
 		android:layout_width="fill_parent" 
 		android:layout_height="fill_parent"
-		android:orientation="vertical">	 				 		
-		</com.roamtouch.view.WebLayoutView>
+		android:orientation="vertical">	 		
+		</com.roamtouch.view.WebLayoutView>	
 	
 	<com.roamtouch.view.SwifteeOverlayView
 		xmlns:android="http://schemas.android.com/apk/res/android"
@@ -19,90 +18,90 @@
     	android:layout_height="fill_parent">
     	
 		<com.roamtouch.view.SelectionGestureView android:id="@+id/selectionGesture"
-		 	android:layout_width="fill_parent" 
+			android:layout_width="fill_parent" 
 			android:layout_height="fill_parent"
 			android:orientation="vertical">
 
 			<com.roamtouch.view.SwifteeGestureView
-			    xmlns:android="http://schemas.android.com/apk/res/android"
-			    android:id="@+id/gestures"
-			    android:layout_width="fill_parent"
-			    android:layout_height="fill_parent"
-			    android:gestureStrokeType="multiple"
-			    android:eventsInterceptionEnabled="true"
-			    android:orientation="vertical">	
-			
+	    		xmlns:android="http://schemas.android.com/apk/res/android"
+	    		android:id="@+id/gestures"
+	    		android:layout_width="fill_parent"
+	    		android:layout_height="fill_parent"
+	    		android:gestureStrokeType="multiple"
+	    		android:eventsInterceptionEnabled="true"
+	    		android:orientation="vertical">
+	   		 			
 				<com.roamtouch.visuals.RingController 
 					xmlns:android="http://schemas.android.com/apk/res/android"
 					android:id="@+id/ringController"
-			    	android:layout_width="fill_parent"
-			    	android:layout_height="fill_parent">
-					</com.roamtouch.visuals.RingController>				
-			
+				    android:layout_width="fill_parent"
+				    android:layout_height="fill_parent">
+				</com.roamtouch.visuals.RingController>		
+	
 				<com.roamtouch.floatingcursor.FloatingCursor 
 					xmlns:android="http://schemas.android.com/apk/res/android"
 					android:id="@+id/floatingCursor"
-			    	android:layout_width="fill_parent"
-			    	android:layout_height="fill_parent">
-					</com.roamtouch.floatingcursor.FloatingCursor>
-					
-				<!--<com.roamtouch.tips.TipController 
-			     	xmlns:android="http://schemas.android.com/apk/res/android"
-					android:id="@+id/tipController"
-			    	android:layout_width="fill_parent"
-			    	android:layout_height="fill_parent">
-					</com.roamtouch.tips.TipController>-->
-							
-		</com.roamtouch.view.SwifteeGestureView>
-			
+	    			android:layout_width="fill_parent"
+	    			android:layout_height="fill_parent">
+				</com.roamtouch.floatingcursor.FloatingCursor>
+	
+			</com.roamtouch.view.SwifteeGestureView>
+
 	</com.roamtouch.view.SelectionGestureView>
-			
+
 </com.roamtouch.view.SwifteeOverlayView>
 
 <LinearLayout  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:layout_gravity="bottom" 
-    android:gravity="center"
-    android:orientation="vertical">
-    
-	<HorizontalScrollView
-		android:id="@+id/gestureScrollView"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content" 
-		android:scrollbars="none"
-		android:fadingEdge="none"
-		android:visibility="visible"
-		android:layout_marginLeft="10dip"
-    	android:layout_marginRight="10dip"
-		android:background="@drawable/tutor_background">	  
- 			
- 			<com.roamtouch.view.TutorArea
- 				android:layout_width="wrap_content"
- 				android:layout_height="80dip">
- 				</com.roamtouch.view.TutorArea>
- 			
-    </HorizontalScrollView>    
-   
-   
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent" 
+	android:gravity="center_horizontal" 
+	android:orientation="vertical">
+	
+	<LinearLayout  
+    	android:layout_width="fill_parent" 
+    	android:layout_height="fill_parent" 
+    	android:gravity="top|center_horizontal"
+    	android:layout_weight="1">
+     	
+     	<com.roamtouch.view.EventViewerArea 
+     		android:id="@+id/eventViewer"
+     		android:layout_width="fill_parent"
+     		android:layout_marginLeft="10px"
+     		android:layout_marginRight="10px"
+     		android:layout_height="wrap_content"
+     		android:background="@drawable/event_viewer">
+    	</com.roamtouch.view.EventViewerArea>
+	
+
     </LinearLayout>
-
-		<LinearLayout  
-		    android:layout_width="fill_parent" 
-		    android:layout_height="fill_parent" 
-		    android:gravity="top|center_horizontal"
-		    android:layout_weight="1">
-	    
-		     <com.roamtouch.view.EventViewerArea 
-		     	android:id="@+id/eventViewer"
-		     	android:layout_width="fill_parent"
-		     	android:layout_marginLeft="10px"
-		     	android:layout_marginRight="10px"
-		     	android:layout_height="wrap_content"
-		    	android:layout_gravity="bottom"
-		     	android:background="@drawable/event_viewer">
-		    	</com.roamtouch.view.EventViewerArea>   	
-
-    	</LinearLayout>
     
+    <LinearLayout  
+    	android:layout_width="fill_parent" 
+    	android:layout_height="wrap_content" 
+    	android:layout_gravity="bottom" 
+    	android:gravity="center"
+    	android:orientation="vertical">
+    	
+		<HorizontalScrollView
+			android:id="@+id/gestureScrollView"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content" 
+			android:scrollbars="none"
+			android:fadingEdge="none"
+			android:visibility="visible"
+			android:layout_marginLeft="15px"
+	    	android:layout_marginRight="15px"
+			android:background="@drawable/tutor_background">
+				  
+	 		<com.roamtouch.view.TutorArea
+	 			android:layout_width="wrap_content"
+	 			android:layout_height="80dip">
+	 		</com.roamtouch.view.TutorArea>
+	 		
+	    </HorizontalScrollView>    
+	      
+    </LinearLayout>
+    
+</LinearLayout>
+
 </FrameLayout>
