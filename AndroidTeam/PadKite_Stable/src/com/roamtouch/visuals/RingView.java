@@ -71,17 +71,16 @@ public class RingView extends View {
         
         if (ringRect!=null){ //Carefull, app crashes without
         	
-        	ringRect.left = ringRect.left - scrollX;
-        	ringRect.right = ringRect.right + scrollX;
-        	ringRect.top = ringRect.top - scrollY;
+        	ringRect.left 	= ringRect.left - scrollX;
+        	ringRect.right 	= ringRect.right + scrollX;
+        	ringRect.top 	= ringRect.top - scrollY;
         	ringRect.bottom = ringRect.bottom - scrollY;
         	
         	x = ringRect.left - 5; 
-        	y = ringRect.top - 4; 
-        	W = ringRect.right - 2; 
-        	H = ringRect.bottom-ringRect.top + 7; 
+        	y = ringRect.top  - 4; 
         	
-        	//ringRect.left-5, ringRect.top-4, ringRect.right-2, ringRect.bottom-ringRect.top+7
+        	W = ringRect.width()  + 10;  
+        	H = ringRect.height() + 10;       	
         	
         }
 	   	
