@@ -56,7 +56,7 @@ public class SwifteeApplication extends Application{
     public static void setSingleFingerSteps(int sfs) { single_finger_steps = sfs; }    
 	
 	//Sets and gets the diameter of the dots of the FC.
-    private static double fc_dots_initial_diam = 5;   
+    private static double fc_dots_initial_diam = 4;   
 	public static double getFCDotInitialDiam() {return fc_dots_initial_diam; }    
 	
 	//Sets and gets the diameter of the dots of the FC.
@@ -104,6 +104,33 @@ public class SwifteeApplication extends Application{
 	public static String getYouTubeSearch() {return youtube_search; }
     public static void setYouTubeSearch(String search) { youtube_search = search; }    
     
+    /**RINGS**/	
+    public static final int DRAW_TAB						= 100;
+    public static final int DRAW_RING						= 101;
+    public static final int DRAW_NONE						= 102;
+    public static final int DRAW_TIP						= 103;
+    public static final int DRAW_RING_AND_TAB 				= 104;    
+
+    public static final int PAINT_GRAY	 	= 200;
+	public static final int PAINT_GREEN	 	= 201;
+	public static final int PAINT_BLUE	 	= 202;	
+	public static final int PAINT_YELLOW	= 203;
+	public static final int PAINT_VIOLET	= 204;
+	public static final int PAINT_RED		= 205;	
+	
+	public static int[] YELLOW 	= {255, 203, 0};	
+	public static int[] LIGHT_YELLOW = {255, 237, 168};	
+	
+	public static int[] GREEN 	= {0, 170, 0};
+	public static int[] VIOLET 	= {223, 43, 240};
+	public static int[] BLUE 	= {0, 114, 225};
+	public static int[] RED 	= {255, 59, 20};
+	public static int[] GRAY 	= {180, 180, 180};	
+	public static int[] DARK_GRAY 	= {50, 50, 50};
+	
+	public static final int PERSIST_FIRST_STAGE 	= 600;	
+	public static final int PERSIST_SECOND_STAGE 	= 601;
+	public static final int PERSIST_THIRD_STAGE 	= 602;
         
 	@Override
 	public void onCreate(){

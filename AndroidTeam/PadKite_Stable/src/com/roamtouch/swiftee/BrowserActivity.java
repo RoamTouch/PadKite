@@ -35,6 +35,7 @@ import com.roamtouch.view.SwifteeGestureView;
 import com.roamtouch.view.SwifteeOverlayView;
 import com.roamtouch.landingpage.LandingPage;
 import com.roamtouch.view.TutorArea;
+import com.roamtouch.visuals.RingController;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -64,6 +65,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.animation.Animation.AnimationListener;
+import roamtouch.webkit.WebSettings;
 import roamtouch.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
@@ -112,6 +114,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     
     private String landingPath = Environment.getExternalStorageDirectory()+"/PadKite/Web Assets/loadPage.html";
     
+    private RingController rCtrl;
     
     public void closeDialog()
     {
@@ -314,7 +317,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	        webView.setMapTrackballToArrowKeys(false); // use trackball directly
 	        // Enable the built-in zoom
 	        webView.getSettings().setBuiltInZoomControls(false);
-	        webView.getSettings().setJavaScriptEnabled(true);
+	        webView.getSettings().setJavaScriptEnabled(true);   
+	        webView.getSettings().setPluginState(WebSettings.PluginState.ON);
+	        
 			LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
 			//params.setMargins(0, 20, 0, 0);
 			
@@ -352,11 +357,18 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 		overlay = (SwifteeOverlayView) findViewById(R.id.overlay);
 		
+		//Ring controller.
+		rCtrl = (RingController)findViewById(R.id.ringController);
+		
+		
 		floatingCursor = (FloatingCursor)findViewById(R.id.floatingCursor);	
 		floatingCursor.setWebView(webView,true);
 		floatingCursor.setEventViewerArea(eventViewer);
-		floatingCursor.setParent(this);
+		floatingCursor.setParent(this, rCtrl);		
 		//floatingCursor.setHandler(handler);
+		
+		//Set proper parents to access from RingController.
+ 		rCtrl.setParent(this, floatingCursor, webView);
 		
 		if(data!=null) {
 			enterParkingMode(true);
