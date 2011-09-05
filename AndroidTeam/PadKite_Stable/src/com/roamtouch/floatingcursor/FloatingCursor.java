@@ -63,7 +63,6 @@ import android.widget.VideoView;
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SelectionGestureView;
 import com.roamtouch.visuals.RingController;
-import com.roamtouch.visuals.VisualHelper;
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.menu.CircularLayout;
 import com.roamtouch.menu.CircularTabsLayout;
@@ -177,7 +176,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 		//Ring View where rings and tabs are set.
 		private RingController rCtrl;
-		private VisualHelper vH;
+		
 		
 		//Rect that gets the size of what is below the pointer. 
 		private Rect rect;
@@ -1005,7 +1004,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					rCtrl.paintRingBlue();
 				}
 				
-				// eventViewer.setText("RT: "+resultType+" id: "+identifier);
+				Log.v("result", "resutl: "+resultType+" id: "+identifier);
 			
 				switch (resultType) {
 
@@ -1024,9 +1023,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						break;								
 					}
 					
-					case WebHitTestResult.SRC_ANCHOR_TYPE:{
-						resultType = WebHitTestResult.ANCHOR_TYPE; //Draw ring
-					}
+					case WebHitTestResult.SRC_ANCHOR_TYPE:					
 					case WebHitTestResult.ANCHOR_TYPE:{
 						cType = 7; //Text link
 						resultType = WebHitTestResult.ANCHOR_TYPE; //Draw ring
@@ -1166,12 +1163,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					}
 					
 					// Node changed:
-					/*if (WebHitTestResult.ANCHOR_TYPE != resultType 
+					if (WebHitTestResult.ANCHOR_TYPE != resultType 
 							&& mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE) {
 						stopFirst(true);
 						stopSecond(true);
 						stopThird(true);
-					}*/
+					}
 					
 				}
 				// Apply pointer after all.
@@ -1313,10 +1310,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 		};
 		
-		/**
-		 * Arms link with link_cursor_armed icon after half a second passed after
-		 * over on link. Sets mReadyToFirst on onTouchUp().
-		 */
+		/**Arms link with link_cursor_armed icon after half a second passed after
+		 * over on link. Sets mReadyToFirst on onTouchUp().**/
 		Runnable mFirstTimer = new Runnable() {
 			public void run() {
 				setFirstRingTab();				
@@ -1326,10 +1321,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}		
 		};
 	
-		/**
-		 * Single Finger: Arms media cursors for selection. Sets mReadyToSecond on.
-		 * Sets mReadyToFirst on onTouchUp().
-		 */
+		/**Single Finger: Arms media cursors for selection. Sets mReadyToSecond on.
+		 * Sets mReadyToFirst on onTouchUp().**/
 		Runnable mSecondTimer = new Runnable() {
 			public void run() {				
 				setSecondRingTab();
@@ -1342,10 +1335,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 		};		
 		
-		/**
-		 * Single Finger: Arms media cursors for selection. Sets mReadyToSecond on.
-		 * Sets mReadyToFirst on onTouchUp().
-		 */
+		/**Single Finger: Arms media cursors for selection. Sets mReadyToSecond on.
+		 * Sets mReadyToFirst on onTouchUp().**/
 		Runnable mThirdTimer = new Runnable() {
 			public void run() {				
 				setThirdRingTab();
@@ -1363,12 +1354,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			return false;
 		}
 		
-		/**
-		 * Draws tab over ring when first timer both on link or on Input Text.  
-		 * In the case of Input Text user can write. 
-		 */
+		/**Draws tab over ring when first timer both on link or on Input Text.  
+		 * In the case of Input Text user can write.**/
 		private void setFirstRingTab(){			
-			switch (resultType){			
+			switch (cType){			
 				case WebHitTestResult.TEXT_TYPE:
 					firstText();
 					break;
@@ -1381,12 +1370,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}				
 		};
 		
-		/**
-		 * The same as first timer but with selection. 
-		 * In the case of input text user can paste text on touch up. 
-		 */
+		/**The same as first timer but with selection. 
+		 * In the case of input text user can paste text on touch up. **/
 		private void setSecondRingTab(){			
-			switch (resultType){		
+			switch (cType){		
 				case WebHitTestResult.TEXT_TYPE:
 					secondText();
 					break;
@@ -1399,13 +1386,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}		
 		};	
 		
-		/**
-		 * The same as second but with selection. 
-		 * In the case of input text user can paste text on touch up. 
-		 */
-		private void setThirdRingTab(){		
-			
-			switch (resultType){		
+		/** The same as second but with selection. 
+		 *  In the case of input text user can paste text on touch up.**/
+		private void setThirdRingTab(){			
+			switch (cType){		
 				case WebHitTestResult.TEXT_TYPE:
 					thirdText();
 					break;					
@@ -1449,9 +1433,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 				case SwifteeApplication.PERSIST_FIRST_STAGE:		
 					
-					if (resultType==WebHitTestResult.TEXT_TYPE) {
+					if (cType==WebHitTestResult.TEXT_TYPE) {
 						firstText();						
-					} else if (resultType==WebHitTestResult.EDIT_TEXT_TYPE) {					
+					} else if (cType==WebHitTestResult.EDIT_TEXT_TYPE) {					
 						firstInput();
 					} else {				
 						firstDefault();			
@@ -1460,9 +1444,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					
 				case SwifteeApplication.PERSIST_SECOND_STAGE:
 					
-					if (resultType==WebHitTestResult.TEXT_TYPE) {	
+					if (cType==WebHitTestResult.TEXT_TYPE) {	
 						secondText();
-					} else if (resultType==WebHitTestResult.EDIT_TEXT_TYPE) {					
+					} else if (cType==WebHitTestResult.EDIT_TEXT_TYPE) {					
 						secondInput();
 					} else {				
 						secondDefault();		
@@ -1471,9 +1455,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					
 				case SwifteeApplication.PERSIST_THIRD_STAGE:
 					
-					if (resultType==WebHitTestResult.TEXT_TYPE) {	
+					if (cType==WebHitTestResult.TEXT_TYPE) {	
 						thirdText();
-					} else if (resultType==WebHitTestResult.EDIT_TEXT_TYPE) {					
+					} else if (cType==WebHitTestResult.EDIT_TEXT_TYPE) {					
 						thirdInput();
 					} else {				
 						thirdDefault();		
@@ -1507,7 +1491,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 		public void secondInput(){
 			Object[] paramEDIT_TEXT =  { rect, SwifteeApplication.BLUE, "COPY", SwifteeApplication.PAINT_BLUE, WebHitTestResult.EDIT_TEXT_TYPE }; 
-			rCtrl.setDrawStyle(SwifteeApplication.DRAW_RING_AND_TAB, paramEDIT_TEXT);					
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT);					
 		}	
 		
 		public void secondDefault(){
@@ -1522,7 +1506,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		}	
 		
 		public void thirdInput(){
-			Object[] paramEDIT_TEXT =  { rect, SwifteeApplication.YELLOW, "GESTURE", SwifteeApplication.PAINT_YELLOW, WebHitTestResult.TEXT_TYPE }; 
+			Object[] paramEDIT_TEXT =  { rect, SwifteeApplication.RED, "PASTE", SwifteeApplication.PAINT_RED, WebHitTestResult.TEXT_TYPE }; 
 			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT);			
 		}	
 		
@@ -2458,9 +2442,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 				// FF: This will not work ...
 				
-				int r = fcPointerView.getRadius();
-				
-				
+				int r = fcPointerView.getRadius();				
 				
 				if((fcX+r) > this.w)
 					scrollWebView(10, 0);
