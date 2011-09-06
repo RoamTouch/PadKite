@@ -21,8 +21,8 @@ public class RingView extends View {
 
     private Bitmap bitmap;
     
-    Rect tabRect;
-    Rect ringRect;
+    //Rect tabRect;
+    //Rect ringRect;
     
     public int scrollX;
     public int scrollY;
@@ -50,7 +50,9 @@ public class RingView extends View {
    	int W;
    	int H;
    	
-   	int ringWidth;
+   	int ringWidth = 1;
+   	
+   	public int rectRight;
    	
    	int TYPE;
     
@@ -62,27 +64,7 @@ public class RingView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);       
-        
-        if (tabRect!=null){ //Carefull, app crashes without
-        	
-        	xPosTab = tabRect.left - scrollX;        	
-        	yPosTab = tabRect.top - scrollY;        	
-        }
-        
-        if (ringRect!=null){ //Carefull, app crashes without
-        	
-        	ringRect.left 	= ringRect.left - scrollX;
-        	ringRect.right 	= ringRect.right + scrollX;
-        	ringRect.top 	= ringRect.top - scrollY;
-        	ringRect.bottom = ringRect.bottom - scrollY;
-        	
-        	x = ringRect.left - 5; 
-        	y = ringRect.top  - 4; 
-        	
-        	W = ringRect.width()  + 10;  
-        	H = ringRect.height() + 10;       	
-        	
-        }
+               
 	   	
         switch (draw){       
         
@@ -99,11 +81,9 @@ public class RingView extends View {
 	        	finalDrawRing(canvas);     	
 	        	
 	        case SwifteeApplication.DRAW_NONE:
-	        	//NOTHING
-	        	break;
-	        	
 	        default:
-	        	break;
+	        	//NOTHING
+	        	break;	        
         }        
     };  
     
@@ -122,7 +102,7 @@ public class RingView extends View {
     	int tSize = (int) pText.measureText(text);    	
     	tabWidth = (int) (tSize+15);
     	
-    	rectWidth = (tabRect.right - scrollX) - xPosTab;
+    	rectWidth = (rectRight - scrollX) - xPosTab;
     	rectCenter = (rectWidth/2)+xPosTab;
     	//Center Tab
     	tabCenter = tabWidth / 2;
@@ -143,7 +123,9 @@ public class RingView extends View {
     	canvas.drawPath(pathTab, pSquare);          	
     	
 		canvas.drawText(text, textFinalXPos, yPosTab-9, pText);	        	
-		pathTab.close();		
+		pathTab.close();
+		
+		canvas.save();
 		
     }
     
@@ -232,11 +214,8 @@ public class RingView extends View {
           
     public void setDrawType(int draw) {
 		this.draw = draw;
-	}
+	}    
     
-    public void setRingWidth(int ringWidth) {
-		this.ringWidth = ringWidth;
-	}
     
 }
  

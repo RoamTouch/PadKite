@@ -32,6 +32,9 @@ public class RingController extends FrameLayout {
 	int l;
 	int TYPE;
 
+	int scrollX;
+	int scrollY;
+
 	public RingController(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init(context);
@@ -77,9 +80,6 @@ public class RingController extends FrameLayout {
 	
 	public void setDrawStyle(int type, Object[] param){			
 	 	
-	 	rV.scrollX = cW.getScrollX();
-	 	rV.scrollY = cW.getScrollY();
-	 	
 		switch (type) {
     	 		
 	    	case SwifteeApplication.DRAW_RING:	    
@@ -89,16 +89,12 @@ public class RingController extends FrameLayout {
 	    		r = c[0];
 	    		g = c[1];
 	    		b = c[2];	
-	    		TYPE = (Integer) param[2];
-	    		if (TYPE==WebHitTestResult.TEXT_TYPE){
-	    			rV.setRingWidth(1);
-	    		} else if (TYPE==WebHitTestResult.EDIT_TEXT_TYPE) {
-	    			rV.setRingWidth(3);
-	    		}
+	    		TYPE = (Integer) param[2];	    		
 	    		rV.fillColor = Color.rgb(r, g, b);						    		
-	    		rV.ringArc = 10;
-	    		rV.ringRect = re;
-	    		rV.setDrawType(SwifteeApplication.DRAW_RING);	  		    		
+	    		rV.ringArc = 10;	 
+	    		
+	    		calculateDims(re);
+	    		rV.setDrawType(SwifteeApplication.DRAW_RING);	    		
 	    		break;
 	    		
 	    	case SwifteeApplication.DRAW_TAB: 		
@@ -109,13 +105,13 @@ public class RingController extends FrameLayout {
 	    		g = c[1];
 	    		b = c[2];	    		
 	    		String t = (String) param[2];				
-	    		rV.text = t;    				
-	    		rV.tabRect = re;	    		
+	    		rV.text = t;    			    		
 	    		rV.fillColor = Color.rgb(r, g, b);		
-	    		rV.ringArc = 5;
-	    		rV.ringRect = re;
+	    		rV.ringArc = 5;	    		
 	    		l = (Integer) param[3];
 	    		setRingcolor(l);
+	    		
+	    		calculateDims(re);
 	    		rV.setDrawType(SwifteeApplication.DRAW_TAB);
 	    		break;
 	    		
@@ -127,20 +123,14 @@ public class RingController extends FrameLayout {
 	    		g = c[1];
 	    		b = c[2];		
 	    		t = (String) param[2];
-	    		TYPE = (Integer) param[3];
-	    		if (TYPE==WebHitTestResult.TEXT_TYPE){
-	    			rV.setRingWidth(1);
-	    		} else if (TYPE==WebHitTestResult.EDIT_TEXT_TYPE) {
-	    			rV.setRingWidth(3);
-	    		}
-	    		rV.tabRect = re;
-	    		rV.ringRect = re;
+	    		TYPE = (Integer) param[3];	    		
 	    		rV.fillColor = Color.rgb(r, g, b);						    		
-	    		rV.ringArc = 10;
-	    		rV.ringRect = re;	
+	    		rV.ringArc = 10;	    		
 	    		rV.text = t;	    		
 	    		l = (Integer) param[3];
-	    		setRingcolor(l);
+	    		setRingcolor(l);	
+	    		
+	    		calculateDims(re);	    		
 	    		rV.setDrawType(SwifteeApplication.DRAW_RING_AND_TAB);
 	    		break;
 	    		
@@ -150,6 +140,33 @@ public class RingController extends FrameLayout {
     	}    	
     }		
 	
+	
+	private void calculateDims(Rect re){
+		
+	 	scrollX = cW.getScrollX();
+	 	scrollY = cW.getScrollY();
+	 	
+	 	rV.scrollX = scrollX;
+	 	rV.scrollY = scrollY;
+	 	
+	 	if (re!=null){
+        	
+	 		rV.xPosTab = re.left - cW.getScrollX();        	
+	 		rV.yPosTab = re.top - cW.getScrollY();  
+        	
+        	re.left 	= re.left 	- scrollX;
+        	re.right 	= re.right 	+ scrollX;
+        	re.top 	 	= re.top 	- scrollY;
+        	re.bottom 	= re.bottom - scrollY;
+        	
+        	rV.x = re.left - 5; 
+        	rV.y = re.top  - 4;         	
+        	rV.W = re.width()  + 10;  
+        	rV.H = re.height() + 10;        	
+        }
+	 	
+	 	rV.rectRight = re.right;
+	}
 	 
  	/**
 	 * Sets the link ring color to blue, green and red
