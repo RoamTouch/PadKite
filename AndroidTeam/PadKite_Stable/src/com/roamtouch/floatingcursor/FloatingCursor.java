@@ -1747,6 +1747,31 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				mParent.startGesture(false);
 			}
 		}
+		
+		public void onLongTouchHack(int fX, int fY) {
+			int old_fcX = fcX;
+			int old_fcY = fcY;
+
+			fcX = fX;
+			fcY = fY;
+
+			// This is false by default for this case
+			mHitTestMode = true;
+
+			moveHitTest(fcX, fcY);
+			if (mWebHitTestResult != null) {
+				mLongTouchHack = true;
+				mLongTouchHackObj = mWebHitTestResult;
+				onLongTouch();
+			}
+
+			fcX = old_fcX;
+			fcY = old_fcY;
+			moveHitTest(fcX, fcY);
+
+			mHitTestMode = false;
+		}
+		
 		/**
 		 * checks for link type and returns whether it is of type image or video
 		 * return 1 for image type 
@@ -2069,6 +2094,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		boolean mMenuDown = false;
 		int mOldTouchCount = 0;
 		
+		private Runnable longTouchRunnable;
+		private boolean mLongTouchCheck;
+		private long lastTouchTime = -1;
+				
+		boolean mLongTouchHack = false;
+		private WebHitTestResult mLongTouchHackObj = null;
+		
 		public boolean dispatchTouchEventFC(MotionEvent event) {
 			
 			int action = event.getAction() & MotionEvent.ACTION_MASK;
@@ -2221,6 +2253,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				// Fixed Size: 60 % from our radius
 				float radFact = 0.6f*r; //(float)(2*innerCirRad) / (float)r;
 
+						
 				//Toast.makeText(mContext, "radFact: " + radFact, 100).show();
 				
 				final int innerCircleX = -(int)fcPointerView.getScrollX() + CircleX;
@@ -2230,81 +2263,129 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				int scrollY = Y - CircleY;
 				double length = Math.hypot(scrollX, scrollY);
 					
-				if(X > innerCircleX-innerCirRad && X < innerCircleX+innerCirRad && Y > innerCircleY-innerCirRad && Y < innerCircleY+innerCirRad){
-					//Toast.makeText(mContext, "Circular Menu", 100).show();
+				// Double tap
+				long thisTime = System.currentTimeMillis();			
+				if (thisTime - lastTouchTime < 250) {
+					
+					//this.getController().zoomInFixing((int) ev.getX(), (int) ev.getY());
+					lastTouchTime = -1;
 					if (isCircularZoomEnabled())
 						disableCircularZoom();
-					else
+					else {
 						toggleMenuVisibility();
-					
-					mHandleTouch = false; // FIXME: Change, do let user drag and fling menu
+						// Should return true here so touch event will not be
+						// handled again by CircularLayout (in parking mode).
+						return true;
+					}
+				} else {
+					// Too slow :)
+					lastTouchTime = thisTime;
 				}
-				else if(isCircularZoomEnabled()){
+				   
+				
+				/*if (X > innerCircleX - innerCirRad
+						&& X < innerCircleX + innerCirRad
+						&& Y > innerCircleY - innerCirRad
+						&& Y < innerCircleY + innerCirRad) {
+					// Toast.makeText(mContext, "Circular Menu", 100).show();
+					if (isCircularZoomEnabled())
+						disableCircularZoom();
+					else {
+						toggleMenuVisibility();
+						// Should return true here so touch event will not be
+						// handled again by CircularLayout (in parking mode).
+						return true;
+					}
+
+				} else*/
+				
+				if (isCircularZoomEnabled()) {
 					zoomView.onTouchEvent(event);
 					return true;
 				}
-				/*else if ((X < CircleX-r || X > CircleX+r || Y < CircleY-r || Y > CircleY+r) && mScroller.isFinished())*/
-				else if ((length >= (r*1.1f)) && mScroller.isFinished())
-				{		
-					fcView.setVisibility(View.INVISIBLE);
+				/*
+				 * else if ((X < CircleX-r || X > CircleX+r || Y < CircleY-r || Y >
+				 * CircleY+r) && mScroller.isFinished())
+				 */		
+				else if ((length >= (r * 1.1f)) && mScroller.isFinished()) {
+
+					// fcView.setVisibility(View.INVISIBLE); JOSE, allowing FC to
+					// stay visible while dragging.
+					if (currentMenu.getVisibility() != View.VISIBLE) {
+						handler.removeCallbacks(parkingRunnable);
+						handler.post(parkingRunnable);
+					}
+
 					removeTouchPoint();
-					
+
 					mHandleTouch = false;
-					
-					//startHitTest(fcX, fcY);	 // Also do the HitTest when the webview 
-								 // window is scrolled
-					if (!mMenuDown)
-					{
+
+					// startHitTest(fcX, fcY); // Also do the HitTest when the
+					// webview
+					// window is scrolled
+					if (!mMenuDown) {
 						mForwardTouch = true;
+						// Start timer for long touch
+						final int fX = X;
+						final int fY = Y;
+
+						longTouchRunnable = new Runnable() {
+
+							public void run() {
+								mLongTouchCheck = false;
+								onLongTouchHack(fX, fY);
+							}
+
+						};
+
+						handler.postDelayed(longTouchRunnable, 500);
+						mLongTouchCheck = true;
+
 						mWebView.dispatchTouchEvent(event);
 						return true;
 					}
-										
+
 					return false;
-				}
-				else if(currentMenu.getVisibility() == VISIBLE)
-				{
+				} else if (currentMenu.getVisibility() == VISIBLE) {
 					mHandleTouch = false; // Don't let user drag at this stage
 					return false;
-				}
-				else
-				{			
+				} else {
 					fcView.setVisibility(View.VISIBLE);
-					//fcTouchView.setVisibility(View.VISIBLE);
+					// fcTouchView.setVisibility(View.VISIBLE);
 
 					mHandleTouch = true;
 					// FC was touched, get out of parking mode
-					if(mParent.isInParkingMode) {
+					if (mParent.isInParkingMode) {
 						mParent.exitParkingMode();
-						fcView.setRadius(FC_RADIUS); //Restore radius size
+						fcView.setRadius(FC_RADIUS); // Restore radius size
 						// Now recalculate some vars
 						r = fcView.getRadius();
-						radFact = 0.6f*r;
+						radFact = 0.6f * r;
 					}
-				
+
 					if (mIsLoading) {
 						fcView.startScaleUpAndRotateAnimation(100);
 					}
-					
+
 					// Save coordinates
-					//				mLastTouchX = X;
-					//				mLastTouchY = Y;
+					// mLastTouchX = X;
+					// mLastTouchY = Y;
 					mTouchPointValid = true;
-			
-					scrollX *= (radFact/length);
-					scrollY *= (radFact/length);
-					
+
+					scrollX *= (radFact / length);
+					scrollY *= (radFact / length);
+
 					pointer.scrollTo(scrollX, scrollY);
-					fcPointerView.scrollTo(scrollX, scrollY);
-					//fcProgressBar.scrollTo(scrollX, scrollY);
-			
-					//fcTouchView.scrollTo(CircleX - X, CircleY - Y);
-					//fcTouchView.setVisibility(View.VISIBLE);
+					fcPointerView.scrollTo(-scrollX, -scrollY);
+					// fcProgressBar.scrollTo(scrollX, scrollY);
+
+					// fcTouchView.scrollTo(CircleX - X, CircleY - Y);
+					// fcTouchView.setVisibility(View.VISIBLE);
 
 					updateFC();
-				
-					//stopSelection(fcX, fcY);
-					startHitTest(fcX, fcY);	
+
+					// stopSelection(fcX, fcY);
+					startHitTest(fcX, fcY); // aca
 				}
 /*				else
 				{
