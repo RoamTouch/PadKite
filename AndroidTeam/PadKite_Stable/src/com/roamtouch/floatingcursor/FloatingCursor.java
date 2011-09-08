@@ -86,7 +86,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	/**
 	 * Calculate the touching radius for FP 
 	 */
-		private final float RADIUS_DIP = 120; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
+		private final float RADIUS_DIP = 150; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
 		private final float scale = getContext().getResources().getDisplayMetrics().density;
 		private final int RADIUS = (int) (RADIUS_DIP * scale + 0.5f); //Converting to Pixel
 		private final int INNER_RADIUS = (int) (RADIUS*0.3f);
@@ -974,7 +974,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		protected void moveHitTest(int X, int Y)
 		{
 			if (mHitTestMode)
-			{
+			{		
+				
+				Throwable t = new Throwable(); 
+				StackTraceElement[] elements = t.getStackTrace(); 
+
+				String calleeMethod = elements[0].getMethodName(); 
+				String callerMethodName = elements[1].getMethodName(); 
+				String callerClassName = elements[1].getClassName();
 						
 				mWebHitTestResult = mWebView.getHitTestResultAt(X, Y);
 				resultType = mWebHitTestResult.getType();
@@ -1538,18 +1545,14 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 		}
 	
-		private void removeTouchPoint()
-		{
-		
-			if (fcPointerView != null)
-			{
-				pointer.scrollTo(0,0);
+		private void removeTouchPoint() {
+
+			if (fcPointerView != null) {
 				pointer.scrollTo(0, 0);
 				fcPointerView.scrollTo(0, 0);
 				updateFC();
-				//fcProgressBar.scrollTo(0,0);
+				// fcProgressBar.scrollTo(0,0);
 			}
-
 			mTouchPointValid = false;
 		}
 	
@@ -1711,14 +1714,18 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			vibrator.vibrate(25);
 		}
 		
-		public void onLongTouchUp() 
-		{
-			if (!mLongTouchEnabled)
-			{
+		public void onLongTouchUp() {
+			if (mLongTouchHack) {
+				mLongTouchHack = false;
+				// FIXME: Perhaps replace again at end of function
+				mWebHitTestResult = mLongTouchHackObj;
+			}
+
+			if (!mLongTouchEnabled) {
 				onClick();
 				return;
 			}
-			
+
 			if (mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE) {
 				cancelSelection();
 				disableGestures();
@@ -1729,32 +1736,40 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 			stopSelectionCommand();
 			startSelection(true);
-			
-//Added for distinguishing various selection
-			
-			if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE)
+
+			// Added for distinguishing various selection
+
+			boolean linkFlag = false;
+
+			if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE) {
 				mParent.setGestureType(SwifteeApplication.CURSOR_IMAGE_GESTURE);
-			else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE)
+				linkFlag = true;
+			} else if (mWebHitTestResult.getType() == WebHitTestResult.VIDEO_TYPE) {
+				mParent.setGestureType(SwifteeApplication.CURSOR_VIDEO_GESTURE);
+				linkFlag = true;
+			} else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE) {
 				mParent.setGestureType(SwifteeApplication.CURSOR_TEXT_GESTURE);
-			else if ( mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE || mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE)
-			{
-				int type = getLinkType();
-				if(type == 0)
+			} else if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE
+					|| mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE
+					|| mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
+				int type = getLinkType(selectedLink);
+				if (type == 0)
 					mParent.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);
-				else if(type == 1)
+				else if (type == 1)
 					mParent.setGestureType(SwifteeApplication.CURSOR_IMAGE_GESTURE);
-				else 
+				else
 					mParent.setGestureType(SwifteeApplication.CURSOR_VIDEO_GESTURE);
 
+				linkFlag = true;
+			}
+
+			if (linkFlag) {
 				stopSelection();
-				disableGestures();
-				
-				mParent.setSelection(selectedLink);
-				mParent.startGesture(false);
 			}
 		}
 		
 		public void onLongTouchHack(int fX, int fY) {
+			
 			int old_fcX = fcX;
 			int old_fcY = fcY;
 
@@ -1762,19 +1777,20 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			fcY = fY;
 
 			// This is false by default for this case
-			mHitTestMode = true;
-
-			moveHitTest(fcX, fcY);
+			//mHitTestMode = true;
+			//moveHitTest(fcX, fcY);			
+			
 			if (mWebHitTestResult != null) {
 				mLongTouchHack = true;
 				mLongTouchHackObj = mWebHitTestResult;
 				onLongTouch();
 			}
-
+						
 			fcX = old_fcX;
 			fcY = old_fcY;
-			moveHitTest(fcX, fcY);
-
+			//Removing HitTest from here since overlaps with Circular Menu opened
+			//moveHitTest(fcX, fcY);
+			
 			mHitTestMode = false;
 		}
 		
