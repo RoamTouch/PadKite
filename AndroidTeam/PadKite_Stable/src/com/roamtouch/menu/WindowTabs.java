@@ -92,7 +92,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		return currentTab;
 	}
 	
-	public void addWindow(String url){
+	public void addWindow(String url){		
 		TabButton but = new TabButton(mContext);
 		//but.setBackgroundResource(R.drawable.settings_btn);
 		but.setWebView(createWebView(url));
@@ -132,9 +132,13 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		webView.setLayoutParams(params);
 		
 		if(url.equals("")){
-			String _url = SwifteeHelper.getHomepage();
+			
+			String[] u = SwifteeHelper.getHomepage(2);
+			String _url = u[0]+u[1]+u[2];
 			webView.loadUrl(_url);
+			
 		} else {
+			
 			webView.loadUrl(url);
 			webView.setSelectionColor(0xAAb4d5fe);
 			webView.setSearchHighlightColor(0xAAb4d5fe);
@@ -142,6 +146,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 			webView.setCursorOuterColors(0xff74b1fc, 0xff46b000, 0xff74b1fc, 0xff36c000);
 			webView.setCursorInnerColors(0xffa0c9fc, 0xff8cd900, 0xffa0c9fc, 0xff7ce900);
 			webView.setCursorPressedColors(0x80b4d5fe, 0x807ce900);
+			
 		}
 		
 		return webView;

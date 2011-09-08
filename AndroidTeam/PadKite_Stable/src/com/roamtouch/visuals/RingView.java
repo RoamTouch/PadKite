@@ -118,7 +118,7 @@ public class RingView extends View {
     		close = true;
     	}    	
     	
-    	Path pathTab = drawTab(tabFinalXPos, yPosTab-13, tabFinalXPos+tabWidth, close);  
+    	Path pathTab = drawTab(tabFinalXPos, yPosTab-12, tabFinalXPos+tabWidth, close);  
     	Paint pSquare = paintTab();
     	canvas.drawPath(pathTab, pSquare);          	
     	

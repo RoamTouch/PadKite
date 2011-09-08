@@ -230,4 +230,8 @@ public class RingController extends FrameLayout {
 		}
 	};	
 	
+	public void setWebView(WebView wv){
+		cW = wv;
+	}
+	
 }

@@ -76,8 +76,7 @@ public class SwifteeApplication extends Application{
     public static String getLandingPageStorePath() {return landing_page_store_path; }
     
     public static String landingPath = Environment.getExternalStorageDirectory()+"/PadKite/Web Assets/loadPage.html";
-    
-    
+        
     /**GLOBAL SEARCH VARIABLES**/
 	//Search parameter for landing page Twitter trends.
 	public static String twitter_key;   
@@ -103,6 +102,16 @@ public class SwifteeApplication extends Application{
 	private static String youtube_search;   
 	public static String getYouTubeSearch() {return youtube_search; }
     public static void setYouTubeSearch(String search) { youtube_search = search; }    
+    
+    //Amount of new landing pages opened.
+	private static int new_landing_amount=0;   
+	public static int getNewLandingPagesOpened() {return new_landing_amount; }
+    public static void setNewLandingPagesOpened(int nlpo) { new_landing_amount = nlpo; }    
+    
+    //Get Sets Landing page string.
+	private static String landing_page;   
+	public static String getLandingPage() {return landing_page; }
+    public static void setLandingPage(String landing) { landing_page = landing; }    
     
     /**RINGS**/	
     public static final int DRAW_TAB						= 100;
@@ -130,7 +139,7 @@ public class SwifteeApplication extends Application{
 	
 	public static final int PERSIST_FIRST_STAGE 	= 600;	
 	public static final int PERSIST_SECOND_STAGE 	= 601;
-	public static final int PERSIST_THIRD_STAGE 	= 602;
+	public static final int PERSIST_THIRD_STAGE 	= 602;	
         
 	@Override
 	public void onCreate(){
@@ -250,23 +259,27 @@ public class SwifteeApplication extends Application{
 		return mLibrary;		
 	}	
 	
-	public static void createWebAssets(String path, String content) throws IOException {		 
+	public static void createWebAssets(String path, String landingEnd, String content) throws IOException {		 
 		 File landing = null;
 		 try {
 			 File root = Environment.getExternalStorageDirectory();
-			    if (root.canWrite()){
-			       String destination = path;		       
-			       landing = new File(destination);
-			       landing.delete();						       
-			       landing.createNewFile();		            
-			    }			
-	        FileWriter gpxwriter = new FileWriter(landing);
-	        BufferedWriter out = new BufferedWriter(gpxwriter);
-	        out.write(content);
-	        out.close();
+			    if (root.canWrite()){			    	
+			    	for (int i=0;i<7; i++){
+			    		String destination = path + i + landingEnd;		       
+					    landing = new File(destination);
+					    if (landing!=null){
+					    	landing.delete();						       
+					    	landing.createNewFile();
+					    	FileWriter gpxwriter = new FileWriter(landing);
+					    	BufferedWriter out = new BufferedWriter(gpxwriter);
+					    	out.write(content);
+					    	out.close();
+					    }
+			    	}			       		            
+			    }	       
 		} catch (IOException e) {
 		    Log.v("TAG", "Error" + e);			
 		}		
-	 }
+	 }	
 	
 }

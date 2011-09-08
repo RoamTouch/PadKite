@@ -638,7 +638,6 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		public void addNewWindow(boolean useSelection) {
 			if (getWindowCount() > 7) {
 				AlertDialog alertDialog;
-
 				alertDialog = new AlertDialog.Builder(mParent).create();
 				alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 				alertDialog
@@ -646,20 +645,17 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						// mP.finish();
-
 					}
 				});
-
 				alertDialog.show();
 				return;
 			}
-
 			removeSelection();
-
-			if (useSelection && selectedLink != "")
+			if (useSelection && selectedLink != ""){
 				fcWindowTabs.addWindow(selectedLink);
-			else
+			} else {
 				fcWindowTabs.addWindow("");
+			}
 
 			selectedLink = "";
 		}
@@ -1431,41 +1427,50 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 			switch (stage){
 			
-				case SwifteeApplication.PERSIST_FIRST_STAGE:		
-					
-					if (cType==WebHitTestResult.TEXT_TYPE) {
-						firstText();						
-					} else if (cType==WebHitTestResult.EDIT_TEXT_TYPE) {					
-						firstInput();
-					} else {				
-						firstDefault();			
-					}	
+				case SwifteeApplication.PERSIST_FIRST_STAGE:						
+					switch (cType){		
+						case WebHitTestResult.TEXT_TYPE:
+							firstText();
+							break;					
+						case WebHitTestResult.EDIT_TEXT_TYPE:
+							firstInput();
+							break;
+						default:
+							firstDefault();			
+							break;				
+					}
 					break;
 					
-				case SwifteeApplication.PERSIST_SECOND_STAGE:
-					
-					if (cType==WebHitTestResult.TEXT_TYPE) {	
-						secondText();
-					} else if (cType==WebHitTestResult.EDIT_TEXT_TYPE) {					
-						secondInput();
-					} else {				
-						secondDefault();		
-					}			
+				case SwifteeApplication.PERSIST_SECOND_STAGE:					
+					switch (cType){		
+						case WebHitTestResult.TEXT_TYPE:
+							secondText();
+							break;					
+						case WebHitTestResult.EDIT_TEXT_TYPE:
+							secondInput();
+							break;
+						default:
+							secondDefault();			
+							break;				
+					}					
 					break;
 					
 				case SwifteeApplication.PERSIST_THIRD_STAGE:
-					
-					if (cType==WebHitTestResult.TEXT_TYPE) {	
-						thirdText();
-					} else if (cType==WebHitTestResult.EDIT_TEXT_TYPE) {					
-						thirdInput();
-					} else {				
-						thirdDefault();		
-					}	
+					switch (cType){
+						case WebHitTestResult.TEXT_TYPE:
+							thirdText();
+							break;					
+						case WebHitTestResult.EDIT_TEXT_TYPE:
+							thirdInput();
+							break;
+						default:
+							thirdDefault();			
+							break;				
+					}		
 					break;
-			};				
-					
-		};	
+			};
+		};		
+			
 		
 		public void firstText(){			
 			Object[] param_TEXT =  { rect, SwifteeApplication.BLUE, "WORD", SwifteeApplication.PAINT_BLUE, WebHitTestResult.TEXT_TYPE }; 
@@ -1484,13 +1489,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		}
 
 		public void secondText(){
-			Object[] param_TEXT =  { rect, SwifteeApplication.BLUE, "LINE", SwifteeApplication.PAINT_BLUE, WebHitTestResult.TEXT_TYPE }; 
+			Object[] param_TEXT =  { rect, SwifteeApplication.BLUE, "SENTENCE", SwifteeApplication.PAINT_BLUE }; 
 			rCtrl.setDrawStyle(SwifteeApplication.DRAW_RING_AND_TAB, param_TEXT);		
-			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_LINE);
+			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_SENTENCE);
 		}	
 		
 		public void secondInput(){
-			Object[] paramEDIT_TEXT =  { rect, SwifteeApplication.BLUE, "COPY", SwifteeApplication.PAINT_BLUE, WebHitTestResult.EDIT_TEXT_TYPE }; 
+			Object[] paramEDIT_TEXT =  { rect, SwifteeApplication.BLUE, "COPY", SwifteeApplication.PAINT_BLUE }; 
 			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT);					
 		}	
 		
@@ -1500,13 +1505,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		}
 
 		public void thirdText(){
-			Object[] param_TEXT_TYPE =  { rect, SwifteeApplication.BLUE, "PHARAGRAPH", SwifteeApplication.PAINT_BLUE, WebHitTestResult.TEXT_TYPE }; 
+			Object[] param_TEXT_TYPE =  { rect, SwifteeApplication.BLUE, "PHARAGRAPH", SwifteeApplication.PAINT_BLUE }; 
 			rCtrl.setDrawStyle(SwifteeApplication.DRAW_RING_AND_TAB, param_TEXT_TYPE);
 			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_PARAGRAPH);
 		}	
 		
 		public void thirdInput(){
-			Object[] paramEDIT_TEXT =  { rect, SwifteeApplication.RED, "PASTE", SwifteeApplication.PAINT_RED, WebHitTestResult.TEXT_TYPE }; 
+			Object[] paramEDIT_TEXT =  { rect, SwifteeApplication.RED, "PASTE", SwifteeApplication.PAINT_RED}; 
 			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT);			
 		}	
 		
@@ -1539,7 +1544,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			if (fcPointerView != null)
 			{
 				pointer.scrollTo(0,0);
-				fcPointerView.scrollTo(0,0);
+				pointer.scrollTo(0, 0);
+				fcPointerView.scrollTo(0, 0);
 				updateFC();
 				//fcProgressBar.scrollTo(0,0);
 			}

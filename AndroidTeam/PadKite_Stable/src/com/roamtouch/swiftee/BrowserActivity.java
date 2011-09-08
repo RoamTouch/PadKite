@@ -246,12 +246,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		landingString = lp.generateLandingPageString();
 		
 		try {			
-			SwifteeApplication.createWebAssets(landingPath, landingString);
+			String[] landing = SwifteeHelper.getHomepage(1);
+			SwifteeApplication.createWebAssets(landing[0], landing[2], landingString);			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-        
+		}        
         
 //    	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -340,7 +340,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			webView.loadUrl(data);
 		}
 		else {			
-			webView.loadUrl(SwifteeHelper.getHomepage());
+			String[] home = SwifteeHelper.getHomepage(0);
+			webView.loadUrl(home[0]);
 		}
 		
 		webView.setSelectionColor(0xAAb4d5fe);
@@ -718,7 +719,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		webView.reload();
 	}
 
-	public void setActiveWebViewIndex(int activeWebViewIndex) {
+	public void setActiveWebViewIndex(int activeWebViewIndex) {		
 		int count = webLayout.getChildCount();
 		if(activeWebViewIndex > -1 && activeWebViewIndex <count){
 			this.activeWebViewIndex = activeWebViewIndex;
@@ -730,6 +731,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 				WebView wv = (WebView)webLayout.getChildAt(i);
 				wv.setVisibility(View.VISIBLE);
 				floatingCursor.setWebView(wv,false);
+				rCtrl.setWebView(wv);
 			}
 			else
 				webLayout.getChildAt(i).setVisibility(View.INVISIBLE);
@@ -749,6 +751,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	public void addWebView(WebView wv){
 		webLayout.addView(wv);
 		floatingCursor.setWebView(wv,false);
+		rCtrl.setWebView(wv);
+		int currentPage = SwifteeApplication.getNewLandingPagesOpened();
+		SwifteeApplication.setNewLandingPagesOpened(currentPage+1);			
 	}
 	public void removeWebView(){
 		webLayout.removeViewAt(activeWebViewIndex);	
@@ -761,7 +766,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		if(webLayout.getChildCount()==0){
 			floatingCursor.addNewWindow(false);
 		}	
-		
+		int currentPage = SwifteeApplication.getNewLandingPagesOpened();
+		if (currentPage>0){
+			SwifteeApplication.setNewLandingPagesOpened(currentPage-1);
+		}
 	}
 
 	public void adjustTabIndex(WindowTabs winTabs){
