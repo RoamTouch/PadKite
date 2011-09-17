@@ -7,6 +7,7 @@ import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCa
 import org.metalev.multitouch.controller.MultiTouchController.PointInfo;
 import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale;
 import android.app.AlertDialog;
+import android.app.Instrumentation;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -63,6 +64,7 @@ import android.widget.VideoView;
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SelectionGestureView;
 import com.roamtouch.visuals.RingController;
+import com.roamtouch.visuals.TipController;
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.menu.CircularLayout;
 import com.roamtouch.menu.CircularTabsLayout;
@@ -86,7 +88,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	/**
 	 * Calculate the touching radius for FP 
 	 */
-		private final float RADIUS_DIP = 150; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
+		private final float RADIUS_DIP = 130; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
 		private final float scale = getContext().getResources().getDisplayMetrics().density;
 		private final int RADIUS = (int) (RADIUS_DIP * scale + 0.5f); //Converting to Pixel
 		private final int INNER_RADIUS = (int) (RADIUS*0.3f);
@@ -176,7 +178,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 		//Ring View where rings and tabs are set.
 		private RingController rCtrl;
-		
+		private TipController tCtrl;		
 		
 		//Rect that gets the size of what is below the pointer. 
 		private Rect rect;
@@ -240,9 +242,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
                 break;
 
             case MotionEvent.ACTION_DOWN:
-            	
+            
             	//Set FC dots smaller while dragging.
-    			SwifteeApplication.setFCDotDiam(1.5);
+    			SwifteeApplication.setFCDotDiam(2.5);
             	
                 /* Remember location of down touch */
                 mLastMotionY = y;
@@ -600,12 +602,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			fcWindowTabs.setEventViewer(eventViewer);
 		}
 
-		public void setParent(BrowserActivity p, RingController rC){
+		public void setParent(BrowserActivity p, RingController rC, TipController tC){
 			mParent = p;
 			fcMainMenu.setParent(mParent);
 			fcSettingsMenu.setParent(mParent);
 			fcWindowTabs.setParent(mParent);
 			rCtrl = rC;
+			tCtrl = tC;
 		}
 		
 		/**
@@ -971,17 +974,18 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		private int resultType;
 		private int identifier;
 		
+		
 		protected void moveHitTest(int X, int Y)
 		{
 			if (mHitTestMode)
 			{		
 				
-				Throwable t = new Throwable(); 
+				/*Throwable t = new Throwable(); 
 				StackTraceElement[] elements = t.getStackTrace(); 
 
 				String calleeMethod = elements[0].getMethodName(); 
 				String callerMethodName = elements[1].getMethodName(); 
-				String callerClassName = elements[1].getClassName();
+				String callerClassName = elements[1].getClassName();*/
 						
 				mWebHitTestResult = mWebView.getHitTestResultAt(X, Y);
 				resultType = mWebHitTestResult.getType();
@@ -996,6 +1000,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					Log.v("identifier", rect.centerX()+" "+rect.centerY());			
 					Log.v("identifier", "_____________________________");
 				}*/	
+				
+				//Log.v("rect", "rect: " + rect + " WB: " + mWebView.getScrollX() + " " + mWebView.getScrollY());
+				
 					
 				int cursorImage = 0;					
 
@@ -1007,9 +1014,16 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					rCtrl.paintRingBlue();
 				}
 				
-				Log.v("result", "resutl: "+resultType+" id: "+identifier);
+				//Log.v("result", "resutl: "+resultType+" id: "+identifier);
 			
 				switch (resultType) {
+				
+					case WebHitTestResult.PHONE_TYPE:{ 
+						cType = 2; //Phone
+						resultType = WebHitTestResult.ANCHOR_TYPE; //Draw ring
+						cursorImage = R.drawable.phone_cursor;
+						break;	
+					}
 
 					case WebHitTestResult.TEXT_TYPE:{ 
 						cType = 11; //Text						
@@ -1108,14 +1122,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 							cursorImage = R.drawable.video_cursor;
 						}
 						break;	
-					}
-					
-					case WebHitTestResult.PHONE_TYPE:{ 
-						cType = 2; //Phone
-						resultType = WebHitTestResult.ANCHOR_TYPE; //Draw ring
-						cursorImage = R.drawable.phone_cursor;
-						break;	
-					}
+					}					
 					
 					case WebHitTestResult.GEO_TYPE:{ 
 						cType = 3; //Address map
@@ -1153,7 +1160,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					if (identifier == mWebHitTestResultIdentifer
 							&& mThirdTimerStarted == false){
 							setStartThird();
-					}					
+					}		
+					if (identifier == mWebHitTestResultIdentifer
+							&& mFourthTimerStarted == false){
+							setStartFourth();
+					}				
 
 					if (mFirstTimerStarted && mReadyToFirst){
 						persistRingsTabs(SwifteeApplication.PERSIST_FIRST_STAGE);							
@@ -1179,9 +1190,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				// Was there a node change?
 				if (identifier != mWebHitTestResultIdentifer){
 					if (resultType == WebHitTestResult.ANCHOR_TYPE){
-						if (mSoftKeyboardVisible == false) {
-							mWebView.focusNodeAt(X, Y);
-						}
+						//if (mSoftKeyboardVisible == false) { //Removing, unnecesary Jose
+						mWebView.focusNodeAt(X, Y);
+						//}
 					} else if (mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE)
 						sendEvent(MotionEvent.ACTION_CANCEL, X, Y); 
 						// FIXME: Use proper API for that.
@@ -1206,6 +1217,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		boolean mThirdTimerStarted = false;
 		boolean mReadyToThird = false;
 
+		boolean mFourthTimerStarted = false;
+		boolean mReadyToFourth = false;
+		
 		// Single Finger: Reset SFOM timers
 		private void resetTimersOnChangeId(int identifier){		
 			if (identifier != mWebHitTestResultIdentifer){
@@ -1222,6 +1236,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					stopThird(true);
 					//if (selection)
 					removeSelection();
+				}
+				if (mFourthTimerStarted){
+					stopFourth(true);
+					//if (selection)
+					//removeSelection();
 				}
 				rCtrl.ringToOriginalColor();			
 				rCtrl.drawNothing(); //Erase draws.				
@@ -1245,13 +1264,15 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		private void startFirst() {
 			mFirstTimerStarted = true;
 			mReadyToFirst = false;
-			/*int time = 0;
-			if (SwifteeApplication.getSingleFingerSteps()== 3){
-				time = 250; //First timer
-			} else if (SwifteeApplication.getSingleFingerSteps()== 2){
-				time = 0;				
-			}*/
-			handler.postDelayed(mFirstTimer, 250);
+			
+			int time = 0;
+			if (cType==WebHitTestResult.TEXT_TYPE){
+				time = 1000; //First timer
+			} else {
+				time = 350;				
+			}
+			
+			handler.postDelayed(mFirstTimer, time);
 		};
 		
 
@@ -1276,7 +1297,15 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		private void startSecond() {
 			mSecondTimerStarted = true;
 			mReadyToSecond = false;
-			handler.postDelayed(mSecondTimer, 1600);
+			
+			int time = 00;
+			if (cType==WebHitTestResult.TEXT_TYPE){
+				time = 2500; //First timer
+			} else {
+				time = 1500;				
+			}
+			
+			handler.postDelayed(mSecondTimer, time);
 		};
 
 		// Single Finger: Stop selection
@@ -1287,7 +1316,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			if (!dragging) {
 				pointer.setImageResource(R.drawable.kite_cursor);
 			}
-		};
+		};		
+		
 		
 		// Single Finger: Set timer for second
 		private void setStartThird() {
@@ -1300,7 +1330,15 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		private void startThird() {
 			mThirdTimerStarted = true;
 			mReadyToThird = false;
-			handler.postDelayed(mThirdTimer, 3000);
+			
+			int time = 0;
+			if (cType==WebHitTestResult.TEXT_TYPE){
+				time = 4000; //First timer
+			} else {
+				time = 3000;				
+			}
+			
+			handler.postDelayed(mThirdTimer, time);
 		};
 
 		// Single Finger: Stop selection
@@ -1308,6 +1346,30 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			mThirdTimerStarted = false;
 			mReadyToThird = false;
 			handler.removeCallbacks(mThirdTimer);
+			if (!dragging) {
+				pointer.setImageResource(R.drawable.kite_cursor);
+			}
+		};
+		
+		// Single Finger: Set timer for second
+		private void setStartFourth() {
+			if (!mFourthTimerStarted) {
+				startFourth();
+			}
+		};
+
+		// Single Finger: Start selection
+		private void startFourth() {
+			mFourthTimerStarted = true;
+			mReadyToFourth = false;
+			handler.postDelayed(mFourthTimer, 4500);
+		};
+
+		// Single Finger: Stop selection
+		private void stopFourth(boolean dragging) {
+			mFourthTimerStarted = false;
+			mReadyToFourth = false;
+			handler.removeCallbacks(mFourthTimer);
 			if (!dragging) {
 				pointer.setImageResource(R.drawable.kite_cursor);
 			}
@@ -1345,17 +1407,56 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				setThirdRingTab();
 				mReadyToFirst = false;	
 				mReadyToSecond = false;
-				mReadyToThird = true;		
+				mReadyToThird = true;			
 				//onLongTouch(); //SELECT TEXT AFTER TIMEOUT.				
 			}
 		};	
 		
-		private boolean isYouTube(String lselectedLink) {
-			if (lselectedLink.contains("youtube.com/watch")
-					|| lselectedLink.contains("m.youtube.com/#/watch"))
-				return true;
-			return false;
-		}
+		/**Single Finger: Arms media cursors for selection. Sets mReadyToSecond on.
+		 * Sets mReadyToFourth to restart cycle after finished.**/
+		Runnable mFourthTimer = new Runnable() {
+			public void run() {		
+				
+				mFirstTimerStarted=false;			
+				mReadyToFirst = true;				
+				
+				mSecondTimerStarted=false;	
+				mReadyToSecond = false;
+				
+				mThirdTimerStarted=false;	
+				mReadyToThird = false;		
+				
+				mFourthTimerStarted=false;	
+				mReadyToFourth = false;	
+				
+			}
+		};			
+			
+		 /* No Target UNKNOWN_TYPE = 0 
+		 * Phone PHONE_TYPE = 2 Note: Phone not working, returning 0 however link is there and opens phone app. 
+		 * Geo GEO_TYPE = 3 
+		 * Mail EMAIL_TYPE = 4 
+		 * Image IMAGE_TYPE = 5 
+		 * Image Link IMAGE_ANCHOR_TYPE = 6 Note: Implemented image into link as image. It can be selected or executed. 
+		 * Text link ANCHOR_TYPE = 7 
+		 * Image link SRC_IMAGE_ANCHOR_TYPE = 8 
+		 * Input text EDIT_TEXT_TYPE = 9 Note: TODO check != "" to set text edition cursor. 
+		 * Video VIDEO_TYPE = 10 Note: HTML5 tags only. WebVideoInfo videoInfo = mWebHitTestResult.getVideoInfo();
+		 * Text TEXT_TYPE = 11
+		 * --------------------------------------------- 
+		 * Button INPUT_TYPE = 12 
+		 * CheckBox INPUT_TYPE = 12 
+		 * RadioButon INPUT_TYPE = 12 
+		 * ComboBox SELECT_TYPE = 13*/
+		
+		/**
+		 * PHONE_TYPE 
+		 * Call
+		 * Copy
+		 * Gesture
+		 * 
+		 * GEO_TYPE
+		 */
 		
 		/**Draws tab over ring when first timer both on link or on Input Text.  
 		 * In the case of Input Text user can write.**/
@@ -1404,6 +1505,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					break;
 			}			
 		};	
+		
+		private boolean isYouTube(String lselectedLink) {
+			if (lselectedLink.contains("youtube.com/watch")
+					|| lselectedLink.contains("m.youtube.com/#/watch"))
+				return true;
+			return false;
+		}
 		
 		/**
 		 * checks for link type and returns whether it is of type image or video
@@ -1462,27 +1570,27 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					}					
 					break;
 					
-				case SwifteeApplication.PERSIST_THIRD_STAGE:
+				case SwifteeApplication.PERSIST_THIRD_STAGE:					
 					switch (cType){
 						case WebHitTestResult.TEXT_TYPE:
-							thirdText();
+							thirdText();							
 							break;					
 						case WebHitTestResult.EDIT_TEXT_TYPE:
-							thirdInput();
+							thirdInput();							
 							break;
 						default:
-							thirdDefault();			
+							thirdDefault();									
 							break;				
 					}		
 					break;
 			};
-		};		
-			
+		};					
 		
 		public void firstText(){			
 			Object[] param_TEXT =  { rect, SwifteeApplication.BLUE, "WORD", SwifteeApplication.PAINT_BLUE, WebHitTestResult.TEXT_TYPE }; 
 			rCtrl.setDrawStyle(SwifteeApplication.DRAW_RING_AND_TAB, param_TEXT);	
-			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD);			
+			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD);	
+			mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 		}
 		
 		public void firstInput(){
@@ -1496,42 +1604,58 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		}
 
 		public void secondText(){
-			Object[] param_TEXT =  { rect, SwifteeApplication.BLUE, "SENTENCE", SwifteeApplication.PAINT_BLUE }; 
+			Object[] param_TEXT =  { rect, SwifteeApplication.BLUE, "LINE", SwifteeApplication.PAINT_BLUE }; 
 			rCtrl.setDrawStyle(SwifteeApplication.DRAW_RING_AND_TAB, param_TEXT);		
-			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_SENTENCE);
+			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_LINE);	
+			mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 		}	
 		
 		public void secondInput(){
-			Object[] paramEDIT_TEXT =  { rect, SwifteeApplication.BLUE, "COPY", SwifteeApplication.PAINT_BLUE }; 
-			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT);					
+			Object[] paramEDIT_TEXT =  { rect, SwifteeApplication.ORANGE, "PASTE", SwifteeApplication.PAINT_ORANGE}; 
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT);			
 		}	
 		
-		public void secondDefault(){
-			Object[] param_default =  { rect, SwifteeApplication.BLUE, "COPY", SwifteeApplication.PAINT_BLUE }; 
-			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, param_default);					
+		public void secondDefault(){			
+			Object[] paramEDIT_TEXT =  { rect, SwifteeApplication.BLUE, "COPY", SwifteeApplication.PAINT_BLUE }; 
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT);		
 		}
 
 		public void thirdText(){
 			Object[] param_TEXT_TYPE =  { rect, SwifteeApplication.BLUE, "PHARAGRAPH", SwifteeApplication.PAINT_BLUE }; 
 			rCtrl.setDrawStyle(SwifteeApplication.DRAW_RING_AND_TAB, param_TEXT_TYPE);
-			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_PARAGRAPH);
+			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_PARAGRAPH);	
+			mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 		}	
 		
 		public void thirdInput(){
-			Object[] paramEDIT_TEXT =  { rect, SwifteeApplication.RED, "PASTE", SwifteeApplication.PAINT_RED}; 
-			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT);			
+			Object[] param_default =  { rect, SwifteeApplication.RED, "VOICE", SwifteeApplication.PAINT_RED }; 
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, param_default);		
 		}	
 		
 		public void thirdDefault(){
-			Object[] param_default =  { rect, SwifteeApplication.YELLOW, "GESTURE", SwifteeApplication.PAINT_YELLOW	}; 
+			Object[] param_default =  { rect, SwifteeApplication.BLACK, "GESTURE", SwifteeApplication.PAINT_BLACK	}; 
 			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, param_default);								
 		}
 		
-		public void eraseDraws(){
-			//	Erase draws.
+//		Erase draws.
+		public void eraseDraws(){									
 			rCtrl.setDrawStyle(SwifteeApplication.DRAW_NONE, null);		
+		}	
+		
+		public void drawTip(String[] comment, float X, float Y){		
+			int _x = Math.round(X);
+			int _y = Math.round(Y);
+			int[] initCoor = {_x,_y}; 
+			Object[] paramTip =  { 
+					rect,					
+					comment,
+					100,
+					initCoor
+				}; 
+			tCtrl.setTipComment(paramTip);		
 		}
-
+		
+		
 		public Rect getRect(){
 			return rect;
 		}
@@ -1696,15 +1820,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				final String selection = (String) ((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).getText();
 
 				if (selection != "") {
-					sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
-					sendEvent(MotionEvent.ACTION_UP, fcX, fcY);
-
-					handler.postDelayed(new Runnable() {
-						
-						public void run() {
-							mWebView.pasteText(selection);
-						}
-					}, 300);
+					pasteTextIntoInputText(fcX,fcY, false);
 					mLongTouchEnabled = true;
 				}
 				
@@ -1823,58 +1939,173 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				return 1;
 			return 0;
 		}
+		
+		
 		public void onTouchUp()
-		{
-
-			/*
-			 * if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE){
-			 * sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
-			 * //pointer.setImageResource(R.drawable.address_bar_cursor);
-			 * sendEvent(MotionEvent.ACTION_UP, fcX, fcY); }
-			 */
-
-			// Jose hack distinguish between execute and select.
+		{		
+			//Erase any ring/tip around on touch up.
+			eraseDraws();
 			
-			if (mReadyToFirst) {
-				if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE
-						|| mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE
-						|| mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE
-						|| mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE) {
-					//eventViewer.setText("Executing link...");
-					sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
-					pointer.setImageResource(R.drawable.address_bar_cursor);
-					sendEvent(MotionEvent.ACTION_UP, fcX, fcY);					
+			 /* No Target UNKNOWN_TYPE = 0 
+			 * Phone PHONE_TYPE = 2 Note: Phone not working, returning 0 however link is there and opens phone app. 
+			 * Geo GEO_TYPE = 3 
+			 * Mail EMAIL_TYPE = 4 
+			 * Image IMAGE_TYPE = 5 
+			 * Image Link IMAGE_ANCHOR_TYPE = 6 Note: Implemented image into link as image. It can be selected or executed. 
+			 * Text link ANCHOR_TYPE = 7 
+			 * Image link SRC_IMAGE_ANCHOR_TYPE = 8 
+			 * Input text EDIT_TEXT_TYPE = 9 Note: TODO check != "" to set text edition cursor. 
+			 * Video VIDEO_TYPE = 10 Note: HTML5 tags only. WebVideoInfo videoInfo = mWebHitTestResult.getVideoInfo();
+			 * Text TEXT_TYPE = 11
+			 * --------------------------------------------- 
+			 * Button INPUT_TYPE = 12 
+			 * CheckBox INPUT_TYPE = 12 
+			 * RadioButon INPUT_TYPE = 12 
+			 * ComboBox SELECT_TYPE = 13*/
+			
+			if (mReadyToFirst) {			
+				
+				switch (mWebHitTestResult.getType()){				
+						
+					case WebHitTestResult.TEXT_TYPE:						
+						mGesturesEnabled = true;
+						mParent.setGestureType(SwifteeApplication.CURSOR_TEXT_GESTURE);
+						mParent.startGesture(true);
+						final String selection = (String) ((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).getText();
+						String word = "Selected \""+selection+"\"";
+						String[] t1 = {word, "draw a gesture", "to execute action"};						
+						drawTip(t1, fcX, fcY);
+						break;
+				
+					case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
+						eventViewer.setText("Opening image in link...");
+						break;
+						
+					case WebHitTestResult.EDIT_TEXT_TYPE:
+						eventViewer.setText("Opening keyboard...");
+						break;	
+						
+					default:
+						eventViewer.setText("Executing link...");
+						break;
+				}				
+				if (mWebHitTestResult.getType()!=WebHitTestResult.TEXT_TYPE){
+					sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);				
+					sendEvent(MotionEvent.ACTION_UP, fcX, fcY);		
 				}
-				mReadyToFirst = false;
-				mFirstTimerStarted = false;
-			} else {
-				if (mFirstTimerStarted) {
-					stopFirst(false);
-				}
+					
+				
+				stopFirst(false);
+				stopSecond(false);
+				stopThird(false);
+				stopFourth(false);	
+				
+			} else if (mReadyToSecond) {						
+				
+				switch (mWebHitTestResult.getType()){	
+				
+				
+					case WebHitTestResult.TEXT_TYPE:						
+						mGesturesEnabled = true;
+						mParent.setGestureType(SwifteeApplication.CURSOR_TEXT_GESTURE);
+						mParent.startGesture(true);
+						String[] t1 = {"Line selected", "draw a gesture", "to execute action"};						
+						drawTip(t1, fcX, fcY);
+						break;
+				
+					case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
+						eventViewer.setText("Opening image in link...");
+						mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
+						mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
+						break;
+					
+					case WebHitTestResult.EDIT_TEXT_TYPE:
+						pasteTextIntoInputText(fcX,fcY, false);
+						final String selection = (String) ((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).getText();
+						eventViewer.setText("Pasting text..."+selection);				
+						break;	
+						
+					default:
+						forceRing(fcX, fcY);
+						((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).setText(selectedLink);
+						mParent.setSelection(selectedLink);
+						String[] t3 = {"Link copied", "to clipboard" };						
+						drawTip(t3, fcX, fcY);
+						break;
+				}			
+				
+				stopSecond(false);
+				stopThird(false);			
+				stopFourth(false);	
+				
+			} else if (mReadyToThird) {					
+				
+				switch (mWebHitTestResult.getType()){	
+				
+					case WebHitTestResult.TEXT_TYPE:						
+						mGesturesEnabled = true;
+						mParent.setGestureType(SwifteeApplication.CURSOR_TEXT_GESTURE);
+						mParent.startGesture(true);
+						String[] t1 = {"Pharagraph selected", "draw a gesture", "to execute action"};						
+						drawTip(t1, fcX, fcY);
+						break;
+					
+					/*case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
+						eventViewer.setText("Opening image in link...");
+						mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
+						mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
+						break;*/
+						
+					case WebHitTestResult.EDIT_TEXT_TYPE:
+						eventViewer.setText("Opening voice recognition...");
+						mParent.startVoiceRecognitionActivity(fcX, fcY);							
+						break;	
+						
+					default:	
+						forceRing(fcX, fcY);						
+						((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).setText(selectedLink);
+						mGesturesEnabled = true;
+						mParent.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);
+						mParent.startGesture(true);
+						String[] t3 = {"Link selected", "draw a gesture", "to execute action"};						
+						drawTip(t3, fcX, fcY);
+						break;
+				}			
+				
+				stopThird(false);	
+				stopFourth(false);	
+				
 			}
-
-			if (mReadyToSecond) {
-				if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE
-						|| mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE
-						|| mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
-					mParent.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);
-					mParent.startGesture(true);
-				}
-				mReadyToSecond = false;
-				mSecondTimerStarted = false;
-			} else {
-				if (mSecondTimerStarted) {
-					stopSecond(false);
-				}
-			}
-			/*
-			 * else { sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
-			 * sendEvent(MotionEvent.ACTION_UP, fcX, fcY); }
-			 */
-
+			
 			pointer.setImageResource(R.drawable.kite_cursor);
 			
 		}
+		
+		public void forceRing(int X, int Y){
+			mWebView.focusNodeAt(X, Y);
+		}
+		
+		/**
+		 * Finally paste the text into the Input Text with stored x,y.
+		 * **/
+		//final Instrumentation instrumentation = new Instrumentation();
+		
+		public void pasteTextIntoInputText(int X, int Y, boolean ENTER){
+						
+			sendEvent(MotionEvent.ACTION_DOWN, X, Y);
+			sendEvent(MotionEvent.ACTION_UP, X, Y);
+						
+			handler.postDelayed(new Runnable() {				
+				public void run() {
+					String selection = (String) ((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).getText();
+					mWebView.pasteText(selection);					
+				}
+			}, 500);		
+			//mWebView.focusNodeAt(0,0);
+			if (ENTER){
+				//instrumentation.sendKeyDownUpSync(66);
+			}
+		};
 		
 		protected boolean mMovableSelection = false;
 		protected boolean mSelectionActive = false;
@@ -2703,10 +2934,15 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}
 		}
 		
-		public void loadPage(String url){
-			
-			mWebView.loadUrl(url);
+		/**
+		 * Open Map when url starts with geo:'
+		 * @param url
+		 */
+		public void loadPage(String url){			
+			mWebView.loadUrl(url);				
 		}
+		
+		
 		public void loadData(String data){
 			mWebView.loadDataWithBaseURL("file:///android_asset/images/", data,  "text/html", "utf-8", null);
 		}
@@ -3056,7 +3292,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
 //				mParent.setTopBarURL(url);
-				view.loadUrl(url);
+				//view.loadUrl(url);
+				if (url.startsWith("geo:")) {
+			        mParent.openMap(url);
+				} else {
+					view.loadUrl(url);
+				}	
 				return true;
 			}
 		

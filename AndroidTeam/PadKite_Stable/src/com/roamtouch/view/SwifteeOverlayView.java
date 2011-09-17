@@ -52,7 +52,6 @@ public class SwifteeOverlayView extends FrameLayout {
 		
 		if (m_floatingCursor != null)
 		{
-
 			// Delegate to floatingCursor
 			if (m_floatingCursor.dispatchTouchEventFC(event))
 				return true;

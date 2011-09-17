@@ -308,14 +308,20 @@ public class SelectionGestureView extends FrameLayout {
 			; // Do nothing
 		}
 	}
+	
+	private Runnable doubleTouchRunnable;
+	private long lastTouchTime = -1;
+	private long thisTime; 	
+	private MotionEvent eventAtLast; 
 
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent event) {
 		
 		if (!this.isEnabled())
-			return super.dispatchTouchEvent(event);
+			return super.dispatchTouchEvent(event);	
 		
 		return dispatchTouchEventFC(event.getX(), event.getY(), event.getAction(), event.getEventTime());
+		
 	}
 	
 	boolean initPointIsValid = true;

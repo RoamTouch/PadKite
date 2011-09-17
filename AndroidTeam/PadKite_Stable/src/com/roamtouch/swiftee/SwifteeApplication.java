@@ -125,22 +125,47 @@ public class SwifteeApplication extends Application{
 	public static final int PAINT_BLUE	 	= 202;	
 	public static final int PAINT_YELLOW	= 203;
 	public static final int PAINT_VIOLET	= 204;
-	public static final int PAINT_RED		= 205;	
+	public static final int PAINT_RED		= 205;
+	public static final int PAINT_ORANGE	= 206;
+	public static final int PAINT_BLACK		= 207;	
 	
-	public static int[] YELLOW 	= {255, 203, 0};	
-	public static int[] LIGHT_YELLOW = {255, 237, 168};	
-	
-	public static int[] GREEN 	= {0, 170, 0};
-	public static int[] VIOLET 	= {223, 43, 240};
-	public static int[] BLUE 	= {0, 114, 225};
-	public static int[] RED 	= {255, 59, 20};
-	public static int[] GRAY 	= {180, 180, 180};	
-	public static int[] DARK_GRAY 	= {50, 50, 50};
+	public static int[] YELLOW 			= {255, 203, 0};	
+	public static int[] LIGHT_YELLOW 	= {255, 237, 168};	
+	public static int[] GREEN 			= {0, 170, 0};
+	public static int[] VIOLET 			= {223, 43, 240};
+	public static int[] BLUE 			= {0, 114, 225};
+	public static int[] RED 			= {255, 59, 20};
+	public static int[] GRAY 			= {180, 180, 180};	
+	public static int[] DARK_GRAY 		= {10, 10, 10};
+	public static int[] ORANGE	 		= {240, 210, 43};
+	public static int[] BLACK	 		= {0, 0, 0};
 	
 	public static final int PERSIST_FIRST_STAGE 	= 600;	
 	public static final int PERSIST_SECOND_STAGE 	= 601;
 	public static final int PERSIST_THIRD_STAGE 	= 602;	
+	
+	//Set voice recognition settings.
+	private static boolean voice_recognition=true;   
+	public static boolean getVoiceRecognitionEnabled() {return voice_recognition; }
+    public static void setVoiceRecognitionEnabled(boolean voice) { voice_recognition = voice; }   
         
+    /**TIPS**/
+    // Variables for Tips
+    public static final int SET_TIP_TO_LEFT_UP 			= 500;
+    public static final int SET_TIP_TO_CENTER_UP		= 501;
+    public static final int SET_TIP_TO_RIGHT_UP			= 502;
+       
+    public static final int SET_TIP_TO_LEFT_DOWN 		= 503;
+    public static final int SET_TIP_TO_CENTER_DOWN		= 504;
+    public static final int SET_TIP_TO_RIGHT_DOWN		= 505;
+    
+    
+       
+    // Tip message
+    private static String tip_message;   
+	public static String getTipMessage() {return tip_message; }
+    public static void setTipMessage(String tM) { tip_message = tM; }
+    
 	@Override
 	public void onCreate(){
 		ACRA.init(this);

@@ -67,6 +67,10 @@ public class RingController extends FrameLayout {
 		setDrawStyle(SwifteeApplication.DRAW_NONE, null);
 	}
 	
+	public void drawTab(){
+		rV.setDrawType(SwifteeApplication.DRAW_TAB);
+	}
+	
 	/**
 	 * Paing WebKit ring blue on start if two fingers.
 	 */
@@ -91,7 +95,7 @@ public class RingController extends FrameLayout {
 	    		b = c[2];	
 	    		TYPE = (Integer) param[2];	    		
 	    		rV.fillColor = Color.rgb(r, g, b);						    		
-	    		rV.ringArc = 10;	 
+	    		rV.ringArc = 5;	 
 	    		
 	    		calculateDims(re);
 	    		rV.setDrawType(SwifteeApplication.DRAW_RING);	    		
@@ -125,7 +129,7 @@ public class RingController extends FrameLayout {
 	    		t = (String) param[2];
 	    		TYPE = (Integer) param[3];	    		
 	    		rV.fillColor = Color.rgb(r, g, b);						    		
-	    		rV.ringArc = 10;	    		
+	    		rV.ringArc = 5;	    		
 	    		rV.text = t;	    		
 	    		l = (Integer) param[3];
 	    		setRingcolor(l);	
@@ -154,15 +158,16 @@ public class RingController extends FrameLayout {
 	 		rV.xPosTab = re.left - cW.getScrollX();        	
 	 		rV.yPosTab = re.top - cW.getScrollY();  
         	
-        	re.left 	= re.left 	- scrollX;
-        	re.right 	= re.right 	+ scrollX;
+        	re.left 	= re.left 	+ scrollX;
+        	re.right 	= re.right 	- scrollX;
         	re.top 	 	= re.top 	- scrollY;
         	re.bottom 	= re.bottom - scrollY;
         	
         	rV.x = re.left - 5; 
         	rV.y = re.top  - 4;         	
         	rV.W = re.width()  + 10;  
-        	rV.H = re.height() + 10;        	
+        	rV.H = re.height() + 10;   
+        	
         }
 	 	
 	 	rV.rectRight = re.right;
@@ -178,7 +183,8 @@ public class RingController extends FrameLayout {
 		
 			case SwifteeApplication.PAINT_GRAY: //gray	
 				
-				cW.invalidate();
+				cW.invalidate();				
+				cW.setSelectionColor(0xffB0B0B0);
 				cW.setCursorOuterColors(0xff6E6E6E, 0xff6E6E6E, 0xff6E6E6E, 0xff6E6E6E);
 				cW.setCursorInnerColors(0xffD4D4D4, 0xffD4D4D4, 0xffD4D4D4, 0xffD4D4D4);
 				cW.invalidate();
@@ -186,7 +192,8 @@ public class RingController extends FrameLayout {
 				
 			case SwifteeApplication.PAINT_RED: //red	
 				
-				cW.invalidate();
+				cW.invalidate();				
+				cW.setSelectionColor(0xffFF9F8C);
 				cW.setCursorOuterColors(0xffFF6A4D, 0xffFF6A4D, 0xffFF6A4D, 0xffFF6A4D);
 				cW.setCursorInnerColors(0xffFFCEC4, 0xffFFCEC4, 0xffFFCEC4, 0xffFFCEC4);
 				cW.invalidate();
@@ -194,19 +201,18 @@ public class RingController extends FrameLayout {
 				
 			case SwifteeApplication.PAINT_BLUE: //blue	
 				
-				cW.invalidate();
-				cW.setSelectionColor(0xAAb4d5fe);
-				cW.setSearchHighlightColor(0xAAb4d5fe);	
+				cW.invalidate();				
+				cW.setSelectionColor(0xffb4d5fe);				
 				cW.setCursorOuterColors(0xff0072FF, 0xff0072FF, 0xff0072FF, 0xff0072FF);
 				cW.setCursorInnerColors(0xffA3CCFF, 0xffA3CCFF, 0xffA3CCFF, 0xffA3CCFF);
 				cW.invalidate();
 				break;
 				
 			case SwifteeApplication.PAINT_GREEN: //green	
-				
+								
+				cW.invalidate();				
+				cW.setSelectionColor(0xffA7FCA4);
 				cW.invalidate();
-				cW.setSelectionColor(0xAAD5B0);
-				cW.setSearchHighlightColor(0xAAD5AD);	
 				cW.setCursorOuterColors(0xff06A800, 0xff06A800, 0xff06A800, 0xff06A800);
 				cW.setCursorInnerColors(0xffA9FFA6, 0xffA9FFA6, 0xffA9FFA6, 0xffA9FFA6);
 				cW.invalidate();
@@ -215,6 +221,7 @@ public class RingController extends FrameLayout {
 			case SwifteeApplication.PAINT_YELLOW: //yeloww
 				
 				cW.invalidate();
+				cW.setSelectionColor(0xffF5CD31);	
 				cW.setCursorOuterColors(0xffF5CD31, 0xffF5CD31, 0xffF5CD31, 0xffF5CD31);
 				cW.setCursorInnerColors(0xffFFEFAD, 0xffFFEFAD, 0xffFFEFAD, 0xffFFEFAD);
 				cW.invalidate();
@@ -223,8 +230,27 @@ public class RingController extends FrameLayout {
 			case SwifteeApplication.PAINT_VIOLET: //violet
 				
 				cW.invalidate();
+				cW.setSelectionColor(0xffF8ABFF);	
 				cW.setCursorOuterColors(0xffDF2BF0, 0xffDF2BF0, 0xffDF2BF0, 0xffDF2BF0);
 				cW.setCursorInnerColors(0xffEAADF0, 0xffEAADF0, 0xffEAADF0, 0xffEAADF0);
+				cW.invalidate();
+				break;
+			
+			case SwifteeApplication.PAINT_ORANGE: //orange
+				
+				cW.invalidate();
+				cW.setSelectionColor(0xffFFEBAB);	
+				cW.setCursorOuterColors(0xffF0CC2B, 0xffF0CC2B, 0xffF0CC2B, 0xffF0CC2B);
+				cW.setCursorInnerColors(0xffF0E7AD, 0xffF0E7AD, 0xffF0E7AD, 0xffF0E7AD);
+				cW.invalidate();
+				break;
+			
+			case SwifteeApplication.PAINT_BLACK: //orange
+				
+				cW.invalidate();
+				cW.setSelectionColor(0xffFFEBAB);	
+				cW.setCursorOuterColors(0xff1C1805, 0xff1C1805, 0xff1C1805, 0xff1C1805);
+				cW.setCursorInnerColors(0xff858585, 0xff858585, 0xff858585, 0xff858585);
 				cW.invalidate();
 				break;
 		}

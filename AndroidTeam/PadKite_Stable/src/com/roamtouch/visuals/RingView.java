@@ -14,6 +14,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.View;
 import com.roamtouch.swiftee.SwifteeApplication;
 
@@ -65,6 +66,7 @@ public class RingView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);       
                
+	   	Log.v("draw", "dras: "+draw);
 	   	
         switch (draw){       
         
@@ -78,7 +80,8 @@ public class RingView extends View {
 	        	
 	        case SwifteeApplication.DRAW_RING_AND_TAB: // && clear==false){
 	        	finalDrawTab(canvas);
-	        	finalDrawRing(canvas);     	
+	        	finalDrawRing(canvas);   
+	        	break;
 	        	
 	        case SwifteeApplication.DRAW_NONE:
 	        default:
@@ -102,8 +105,8 @@ public class RingView extends View {
     	int tSize = (int) pText.measureText(text);    	
     	tabWidth = (int) (tSize+15);
     	
-    	rectWidth = (rectRight - scrollX) - xPosTab;
-    	rectCenter = (rectWidth/2)+xPosTab;
+    	rectWidth = rectRight - xPosTab;
+    	rectCenter = (rectWidth/2) + xPosTab;
     	//Center Tab
     	tabCenter = tabWidth / 2;
     	tabFinalXPos = rectCenter - tabCenter;
@@ -130,6 +133,7 @@ public class RingView extends View {
     }
     
     private void finalDrawRing(Canvas canvas){    	
+    	
     	//Path ring = drawRing(ringRect.left-5, ringRect.top-4, ringRect.right-2, ringRect.bottom-ringRect.top+7);
     	Path ring = drawRing(x, y, W, H);
     	Paint p = new Paint();
@@ -138,6 +142,7 @@ public class RingView extends View {
         p.setStrokeWidth(ringWidth);
         p.setStyle(Style.STROKE);        
         canvas.drawPath(ring, p);        
+        
     }
       
     public Path drawTab(int x, int y, int right, boolean close){    	
@@ -148,18 +153,37 @@ public class RingView extends View {
     	path.arcTo(new RectF(x,y-12,x+20,y-5),180,90); //A 
     	path.lineTo(30, y-12);    	
     	path.arcTo(new RectF(right-20,y-12,right,y-5),270,90); //B
-    	
+    	   	
     	if (close){    		
+    		
     		int Ex = right - 5; 
-    		int Ey = y + 7;   		
-    		path.arcTo(new RectF(right-5, y-5, Ex + 5, Ey),0,90); //D-E arc
-            path.lineTo(x, y+7);
+    		int Ey = y + 5;   		
+    		path.arcTo(new RectF(right-5, y-7, right, y+7),0,90); //D-E arc
+    		//path.lineTo(x+7, y-7);
+    		
+    		path.lineTo(x-7, y+7);
+              		
+            //path.arcTo(new RectF(x+7, y+7,x, y-7),90, 0); //D-E arc  //x, y-7, x+7, y+7
+            //path.lineTo(x, y+7);
+            
     	} else {
+    		
     		path.lineTo(right, y+7);       	
     		path.lineTo(x, y+7);
+    		
     	}      	
        	return path;  
     }
+    
+//        Ab
+//  A  Aa   Ac  B
+//K               C
+//	Jc				Ca
+//Jb	     		  Cb
+//Ja				Cc
+//J                D
+//  I   H    F   E
+//         G
     
     public Path drawRing(int X, int Y, int W, int H){    	
     	int arc = ringArc;    	

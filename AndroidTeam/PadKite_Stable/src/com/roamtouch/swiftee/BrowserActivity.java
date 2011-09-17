@@ -8,6 +8,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
 
 import org.acra.ErrorReporter;
 import org.apache.http.HeaderElement;
@@ -34,8 +37,9 @@ import com.roamtouch.view.SelectionGestureView;
 import com.roamtouch.view.SwifteeGestureView;
 import com.roamtouch.view.SwifteeOverlayView;
 import com.roamtouch.landingpage.LandingPage;
-import com.roamtouch.view.TutorArea;
 import com.roamtouch.visuals.RingController;
+import com.roamtouch.visuals.TipController;
+import com.roamtouch.view.TutorArea;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -44,16 +48,23 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.gesture.GestureOverlayView;
 import android.gesture.GestureOverlayView.OnGestureListener;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.DeadObjectException;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.SystemClock;
+import android.speech.RecognizerIntent;
 import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.Display;
@@ -69,8 +80,8 @@ import roamtouch.webkit.WebSettings;
 import roamtouch.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
+import android.widget.ListView;
 import android.widget.Toast;
-//import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
 
@@ -113,8 +124,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     public final LandingPage lp = new LandingPage(this); //HERE ONLY PLACE TO INSTANSIATE LANDINGPAGE.
     
     private String landingPath = Environment.getExternalStorageDirectory()+"/PadKite/Web Assets/loadPage.html";
-    
+          
+    //Visuals
     private RingController rCtrl;
+    private TipController tCtrl;
     
     public void closeDialog()
     {
@@ -187,6 +200,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     public static final int FacebookStatusError = 2;
     public static final int FacebookStatusLogout = 3;
     
+    //Voice recognition. 
+    public ArrayList<String> matchesVoice;
+    private static final int REQUEST_CODE = 1234;
+    
     @Override
     protected void onActivityResult ( int requestCode, int resultCode, Intent data)
     {
@@ -216,7 +233,36 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     		if (status == true)
     			System.exit(1);
     	}
-    }
+    	
+    	//Voice recognition.
+    	if (requestCode == REQUEST_CODE && resultCode == RESULT_OK)
+        {
+            // Populate the wordsList with the String values the recognition engine thought it heard
+    		matchesVoice = data.getStringArrayListExtra(
+                    RecognizerIntent.EXTRA_RESULTS);       
+    		((ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setText(matchesVoice.get(0));
+    		floatingCursor.pasteTextIntoInputText(record_X_location, record_Y_location, true);
+        }      	
+    }      
+	 
+    /**
+     * Voice Recording for WebView Input
+     */
+    int record_X_location;
+    int record_Y_location;   
+    
+    public void startVoiceRecognitionActivity(int X, int Y)
+    {    	
+    	record_X_location = X;
+    	record_Y_location = Y;
+    	
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Voice recognition Demo...");
+        startActivityForResult(intent, REQUEST_CODE);        
+    };
+
 
     @Override
 	 protected void onNewIntent(Intent intent) {
@@ -253,7 +299,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			e.printStackTrace();
 		}        
         
-//    	getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
+//    	getWindow().setFlags(Windowt.LayoutParams.FLAG_FULLSCREEN, 
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
     	
     	DEVICE_WIDTH  =  getWindow().getWindowManager().getDefaultDisplay().getWidth();
@@ -344,12 +390,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			webView.loadUrl(home[0]);
 		}
 		
-		webView.setSelectionColor(0xAAb4d5fe);
+		/*webView.setSelectionColor(0xAAb4d5fe);
 		webView.setSearchHighlightColor(0xAAb4d5fe);
 		
 		webView.setCursorOuterColors(0xff74b1fc, 0xff46b000, 0xff74b1fc, 0xff36c000);
 		webView.setCursorInnerColors(0xffa0c9fc, 0xff8cd900, 0xffa0c9fc, 0xff7ce900);
-		webView.setCursorPressedColors(0x80b4d5fe, 0x807ce900);
+		webView.setCursorPressedColors(0x80b4d5fe, 0x807ce900);*/
 		
 		eventViewer= (EventViewerArea) findViewById(R.id.eventViewer);
 		eventViewer.setParent(this);
@@ -361,11 +407,14 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		//Ring controller.
 		rCtrl = (RingController)findViewById(R.id.ringController);
 		
+		//Tips controller.
+		tCtrl = (TipController)findViewById(R.id.tipController);		
+		tCtrl.setParent(this);
 		
 		floatingCursor = (FloatingCursor)findViewById(R.id.floatingCursor);	
 		floatingCursor.setWebView(webView,true);
 		floatingCursor.setEventViewerArea(eventViewer);
-		floatingCursor.setParent(this, rCtrl);		
+		floatingCursor.setParent(this, rCtrl, tCtrl);		
 		//floatingCursor.setHandler(handler);
 		
 		//Set proper parents to access from RingController.
@@ -411,15 +460,21 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		IntentFilter filter = new IntentFilter (Intent.ACTION_MEDIA_UNMOUNTED); 
 		filter.addDataScheme("file"); 
 		registerReceiver(this.mSDInfoReceiver, new IntentFilter(filter));
+		
+		// Query voice recognition and sotres variable on SwifteeApplication. 
+        PackageManager pm = getPackageManager();
+        List<ResolveInfo> activities = pm.queryIntentActivities(
+                new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
+        if (activities.size() == 0){
+        	SwifteeApplication.setVoiceRecognitionEnabled(false);
+        }		
+		
     }
-   
-/*    public void setWebView(WebView wv){
-    	webLayout.removeViewAt(0);
-    	webLayout.addView(wv);
-    	floatingCursor.setWebView(wv,false);
-//    	mTopBarArea.setWebView(wv);
+    
+    public void openMap(String url){
+    	Intent searchAddress = new Intent(Intent.ACTION_VIEW, Uri.parse(url)); 
+        startActivity(searchAddress); 
     }
-*/    
     
     public void startTextGesture()
     {
@@ -440,7 +495,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	mSelectionGesture.setEnabled(false);
     }
     
-    private String mSelection;
+    public String mSelection;
     
     public void initGestureLibrary(int id){
     	currentGestureLibrary = id;
@@ -470,6 +525,14 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     
     public void startGesture(boolean useSelection)
     {
+    	
+    	/*Throwable t = new Throwable(); 
+		StackTraceElement[] elements = t.getStackTrace(); 
+
+		String calleeMethod = elements[0].getMethodName(); 
+		String callerMethodName = elements[1].getMethodName(); 
+		String callerClassName = elements[1].getClassName();*/
+    	
     	initGestureLibrary(mGestureType);
 		stopTextGesture();
     	floatingCursor.gestureDisableFC();
@@ -491,7 +554,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	if (show)
     		eventViewer.setText("Gesture cancelled.");
     	stopGesture();
-    }
+    }  
+  
     
     public void stopGesture()
     {
@@ -662,6 +726,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         }
 		stopGesture();
 	}
+	
+	
 	
 	private void bookmarkGestures(String action){
 		
@@ -900,14 +966,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		isInParkingMode = true;		
 		
 		//Shrink to a half the size
-		floatingCursor.enterParkingMode();		
-        Display display = getWindowManager().getDefaultDisplay();
-        
-        //General location vars.
-        final int w = display.getWidth();
-        final int h = display.getHeight();
-        final int xLoc = floatingCursor.getScrollX();        
-        final int yLoc = floatingCursor.getScrollY();	 
+		floatingCursor.enterParkingMode();		 
         
         WindowTabs.getCurrentTab();
         
@@ -916,11 +975,23 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		if(moveToParkingPosition) {   
 			
 			floatingCursor.stopFling();
-					
-			if ((xLoc > 0 && yLoc > 0)
-					||(xLoc==0 && yLoc==0)) {	//UPPER LEFT CUADRANT - C1.
-				
-	        	//Fisrt cuadrant vars
+			
+			int xLoc = floatingCursor.getScrollX();
+			int yLoc = floatingCursor.getScrollY();	
+			
+			Hashtable location = getCuadrant4(xLoc, yLoc);			
+			
+			Object[] objCuarant = (Object[]) location.get(1);
+			int cuadrant = (Integer) objCuarant[0];		
+			
+			Object[] hW = (Object[]) location.get(2);		
+			int w = (Integer) hW[0];
+			int h = (Integer) hW[1];
+			
+			switch (cuadrant){
+			
+			case 1:
+				//Fisrt cuadrant vars
 	            final int c1X;        
 	            final int c1Y;
 	            //Calculate distance to upper right corner. 
@@ -933,8 +1004,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	        		//Log.v("","x is shorter, snap y");
 	        		floatingCursor.scrollTo(w/2, yLoc);
 	        	}
-	        } else if (xLoc < 0 && yLoc > 0){ //UPPER RIGHT CUADRANT - C2.        	        	
-	        	//Second cuadrant vars.
+				break;
+			
+			case 2:
+				//Second cuadrant vars.
 	            final int c2X;        
 	            final int c2Y;
 	            //Calculate distance to upper right corner. 
@@ -949,7 +1022,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         			floatingCursor.scrollTo(-w/2, yLoc);
         			//animateDocking(xLoc, yLoc, -w/2, yLoc);
         		}        		
-	        } else if (xLoc > 0 && yLoc < 0){ //DOWN LEFT CUADRANT - C3.		
+				break;
+			case 3:
 				//Third cuadrant vars.
 	            final int c3X;        
 	            final int c3Y;
@@ -965,7 +1039,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         			//animateDocking(xLoc, -w/2, yLoc, yLoc);
         			floatingCursor.scrollTo( w/2, yLoc);
         		}
-			} else if (xLoc < 0 && yLoc < 0){ //DOWN RIGHT CUADRANT - C4.		
+				break;
+			case 4:
 				//Fourth cuadrant vars.
 	            final int c4X;        
 	            final int c4Y;
@@ -981,10 +1056,130 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         			//animateDocking(xLoc, -w/2, yLoc, yLoc);
         			floatingCursor.scrollTo( -w/2, yLoc);
         		}
-			}		
-			//}		
+				break;			
+			}			
+		
 		}
 	};
+	
+	
+	public Hashtable getCuadrant4(int X, int Y) {
+		
+		//Object cuadrant[] = {};
+		Hashtable cuadrant = new Hashtable();
+		Object[] loc = new Object[1];
+		Object[] hW = new Object[2];		
+		
+		Display display = getWindowManager().getDefaultDisplay();
+		
+		 //General location vars.
+        int w = display.getWidth();
+        int h = display.getHeight();
+        
+        int xLoc = X; //floatingCursor.getScrollX();        
+        int yLoc = Y; //floatingCursor.getScrollY();	
+        
+        if ((xLoc > 0 && yLoc > 0)
+				||(xLoc==0 && yLoc==0)) {	//UPPER LEFT CUADRANT - C1.
+        	loc[0] = 1;
+        } else if (xLoc < 0 && yLoc > 0){ //UPPER RIGHT CUADRANT - C2.    
+        	loc[0] = 2;
+        } else if (xLoc > 0 && yLoc < 0){ //DOWN LEFT CUADRANT - C3.		
+        	loc[0] = 3;
+        } else if (xLoc < 0 && yLoc < 0){ //DOWN RIGHT CUADRANT - C4.		
+        	loc[0] = 4;
+        }
+        
+        hW[0] = w;
+        hW[1] = h;        
+        
+        cuadrant.put(1, loc);
+        cuadrant.put(2, hW);         
+        
+        return cuadrant;
+        
+	}
+	
+	/**
+	 * Provides coordinates to locate tips
+	 * @param X
+	 * @param Y
+	 * @return
+	 */
+	public Vector getCuadrant34(int X, int Y) {
+		
+		Vector cuadrant 		= new Vector();
+		int verticals 	= 0;
+		int horizontals = 0;
+		Rect xRect = new Rect(); 
+		int tipType = 0;
+		
+		Display display = getWindowManager().getDefaultDisplay();
+		
+        int w = display.getWidth();       
+        int h = display.getHeight();        
+      	
+        int yModule = h/4;
+        
+        if (Y > 0 && Y < yModule){
+        	horizontals = 1;       	
+        } else if (Y > yModule && Y < yModule*2){
+        	horizontals = 2;
+        } else if (Y > yModule*2 && Y < yModule*3){
+        	horizontals = 3;
+        } else if (Y > yModule*3 && Y < yModule*4){
+        	horizontals = 4;
+        }  
+        
+        int xModule = w/3;
+        
+        if (X > 0 && X < xModule){
+        	
+        	verticals = 1;        	
+        	xRect.left = 20;
+        	xRect.right = xModule+20;
+        	
+        	if (horizontals==1){
+        		tipType = SwifteeApplication.SET_TIP_TO_LEFT_UP;
+        	} else {
+        		tipType = SwifteeApplication.SET_TIP_TO_LEFT_DOWN;
+        	}
+        	
+        } else if (X > xModule && X < xModule*2){
+        	
+        	verticals = 2;
+        	xRect.left = xModule-20;
+        	xRect.right = xModule+20;   
+        	
+        	if (horizontals==1){
+        		tipType = SwifteeApplication.SET_TIP_TO_CENTER_UP;
+        	} else {
+        		tipType = SwifteeApplication.SET_TIP_TO_CENTER_DOWN;
+        	}
+        	
+        } else if (X > xModule*2 && X < xModule*3){
+        	
+        	xRect.left = w/2-20;
+        	xRect.right = xModule+20;        	
+        	verticals = 3;
+        	
+        	if (horizontals==1){
+        		tipType = SwifteeApplication.SET_TIP_TO_RIGHT_UP;
+        	} else {
+        		tipType = SwifteeApplication.SET_TIP_TO_RIGHT_DOWN;
+        	}        	
+        }
+      
+        
+        cuadrant.add(verticals);
+        cuadrant.add(horizontals);
+        cuadrant.add(xRect);
+        cuadrant.add(tipType);
+        //cuadrant.add(xModule);
+        //cuadrant.add(yModule);
+        
+        return cuadrant;        
+	}
 		
 	
 	public void exitParkingMode() {
@@ -1048,56 +1243,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	    	});
 
 	    	}
-	 }; 
-	 
-	 public static final int PAINT_RING_COLOR_RED	= 600;
-	 public static final int PAINT_RING_COLOR_GRAY 	= 601;
-	 public static final int PAINT_RING_COLOR_BLUE	= 602;
-	 public static final int PAINT_RING_COLOR_GREEN	= 603;
+	 };   
 
-	 
-	 /**
-		 * Sets the link ring color to blue, green and red
-		 * @param color
-		 */
-		public void setRingcolor(int colorId, WebView cWebView){		
-			
-			switch (colorId){
-			
-				case PAINT_RING_COLOR_GRAY: //gray	
-					
-					cWebView.invalidate();
-					cWebView.setCursorOuterColors(0xffFF6A4D, 0xffFF6A4D, 0xffFF6A4D, 0xffFF6A4D);
-					cWebView.setCursorInnerColors(0xffFFCEC4, 0xffFFCEC4, 0xffFFCEC4, 0xffFFCEC4);	
-					break;
-					
-				case 1: //red	
-					
-					cWebView.invalidate();
-					cWebView.setCursorOuterColors(0xffFF6A4D, 0xffFF6A4D, 0xffFF6A4D, 0xffFF6A4D);
-					cWebView.setCursorInnerColors(0xffFFCEC4, 0xffFFCEC4, 0xffFFCEC4, 0xffFFCEC4);	
-					break;
-					
-				case 2: //blue	
-					
-					cWebView.invalidate();
-					cWebView.setSelectionColor(0xAAb4d5fe);
-					cWebView.setSearchHighlightColor(0xAAb4d5fe);	
-					cWebView.setCursorOuterColors(0xff0072FF, 0xff0072FF, 0xff0072FF, 0xff0072FF);
-					cWebView.setCursorInnerColors(0xffA3CCFF, 0xffA3CCFF, 0xffA3CCFF, 0xffA3CCFF);				
-					break;
-					
-				case 3: //green	
-					
-					cWebView.invalidate();
-					cWebView.setSelectionColor(0xAAD5B0);
-					cWebView.setSearchHighlightColor(0xAAD5AD);	
-					cWebView.setCursorOuterColors(0xff06A800, 0xff06A800, 0xff06A800, 0xff06A800);
-					cWebView.setCursorInnerColors(0xffA9FFA6, 0xffA9FFA6, 0xffA9FFA6, 0xffA9FFA6);	
-					break;
-					
-			}
-		};	
-
+	
 	
 }

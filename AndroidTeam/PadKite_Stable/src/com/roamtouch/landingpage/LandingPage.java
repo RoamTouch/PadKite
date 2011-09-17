@@ -56,28 +56,32 @@ public class LandingPage {
 	
 	public String generateLandingPageString() {	
 		
+		String padkite = "PadKite is the first multitouch mobile mouse that allows " +
+				"you to quickly identify the content below your finger and fast operate " +
+				"with gestures to perform actions. Drag the circle to start operating. Have fun!.";
+		
 		landing += "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">"
 			+"<html>"
 			+"<head>"
 			+"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">"
 			+"<title>PadKite Start Page</title>"
 			+"<script type=\"text/javascript\">"
-			+"function load(){"
-			    +"var theUrl = document.getElementById('urlform').url.value ;"
-			    +"if (theUrl != \"\"){"			         
-			            +"var i = theUrl.search(\"http://\")"
-			            +"if(i == -1)"
-			            +"{"
-			            	+"var i = theUrl.search(\"\\.\");"
-					+"if (i != -1)"
-				            	+"window.document.location.href=\"http://\"+theUrl;"
-					+"else"
-				            	+"window.document.location.href=\"http://www.google.com/search?q=\"+theUrl;"
-			            +"}"
-			            +"else"
-			            	+"window.document.location.href=theUrl;"
-			    +"}"
-				+"return false;"
+			+"function loadSearch() {"
+			+"	var theUrl = document.getElementById('urlform').url.value ;"
+			+"	if (theUrl != \"\") {"			         
+			+"		var i = theUrl.search(\"http://\");"
+		    +"		if (i == -1) {"			            
+		    +"			var i = theUrl.search(\"\\.\");"
+		    +"			if (i != -1) {"
+			+"				window.document.location.href=\"http://\"+theUrl;"
+			+"			} else {"
+			+"				window.document.location.href=\"http://www.google.com/search?q=\"+theUrl;"
+			+"			}"
+		    +"		} else {"
+		    +"			window.document.location.href=theUrl;"
+		    +"		}"
+		    +"	}"
+			+"	return false;"
 			+"}"		
 			+"</script>"
 			+"</head>"
@@ -91,17 +95,22 @@ public class LandingPage {
 			+"</div>"
 			+"<br />"
 			+"<div align=\"center\">"
-			+"<form id=\"urlform\" action=\"#\" onsubmit=\"return load();\">"
+			+"	<form id=\"urlform\" action=\"#\" onSubmit=\"return loadSearch()\">\n"
 			+"<label>Enter address</label><br>"
 			+"<input type=\"text\" name=\"url\"></input><br>"
-			+"<input type=\"button\" value=\"Load Webpage\" onclick=\"load()\"></input>"
-			+"</form>"
+			//+"<input type=\"button\" value=\"Load Webpage\" onclick=\"loadSearch()\"></input>"
+			+"</form>"			
 			+"<br />"
 			+"<a href=\"http://padkite.com/start\">PadKite Homepage</a><br><br>"
 			+"</div>"				
+			+"<p align=\"center\"><font size=\"2\">"+padkite+"</font></p>"			
 			+"<div class=\"cuadro\" align=\"center\"><h4>Popular Sites</h4><ul class=\"book\"></div>";						
 			String popularString = generatePopularSitesString();			
-			landing += popularString			
+			landing += popularString	
+			+"<table><br>"
+			+"<p align=\"center\"><font size=\"2\">423 Broadway #522 Millbrae, California 94030-1905 U.S.A.</font></p>"
+			+"<p align=\"center\"><font size=\"2\" align=\"center\">Telephone 001-415-513-0069</font></p>"			
+			+"</table>"
 			+"</body>"
 			+"</html>";			
 			
