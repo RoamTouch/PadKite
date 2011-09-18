@@ -183,6 +183,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		//Rect that gets the size of what is below the pointer. 
 		private Rect rect;
 		
+		// FC Scroll speed
+		private final int FC_SCROLL_SPEED = 35;
+		
 		private void initScrollView() {
 			mScroller = new Scroller(mContext);
 			setFocusable(true);
@@ -494,11 +497,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						handler.removeCallbacks(parkingRunnable);
 					} else {
 						parkTimerStarted = true;
-						handler.postDelayed(this, 2000); // Go parking mode timer
+						handler.postDelayed(this, 800); // Go parking mode timer
 														// faster
 					}
 				}
-
 			};
 
 			
@@ -1182,6 +1184,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						stopFirst(true);
 						stopSecond(true);
 						stopThird(true);
+						stopFourth(true);
 					}
 					
 				}
@@ -2354,6 +2357,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		boolean mLongTouchHack = false;
 		private WebHitTestResult mLongTouchHackObj = null;
 		
+		//do not allow cursor to leave the screen variables
+		private int xFcTop = 0;
+		private int yFcTop = 0;
+		private boolean xFlag;
+		private boolean yFlag;
+		
 		public boolean dispatchTouchEventFC(MotionEvent event) {
 			
 			int action = event.getAction() & MotionEvent.ACTION_MASK;
@@ -2626,15 +2635,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					mTouchPointValid = true;
 
 					scrollX *= (radFact / length);
-					scrollY *= (radFact / length);
-
+					scrollY *= (radFact / length);					
+					
 					pointer.scrollTo(scrollX, scrollY);
 					fcPointerView.scrollTo(-scrollX, -scrollY);
-					// fcProgressBar.scrollTo(scrollX, scrollY);
-
-					// fcTouchView.scrollTo(CircleX - X, CircleY - Y);
-					// fcTouchView.setVisibility(View.VISIBLE);
-
+					
 					updateFC();
 
 					// stopSelection(fcX, fcY);
@@ -2771,32 +2776,37 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				else
 					checkClickSelection(fcX, fcY);
 				*/	
+				
 				moveSelection();
 				moveHitTest(fcX, fcY);
 				
 				// FF: This will not work ...
 				
-				int r = fcPointerView.getRadius();				
+				int r = fcPointerView.getRadius();			
 				
-				if((fcX+r) > this.w)
-					scrollWebView(10, 0);
-				else if(X+r > this.w)
-					scrollWebView(10, 0);
-				
-				if((fcX-r) <= 0)
-					scrollWebView(-10, 0);
-				else if ((X-r) <= 0)
-					scrollWebView(-10, 0);
-				
-				if((fcY+r) > this.h)
-					scrollWebView(10, 1);
-				else if(Y+r > this.h)
-					scrollWebView(10, 1);
+				if ((fcX + r) > this.w - 5){
+					scrollWebView(FC_SCROLL_SPEED, 0, fcX, fcY);
+				} else if (X + r > this.w - 5){
+					scrollWebView(FC_SCROLL_SPEED, 0, fcX, fcY);
+				}
 
-				if((fcY-(r+50)) <= 0)
-					scrollWebView(-10, 1);
-				else if ((Y-(r+50)) <= 0)
-					scrollWebView(-10, 1);
+				if ((fcX - r) <= 5){
+					scrollWebView(-FC_SCROLL_SPEED, 0, fcX, fcY);
+				} else if ((X - r) <= 5){
+					scrollWebView(-FC_SCROLL_SPEED, 0, fcX, fcY);
+				}
+
+				if ((fcY + r) > this.h - 5){
+					scrollWebView(FC_SCROLL_SPEED, 1, fcX, fcY);
+				} else if (Y + r > this.h - 5) {
+					scrollWebView(FC_SCROLL_SPEED, 1, fcX, fcY);
+				}
+
+				if ((fcY - (r)) <= 5){
+					scrollWebView(-FC_SCROLL_SPEED, 1, fcX, fcY);
+				} else if ((Y - (r)) <= 5){
+					scrollWebView(-FC_SCROLL_SPEED, 1, fcX, fcY);
+				}
 			}
 			/*
 			 
@@ -2964,44 +2974,91 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		/*
 		 * WebView scrolling with FloatingCursor
 		 */
-		public void scrollWebView(int value,int direction){
-		
-		/*
-		 * direction = 0 if web view scrolls along X axis
-		 * direction = 1 if web view scrolls along Y axis
-		 */
+		public void scrollWebView(int speed, int direction, int _fcX, int _fcY) {
+			
+			/*
+			 * direction = 0 if web view scrolls along X axis direction = 1 if web
+			 * view scrolls along Y axis
+			 */
+
 			int sx = mWebView.getScrollX();
 			int sy = mWebView.getScrollY();
 
-			if(direction==0)
-			{
-				sx += value;
+			final int xLoc = this.getScrollX();
+			final int yLoc = this.getScrollY();
+
+			int dims[] = mParent.getDeviceWidthHeight();
+			int coords[] = mParent.getFCLocation(xLoc, yLoc, dims[0], dims[1]);		
+			
+
+			if (direction == 0) { // X AXIS			
 				
-				if (mWebView.getContentWidth() <= this.getWidth() )
-					return;
+				/**
+				 * Check bug here while scrolling to the bottom. 
+				 */
+
+				int WebViewWidth = mWebView.getContentWidth();
+				int FloatingCursorWidth = this.getWidth();
 				
-				//Log.i("scrollX","sx,gCW,gSX,tgW"+sx+","+mWebView.getContentWidth() + "," + mWebView.getScrollX() + "," + "," + this.getWidth());
+				/**
+				 * If the WebView with is smaller than the FC width return, 
+				 * else scroll. 
+				 */
+				if (WebViewWidth <= FloatingCursorWidth){
+					return; 
+				}	
 				
-				if (sx >= mWebView.getContentWidth())
-					sx =  mWebView.getContentWidth();
-				if (sx < 0)
+				sx += speed;
+
+				if (sx >= WebViewWidth){
+					sx = WebViewWidth;
+				}
+				
+				if (sx < 0){
 					sx = 0;
+				}
+				//Apply move to scroll according to speed distance. 
 				mWebView.scrollTo(sx, sy);
-			}
-			else
-			{
-				if (mWebView.getContentHeight() <= this.getHeight() )
-					return;
 				
-				sy += value;
-				if (sy >= mWebView.getContentHeight())
-					sy = mWebView.getContentHeight();
-				if (sy < 0)
+				//Show scroll icon optional?.
+				//showScrollCursor(coords[0], direction, coords[1], coords[2]);
+				
+			} else { // Y AXIS
+				
+ 				int WebViewHeight = mWebView.getContentHeight();
+				int FloatingCursorHeight = this.getHeight();
+				
+				int fcViewHeight = fcView.getRadius();
+				int fcPointerViewHeight = fcPointerView.getRadius()*2;
+				
+				/**
+				 * BUG: This condition does not reach a small space at the bottom
+				 * of the page, I am adding the FC radius to reach.  
+				 */
+				int totalHeight = FloatingCursorHeight - (fcViewHeight+fcPointerViewHeight);
+				
+				if (WebViewHeight <= totalHeight){
+					return;
+				}
+				
+				sy += speed;
+				
+				if (sy >= WebViewHeight){
+					sy = WebViewHeight;
+				}
+				
+				if (sy < 0){
 					sy = 0;
+				}
 
 				mWebView.scrollTo(sx, sy);
+				//showScrollCursor(coords[0], direction, coords[1], coords[2]);
 			}
-		}
+			// TODO, the scrolling cursors are not applied per page moving but per
+			// scrollTo.
+			// It will be better to show them on page movement listener rather than
+			// page to be moved.
+ 		}
 	
 		public class WebClient extends WebChromeClient // implements OnCompletionListener, OnErrorListener
 		{

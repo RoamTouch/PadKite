@@ -41,7 +41,7 @@ public class FloatingCursorInnerView extends View {
 		}
 	}
 	
-	protected int getRadius()
+	public int getRadius()
 	{
 		return this.r;
 	}

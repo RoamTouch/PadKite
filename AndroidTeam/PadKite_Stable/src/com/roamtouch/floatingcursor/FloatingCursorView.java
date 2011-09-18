@@ -96,7 +96,7 @@ public class FloatingCursorView extends View{
         }
     }
 
-    protected int getRadius()
+    public int getRadius()
     {
         return this.rad;
     }  
