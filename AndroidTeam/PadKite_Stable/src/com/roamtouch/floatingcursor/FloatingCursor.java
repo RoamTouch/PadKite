@@ -63,6 +63,7 @@ import android.widget.VideoView;
 
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SelectionGestureView;
+import com.roamtouch.visuals.PointerHolder;
 import com.roamtouch.visuals.RingController;
 import com.roamtouch.visuals.TipController;
 import com.roamtouch.database.DBConnector;
@@ -106,6 +107,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		private WindowTabs fcWindowTabs;
 		private ZoomWebView zoomView;
 //		private ImageView menuBackground;
+		private View TemporaryView;
 				
 	/**
 	 *  integer showing which menu among main,settings and tabs is currently displayed 
@@ -178,7 +180,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 		//Ring View where rings and tabs are set.
 		private RingController rCtrl;
-		private TipController tCtrl;		
+		private TipController tCtrl;
+		private PointerHolder pHold;
 		
 		//Rect that gets the size of what is below the pointer. 
 		private Rect rect;
@@ -453,6 +456,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			zoomView.setFCRadius(circRadius);
 			zoomView.setVisibility(INVISIBLE);
 			
+			TemporaryView =  new View(context); //ViewGroup(context);
+						
 
 			addView(fcView);
 			//addView(fcProgressBar);
@@ -462,6 +467,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			addView(fcSettingsMenu);
 			addView(fcWindowTabs);
 			addView(zoomView);
+			addView(TemporaryView);
 			
 			vibrator = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
 			
@@ -568,8 +574,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 		public void updateFC()
 		{
-			fcX = -(int)pointer.getScrollX() + -(int)getScrollX() + w/2;
-			fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;
+			fcX = -(int)pointer.getScrollX() + -(int)getScrollX() + w/2;			
+			fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;		
+			
 		}
 		
 		public void enterParkingMode() {
@@ -604,13 +611,18 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			fcWindowTabs.setEventViewer(eventViewer);
 		}
 
-		public void setParent(BrowserActivity p, RingController rC, TipController tC){
+		public void setParent(BrowserActivity p, 
+				RingController rC, 
+				TipController tC,
+				PointerHolder pH
+			){
 			mParent = p;
 			fcMainMenu.setParent(mParent);
 			fcSettingsMenu.setParent(mParent);
 			fcWindowTabs.setParent(mParent);
 			rCtrl = rC;
 			tCtrl = tC;
+			pHold = pH;
 		}
 		
 		/**
@@ -2360,8 +2372,15 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		//do not allow cursor to leave the screen variables
 		private int xFcTop = 0;
 		private int yFcTop = 0;
-		private boolean xFlag;
-		private boolean yFlag;
+		
+		private int yFlag;
+		private int xFlag;		
+		
+		
+		private int pointerScrollX;
+		private int pointerScrollY;
+		
+		
 		
 		public boolean dispatchTouchEventFC(MotionEvent event) {
 			
@@ -2393,6 +2412,124 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 			fcX = -(int)pointer.getScrollX() + -(int)getScrollX() + w/2;
 			fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;
+			
+			Log.v("out", "fcX : "+fcX +" fcY: "+fcY);
+
+			int _pWidth 	= getWidth();
+			int _pHeight 	= getHeight();
+			
+			int allH = getHeight();
+			int allW = getWidth();
+			
+			int dW = mParent.getDisplayWidth();
+			int dH = mParent.getDisplayHeight();
+	
+			//TOP-BOTTOM SIDES
+			if ( fcY < 40  || fcY > _pHeight ){						
+				
+				int fcY_hor = 0;
+					
+				if ( fcY < 40 ){ 				
+					fcY_hor = _pHeight - _pWidth - 20;//385;
+				} else if ( fcY > _pHeight ) {
+					fcY_hor = _pWidth - _pHeight - 20;//385;
+				}
+				
+				Log.v("out" , "fcY_hor :: "+fcY_hor);
+				
+				//Draw new cursor on pHold.
+				if (yFlag == 0) {						
+					
+					if (pointer!=null){				
+						removeView(pointer);
+					}
+					
+					if (xFlag==0) {
+						pHold.addView(pointer);
+					}
+					
+					yFlag = 1;
+				}			
+				
+				//Left-Right Tops
+				int fcX_hor = 0;
+				
+				if ( fcX < 0 ){
+					
+					fcX_hor = (_pHeight - _pWidth)/2;
+					
+				} else if (fcX > _pWidth){
+					
+					fcX_hor = _pWidth - 800;
+					
+				} else {
+					
+					fcX_hor = fcX  - (_pWidth/2) + pointerScrollX;
+					fcX_hor = fcX_hor * -1;
+					
+				}
+				
+				pHold.scrollTo(fcX_hor, fcY_hor);					
+				
+				updateFC();			
+				
+			} else if (fcY > 40 && yFlag == 1){				
+				
+				relocatePointerToFCView();		
+				
+				updateFC();
+			}
+			
+			//LEFT-RIGHT SIDES
+			if (  fcX < 0 || fcX > _pWidth ){
+				
+				int fcX_ver = 0;
+				
+				if (fcX > _pWidth) {
+					fcX_ver = _pWidth - 800;
+				} else if (fcX < 0){
+					fcX_ver = (_pHeight - _pWidth)/2;
+				}
+			
+				Log.v("out" , "fcX_ver::: "+fcX_ver);
+
+				//Draw new cursor on pHold.
+				if (xFlag == 0) {					
+				
+					if (pointer!=null){				
+						removeView(pointer);
+					}
+					
+					if (yFlag==0) {
+						pHold.addView(pointer);
+					}
+					
+					xFlag = 1;
+				}
+				
+				int fcY_ver;
+				
+				//Top-bottom tops
+				if (fcY < 40){
+					fcY_ver = _pHeight - _pWidth - 20;
+				} else if (fcY > _pHeight){
+					fcY_ver = _pWidth - _pHeight - 20;
+				} else {					
+					fcY_ver = fcY  - (_pHeight/2)  + pointerScrollY;
+					fcY_ver = fcY_ver * -1;
+				}
+				
+				pHold.scrollTo(fcX_ver, fcY_ver);	
+				
+				updateFC();		
+				
+			} else if (fcX > 0 && xFlag == 1) {
+				
+				relocatePointerToFCView();
+				
+				updateFC();
+				
+			}			
 
 			if (mForwardTouch)
 			{
@@ -2639,6 +2776,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					
 					pointer.scrollTo(scrollX, scrollY);
 					fcPointerView.scrollTo(-scrollX, -scrollY);
+
+					pointerScrollX = scrollX;
+					pointerScrollY = scrollY;
 					
 					updateFC();
 
@@ -2783,29 +2923,32 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				// FF: This will not work ...
 				
 				int r = fcPointerView.getRadius();			
+						
+				//TOP.
+				if ((fcY - (r)) <= 10){
+					scrollWebView(-FC_SCROLL_SPEED, 1, fcX, fcY);
+				} else if ((Y - (r)) <= 10){
+					scrollWebView(-FC_SCROLL_SPEED, 1, fcX, fcY);
+				}
+				//RIGHT
+				if ((fcX + r) > this.w - 10){
+					scrollWebView(FC_SCROLL_SPEED, 0, fcX, fcY);		
+				} else if (X + r > this.w - 10){
+					scrollWebView(FC_SCROLL_SPEED, 0, fcX, fcY);		
+				}
 				
-				if ((fcX + r) > this.w - 5){
-					scrollWebView(FC_SCROLL_SPEED, 0, fcX, fcY);
-				} else if (X + r > this.w - 5){
-					scrollWebView(FC_SCROLL_SPEED, 0, fcX, fcY);
-				}
-
-				if ((fcX - r) <= 5){
-					scrollWebView(-FC_SCROLL_SPEED, 0, fcX, fcY);
-				} else if ((X - r) <= 5){
-					scrollWebView(-FC_SCROLL_SPEED, 0, fcX, fcY);
-				}
-
-				if ((fcY + r) > this.h - 5){
+				//BOTTOM
+				if ((fcY + r) > this.h - 10){
 					scrollWebView(FC_SCROLL_SPEED, 1, fcX, fcY);
-				} else if (Y + r > this.h - 5) {
+				} else if (Y + r > this.h - 10) {
 					scrollWebView(FC_SCROLL_SPEED, 1, fcX, fcY);
 				}
-
-				if ((fcY - (r)) <= 5){
-					scrollWebView(-FC_SCROLL_SPEED, 1, fcX, fcY);
-				} else if ((Y - (r)) <= 5){
-					scrollWebView(-FC_SCROLL_SPEED, 1, fcX, fcY);
+				
+				//LEFT
+				if ((fcX - r) <= 10){
+					scrollWebView(-FC_SCROLL_SPEED, 0, fcX, fcY);
+				} else if ((X - r) <= 10){
+					scrollWebView(-FC_SCROLL_SPEED, 0, fcX, fcY);
 				}
 			}
 			/*
@@ -2846,6 +2989,27 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			return true;
 
 		}
+		
+		public void relocatePointerToFCView(){
+			if (pointer!=null){
+				pHold.removeView(pointer);
+			}
+			pointer = new ImageView(getContext());
+			pointer.setImageResource(R.drawable.kite_cursor);
+			pointer.setScaleType(ImageView.ScaleType.CENTER);
+			yFlag 		= 0;
+			xFlag 		= 0;					
+			addView(pointer);
+			pointer.scrollTo(pointerScrollX, pointerScrollY);
+			fcPointerView.scrollTo(-pointerScrollX, -pointerScrollY);
+		}
+		
+		/*private void removeAddPointer() {
+			if (pointer!=null){				
+				removeView(pointer);
+			}
+			pHold.addView(pointer);
+		}*/
 		
 		public boolean canGoForward(){
 			return mWebView.canGoForward();
@@ -2971,10 +3135,15 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			fcWindowTabs.setCurrentTab(child.getTabIndex());
 			fcWindowTabs.setActiveTabIndex(child);
 		}
+		
+		boolean byPassTop;
+		
 		/*
 		 * WebView scrolling with FloatingCursor
 		 */
 		public void scrollWebView(int speed, int direction, int _fcX, int _fcY) {
+			
+		
 			
 			/*
 			 * direction = 0 if web view scrolls along X axis direction = 1 if web

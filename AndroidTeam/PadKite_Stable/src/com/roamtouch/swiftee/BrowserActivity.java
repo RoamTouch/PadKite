@@ -37,6 +37,7 @@ import com.roamtouch.view.SelectionGestureView;
 import com.roamtouch.view.SwifteeGestureView;
 import com.roamtouch.view.SwifteeOverlayView;
 import com.roamtouch.landingpage.LandingPage;
+import com.roamtouch.visuals.PointerHolder;
 import com.roamtouch.visuals.RingController;
 import com.roamtouch.visuals.TipController;
 import com.roamtouch.view.TutorArea;
@@ -128,6 +129,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     //Visuals
     private RingController rCtrl;
     private TipController tCtrl;
+    private PointerHolder pHold;
     
     public void closeDialog()
     {
@@ -307,7 +309,6 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	
 		sharedPreferences = getApplicationContext().getSharedPreferences("Shared_Pref_AppSettings", MODE_WORLD_READABLE);
 
-
 		// FIXME: First show loading screen ...
         setContentView(R.layout.main);
         
@@ -409,17 +410,22 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		
 		//Tips controller.
 		tCtrl = (TipController)findViewById(R.id.tipController);		
-		tCtrl.setParent(this);
+		tCtrl.setParent(this);	
+		
+		//Pointer Holder controller.
+		pHold = (PointerHolder)findViewById(R.id.pointerHolder);
 		
 		floatingCursor = (FloatingCursor)findViewById(R.id.floatingCursor);	
 		floatingCursor.setWebView(webView,true);
 		floatingCursor.setEventViewerArea(eventViewer);
-		floatingCursor.setParent(this, rCtrl, tCtrl);		
-		//floatingCursor.setHandler(handler);
+		floatingCursor.setParent(this, rCtrl, tCtrl, pHold);		
+		//floatingCursor.setHandler(handler);	
+		
+		//pHold.setParent(this, floatingCursor);	
 		
 		//Set proper parents to access from RingController.
- 		rCtrl.setParent(this, floatingCursor, webView);
-		
+ 		rCtrl.setParent(this, floatingCursor, webView); 		
+ 		
 		if(data!=null) {
 			enterParkingMode(true);
 		}
@@ -468,6 +474,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         if (activities.size() == 0){
         	SwifteeApplication.setVoiceRecognitionEnabled(false);
         }		
+        
+        display = getWindowManager().getDefaultDisplay();
 		
     }
     
@@ -1062,15 +1070,24 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		}
 	};
 	
+	Display display;
+	
+	public int getDisplayWidth(){
+		int w = display.getWidth();
+		return w;
+	}
+	
+	public int getDisplayHeight(){
+		int h = display.getHeight();
+		return h;
+	}
 	
 	public Hashtable getCuadrant4(int X, int Y) {
 		
 		//Object cuadrant[] = {};
 		Hashtable cuadrant = new Hashtable();
 		Object[] loc = new Object[1];
-		Object[] hW = new Object[2];		
-		
-		Display display = getWindowManager().getDefaultDisplay();
+		Object[] hW = new Object[2];	
 		
 		 //General location vars.
         int w = display.getWidth();

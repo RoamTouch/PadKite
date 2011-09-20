@@ -18,6 +18,10 @@ public class FloatingCursorInnerView extends View {
 	
 //	private Bitmap bitmap;
 //	private Rect rect;
+	
+	public boolean trans;
+	int _x;
+	int _y;
 
 	
 	public FloatingCursorInnerView(Context context) {
@@ -49,6 +53,10 @@ public class FloatingCursorInnerView extends View {
 	 @Override
 	 protected void onDraw(Canvas canvas) {
 	     super.onDraw(canvas);
+	     if (trans){   	    	 
+	    	 canvas.translate(_x, _y);
+	     }	 
+
 	     //Toast.makeText(getContext(), "Hello Draw", Toast.LENGTH_SHORT).show();
 	     //rect = new Rect((int)x-r,(int)y-r,(int)x+r,(int)y+r);
 	     //if (bitmap != null)
@@ -56,4 +64,16 @@ public class FloatingCursorInnerView extends View {
 	    	//w canvas.drawBitmap(bitmap, null, rect, null);
         //canvas.drawCircle(x, y, r, mPaint);
 	 }
+	 
+	 public void set_x(int _x) {
+		this._x = _x;
+	}
+	 
+	 public void set_y(int _y) {
+		this._y = _y;
+	}
+	 
+	 public void setTrans(boolean trans) {
+		this.trans = trans;
+	}
 }

@@ -145,7 +145,9 @@ public class FloatingCursorView extends View{
         /*rect = new Rect((int)x-r,(int)y-r,(int)x+r,(int)y+r);
         if (bitmap != null) {
             canvas.drawBitmap(bitmap, null, rect, null);
-        }*/
+        }*/       
+        
+        
     }   
     
     private boolean isOdd( int val ) 
