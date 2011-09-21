@@ -1,5 +1,7 @@
 package com.roamtouch.visuals;
 
+import java.util.Vector;
+
 import com.roamtouch.swiftee.R;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -54,32 +56,37 @@ public class RingView extends View {
    	int ringWidth = 1;
    	
    	public int rectRight;
+   	public int rectBottom;
    	
    	int TYPE;
+   	
+   	boolean rotatedTab;
     
     public RingView(Context context) {
         super(context);       
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.outer_circle);        
     }   
+    
+    int textFinalXPos;
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);       
-               
-	   	Log.v("draw", "dras: "+draw);
-	   	
+        
+    	super.onDraw(canvas);   
+        
+        
         switch (draw){       
         
-	       case SwifteeApplication.DRAW_TAB: // && clear==false){    	   	
-	        	finalDrawTab(canvas);
-	        	break;    
+	       case SwifteeApplication.DRAW_TAB: // && clear==false){   	 	   
+	    	   drawTab(canvas);   	
+	    	   break;    
 	        	
 	        case SwifteeApplication.DRAW_RING: // && clear==false){ 
 	        	finalDrawRing(canvas);        	  	
 	        	break;
 	        	
 	        case SwifteeApplication.DRAW_RING_AND_TAB: // && clear==false){
-	        	finalDrawTab(canvas);
+	        	drawTab(canvas);        	
 	        	finalDrawRing(canvas);   
 	        	break;
 	        	
@@ -90,16 +97,42 @@ public class RingView extends View {
         }        
     };  
     
-    private void finalDrawTab(Canvas canvas){
-    	
+    
+    private void drawTab(Canvas canvas){
+    	Paint pText;
+    	if (this.rotatedTab){
+		   	pText = invertTab(canvas);	
+		} else {	    			 
+			pText = finalDrawTab(canvas);	 	    	   
+		}	        	
+    
+    	if (this.rotatedTab){	        			   		     		
+    		canvas.drawText(text, textFinalXPos, rectBottom + 20, pText);  		
+    		this.rotatedTab=false;
+    	} else {
+    		canvas.drawText(text, textFinalXPos, yPosTab-9, pText);	  
+    	}
+    }
+    
+    private Paint invertTab(Canvas canvas){
+    	Paint pText;
+    	canvas.save();
+ 	   	canvas.rotate(180, cX, cY); 
+ 	    pText = finalDrawTab(canvas);
+ 	   	canvas.restore();
+ 	   	canvas.save();	
+ 	   	return pText;
+    }
+    
+    private Paint finalDrawTab(Canvas canvas){
+    	   	
     	boolean close;    	
     	int tabWidth;    
     	int rectWidth;
     	int rectCenter;
     	int tabCenter;
     	int tabFinalXPos;
-    	int textCenter;
-    	int textFinalXPos;
+    	int textCenter;    	
     	
     	Paint pText = paintText();    
     	int tSize = (int) pText.measureText(text);    	
@@ -121,16 +154,25 @@ public class RingView extends View {
     		close = true;
     	}    	
     	
-    	Path pathTab = drawTab(tabFinalXPos, yPosTab-12, tabFinalXPos+tabWidth, close);  
+    	Path pathTab = drawTabShape(tabFinalXPos, yPosTab-12, tabFinalXPos+tabWidth, close);  
     	Paint pSquare = paintTab();
     	canvas.drawPath(pathTab, pSquare);          	
     	
-		canvas.drawText(text, textFinalXPos, yPosTab-9, pText);	        	
-		pathTab.close();
+		//canvas.drawText(text, textFinalXPos, yPosTab-9, pText);	        	
+		pathTab.close();	
 		
-		canvas.save();
+		return pText;
 		
     }
+    
+    int cX;
+    int cY;
+    
+    public void setRotatedTab(boolean rotatedTab, int centerX, int centerY) {
+		this.rotatedTab = rotatedTab;
+		cX = centerX;
+		cY = centerY;
+	}
     
     private void finalDrawRing(Canvas canvas){    	
     	
@@ -145,7 +187,7 @@ public class RingView extends View {
         
     }
       
-    public Path drawTab(int x, int y, int right, boolean close){    	
+    public Path drawTabShape(int x, int y, int right, boolean close){    	
     	
     	Path path = new Path();    	    	
     	path.moveTo(x, y+7);
@@ -230,7 +272,7 @@ public class RingView extends View {
     	Paint pText = new Paint();
 		pText.setStyle(Paint.Style.FILL);
 		pText.setAntiAlias(false);
-		pText.setColor(Color.WHITE);
+		pText.setColor(Color.WHITE);		
 		pText.setTypeface(Typeface.DEFAULT_BOLD);
 		pText.setTextSize(16);
 		return pText;

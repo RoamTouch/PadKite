@@ -170,7 +170,13 @@ public class RingController extends FrameLayout {
         	
         }
 	 	
+	 	//Draw Upside down tab while upper scrolling. 
+	 	if (re.top < 20){
+	 		rV.setRotatedTab(true, re.centerX(), re.centerY());
+	 	}
+	 	
 	 	rV.rectRight = re.right;
+	 	rV.rectBottom = re.bottom;
 	}
 	 
  	/**
