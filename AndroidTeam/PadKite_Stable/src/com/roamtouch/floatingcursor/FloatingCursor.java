@@ -2369,19 +2369,16 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		boolean mLongTouchHack = false;
 		private WebHitTestResult mLongTouchHackObj = null;
 		
-		//do not allow cursor to leave the screen variables
+		//Boundaries to cursor variables.
 		private int xFcTop = 0;
 		private int yFcTop = 0;
 		
 		private int yFlag;
-		private int xFlag;		
-		
+		private int xFlag;
 		
 		private int pointerScrollX;
 		private int pointerScrollY;
-		
-		
-		
+			
 		public boolean dispatchTouchEventFC(MotionEvent event) {
 			
 			int action = event.getAction() & MotionEvent.ACTION_MASK;
@@ -2413,6 +2410,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			fcX = -(int)pointer.getScrollX() + -(int)getScrollX() + w/2;
 			fcY = -(int)pointer.getScrollY() + -(int)getScrollY() + h/2;
 			
+			Log.v("out","fcX_1: "+fcX);
+			
 			/**
 			* Set side tops boundaries to cursor. 
 			*/
@@ -2434,8 +2433,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				
 				if ( fcY < 40 ){					
 					fcY_hor = (_pHeight - _pWidth) + gapY - pointerScrollY;
+					fcY = 0;
 				} else if ( fcY > _pHeight ) {					 
 					fcY_hor = (_pWidth - _pHeight) - gapY - pointerScrollY;
+					fcY = _pHeight;
 				}			
 				
 				//Draw new cursor on pHold.
@@ -2459,23 +2460,24 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					fcX_hor = fcX_hor * -1;					
 				}
 				
-				pHold.scrollTo(fcX_hor, fcY_hor);
+				pHold.scrollTo(fcX_hor, fcY_hor);				
 				
-				updateFC();			
+			} else if (fcY > 40 && yFlag == 1){
 				
-			} else if (fcY > 40 && yFlag == 1){	
-				relocatePointerToFCView();					
-				updateFC();
+				relocatePointerToFCView();
+				
 			}
 			
 			//LEFT-RIGHT SIDES
 			if (  fcX < 0 || fcX > _pWidth ){			
 				
-				if (fcX > _pWidth) {
-					fcX_ver = (_pWidth - _pHeight) + gapX - pointerScrollX;													
-				} else if (fcX < 0){
+				if (fcX <= 0){
+					fcX = 0;
 					fcX_ver = ( _pHeight - _pWidth ) - gapX - pointerScrollX;
-				}		
+				} else if (fcX >= _pWidth) {					
+					fcX_ver = (_pWidth - _pHeight) + gapX - pointerScrollX;
+					fcX = _pWidth;
+				} 
 
 				//Draw new cursor on pHold.
 				if (xFlag == 0) {					
@@ -2489,25 +2491,21 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				}				
 				
 				//Top-bottom tops
-				if (fcY < 40){
+				if (fcY <= 0){
 					fcY_ver = (_pHeight - _pWidth) + gapY - pointerScrollY;					
-				} else if (fcY > _pHeight){
+				} else if (fcY >= _pHeight){
 					fcY_ver = (_pWidth - _pHeight) - gapY - pointerScrollY;
 				} else {					
 					fcY_ver = fcY  - (_pHeight/2)  + pointerScrollY;
 					fcY_ver = fcY_ver * -1;
 				}
 				
-				pHold.scrollTo(fcX_ver, fcY_ver);	
-				
-				updateFC();		
+				pHold.scrollTo(fcX_ver, fcY_ver);		
 				
 			} else if (fcX > 0 && xFlag == 1) {
 				
 				relocatePointerToFCView();
-				
-				updateFC();
-				
+			
 			} 
 			//END OF TOPS			
 
