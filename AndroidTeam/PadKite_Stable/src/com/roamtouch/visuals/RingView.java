@@ -36,7 +36,7 @@ public class RingView extends View {
     
     int fillColor;    
 
-    //int tabWidth;
+    int[] cords;
     
     private static final int[] GREEN_COLOR = new int[]{49, 179, 110};
     private static final int[] BLUE_COLOR = new int[]{49, 179, 110};
@@ -61,6 +61,8 @@ public class RingView extends View {
    	int TYPE;
    	
    	boolean rotatedTab;
+   	
+   	int identifier = 0;
     
     public RingView(Context context) {
         super(context);       
@@ -115,12 +117,14 @@ public class RingView extends View {
     }
     
     private Paint invertTab(Canvas canvas){
+    	
     	Paint pText;
     	canvas.save();
  	   	canvas.rotate(180, cX, cY); 
  	    pText = finalDrawTab(canvas);
  	   	canvas.restore();
- 	   	canvas.save();	
+ 	   	canvas.save();
+ 	   	
  	   	return pText;
     }
     
@@ -228,6 +232,7 @@ public class RingView extends View {
 //         G
     
     public Path drawRing(int X, int Y, int W, int H){    	
+    	
     	int arc = ringArc;    	
     	int Ax = X + arc;
         int Ay = Y;
@@ -246,6 +251,7 @@ public class RingView extends View {
         int Jy = Dy;
         int Kx = X;
         int Ky = Cy;        
+        
         Path pR = new Path();
         pR.moveTo(Ax,Ay); //A
         pR.lineTo(Bx,By);//B
@@ -257,6 +263,7 @@ public class RingView extends View {
         pR.lineTo(Kx, Ky); //K
         pR.arcTo(new RectF(Ax - arc, Ay, Kx + arc, Ky),180,90); //K - A arc
         pR.lineTo(Ax, Ay); //K 
+        
     	return pR;
     }
     
@@ -282,7 +289,46 @@ public class RingView extends View {
 		this.draw = draw;
 	}    
     
+    public void setIdentifier(int identifier) {
+		this.identifier = identifier;
+	}
     
+    public int getIdentifier() {
+		return identifier;
+	}
+    
+    public void setScrollX(int scrollX) {
+		this.scrollX = scrollX;
+	}
+    
+   public void setScrollY(int scrollY) {
+	   this.scrollY = scrollY;
+   }
+
+   public void setxPosTab(int xPosTab) {
+	this.xPosTab = xPosTab;
+   }
+   
+   public void setyPosTab(int yPosTab) {
+		this.yPosTab = yPosTab;
+   }
+   
+   public void setCords(int[] cords) {
+	    x = (Integer)cords[0]; 
+	    y = (Integer)cords[1];
+	    W = (Integer)cords[2];
+	    H = (Integer)cords[3];
+	    this.cords = cords;	
+   }
+   
+   public void setRectRight(int rectRight) {
+	   this.rectRight = rectRight;
+   }
+   
+   public void setRectBottom(int rectBottom) {
+	   this.rectBottom = rectBottom;
+   }
+   
 }
  
 

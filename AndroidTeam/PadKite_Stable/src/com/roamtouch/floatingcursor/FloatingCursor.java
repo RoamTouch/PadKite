@@ -271,7 +271,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
     			SwifteeApplication.setFCDotDiam(SwifteeApplication.getFCDotInitialDiam());
     			
     			//Erase draws.
-    			rCtrl.setDrawStyle(SwifteeApplication.DRAW_NONE, null);		
+    			
+    			rCtrl.drawNothing();
+    			//rCtrl.setDrawStyle(SwifteeApplication.DRAW_NONE, null, identifier);		
     			
             	final boolean oldDrag = mIsBeingDragged;
                 /* Release the drag */
@@ -992,8 +994,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		private int cType;
 		private int resultType;
 		private int identifier;
-		
-		
+			
 		protected void moveHitTest(int X, int Y)
 		{
 			if (mHitTestMode)
@@ -1014,11 +1015,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				//rect = new Rect(); 
 				rect =	mWebHitTestResult.getRect();
 				
-				/*if (!rect.isEmpty()){ //rect.left==0 && rect.right==0){		
-					Log.v("identifier", "identifier :"+identifier);
-					Log.v("identifier", rect.centerX()+" "+rect.centerY());			
+				if (!rect.isEmpty()){ //rect.left==0 && rect.right==0){
+					Log.v("identifier", "id: " + identifier);
+					Log.v("identifier", "rect :"+rect);								
 					Log.v("identifier", "_____________________________");
-				}*/	
+				}	
 				
 				//Log.v("rect", "rect: " + rect + " WB: " + mWebView.getScrollX() + " " + mWebView.getScrollY());
 				
@@ -1046,8 +1047,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 					case WebHitTestResult.TEXT_TYPE:{ 
 						cType = 11; //Text						
-						Object[] paramText =  { rect, SwifteeApplication.GRAY, WebHitTestResult.TEXT_TYPE };
-						rCtrl.setDrawStyle(SwifteeApplication.DRAW_RING, paramText);					
+						Object[] paramText =  { rect, SwifteeApplication.GRAY };
+						rCtrl.setDrawStyle(SwifteeApplication.DRAW_RING, paramText, identifier);					
 						cursorImage = R.drawable.text_cursor;						
 						break;
 					}
@@ -1228,9 +1229,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		 * with two fingers. If true the mouse can be single finger operated.
 		 * */
 		
-		boolean mFirstTimerStarted = false;
-		boolean mReadyToFirst = false;
-
+		public boolean mFirstTimerStarted = false;
+		public boolean mReadyToFirst = false;
+		
 		boolean mSecondTimerStarted = false;
 		boolean mReadyToSecond = false;
 		
@@ -1450,7 +1451,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				mReadyToFourth = false;	
 				
 			}
-		};			
+		};		
+		
+		
 			
 		 /* No Target UNKNOWN_TYPE = 0 
 		 * Phone PHONE_TYPE = 2 Note: Phone not working, returning 0 however link is there and opens phone app. 
@@ -1607,59 +1610,108 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		};					
 		
 		public void firstText(){			
-			Object[] param_TEXT =  { rect, SwifteeApplication.BLUE, "WORD", SwifteeApplication.PAINT_BLUE, WebHitTestResult.TEXT_TYPE }; 
-			rCtrl.setDrawStyle(SwifteeApplication.DRAW_RING_AND_TAB, param_TEXT);	
+			Object[] param_TEXT =  { 
+					rect, 
+					SwifteeApplication.BLUE, 
+					"WORD",				 
+					SwifteeApplication.PAINT_BLUE 
+					}; 			
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_RING_AND_TAB, param_TEXT, identifier);	
 			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD);	
 			mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 		}
 		
 		public void firstInput(){
-			Object[] paramEDIT_TEXT =  { rect, SwifteeApplication.VIOLET, "WRITE", SwifteeApplication.PAINT_VIOLET }; 
-			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT);
+			Object[] paramEDIT_TEXT =  { 
+					rect, 
+					SwifteeApplication.VIOLET, 
+					"WRITE", 
+					SwifteeApplication.PAINT_VIOLET 
+					}; 
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT, identifier);
 		}
 		
 		public void firstDefault(){
-			Object[] param_default =  { rect, SwifteeApplication.GREEN, "OPEN", SwifteeApplication.PAINT_GREEN }; 
-			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, param_default);	
+			Object[] param_default =  { 
+					rect, 
+					SwifteeApplication.GREEN, 
+					"OPEN", 
+					SwifteeApplication.PAINT_GREEN 
+					}; 
+			Log.v("rect", "first : "+rect+ " identifier: " +identifier);		
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, param_default, identifier);	
 		}
 
 		public void secondText(){
-			Object[] param_TEXT =  { rect, SwifteeApplication.BLUE, "LINE", SwifteeApplication.PAINT_BLUE }; 
-			rCtrl.setDrawStyle(SwifteeApplication.DRAW_RING_AND_TAB, param_TEXT);		
+			Object[] param_TEXT =  { 
+					rect, 
+					SwifteeApplication.BLUE, 
+					"LINE", 
+					SwifteeApplication.PAINT_BLUE 
+					}; 
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_RING_AND_TAB, param_TEXT, identifier);			
 			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_LINE);	
 			mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 		}	
 		
 		public void secondInput(){
-			Object[] paramEDIT_TEXT =  { rect, SwifteeApplication.ORANGE, "PASTE", SwifteeApplication.PAINT_ORANGE}; 
-			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT);			
+			Object[] paramEDIT_TEXT =  { 
+					rect, 
+					SwifteeApplication.ORANGE, 
+					"PASTE", 
+					SwifteeApplication.PAINT_ORANGE
+					}; 
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT, identifier);			
 		}	
 		
 		public void secondDefault(){			
-			Object[] paramEDIT_TEXT =  { rect, SwifteeApplication.BLUE, "COPY", SwifteeApplication.PAINT_BLUE }; 
-			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT);		
+			Object[] paramEDIT_TEXT =  { 
+					rect, 
+					SwifteeApplication.BLUE, 
+					"COPY", 
+					SwifteeApplication.PAINT_BLUE 
+					}; 
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT, identifier);
+			Log.v("rect", "second : "+rect + " identifier: " +identifier);			
 		}
 
 		public void thirdText(){
-			Object[] param_TEXT_TYPE =  { rect, SwifteeApplication.BLUE, "PHARAGRAPH", SwifteeApplication.PAINT_BLUE }; 
-			rCtrl.setDrawStyle(SwifteeApplication.DRAW_RING_AND_TAB, param_TEXT_TYPE);
+			Object[] param_TEXT_TYPE =  { 
+					rect, 
+					SwifteeApplication.BLUE, 
+					"PHARAGRAPH", 
+					SwifteeApplication.PAINT_BLUE 
+					}; 
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_RING_AND_TAB, param_TEXT_TYPE, identifier);
 			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_PARAGRAPH);	
 			mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 		}	
 		
 		public void thirdInput(){
-			Object[] param_default =  { rect, SwifteeApplication.RED, "VOICE", SwifteeApplication.PAINT_RED }; 
-			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, param_default);		
+			Object[] param_default =  { 
+					rect, 
+					SwifteeApplication.RED, 
+					"VOICE", 
+					SwifteeApplication.PAINT_RED 
+					}; 
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, param_default, identifier);		
 		}	
 		
 		public void thirdDefault(){
-			Object[] param_default =  { rect, SwifteeApplication.BLACK, "GESTURE", SwifteeApplication.PAINT_BLACK	}; 
-			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, param_default);								
+			Object[] param_default =  { 
+					rect, 
+					SwifteeApplication.BLACK, 
+					"GESTURE", 
+					SwifteeApplication.PAINT_BLACK	
+					}; 
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, param_default, identifier);			
+			Log.v("rect", "third : "+rect+ " identifier: " +identifier);				
 		}
 		
 //		Erase draws.
-		public void eraseDraws(){									
-			rCtrl.setDrawStyle(SwifteeApplication.DRAW_NONE, null);		
+		public void eraseDraws(){							
+			rCtrl.drawNothing();
+			//rCtrl.setDrawStyle(SwifteeApplication.DRAW_NONE, null, identifier);		
 		}	
 		
 		public void drawTip(String[] comment, float X, float Y){		
@@ -1673,12 +1725,17 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					initCoor
 				}; 
 			tCtrl.setTipComment(paramTip);		
-		}
-		
+		}		
 		
 		public Rect getRect(){
 			return rect;
-		}
+		};		
+		public int getResultType(){
+			return resultType;
+		};		
+		public int getIdentifier(){
+			return identifier;
+		};
 
 		protected void startHitTest(int X, int Y)
 		{

@@ -34,7 +34,9 @@ public class RingController extends FrameLayout {
 
 	int scrollX;
 	int scrollY;
-
+	
+	private int identifier;
+	
 	public RingController(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init(context);
@@ -52,24 +54,15 @@ public class RingController extends FrameLayout {
 	}			
 	
 	public void ringToOriginalColor(){
+		
 		/** Turn color back to NONE, in case 3 colors back to GRAY.**/			 
 		if (SwifteeApplication.getSingleFingerSteps()== 3){
 			setRingcolor(SwifteeApplication.PAINT_GRAY);				
 		} else if (SwifteeApplication.getSingleFingerSteps()== 2){		
 			setRingcolor(SwifteeApplication.PAINT_BLUE);
 		}
+		
 	}	
-	
-	/**
-	 * Draw nothing on the screen erase what was there.
-	 */
-	public void drawNothing(){
-		setDrawStyle(SwifteeApplication.DRAW_NONE, null);
-	}
-	
-	public void drawTab(){
-		rV.setDrawType(SwifteeApplication.DRAW_TAB);
-	}
 	
 	/**
 	 * Paing WebKit ring blue on start if two fingers.
@@ -82,102 +75,99 @@ public class RingController extends FrameLayout {
 		rV.postInvalidate();
 	}
 	
-	public void setDrawStyle(int type, Object[] param){			
-	 	
-		switch (type) {
-    	 		
-	    	case SwifteeApplication.DRAW_RING:	    
-	    		
-	    		re = (Rect) param[0];    		
-	    		c = (int[]) param[1];
-	    		r = c[0];
-	    		g = c[1];
-	    		b = c[2];	
-	    		TYPE = (Integer) param[2];	    		
-	    		rV.fillColor = Color.rgb(r, g, b);						    		
-	    		rV.ringArc = 5;	 
-	    		
-	    		calculateDims(re);
-	    		rV.setDrawType(SwifteeApplication.DRAW_RING);	    		
-	    		break;
-	    		
-	    	case SwifteeApplication.DRAW_TAB: 		
-	    		
-	    		re = (Rect) param[0];		
-	    		c = (int[]) param[1];
-	    		r = c[0];
-	    		g = c[1];
-	    		b = c[2];	    		
-	    		String t = (String) param[2];				
-	    		rV.text = t;    			    		
-	    		rV.fillColor = Color.rgb(r, g, b);		
-	    		rV.ringArc = 5;	    		
-	    		l = (Integer) param[3];
-	    		setRingcolor(l);
-	    		
-	    		calculateDims(re);
-	    		rV.setDrawType(SwifteeApplication.DRAW_TAB);
-	    		break;
-	    		
-	    	case SwifteeApplication.DRAW_RING_AND_TAB:  
-	    		
-	    		re = (Rect) param[0];    		
-	    		c = (int[]) param[1];
-	    		r = c[0];
-	    		g = c[1];
-	    		b = c[2];		
-	    		t = (String) param[2];
-	    		TYPE = (Integer) param[3];	    		
-	    		rV.fillColor = Color.rgb(r, g, b);						    		
-	    		rV.ringArc = 5;	    		
-	    		rV.text = t;	    		
-	    		l = (Integer) param[3];
-	    		setRingcolor(l);	
-	    		
-	    		calculateDims(re);	    		
-	    		rV.setDrawType(SwifteeApplication.DRAW_RING_AND_TAB);
-	    		break;
-	    		
-	    	case SwifteeApplication.DRAW_NONE:	    		
-	    		rV.setDrawType(SwifteeApplication.DRAW_NONE);
-	    		break;		    
-    	}    	
-    }		
-	
-	
-	private void calculateDims(Rect re){
+	public void setDrawStyle(int type, Object[] param, int id){	
 		
-	 	scrollX = cW.getScrollX();
-	 	scrollY = cW.getScrollY();
-	 	
-	 	rV.scrollX = scrollX;
-	 	rV.scrollY = scrollY;
-	 	
-	 	if (re!=null){
-        	
-	 		rV.xPosTab = re.left - cW.getScrollX();        	
-	 		rV.yPosTab = re.top - cW.getScrollY();  
-        	
-        	re.left 	= re.left 	+ scrollX;
-        	re.right 	= re.right 	- scrollX;
-        	re.top 	 	= re.top 	- scrollY;
-        	re.bottom 	= re.bottom - scrollY;
-        	
-        	rV.x = re.left - 5; 
-        	rV.y = re.top  - 4;         	
-        	rV.W = re.width()  + 10;  
-        	rV.H = re.height() + 10;   
-        	
-        }
-	 	
-	 	//Draw Upside down tab while upper scrolling. 
-	 	if (re.top < 20){
-	 		rV.setRotatedTab(true, re.centerX(), re.centerY());
-	 	}
-	 	
-	 	rV.rectRight = re.right;
-	 	rV.rectBottom = re.bottom;
-	}
+		Throwable t = new Throwable(); 
+		StackTraceElement[] elements = t.getStackTrace(); 
+
+		String calleeMethod = elements[0].getMethodName(); 
+		String callerMethodName = elements[1].getMethodName(); 
+		String callerClassName = elements[1].getClassName();	
+		
+		//Log.v("id"," this.identifier : " + this.identifier+ " id: " + id);
+	
+		if ( this.identifier != id ) {	//first run.		
+			
+			this.identifier = id;
+			
+			renderAssets(type, param, true);			
+			
+		}  else if ( this.identifier == id ) {
+			
+			renderAssets(type, param, false);
+		}
+		
+		rV.setDrawType(type);
+	} 
+    	
+	
+	private void renderAssets(int type, Object[] param, boolean redrawRect){
+		
+		/** No need to set rect again 
+		 * if identifier is the same**/
+		if (redrawRect) {
+			
+			re = (Rect) param[0];
+			
+			scrollX = cW.getScrollX();
+		 	scrollY = cW.getScrollY();
+		 	
+		 	rV.setScrollX(scrollX);
+		 	rV.setScrollY(scrollY);	 
+		 	
+		 	if (re!=null){
+		 		
+	        	int xPos = re.left - cW.getScrollX();
+	        	int yPos = re.top - cW.getScrollY();
+	        	
+	        	rV.setxPosTab(xPos);         	
+		 		rV.setyPosTab(yPos);	 		  
+	        	
+	        	re.left 	= re.left 	+ scrollX;
+	        	re.right 	= re.right 	- scrollX;
+	        	re.top 	 	= re.top 	- scrollY;
+	        	re.bottom 	= re.bottom - scrollY;
+	        	
+	        	int x = re.left - 5; 
+	      	    int y = re.top  - 4;
+	      	    int W = re.width()  + 10;
+	      	    int H = re.height() + 10;	        	
+	        	int[] coords = { x, y, W, H };	        			    	
+	        	rV.setCords(coords);
+	        }
+		 	
+		 	//Draw Upside down tab while upper scrolling. 
+		 	if (re.top < 20){
+		 		rV.setRotatedTab(true, re.centerX(), re.centerY());
+		 	}	
+		 	
+		 	rV.setRectRight(re.right);
+		 	rV.setRectBottom(re.bottom);		
+		 	
+		}
+		
+		//Color 
+		c = (int[]) param[1];
+		r = c[0];
+		g = c[1];
+		b = c[2];		
+		rV.fillColor = Color.rgb(r, g, b);			
+		
+		//Draw text and ring color
+		if (type != SwifteeApplication.DRAW_RING){			
+			t = (String) param[2];
+			rV.text = t;
+			l = (Integer) param[3];
+			setRingcolor(l);
+		}	
+		
+	}	
+				
+	/**Draw Nothing**/
+	public void drawNothing(){
+		//this.identifier = id;
+		rV.setDrawType(SwifteeApplication.DRAW_NONE);
+	}	
 	 
  	/**
 	 * Sets the link ring color to blue, green and red
