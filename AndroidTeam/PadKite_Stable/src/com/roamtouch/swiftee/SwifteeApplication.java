@@ -55,7 +55,17 @@ public class SwifteeApplication extends Application{
 	public static int getSingleFingerSteps() {return single_finger_steps; }
     public static void setSingleFingerSteps(int sfs) { single_finger_steps = sfs; }    
 	
-	//Sets and gets the diameter of the dots of the FC.
+	/**
+	 * FLOATING 
+	 * CURSOR
+	 * **/
+    
+    //Sets and gets the amount of dots within the circle.	
+    private static int fc_mount_of_dots = 40;   
+	public static int getFCAmountOfDots() {return fc_mount_of_dots; }
+	public static void setFCAmountOfDots(int amount) { fc_mount_of_dots = amount; }
+    
+    //Sets and gets the diameter of the dots of the FC.
     private static double fc_dots_initial_diam = 4;   
 	public static double getFCDotInitialDiam() {return fc_dots_initial_diam; }    
 	
@@ -69,6 +79,10 @@ public class SwifteeApplication extends Application{
 	public static boolean getFCVisible() {return fc_circle_visible; }
     public static void setFCVisible(boolean FCV) { fc_circle_visible = FCV; }
     
+    /**
+	 * LANDDING  
+	 * PAGE
+	 * **/
     //Landing page path. 
     //private static String landing_page_load_path = "file:///android_asset/loadPage.html";
     //public static String getLandingPageLoadPath() {return landing_page_load_path; }
@@ -76,8 +90,22 @@ public class SwifteeApplication extends Application{
     public static String getLandingPageStorePath() {return landing_page_store_path; }
     
     public static String landingPath = Environment.getExternalStorageDirectory()+"/PadKite/Web Assets/loadPage.html";
-        
-    /**GLOBAL SEARCH VARIABLES**/
+    
+    //Amount of new landing pages opened.
+	private static int new_landing_amount=0;   
+	public static int getNewLandingPagesOpened() {return new_landing_amount; }
+    public static void setNewLandingPagesOpened(int nlpo) { new_landing_amount = nlpo; }    
+    
+    //Get Sets Landing page string.
+	private static String landing_page;   
+	public static String getLandingPage() {return landing_page; }
+    public static void setLandingPage(String landing) { landing_page = landing; }    
+    
+    /**
+     * GLOBAL 
+     * SEARCH 
+     * VARIABLES
+     * **/
 	//Search parameter for landing page Twitter trends.
 	public static String twitter_key;   
 	public static String getTwitterKey() {return twitter_key; }
@@ -103,17 +131,12 @@ public class SwifteeApplication extends Application{
 	public static String getYouTubeSearch() {return youtube_search; }
     public static void setYouTubeSearch(String search) { youtube_search = search; }    
     
-    //Amount of new landing pages opened.
-	private static int new_landing_amount=0;   
-	public static int getNewLandingPagesOpened() {return new_landing_amount; }
-    public static void setNewLandingPagesOpened(int nlpo) { new_landing_amount = nlpo; }    
-    
-    //Get Sets Landing page string.
-	private static String landing_page;   
-	public static String getLandingPage() {return landing_page; }
-    public static void setLandingPage(String landing) { landing_page = landing; }    
-    
-    /**RINGS**/	
+      
+    /**
+     * RINGS
+     * AND
+     * TIPS 
+     * **/	
     public static final int DRAW_TAB						= 100;
     public static final int DRAW_RING						= 101;
     public static final int DRAW_NONE						= 102;
@@ -144,12 +167,7 @@ public class SwifteeApplication extends Application{
 	public static final int PERSIST_SECOND_STAGE 	= 601;
 	public static final int PERSIST_THIRD_STAGE 	= 602;	
 	
-	//Set voice recognition settings.
-	private static boolean voice_recognition=true;   
-	public static boolean getVoiceRecognitionEnabled() {return voice_recognition; }
-    public static void setVoiceRecognitionEnabled(boolean voice) { voice_recognition = voice; }   
-        
-    /**TIPS**/
+	/**TIPS**/
     // Variables for Tips
     public static final int SET_TIP_TO_LEFT_UP 			= 500;
     public static final int SET_TIP_TO_CENTER_UP		= 501;
@@ -158,6 +176,16 @@ public class SwifteeApplication extends Application{
     public static final int SET_TIP_TO_LEFT_DOWN 		= 503;
     public static final int SET_TIP_TO_CENTER_DOWN		= 504;
     public static final int SET_TIP_TO_RIGHT_DOWN		= 505;
+    
+	/**
+	 * MISC
+	 */
+    
+	//Set voice recognition settings.
+	private static boolean voice_recognition=true;   
+	public static boolean getVoiceRecognitionEnabled() {return voice_recognition; }
+    public static void setVoiceRecognitionEnabled(boolean voice) { voice_recognition = voice; }   
+        
     
     
        

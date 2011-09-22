@@ -100,7 +100,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	 */
 		private FloatingCursorView fcView = null;
 		private FloatingCursorInnerView fcPointerView = null;
-		//private CircularProgressBar fcProgressBar;
+		private CircularProgressBar fcProgressBar;
 		private ImageView pointer;
 		private MainMenu fcMainMenu;
 		private SettingsMenu fcSettingsMenu;
@@ -250,7 +250,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
             case MotionEvent.ACTION_DOWN:
             
             	//Set FC dots smaller while dragging.
-    			SwifteeApplication.setFCDotDiam(2.5);
+    			SwifteeApplication.setFCDotDiam(4);
             	
                 /* Remember location of down touch */
                 mLastMotionY = y;
@@ -431,7 +431,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			fcPointerView.setRadius(INNER_RADIUS);
 			//fcPointerView.setQuality(0);			
 		
-			//fcProgressBar=new CircularProgressBar(getContext(),(int)(RADIUS*0.3f)+20);
+			fcProgressBar = new CircularProgressBar(getContext(),(int)(RADIUS*0.3f)-6);
 
 			int circRadius = (int)(RADIUS*110/120);
 			
@@ -460,7 +460,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						
 
 			addView(fcView);
-			//addView(fcProgressBar);
+			addView(fcProgressBar);
 			addView(fcPointerView);
 			addView(pointer);
 			addView(fcMainMenu);
@@ -503,7 +503,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						handler.removeCallbacks(parkingRunnable);
 					} else {
 						parkTimerStarted = true;
-						handler.postDelayed(this, 800); // Go parking mode timer
+						handler.postDelayed(this, 900); // Go parking mode timer
 														// faster
 					}
 				}
@@ -580,8 +580,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		}
 		
 		public void enterParkingMode() {
+			//Relocate the FC again into pointer in case was snapped to a side.
+			if ( xFlag == 1 || yFlag == 1 ){
+				relocatePointerToFCView();
+				pointer.scrollTo(0, 0);
+			}
 			// Scale down cursor
-			fcView.setRadius(RADIUS * 1 / 2);
+			fcView.setRadius(RADIUS * 1 / 3);
 			// Reset the cursor.
 			pointer.setImageResource(R.drawable.kite_cursor);
 		}
@@ -886,7 +891,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			
 			fcView.setPosition(w / 2, h / 2);
 			fcPointerView.setPosition(w / 2, h / 2);
-			// fcProgressBar.setPosition(w/2, h/2);
+			fcProgressBar.setPosition(w/2, h/2);
 			fcMainMenu.setPosition(w / 2, h / 2);
 			scrollTo(0, 0);
 			
@@ -1690,7 +1695,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				pointer.scrollTo(0, 0);
 				fcPointerView.scrollTo(0, 0);
 				updateFC();
-				// fcProgressBar.scrollTo(0,0);
+				fcProgressBar.scrollTo(0,0);
 			}
 			mTouchPointValid = false;
 		}
@@ -2007,8 +2012,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				if (mWebHitTestResult.getType()!=WebHitTestResult.TEXT_TYPE){
 					sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);				
 					sendEvent(MotionEvent.ACTION_UP, fcX, fcY);		
-				}
-					
+				}					
 				
 				stopFirst(false);
 				stopSecond(false);
@@ -2090,9 +2094,17 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				stopThird(false);	
 				stopFourth(false);	
 				
+			} else  {
+				
+				stopFirst(false);
+				stopSecond(false);
+				stopThird(false);
+				stopFourth(false);
+				
 			}
 			
 			pointer.setImageResource(R.drawable.kite_cursor);
+			
 			
 		}
 		
@@ -3464,7 +3476,18 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		    }
 		    
 			public void onProgressChanged  (WebView  view, int newProgress) {
-				fcView.setProgress(newProgress);
+				
+				/*if (newProgress==0){
+					fcProgressBar.enable();
+				}*/				
+				
+				fcView.setProgress(newProgress);				
+				fcProgressBar.setProgress(newProgress);		
+				
+				if (newProgress==100){
+					fcProgressBar.disable();
+				}
+				
 			}
 			
 			// @Override
@@ -3501,6 +3524,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			        mParent.openMap(url);
 				} else {
 					view.loadUrl(url);
+					fcProgressBar.enable();
 				}	
 				return true;
 			}

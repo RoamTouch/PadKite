@@ -1067,6 +1067,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 				break;			
 			}			
 		
+			SwifteeApplication.setFCAmountOfDots(20);
+			SwifteeApplication.setFCDotDiam(6);
 		}
 	};
 	

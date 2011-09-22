@@ -60,7 +60,7 @@ public class FloatingCursorView extends View{
     
     public double dD;
     
-    int n = 40;
+    //int n = 40;
 
     public FloatingCursorView(Context context) {
         super(context);
@@ -119,8 +119,8 @@ public class FloatingCursorView extends View{
 	        lF.setStrokeWidth(1);
 	        lF.setColor(0xFFF5CD31);	          
 	        
-	        for (int i = 0; i < n; i++) {
-	            double t = 2 * Math.PI * i / n;
+	        for (int i = 0; i < SwifteeApplication.getFCAmountOfDots(); i++) {
+	            double t = 2 * Math.PI * i / SwifteeApplication.getFCAmountOfDots();
 	            int x = (int) Math.round(rect.exactCenterX() + rad * Math.cos(t));
 	            int y = (int) Math.round(rect.exactCenterY() + rad * Math.sin(t));
 	            if (isOdd(i)){
@@ -131,7 +131,7 @@ public class FloatingCursorView extends View{
 	            	pF.setColor(0xFFB3B3B3);
 	            	canvas.drawCircle(x, y, (float) (dD-2), pF);
 	            } else {
-	            	lF.setColor(0xFFC9C9C9);
+	            	lF.setColor(0xFF545454);
 	            	canvas.drawCircle(x, y, (float) (dD-1.5), lF);
 	            	pF.setColor(0xFFFFFFFF);
 	            	canvas.drawCircle(x, y, (float) (dD-2), pF);            	
@@ -257,7 +257,7 @@ public class FloatingCursorView extends View{
     
     
     public void setProgress(int progress){
-    	Log.v(TAG,"Progress is " + progress);
+    	Log.v("progress","Progress is " + progress);
     	mProgress = progress;
     	//Commented out for now for performance issues.
     	// ra = null;
