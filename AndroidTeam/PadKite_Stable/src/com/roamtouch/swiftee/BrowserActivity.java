@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.acra.ErrorReporter;
@@ -101,7 +102,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 
 	private int activeWebViewIndex = 0;
 	
-	private WebView webView;
+	public WebView webView;
 	private SwifteeOverlayView overlay;
 	private SelectionGestureView mSelectionGesture;
 
@@ -130,6 +131,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     private RingController rCtrl;
     private TipController tCtrl;
     private PointerHolder pHold;
+    
+    public static boolean landingLoaded=false;
+	private String currentPageBridge;
+	
+	//JavaScript Bridge Settings 
+	private static WebSettings wSet;
     
     public void closeDialog()
     {
@@ -363,7 +370,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	        webView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
 	        webView.setMapTrackballToArrowKeys(false); // use trackball directly
 	        // Enable the built-in zoom
-	        webView.getSettings().setBuiltInZoomControls(false);
+	        webView.getSettings().setBuiltInZoomControls(false);	        
 	        webView.getSettings().setJavaScriptEnabled(true);   
 	        webView.getSettings().setPluginState(WebSettings.PluginState.ON);
 	        
@@ -375,12 +382,17 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			//webView.setDragTracker(tracker);	
 			
 			webLayout.addView(webView);
-			//webView.loadUrl("http://padkite.com/start");
+			//webView.loadUrl("http://padkite.com/start");			
+			
         } 
        	catch(Exception e)
        	{
         	ErrorReporter.getInstance().handleException(e);
     	}
+      
+      //JavaScript ProxyBridge
+		ProxyBridge pBridge = new ProxyBridge();
+		webView.addJavascriptInterface(pBridge, "pBridge");
        	
 		String data = getIntent().getDataString();
 		if(data!=null) {
@@ -1306,8 +1318,41 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	    	});
 
 	    	}
-	 };   
-
-	
+	 };	 
+	 
+	 /**
+		 * JScript Bridge 
+		 * On onPageFinished at FloatingCursor a Java script snippet is loaded. 
+		 * Also on FloatingCursor set the snippet cords mWebView.loadUrl("javascript:whereInWorld("+event.getX()+","+event.getY()+")");		
+		 */
+		public class ProxyBridge extends Activity {
+						
+			public ProxyBridge() {
+				// TODO Auto-generated constructor stub
+			}
+			
+			@Override
+			protected void onCreate(Bundle savedInstanceState) {
+				// TODO Auto-generated method stub
+				super.onCreate(savedInstanceState);
+			}
+			
+			public void currentSearch(String currentSearch){
+				//Log.v("search", "currentSearch: "+currentSearch);
+				floatingCursor.setCurrentSearch(currentSearch);
+			}
+			
+			public void currentType(String type){
+				//Log.v("type", "url: "+type);
+				if (type.equals("video")){
+					floatingCursor.setSearchVideo(true);					
+				} else if (type.equals("image")){
+					floatingCursor.setSearchImage(true);					
+				}				
+			}
+			
+		}
+			
+	 
 	
 }

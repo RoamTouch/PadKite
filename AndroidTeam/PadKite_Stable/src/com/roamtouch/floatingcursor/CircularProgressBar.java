@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.Handler;
 import android.view.View;
 
 /* This is NO LONGER USED */
@@ -34,7 +35,9 @@ public class CircularProgressBar extends View {
 	    private int mProgress;
 	    private int mColorValue=220;
 	    
-	    private boolean isEnabled=false;
+	    public boolean isEnabled=false;
+	    
+	    Handler handler; 
 		
 		
 		public CircularProgressBar(Context context,int r) {
@@ -62,13 +65,11 @@ public class CircularProgressBar extends View {
 			super.onDraw(canvas);	
        	
 			if (isEnabled){
-				
 				canvas.drawColor(Color.alpha(Color.CYAN));				
 				mBigOval = new RectF(x-r,y-r,x+r,y+r);
-				mPaints.setColor(Color.rgb(mColorValue-mColor*3, mColorValue-mColor*3, mColorValue-mColor*3));
+				mPaints.setColor(Color.rgb(mColorValue-mColor*6, mColorValue-mColor*6, mColorValue-mColor*6));
 				drawArcs(canvas, mBigOval, mUseCenters[2], mPaints);       					
-	        	invalidate();
-	        	
+	        	invalidate();	        	
 			}  
 		}
 		
@@ -77,10 +78,11 @@ public class CircularProgressBar extends View {
 		} 
 
 		public void setProgress(int progress){			
-			//Log.v("progress", "progress: "+progress);
+			
 			mProgress = progress;
 			mSweep = (mProgress * 360) / 100;
 			mColor = (mProgress * 20) / 100;
+			
 		}
 		
 		public void enable(){
@@ -88,11 +90,20 @@ public class CircularProgressBar extends View {
 			this.setVisibility(VISIBLE);			
 		}
 		
-		public void disable(){
+		
+		public void disable(){			
 			mProgress=0;	
         	mSweep = 0;
-			isEnabled=false;
-			this.setVisibility(INVISIBLE);
+						
+			
+			//Keep showing progress for a moment.
+			handler = new Handler();		
+			handler.postDelayed(new Runnable() { 
+	            public void run() { 
+	            	isEnabled=false;
+	            	//setVisibility(INVISIBLE);
+	            } 
+			}, 600); 	
 		}		
 
 		protected void setPosition(float x, float y) {
@@ -100,5 +111,7 @@ public class CircularProgressBar extends View {
 			this.y = y;
 			invalidate();
 		}
+
+
 	
 }

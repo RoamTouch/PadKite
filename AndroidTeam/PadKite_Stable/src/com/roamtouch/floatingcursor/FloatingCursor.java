@@ -1,6 +1,7 @@
 package com.roamtouch.floatingcursor;
 
 import java.net.URISyntaxException;
+import java.util.StringTokenizer;
 
 import org.metalev.multitouch.controller.MultiTouchController;
 import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCanvas;
@@ -63,6 +64,7 @@ import android.widget.VideoView;
 
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SelectionGestureView;
+import com.roamtouch.view.WebPage;
 import com.roamtouch.visuals.PointerHolder;
 import com.roamtouch.visuals.RingController;
 import com.roamtouch.visuals.TipController;
@@ -655,9 +657,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					fcSettingsMenu.setVisibility(INVISIBLE);
 					fcMainMenu.setVisibility(INVISIBLE);
 					break;		
-			}
-			
+			}		
 		}
+		
 
 		public void addNewWindow(boolean useSelection) {
 			if (getWindowCount() > 7) {
@@ -3161,8 +3163,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		 */
 		public void loadPage(String url){			
 			mWebView.loadUrl(url);				
-		}
-		
+		}	
 		
 		public void loadData(String data){
 			mWebView.loadDataWithBaseURL("file:///android_asset/images/", data,  "text/html", "utf-8", null);
@@ -3571,18 +3572,60 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		    }		
 		}
 		
+		public boolean searchVideo;
+		public boolean searchImage;
+		public String currentSearch;
+		
+		public void setSearchVideo(boolean searchVideo) {
+			this.searchVideo = searchVideo;
+		}
+		
+		public void setSearchImage(boolean searchImage) {
+			this.searchImage = searchImage;
+		}
+		
+		public void setCurrentSearch(String currentSearch) {
+			this.currentSearch = currentSearch;
+		}
+		
 		private class GestureWebViewClient extends WebViewClient {
 
 			@Override
-			public boolean shouldOverrideUrlLoading(WebView view, String url) {
-//				mParent.setTopBarURL(url);
-				//view.loadUrl(url);
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {							
+				
 				if (url.startsWith("geo:")) {
 			        mParent.openMap(url);
-				} else {
-					view.loadUrl(url);
-					fcProgressBar.enable();
-				}	
+				} else if (url.startsWith("file:///")) {		 
+					
+					String entry = currentSearch;
+			    	
+			    	if (searchVideo){
+			    		
+			    			url = SwifteeApplication.getYouTubeSearch()+entry;	   
+			    			searchVideo=false;
+			    			
+			    	} else if (searchImage){
+			    		
+			    			url = SwifteeApplication.getImageSearch()+entry;
+			    			searchImage=false;
+			    			
+			    	} else if (entry.contains(".")){ //TODO: Match domain extension list here. 
+			    		
+							if (!entry.contains("http://")){
+								entry = "http://"+entry;
+							}				
+							url = entry;
+							
+					} else {
+							
+						url = SwifteeApplication.getGoogleSearch()+entry;
+						
+					}			    	
+			    	
+					currentSearch = null;													
+				}
+				view.loadUrl(url);
+				fcProgressBar.enable();
 				return true;
 			}
 		
@@ -3596,21 +3639,66 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			@Override
 			public void onPageFinished(WebView view, String url) {
 				
-				fcView.stopAllAnimation(); //Stop 'loading' animation
+				fcView.stopAllAnimation(); // Stop 'loading' animation
 				mIsLoading = false;
-				if(!mParent.isInParkingMode) {
-					fcView.startScaleUpAnimation(1000); //Restore original size if not in parking mode
-				}
 				
+				if (!mParent.isInParkingMode) {
+					fcView.startScaleUpAnimation(1000); // Restore original size if
+														// not in parking mode
+
+					// Here we start the timer to park the PadKite.
+					handler.removeCallbacks(parkingRunnable);
+					handler.postDelayed(parkingRunnable, 400);
+				}
+
 				fcMainMenu.toggleCloseORRefresh(true);
 				mContentWidth = view.getContentWidth();
 				mContentHeight = view.getContentHeight();
-			
+
 				BitmapDrawable bd = new BitmapDrawable(getCircleBitmap(view));
-				fcWindowTabs.setCurrentThumbnail(bd,view);
-				
+				fcWindowTabs.setCurrentThumbnail(bd, view);
+
 				fcMainMenu.setBackEabled(view.canGoBack());
 				fcMainMenu.setFwdEabled(view.canGoForward());
+				
+				if (url.startsWith("file:///android_asset/Web%20Pages/history.html")) {
+					int start = 0;
+					String[] parts = url.split("\\?", 2);
+					try {
+						String[] t = parts[1].split("\\=", 2);
+						if (t[0].equals("start"))
+							start = Integer.parseInt(t[1]);
+					} catch (Exception e) {
+
+					}
+					WebPage page = new WebPage();
+					loadData(page.getBrowserHistory(mParent, parts[0], start));
+					
+				} else if (url.startsWith("file:///android_asset/Web%20Pages/download.html")) {
+					int start = 0;
+					String[] parts = url.split("\\?", 2);
+					try {
+						String[] t = parts[1].split("\\=", 2);
+						if (t[0].equals("start"))
+							start = Integer.parseInt(t[1]);
+					} catch (Exception e) {
+
+					}
+					WebPage page = new WebPage();
+					loadData(page.getDownloadHistory(mParent, url, start));
+				}
+
+				// Send Javascript for proxy bridge to identify page. webview.
+				final String currentWeb = "javascript:"
+						+ "pBridge.currentPage(theUrl);";
+				view.loadUrl(currentWeb);
+				
+				/*if (url.startsWith("file:////mnt/sdcard/PadKite/")){				
+					if (url.contains("loadPage.html")){
+						mParent.landingLoaded = true;
+					}
+				}*/		
+				//"file:////mnt/sdcard/PadKite/Web%Assets/loadPage.html"		
 			}
 			
 			public Bitmap getCircleBitmap(WebView view){

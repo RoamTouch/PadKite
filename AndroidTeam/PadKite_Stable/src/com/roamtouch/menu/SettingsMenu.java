@@ -1,3 +1,7 @@
+//******************************************************************************** 
+//**	Copyright (c) 2011, Roaming Keyboards LLC doing business as RoamTouch®	**	       
+//**	All rights reserved.													**
+//********************************************************************************
 package com.roamtouch.menu;
 
 import com.roamtouch.floatingcursor.FloatingCursor;
@@ -25,6 +29,7 @@ enum SettingsMenuFunctions {
 	gesture_kit_editor,
 	miscellaneous,
 	help_online,
+	download,
 	history,
 }
 
@@ -108,13 +113,18 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 			
 			//Help online	
 			case help_online:
-				mFloatingCursor.setEventText("Help online	");
+				mFloatingCursor.setEventText("Help onlin");
 				break;
 			
 			//History	
 			case history:
 				mFloatingCursor.setEventText("History");
 				break;
+			
+			// Download
+			case download:
+				mFloatingCursor.setEventText("Download");
+				break;	
 				
 			default:
 				mFloatingCursor.setEventText("No function defined for: " + b.getFunction());
@@ -188,9 +198,18 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 			
 			//Practice gesture	
 			case history:		
-				//mFloatingCursor.loadPage("file:///android_asset/Web Pages/history.html");
-				WebPage page = new WebPage();
-				mFloatingCursor.loadData(page.getBrowserHistory(mParent));
+				mFloatingCursor.loadPage("file:///android_asset/Web Pages/history.html");
+				//WebPage page = new WebPage();
+				//mFloatingCursor.loadData(page.getBrowserHistory(mParent));				
+				break;
+			
+			case download:
+				//Intent i = new Intent(mParent,WebPage.class);
+				//i.putExtra("webUrl", "http://www.padkite.com/downloads");
+				//mParent.startActivity(i);
+				mFloatingCursor.loadPage("file:///android_asset/Web Pages/download.html");
+				//WebPage page = new WebPage();
+				//mFloatingCursor.loadData(page.getDownLoadHistory(mParent));
 				break;
 
 			case none:

@@ -34,15 +34,12 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
-/**
- * 
- * @author jose vigil
- * DO NOT INSTANSIATE THIS CLASS IN OTHER THAN
- */
+
 public class LandingPage {
 
 	private static  String landing = "";
 	public static ArrayList<String> popSites = new ArrayList<String>();
+	public static ArrayList<String> history = new ArrayList<String>();
 	
 		
 	SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM d, yyyy h:mm a");
@@ -66,23 +63,20 @@ public class LandingPage {
 			+"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">"
 			+"<title>PadKite Start Page</title>"
 			+"<script type=\"text/javascript\">"
-			+"function loadSearch() {"
-			+"	var theUrl = document.getElementById('urlform').url.value ;"
-			+"	if (theUrl != \"\") {"			         
-			+"		var i = theUrl.search(\"http://\");"
-		    +"		if (i == -1) {"			            
-		    +"			var i = theUrl.search(\"\\.\");"
-		    +"			if (i != -1) {"
-			+"				window.document.location.href=\"http://\"+theUrl;"
-			+"			} else {"
-			+"				window.document.location.href=\"http://www.google.com/search?q=\"+theUrl;"
-			+"			}"
-		    +"		} else {"
-		    +"			window.document.location.href=theUrl;"
-		    +"		}"
-		    +"	}"
-			+"	return false;"
+			+"var type;"			
+			+"function load(){"
+			+"	var theUrl = document.forms[\"urlform\"].elements[\"box\"].value;"			
+			+"	pBridge.currentType(type);"
+			+"	pBridge.currentSearch(theUrl);"			
+			+"	document.forms['urlform'].elements['box'].value=\"\";"
+			+"	type=\"\";"
+			+"	theUrl=\"\";"
+			+"	return true;"
 			+"}"		
+			+"function sendType(t){"
+			+"	type = t;"
+			+"	document.forms['urlform'].elements['box'].focus();"
+			+"}"
 			+"</script>"
 			+"</head>"
 			+"<body>"
@@ -94,14 +88,16 @@ public class LandingPage {
 				+"</a>"
 			+"</div>"
 			+"<br />"
-			+"<div align=\"center\">"
-			+"	<form id=\"urlform\" action=\"#\" onSubmit=\"return loadSearch()\">\n"
-			+"<label>Enter address</label><br>"
-			+"<input type=\"text\" name=\"url\"></input><br>"
-			//+"<input type=\"button\" value=\"Load Webpage\" onclick=\"loadSearch()\"></input>"
+			+"<div align=\"center\">"			
+			//+"	<form id=\"urlform\" action=\"#\" onSubmit=\"return loadSearch()\">\n"			
+			+"<form id=\"urlform\" action=\"#\" onsubmit=\"return load()\">"				
+			+"<label>Enter address</label>     <a href=\"#\" name=\"ImageLink\" onclick=\"sendType('image')\">Image</a>    <a href=\"#\" name=\"VideoLink\" onclick=\"sendType('video');\">Video</a>\n"			
+			//+"<input type=\"text\" name=\"url\"></input><br>"		
+			+"<input name=\"box\" class=\"input\" type=\"text\" size=\"30\" height=\"10\"></input>"
+			//+"<input type=\"button\" value=\"Load Webpage\" action=\"#\" onclick=\"return load()\"></input>"			
 			+"</form>"			
-			+"<br />"
-			+"<a href=\"http://padkite.com/start\">PadKite Homepage</a><br><br>"
+			//+"<br />"
+			//+"<a href=\"http://padkite.com/start\">PadKite Homepage</a><br><br>"
 			+"</div>"				
 			+"<p align=\"center\"><font size=\"2\">"+padkite+"</font></p>"			
 			+"<div class=\"cuadro\" align=\"center\"><h4>Popular Sites</h4><ul class=\"book\"></div>";						
@@ -295,7 +291,11 @@ public class LandingPage {
           }
         }
         return false;
-    };        
+    };  
+    
+    public static void setHistory(ArrayList<String> hist){ 
+    	history = hist;
+    }
     
    
   
