@@ -58,6 +58,7 @@ import android.gesture.GestureOverlayView;
 import android.gesture.GestureOverlayView.OnGestureListener;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.net.ConnectivityManager;
+import android.net.MailTo;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -494,6 +495,22 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     public void openMap(String url){
     	Intent searchAddress = new Intent(Intent.ACTION_VIEW, Uri.parse(url)); 
         startActivity(searchAddress); 
+    }
+    
+    public void sendMail(String url){
+    	MailTo mt = MailTo.parse(url);
+        Intent i = newEmailIntent(this, mt.getTo(), mt.getSubject(), mt.getBody(), mt.getCc());
+        startActivity(i);
+    }
+    
+    public static Intent newEmailIntent(Context context, String address, String subject, String body, String cc) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[] { address });
+        intent.putExtra(Intent.EXTRA_TEXT, body);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_CC, cc);
+        intent.setType("message/rfc822");
+        return intent;
     }
     
     public void startTextGesture()

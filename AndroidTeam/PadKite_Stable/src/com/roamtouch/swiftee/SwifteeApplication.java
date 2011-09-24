@@ -151,6 +151,9 @@ public class SwifteeApplication extends Application{
 	public static final int PAINT_RED		= 205;
 	public static final int PAINT_ORANGE	= 206;
 	public static final int PAINT_BLACK		= 207;	
+	public static final int PAINT_RED_MAP	= 208;
+	public static final int PAINT_TURQUOISE	= 209;
+	
 	
 	public static int[] YELLOW 			= {255, 203, 0};	
 	public static int[] LIGHT_YELLOW 	= {255, 237, 168};	
@@ -162,6 +165,9 @@ public class SwifteeApplication extends Application{
 	public static int[] DARK_GRAY 		= {10, 10, 10};
 	public static int[] ORANGE	 		= {240, 210, 43};
 	public static int[] BLACK	 		= {0, 0, 0};
+	public static int[] RED_MAP	 		= {252, 120, 108};
+	public static int[] TURQUOISE 		= {0, 212, 159};
+	
 	
 	public static final int PERSIST_FIRST_STAGE 	= 600;	
 	public static final int PERSIST_SECOND_STAGE 	= 601;

@@ -1499,6 +1499,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				case WebHitTestResult.EDIT_TEXT_TYPE:
 					firstInput();
 					break;	
+				case WebHitTestResult.GEO_TYPE:
+					firstMap();
+				case WebHitTestResult.EMAIL_TYPE:
+					firstMail();
+					break;	
 				default:
 					firstDefault();
 					break;
@@ -1515,6 +1520,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				case WebHitTestResult.EDIT_TEXT_TYPE:
 					secondInput();
 					break;
+				case WebHitTestResult.GEO_TYPE:
+					secondMap();
+					break;
+				case WebHitTestResult.EMAIL_TYPE:
+					secondMail();
+					break;	
 				default:
 					secondDefault();
 					break;
@@ -1536,36 +1547,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					break;
 			}			
 		};	
-		
-		private boolean isYouTube(String lselectedLink) {
-			if (lselectedLink.contains("youtube.com/watch")
-					|| lselectedLink.contains("m.youtube.com/#/watch"))
-				return true;
-			return false;
-		}
-		
-		/**
-		 * checks for link type and returns whether it is of type image or video
-		 * return 1 for image type return 2 for video type else return 0 **/		
-		private int getLinkType(String lselectedLink) {
-			if (lselectedLink.endsWith(".mp4") || lselectedLink.endsWith(".flv")
-					|| lselectedLink.endsWith(".mpeg")
-					|| lselectedLink.endsWith(".wmv")
-					|| lselectedLink.endsWith(".mpg")
-					|| lselectedLink.endsWith(".rm")
-					|| lselectedLink.endsWith(".mov") || isYouTube(lselectedLink))
-				return 2;
-			if (lselectedLink.endsWith(".jpg") || lselectedLink.endsWith(".jpeg")
-					|| lselectedLink.endsWith(".png")
-					|| lselectedLink.endsWith(".gif")
-					|| lselectedLink.endsWith(".bmp")
-					|| lselectedLink.endsWith(".pdf")
-					|| lselectedLink.endsWith(".doc")
-					|| lselectedLink.endsWith(".txt"))
-				return 1;
-			return 0;
-		}
-		
+				
 		/** Single Finger: 
 		 * When the cursor is moved on top of the 
 		 * same media the same cursor/ring/tab remains.**/	
@@ -1581,6 +1563,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						case WebHitTestResult.EDIT_TEXT_TYPE:
 							firstInput();
 							break;
+						case WebHitTestResult.GEO_TYPE:
+							firstMap();
+							break;
+						case WebHitTestResult.EMAIL_TYPE:
+							firstMail();
+							break;	
 						default:
 							firstDefault();			
 							break;				
@@ -1595,6 +1583,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						case WebHitTestResult.EDIT_TEXT_TYPE:
 							secondInput();
 							break;
+						case WebHitTestResult.GEO_TYPE:
+							secondMap();
+							break;
+						case WebHitTestResult.EMAIL_TYPE:
+							secondMail();
+							break;	
 						default:
 							secondDefault();			
 							break;				
@@ -1616,6 +1610,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					break;
 			};
 		};					
+		
+		/**
+		 * ALL FIRST.
+		 */
 		
 		public void firstText(){			
 			Object[] param_TEXT =  { 
@@ -1639,6 +1637,26 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT, identifier);
 		}
 		
+		public void firstMap(){
+			Object[] param_default =  { 
+					rect, 
+					SwifteeApplication.RED_MAP, 
+					"OPEN MAP", 
+					SwifteeApplication.PAINT_RED_MAP 
+					};					
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, param_default, identifier);	
+		}
+		
+		public void firstMail(){
+			Object[] param_default =  { 
+					rect, 
+					SwifteeApplication.TURQUOISE, 
+					"SEND EMAIL", 
+					SwifteeApplication.PAINT_TURQUOISE 
+					};					
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, param_default, identifier);	
+		}
+		
 		public void firstDefault(){
 			Object[] param_default =  { 
 					rect, 
@@ -1650,6 +1668,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, param_default, identifier);	
 		}
 
+		/**
+		 * ALL SECOND.
+		 */
+		
 		public void secondText(){
 			Object[] param_TEXT =  { 
 					rect, 
@@ -1672,6 +1694,26 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT, identifier);			
 		}	
 		
+		public void secondMap(){			
+			Object[] paramEDIT_TEXT =  { 
+					rect, 
+					SwifteeApplication.BLUE, 
+					"COPY LOCATION", 
+					SwifteeApplication.PAINT_BLUE 
+					}; 
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT, identifier);					
+		}
+		
+		public void secondMail(){			
+			Object[] paramEDIT_TEXT =  { 
+					rect, 
+					SwifteeApplication.BLUE, 
+					"COPY EMAIL", 
+					SwifteeApplication.PAINT_BLUE 
+					}; 
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT, identifier);					
+		}
+		
 		public void secondDefault(){			
 			Object[] paramEDIT_TEXT =  { 
 					rect, 
@@ -1679,10 +1721,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					"COPY", 
 					SwifteeApplication.PAINT_BLUE 
 					}; 
-			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT, identifier);
-			Log.v("rect", "second : "+rect + " identifier: " +identifier);			
+			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, paramEDIT_TEXT, identifier);						
 		}
-
+		
+		/**
+		 * ALL THIRD.
+		 */
+		
 		public void thirdText(){
 			Object[] param_TEXT_TYPE =  { 
 					rect, 
@@ -1714,12 +1759,12 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					}; 
 			rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, param_default, identifier);			
 			Log.v("rect", "third : "+rect+ " identifier: " +identifier);				
-		}
+		}	
 		
-//		Erase draws.
+		
+		//Erase draws.
 		public void eraseDraws(){							
-			rCtrl.drawNothing();
-			//rCtrl.setDrawStyle(SwifteeApplication.DRAW_NONE, null, identifier);		
+			rCtrl.drawNothing();			
 		}	
 		
 		public void drawTip(String[] comment, float X, float Y){		
@@ -1745,6 +1790,35 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			return identifier;
 		};
 
+		private boolean isYouTube(String lselectedLink) {
+			if (lselectedLink.contains("youtube.com/watch")
+					|| lselectedLink.contains("m.youtube.com/#/watch"))
+				return true;
+			return false;
+		}
+		
+		/**
+		 * checks for link type and returns whether it is of type image or video
+		 * return 1 for image type return 2 for video type else return 0 **/		
+		private int getLinkType(String lselectedLink) {
+			if (lselectedLink.endsWith(".mp4") || lselectedLink.endsWith(".flv")
+					|| lselectedLink.endsWith(".mpeg")
+					|| lselectedLink.endsWith(".wmv")
+					|| lselectedLink.endsWith(".mpg")
+					|| lselectedLink.endsWith(".rm")
+					|| lselectedLink.endsWith(".mov") || isYouTube(lselectedLink))
+				return 2;
+			if (lselectedLink.endsWith(".jpg") || lselectedLink.endsWith(".jpeg")
+					|| lselectedLink.endsWith(".png")
+					|| lselectedLink.endsWith(".gif")
+					|| lselectedLink.endsWith(".bmp")
+					|| lselectedLink.endsWith(".pdf")
+					|| lselectedLink.endsWith(".doc")
+					|| lselectedLink.endsWith(".txt"))
+				return 1;
+			return 0;
+		}
+		
 		protected void startHitTest(int X, int Y)
 		{
 			if (!mHitTestMode)
@@ -2025,7 +2099,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			return 0;
 		}
 		
-		
+		//ACTIONS
 		public void onTouchUp()
 		{		
 			//Erase any ring/tip around on touch up.
@@ -3602,7 +3676,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {							
 				
 				if (url.startsWith("geo:")) {
-			        mParent.openMap(url);
+			        
+					mParent.openMap(url);
+			        
+				} else if (url.startsWith("mailto:")){
+					
+					mParent.sendMail(url);
+				
 				} else if (url.startsWith("file:///")) {		 
 					
 					String entry = currentSearch;
@@ -3628,12 +3708,18 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 							
 						url = SwifteeApplication.getGoogleSearch()+entry;
 						
-					}			    	
-			    	
-					currentSearch = null;													
+					}	 	
+			    	view.loadUrl(url);
+					fcProgressBar.enable();	
+					currentSearch = null;				
+					
+				} else {	
+					
+					view.loadUrl(url);
+					fcProgressBar.enable();
+					
 				}
-				view.loadUrl(url);
-				fcProgressBar.enable();
+				
 				return true;
 			}
 		

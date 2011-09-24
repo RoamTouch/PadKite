@@ -57,6 +57,11 @@ public class LandingPage {
 				"you to quickly identify the content below your finger and fast operate " +
 				"with gestures to perform actions. Drag the circle to start operating. Have fun!.";
 		
+		String mailBoby = "Hi,\n\n" +
+				"My feedback is\n\n" +
+				"Regards,\n Customer";		
+					
+		
 		landing += "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">"
 			+"<html>"
 			+"<head>"
@@ -102,10 +107,11 @@ public class LandingPage {
 			+"<p align=\"center\"><font size=\"2\">"+padkite+"</font></p>"			
 			+"<div class=\"cuadro\" align=\"center\"><h4>Popular Sites</h4><ul class=\"book\"></div>";						
 			String popularString = generatePopularSitesString();			
-			landing += popularString	
-			+"<table><br>"
-			+"<p align=\"center\"><font size=\"2\">423 Broadway #522 Millbrae, California 94030-1905 U.S.A.</font></p>"
-			+"<p align=\"center\"><font size=\"2\" align=\"center\">Telephone 001-415-513-0069</font></p>"			
+			landing += popularString		
+			//+"<br><table><p align=\"center\"><a href=\"mailto:feedback@roamtouch.com?subject='Feedback'&body='hola'>Send Feedback</a></p>" //"+mailBoby+"'
+			+"<br><table><p align=\"center\"><A HREF=\"mailto:feedback@roamtouch.com?&subject=PadKite Feddback\">Send feedback</A></p>" //"+mailBoby+"'
+			+"<p align=\"center\"><font size=\"1\">423 Broadway #522 Millbrae, California 94030-1905</font><br>"
+			+"<font size=\"1\" align=\"center\">Copyright © 2010 by RoamTouch™ All rights reserved.</font></p>"			
 			+"</table>"
 			+"</body>"
 			+"</html>";			
