@@ -91,7 +91,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 	/**
 	 * Calculate the touching radius for FP 
 	 */
-		private final float RADIUS_DIP = 130; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
+		public final float RADIUS_DIP = 130; // 64dip=10mm, 96dip=15mm, 192dip=30mm expressed in DIP
 		private final float scale = getContext().getResources().getDisplayMetrics().density;
 		private final int RADIUS = (int) (RADIUS_DIP * scale + 0.5f); //Converting to Pixel
 		private final int INNER_RADIUS = (int) (RADIUS*0.3f);
@@ -536,6 +536,11 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
     		return mIsLoading;
     	}
         
+        public boolean getProgressEnabled(){
+        	boolean is = fcProgressBar.getIsEnabled();
+        	return is;
+        }
+        
 		public void gestureDisableFC()
 		{
 			//mCanBeDisabled  = true;
@@ -851,6 +856,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 				// mP.setTopBarVisibility(VISIBLE);
 				// mP.setTopBarMode(TopBarArea.ADDR_BAR_MODE);
+				
 			} else if (currentMenu.getVisibility() == VISIBLE) {
 
 				mMenuDown = false;
