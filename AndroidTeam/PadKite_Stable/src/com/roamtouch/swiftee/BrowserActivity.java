@@ -1008,6 +1008,20 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			int w = (Integer) hW[0];
 			int h = (Integer) hW[1];
 			
+			int c_x;
+    		if (floatingCursor.getProgressEnabled()){
+    			c_x = (int) (w/2 - (floatingCursor.RADIUS_DIP/2)-3);
+    		} else {
+    			c_x = w/2;
+    		}
+			
+			int c_y;
+    		if (floatingCursor.getProgressEnabled()){
+    			c_y = (int) (h/2 - (floatingCursor.RADIUS_DIP/2)-3);
+    		} else {
+    			c_y = h/2;
+    		} 		
+			
 			switch (cuadrant){
 			
 			case 1:
@@ -1017,12 +1031,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	            //Calculate distance to upper right corner. 
 	        	c1X = w/2 - xLoc;
 	        	c1Y = h/2 - yLoc;        	
-	        	if (c1X >= c1Y){ // y is shorter, snap y. 
-	        		//Log.v("","y is shorter, snap x");
-	        		floatingCursor.scrollTo(xLoc, h/2);
-	        	} else if (c1X <= c1Y) { // x is shorter snap to y.
-	        		//Log.v("","x is shorter, snap y");
-	        		floatingCursor.scrollTo(w/2, yLoc);
+	        	if (c1X >= c1Y){ // y is shorter, snap y.    		
+	        		floatingCursor.scrollTo(xLoc, c_y);	        		
+	        	} else if (c1X <= c1Y) { // x is shorter snap to x.   	
+	        		floatingCursor.scrollTo(c_x, yLoc);	        		
 	        	}
 				break;
 			
@@ -1033,13 +1045,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	            //Calculate distance to upper right corner. 
 	        	c2X = w/2 + xLoc;
 	        	c2Y = h/2 - yLoc;       		
-        		if (c2X >= c2Y){ //y is shorter snap to x.
-        			//Log.v("","y is shorter, snap x");	        			
-        			floatingCursor.scrollTo(xLoc, h/2);
+        		if (c2X >= c2Y){ //y is shorter snap to x.        			
+        			floatingCursor.scrollTo(xLoc, c_y);
         			//animateDocking(xLoc, yLoc, xLoc, h/2);
         		} else if (c2X <= c2Y) { //x is shorter snap to y.
         			//Log.v("","x is shorter, snap y");
-        			floatingCursor.scrollTo(-w/2, yLoc);
+        			floatingCursor.scrollTo(-c_x, yLoc);
         			//animateDocking(xLoc, yLoc, -w/2, yLoc);
         		}        		
 				break;
@@ -1052,12 +1063,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	        	c3Y = h/2 + yLoc;       		
         		if (c3X >= c3Y){ //y is shorter snap to x.
         			//Log.v("","y is shorter, snap x");	
-        			floatingCursor.scrollTo( xLoc, -h/2);
+        			floatingCursor.scrollTo( xLoc, -c_y);
         			//animateDocking(xLoc, -w/2, yLoc, -h/2);
         		} else if (c3X <= c3Y) { //x is shorter snap to x.
         			//Log.v("","x is shorter, snap y");
         			//animateDocking(xLoc, -w/2, yLoc, yLoc);
-        			floatingCursor.scrollTo( w/2, yLoc);
+        			floatingCursor.scrollTo( c_x, yLoc);
         		}
 				break;
 			case 4:
@@ -1070,11 +1081,11 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         		if (c4X >= c4Y){ //y is shorter snap to x.
         			//Log.v("","y is shorter, snap x");	
         			//animateDocking(xLoc, xLoc, yLoc, -h/2);
-        			floatingCursor.scrollTo( xLoc, -h/2);
+        			floatingCursor.scrollTo( xLoc, -c_y);
         		} else if (c4X <= c4Y) { //x is shorter snap to x.
         			//Log.v("","x is shorter, snap y");
         			//animateDocking(xLoc, -w/2, yLoc, yLoc);
-        			floatingCursor.scrollTo( -w/2, yLoc);
+        			floatingCursor.scrollTo( -c_x, yLoc);
         		}
 				break;			
 			}			
