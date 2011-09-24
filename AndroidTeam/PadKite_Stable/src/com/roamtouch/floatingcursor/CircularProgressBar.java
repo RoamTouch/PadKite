@@ -90,6 +90,9 @@ public class CircularProgressBar extends View {
 			this.setVisibility(VISIBLE);			
 		}
 		
+		public boolean getIsEnabled(){
+			return isEnabled;
+		}
 		
 		public void disable(){			
 			mProgress=0;	

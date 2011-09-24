@@ -2718,24 +2718,26 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				double length = Math.hypot(scrollX, scrollY);
 					
 				// Double tap
-				long thisTime = System.currentTimeMillis();			
-				if (thisTime - lastTouchTime < 250) {
-					
-					//this.getController().zoomInFixing((int) ev.getX(), (int) ev.getY());
-					lastTouchTime = -1;
-					if (isCircularZoomEnabled())
-						disableCircularZoom();
-					else {
-						toggleMenuVisibility();
-						// Should return true here so touch event will not be
-						// handled again by CircularLayout (in parking mode).
-						return true;
+				if (!mSoftKeyboardVisible){
+					long thisTime = System.currentTimeMillis();			
+					if (thisTime - lastTouchTime < 250) {
+						
+						//this.getController().zoomInFixing((int) ev.getX(), (int) ev.getY());
+						lastTouchTime = -1;
+						if (isCircularZoomEnabled())
+							disableCircularZoom();
+						else {
+							
+							toggleMenuVisibility();
+							// Should return true here so touch event will not be
+							// handled again by CircularLayout (in parking mode).
+							return true;
+						}
+					} else {
+						// Too slow :)
+						lastTouchTime = thisTime;
 					}
-				} else {
-					// Too slow :)
-					lastTouchTime = thisTime;
-				}
-				   
+				}   
 				
 				/*if (X > innerCircleX - innerCirRad
 						&& X < innerCircleX + innerCirRad

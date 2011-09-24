@@ -4,6 +4,7 @@ import com.roamtouch.swiftee.R;
 import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -131,14 +132,14 @@ public class CircularLayout extends ViewGroup {
         
 		   a = widthSpecSize /2;
         
-//		   Log.i("widthSpecSize:", ""+widthSpecSize);        
+		   Log.i("widthSpecSize:", ""+widthSpecSize);        
 
 		   final int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
 		   final int heightSpecSize =  MeasureSpec.getSize(heightMeasureSpec);
         
 		   b = heightSpecSize /2;
         
-//		   Log.i("heightSpecSize:", ""+heightSpecSize);        
+		   Log.i("heightSpecSize:", ""+heightSpecSize);        
 
 		   // for now we take the width of the view as the radius 
 		   outR = widthSpecSize/2;
@@ -261,6 +262,7 @@ public class CircularLayout extends ViewGroup {
 	}
 	public void init(){
 
+		//SEPARATOR
 		ImageView coneSeparator = new ImageView(context);
 		coneSeparator.setBackgroundResource(R.drawable.circleround_cone);
 		addView(coneSeparator);
