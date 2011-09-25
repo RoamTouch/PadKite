@@ -3680,10 +3680,23 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					mParent.openMap(url);
 			        
 				} else if (url.startsWith("mailto:")){
-					
-					mParent.sendMail(url);
 				
-				} else if (url.startsWith("file:///")) {		 
+					mParent.sendMail(url);
+					
+				} else {	
+					
+					view.loadUrl(url);
+					fcProgressBar.enable();
+					
+				}
+				
+				return true;
+			}			
+			
+			@Override
+			public void onPageStarted(WebView view, String url,Bitmap b) {
+				
+				if (url.startsWith("file:///") && url.contains("box=#")) {		 
 					
 					String entry = currentSearch;
 			    	
@@ -3711,25 +3724,18 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					}	 	
 			    	view.loadUrl(url);
 					fcProgressBar.enable();	
-					currentSearch = null;				
-					
-				} else {	
-					
-					view.loadUrl(url);
-					fcProgressBar.enable();
-					
+					currentSearch = null;	
 				}
 				
-				return true;
-			}
-		
-			@Override
-			public void doUpdateVisitedHistory (WebView view, String url, boolean isReload){
-				if(!isReload && !url.startsWith("data:text/html") && !url.startsWith("file:///android_asset/")){
-//					Log.d("---History--------", "url = "+url+"  Title ="+ view.getTitle());
-					dbConnector.addToHistory(System.currentTimeMillis()+"", url, view.getTitle(), 1);
+				mIsLoading = true;
+				if(!mParent.isInParkingMode) {
+					fcView.startScaleDownAndRotateAnimation(1000);
+				} else {
+					fcView.startRotateAnimation();
 				}
+				fcMainMenu.toggleCloseORRefresh(false);
 			}
+			
 			@Override
 			public void onPageFinished(WebView view, String url) {
 				
@@ -3822,31 +3828,15 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		        System.gc();
 		        return bm;
 			}
-/*			
-			public Bitmap getCircleBitmap(WebView view){
-				 Bitmap sourceBitmap = view.getDrawingCache();
-				 Bitmap bm = Bitmap.createBitmap(50,
-			                50, Bitmap.Config.ARGB_4444);
-			        
-			        Canvas canvas = new Canvas(bm);
-			        Path path = new Path();
-				    
-					path.addCircle(25,25,25,Path.Direction.CCW);
-					canvas.clipPath(path,Region.Op.INTERSECT);
-					canvas.drawBitmap(sourceBitmap, 0, 0, null);
-					//sourceBitmap.recycle();
-			    return bm;
-			}
-*/			
-			public void onPageStarted(WebView view, String url,Bitmap b) {
-				mIsLoading = true;
-				if(!mParent.isInParkingMode) {
-					fcView.startScaleDownAndRotateAnimation(1000);
-				} else {
-					fcView.startRotateAnimation();
+			
+			@Override
+			public void doUpdateVisitedHistory (WebView view, String url, boolean isReload){
+				if(!isReload && !url.startsWith("data:text/html") && !url.startsWith("file:///android_asset/")){
+//					Log.d("---History--------", "url = "+url+"  Title ="+ view.getTitle());
+					dbConnector.addToHistory(System.currentTimeMillis()+"", url, view.getTitle(), 1);
 				}
-				fcMainMenu.toggleCloseORRefresh(false);
 			}
+
 		}
 		
 		/* MT Stuff */
