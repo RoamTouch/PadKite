@@ -112,12 +112,14 @@ public class GestureActions {
 	{
 		//fc.loadPage("http://www.google.com/m/search?q=" + URLEncoder.encode(mSelection));
 		fc.loadPage(SwifteeApplication.getGoogleSearch()+URLEncoder.encode(mSelection));
+		fc.enableProgressBar();
 	}
 
 	public void searchPicture(FloatingCursor fc)
 	{
 		//fc.loadPage("http://www.google.com/m/search?site=images&q=" + URLEncoder.encode(mSelection));
 		fc.loadPage(SwifteeApplication.getImageSearch()+URLEncoder.encode(mSelection));
+		fc.enableProgressBar();
 	}
 
 	
@@ -125,6 +127,7 @@ public class GestureActions {
 	{
 		//fc.loadPage("http://m.youtube.com/results?search_query=" + URLEncoder.encode(mSelection));
 		fc.loadPage(SwifteeApplication.getYouTubeSearch()+ URLEncoder.encode(mSelection));
+		fc.enableProgressBar();
 	}
 
 	public void email()
@@ -306,6 +309,7 @@ public class GestureActions {
 	public void wikipedia(FloatingCursor fc)
 	{	
     	fc.loadPage("http://en.wikipedia.org/w/index.php?search=" + URLEncoder.encode(mSelection) + "&go=Go");
+    	fc.enableProgressBar();
 	}
 
 	public void addLink()
