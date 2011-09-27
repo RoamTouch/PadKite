@@ -107,7 +107,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	private SwifteeOverlayView overlay;
 	private SelectionGestureView mSelectionGesture;
 
-	private FloatingCursor floatingCursor;
+	private static FloatingCursor floatingCursor;
 	public static EventViewerArea eventViewer;
 	private GestureLibrary mLibrary;	
 	
@@ -513,12 +513,14 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         return intent;
     }
     
+    public static void drawTip(Rect re, String[] comment, float X, float Y){    	
+    	floatingCursor.drawTip(re, comment, X, Y, SwifteeApplication.IS_FOR_CIRCULAR_MENU_TIPS);
+    }
+    
     public void startTextGesture()
     {
 		eventViewer.setText("Please make text selection gesture now.");
-
     	mSelectionGesture.setEnabled(true);
-    	//floatingCursor.gestureDisableFC();
     }
 
     public void stopTextGesture()

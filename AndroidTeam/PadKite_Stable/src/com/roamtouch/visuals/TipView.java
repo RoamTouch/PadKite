@@ -51,11 +51,13 @@ public class TipView extends View {
         super.onDraw(canvas);
         
         if (draw != SwifteeApplication.DRAW_NONE){
-        	Paint pT = paintText();	   
+        	Paint pT = paintText();	 
+        	 
         	
 		    switch (textLines){
 		    
 	    		case 1:	    	   			
+	    			width = (int) pT.measureText(tipText[0].toString());  
 	    			comment(canvas, lineHeight);
 	    	   		canvas.drawText(tipText[0].toString(), xPos+(width/2)+15, yPos-5, pT);	
 	    	   		break;
@@ -79,6 +81,8 @@ public class TipView extends View {
     
     private void comment (Canvas canvas, int commentHeight){   
     	//Check for cuadrant
+    	
+    	 
        Path cP = drawComment(xPos,yPos-40, width+30, commentHeight+20, draw);  
 	   Paint pF = getPaintFill();
 	   canvas.drawPath(cP, pF);

@@ -1,8 +1,14 @@
 package com.roamtouch.menu;
 
+import java.util.Hashtable;
+import java.util.Vector;
+
+import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -10,6 +16,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.app.Instrumentation;
 
 /**
  * Circular layout containing menu items and performing circular wheel animation
@@ -61,6 +68,9 @@ public class CircularLayout extends ViewGroup {
 		
 		private String m_name;
 		
+		private MenuButton hotBut;
+		public static String PATH = BrowserActivity.THEME_PATH + "/";
+			
 		public String getName()
 		{
 			return m_name;
@@ -120,8 +130,8 @@ public class CircularLayout extends ViewGroup {
 			final ViewConfiguration configuration = ViewConfiguration.get(context);
 			mTouchSlop = configuration.getScaledTouchSlop();
 			//Log.d("Touch slope", ""+mTouchSlop);
-//			mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
-//			mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
+			//mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
+			//mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
 			initBG();
 		}
 
@@ -172,7 +182,7 @@ public class CircularLayout extends ViewGroup {
 		   
 		   MenuButton hotKey = (MenuButton)getChildAt(childEndPoint+1);		   
 		   if(hotKey.getVisibility() != GONE){
-			   int diff = (int) (BUTTON_RADIUS*1.3);
+			   int diff = (int) (BUTTON_RADIUS);//*1.3);
 			   hotKey.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
 		   }
 
@@ -243,6 +253,9 @@ public class CircularLayout extends ViewGroup {
              if(child.shouldDraw()) {
                  child.layout(childLeft, childTop, lb, rb);                	
              }
+            
+            setHotKey();
+     		
          }
      }			   
 		mAngleChange = 0;
@@ -256,6 +269,13 @@ public class CircularLayout extends ViewGroup {
 			child.calculateCenter(a,b,inR,0);
 		}*/
 	}
+	
+	private void setHotKey(){	
+		hotName = hotBut.getDescription();
+    	hotBut.setDrawables(MenuInflater.hotkey_image,MenuInflater.hotkey_highlight);	
+		hotBut.setFunction(MenuInflater.hotkey_function);
+	}
+	
 	public double getZoomAngle(){
 		MenuButton b = (MenuButton) getChildAt(4);
 		return b.getAngle();
@@ -267,11 +287,13 @@ public class CircularLayout extends ViewGroup {
 		coneSeparator.setBackgroundResource(R.drawable.circleround_cone);
 		addView(coneSeparator);
 			
-		MenuButton but = new MenuButton(context);
-		but.setDrawables(MenuInflater.hotkey_image,MenuInflater.hotkey_highlight);	
-		but.setFunction(MenuInflater.hotkey_function);		
-		but.setHotkey(true);
-		addView(but);
+		hotBut = new MenuButton(context);
+		hotBut.setDrawables(MenuInflater.hotkey_image,MenuInflater.hotkey_highlight);	
+		hotBut.setFunction(MenuInflater.hotkey_function);
+		hotName = hotBut.getDescription();
+		hotBut.setHotkey(true);
+		addView(hotBut);
+		
 	}   
 /*
 	@Override
@@ -287,10 +309,13 @@ public class CircularLayout extends ViewGroup {
 		MenuButton first = (MenuButton)getChildAt(1);
 		MenuButton last = (MenuButton)getChildAt(childEndPoint-2);
 		
-		if((first.getAngle()+angleDiff)>4)
+		if((first.getAngle()+angleDiff)>-40){
+			setHotKey();
 			return false;
-		else if(last.getAngle()+angleDiff < 164)
-			return false;
+		}
+		//else if(last.getAngle()+angleDiff < 164)
+		//	return false;
+		
 		return true;
 	}
 	
@@ -310,6 +335,7 @@ public class CircularLayout extends ViewGroup {
 			this.a = a;
 			this.b = b;
 		}
+	
 	 @Override
 	public boolean onTouchEvent(MotionEvent event) {
 
@@ -344,21 +370,23 @@ public class CircularLayout extends ViewGroup {
 			    mLastMotionAngle = -999;
 			    mLastMotionX =0;
 			    mLastMotionY =0;
-///			    Log.d("inside mLastMotionAngle touch Down"," resetting position!!----------------------");
+			    //Log.d("inside mLastMotionAngle touch Down"," resetting position!!----------------------");
             break;
 		}
+		
 		case MotionEvent.ACTION_OUTSIDE:{
 			 mIsBeingDragged=false;
 			    mLastMotionAngle = -999;
 			    mLastMotionX =0;
 			    mLastMotionY =0;
-///			    Log.d("inside mLastMotionAngle touch outside"," resetting position!!----------------------");
+			    //Log.d("inside mLastMotionAngle touch outside"," resetting position!!----------------------");
 		}
+		
 		case MotionEvent.ACTION_MOVE:{
 			 
 			
-//			final int yDiff = (int) Math.abs(y - mLastMotionY);
-//            final int xDiff = (int) Math.abs(x - mLastMotionX);
+			//final int yDiff = (int) Math.abs(y - mLastMotionY);
+			//final int xDiff = (int) Math.abs(x - mLastMotionX);
             
             float currentAngle, angleDiff;
             mVelocityTracker.addMovement(event);
@@ -379,14 +407,14 @@ public class CircularLayout extends ViewGroup {
             	if(currentAngle < mLastMotionAngle) {
             		if((mLastMotionAngle > 270) && (currentAngle < 90)) {
             			angleDiff = currentAngle + (360 - mLastMotionAngle);
-//            			Log.d("Angle diff adjusted---------------",""+angleDiff);
+            			//Log.d("Angle diff adjusted---------------",""+angleDiff);
             		}
             	}
            		else {
            			if((mLastMotionAngle < 90) && (currentAngle > 270)) {
             				angleDiff = mLastMotionAngle + (360 - currentAngle);
             				angleDiff = -1*angleDiff;
-///            				Log.d("Angle diff adjusted---------------",""+angleDiff);
+            				///Log.d("Angle diff adjusted---------------",""+angleDiff);
            			}
            		}
             }
@@ -409,13 +437,22 @@ public class CircularLayout extends ViewGroup {
 			mLastMotionX = x;
             mLastMotionY = y;
             
-            if(!canScroll(angleDiff, count))
+            if(!canScroll(angleDiff, count)){
             	return true;
+            }
+            
+            
             //if(mLastMotionAngle>270 && currentAngle<90)
             //	mAngleChange = currentAngle;
             
-                  
+            //Log.v("top", "top: "+top);
+            //if (top){
+           // 	return true;            	
+           // }
+               
             moveChilds();
+            
+            
         	//Log.i("x,y" , "("+ x +","+ y +")");
 			
 			
@@ -424,36 +461,67 @@ public class CircularLayout extends ViewGroup {
             break;
 		}
 		case MotionEvent.ACTION_UP:
+			
+			handler.removeCallbacks(runnableHot);	
+			
+			if (hotArmed){
+				
+				hotBut.setFunction(hotFunction);		
+				long downTime = SystemClock.uptimeMillis();
+				long eventTime = SystemClock.uptimeMillis();								
+				MotionEvent hotEvent = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_UP, cX, cY, 0);				
+				hotBut.dispatchTouchEvent(hotEvent);				
+				
+			}
+			
 			final VelocityTracker velocityTracker = mVelocityTracker;
             velocityTracker.computeCurrentVelocity(1000);
             float initialVelocityY =  velocityTracker.getYVelocity();
             float initialVelocityX =  velocityTracker.getXVelocity();
-///            Log.d("X and Y velocity","x:"+initialVelocityX+"y:"+initialVelocityY);
+            
+            //Log.d("X and Y velocity","x:"+initialVelocityX+"y:"+initialVelocityY);
         	//Toast.makeText(mContext, "fling: " + 
-        		//	getScrollX() + "," + getScrollY() + "-" + initialVelocityX + "," + initialVelocityY + "-" + 
-        			//getWidth() + "," + getHeight(), Toast.LENGTH_SHORT).show();
+        	//getScrollX() + "," + getScrollY() + "-" + initialVelocityX + "," + initialVelocityY + "-" + 
+        	//getWidth() + "," + getHeight(), Toast.LENGTH_SHORT).show();
 
             if (Math.abs(initialVelocityX) > 0.2) {
+            	fling=true;
             	fling(Math.abs(initialVelocityX), initialVelocityY);
+            } else {
+            	fling=false;
             }
 
             if (mVelocityTracker != null) {
                 mVelocityTracker.recycle();
                 mVelocityTracker = null;
             }
+            
 		    mIsBeingDragged=false;
 		    mLastMotionAngle = -999;
 		    mLastMotionX =0;
 		    mLastMotionY =0;
-///		    Log.d("inside mLastMotionAngle,"," resetting position!!----------------------");
-		}
-		
+		    
+		    ///Log.d("inside mLastMotionAngle,"," resetting position!!----------------------");
+		}		
 		
 		return true;
 	}
 	
+	//private Runnable runnableHot;		
+	private Handler handler = new Handler();
+	 
+	private String hotName;
+	private String hotFunction;
+	private String hotFlag;
+	private boolean hotArmed;	 
+	int cX; // = hotBut.getCenterX();
+	int cY; // = hotBut.getCenterY();
+	boolean top;	  
+	private Hashtable hotHash = new Hashtable(); 
+	boolean fling; 
+	 
 	 public void moveChilds(){
-		 //int count=getChildCount();
+		 
 		 for (int i = 1; i < childEndPoint; i++) {
 				
 	            MenuButton child = (MenuButton)getChildAt(i);
@@ -463,6 +531,7 @@ public class CircularLayout extends ViewGroup {
 	            	if(child.isHotkey()){
 						   int diff = BUTTON_RADIUS/2;
 						   child.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
+						   
 						   continue;
 					   }
 	            	
@@ -477,43 +546,117 @@ public class CircularLayout extends ViewGroup {
 	                final int lb = child.getCenterX() + BUTTON_RADIUS;
 	                final int rb = child.getCenterY() + BUTTON_RADIUS;
 	               
-	                if(child.shouldDraw()) {
+	                /*if(child.shouldDraw()) {
 	                	child.setVisibility(View.VISIBLE);
 	                	child.layout(childLeft, childTop, lb, rb);
-	                }
-	                else
+	                } else
+	                	child.setVisibility(View.INVISIBLE);*/
+	                
+	                //jose            
+	                
+	               
+	                if(child.shouldDraw()) {
+	                	
+	                	child.setVisibility(View.VISIBLE);
+	                	child.layout(childLeft, childTop, lb, rb);
+	                	//top=false;
+	                	
+	                	
+	                } else {
+	                	
 	                	child.setVisibility(View.INVISIBLE);
+	                	
+	                	if (!child.isAnglePositive()){	   
+         		
+	                		int id = child.getId();
+	                		boolean has = hotHash.containsKey(id);
+	                	
+	                		hotName = child.getDescription();
+	                		hotFunction = child.getFunction();	                		
+                			String urlPressed = hotFunction + "_normal.png";
+                			
+                			if (hotFunction.equals("finger_model")){
+	                			if (hotBut.getIsSingleFinger()){
+	                				urlPressed = "Finger_model_single.png";
+	                			} else {
+	                				urlPressed = "Finger_model_multi.png";
+	                			}
+	                		}                 			
+                    		hotBut.setHotDrawables(PATH + urlPressed);
+	                		
+                    		drawHotTip();
+                    		
+	                		if (direction==1){           			
+	                    		if (has){  
+	                    			hotHash.remove(id);	                    				
+	                    		}	                			
+	                		} else {           		
+		                		if (!has){		                			
+		                			hotHash.put(id, child);            					                    			
+		                			handler.postDelayed(runnableHot, 500);		                			 
+		                			hotArmed = false;		
+		                		}              
+	                		}        		
+	                	} 
+	            	}          
 	            }
-	        }
+	     }	 
+	 } 
+	  
+	 Runnable runnableHot = new Runnable(){
+		 
+		public void run() {
+			top = false;
+			//BrowserActivity.eventViewer.setText(hotName);
+			String urlPressed = hotFunction + "_pressed.png";
+			hotBut.setHotDrawables(PATH + urlPressed);
+			handler.removeCallbacks(runnableHot);
+			hotArmed=true;
+		}			
+		
+	};
+		 	
+	 public void drawHotTip(){		         						
+		 String[] text = {hotName};		
+		 int[] loc = new int[2]; 		
+		 int w = hotBut.getWidth();
+		 int h = hotBut.getHeight();
+		 hotBut.getLocationOnScreen(loc);
+		 int x = loc[0];
+		 int y = loc[1];
+		 Rect re = new Rect(x, y, w, h);
+		 BrowserActivity.drawTip(re, text, x, y);
 	 }
+		 
 	public void fling(float velocityX, float velocityY) 
 	{
-///		Log.d("Scroll X,Y",getScrollX()+","+getScrollY());
+		//Log.d("Scroll X,Y",getScrollX()+","+getScrollY());		
+		handler.removeCallbacks(runnableHot);	
 		mScroller.fling(getScrollX(), getScrollY(), velocityX, velocityY, 0,320, 0, 320);
-		
 		invalidate();
 	}
 
 	@Override
 	public void computeScroll() {
-///		Log.d("INSIDE computeScroll","-----------------------------");
+		//Log.d("INSIDE computeScroll","-----------------------------");
 		if (mScroller.computeScrollOffset()) {
 			//Log.d("INSIDE computeScrolloffset","-----------------------------");
 			mAngleChange = mScroller.getAngle();
 			int count = getChildCount();
 			mAngleChange *= direction;
+			
 			if(!canScroll(mAngleChange, count)){
-					mScroller.forceFinished(true);
-	            	return;
+				mScroller.forceFinished(true);
+	            return;
 			}
+			
 			moveChilds();
-	//		Toast.makeText(context, "scrollTo:" + mScroller.getCurrX() +
-	//			 "," + mScroller.getCurrY(), Toast.LENGTH_SHORT).show();
+			//Toast.makeText(context, "scrollTo:" + mScroller.getCurrX() +
+			//"," + mScroller.getCurrY(), Toast.LENGTH_SHORT).show();
 			//scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
 			//mAngleChange = mScroller.get;
 			//moveChilds();
 			// FIXME: Update cursor image
-
 			// Keep on drawing until the animation has finished.
 			postInvalidate();
 		}
@@ -532,7 +675,7 @@ public class CircularLayout extends ViewGroup {
 	        switch (action) {
             case MotionEvent.ACTION_MOVE:
               
-///            	 Log.i("inside ACTION_MOVE mLastMotionX,mLastMotionY" , "("+ mLastMotionX +","+ mLastMotionY +")");
+            	//Log.i("inside ACTION_MOVE mLastMotionX,mLastMotionY" , "("+ mLastMotionX +","+ mLastMotionY +")");
                 final int yDiff = (int) Math.abs(y - mLastMotionY);
                 final int xDiff = (int) Math.abs(x - mLastMotionX);
                 
@@ -552,7 +695,7 @@ public class CircularLayout extends ViewGroup {
             case MotionEvent.ACTION_UP:
                 /* Release the drag */
                 mIsBeingDragged = false;
-//                Log.i("inside ACTION_UP mLastMotionX,mLastMotionY" , "("+ mLastMotionX +","+ mLastMotionY +")");
+                //Log.i("inside ACTION_UP mLastMotionX,mLastMotionY" , "("+ mLastMotionX +","+ mLastMotionY +")");
                 break;
         }
 

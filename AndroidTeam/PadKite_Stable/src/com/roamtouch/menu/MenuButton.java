@@ -8,7 +8,7 @@ import android.util.Log;
 import android.util.StateSet;
 import android.widget.Button;
 
-public class MenuButton extends Button{
+public class MenuButton extends Button {
 
 		private double angle;
 		private int centerX,centerY;
@@ -18,6 +18,12 @@ public class MenuButton extends Button{
 		
 		private String m_button_function = null;
 		private String m_button_policy = null;
+		
+		private boolean isAnglePositive;
+		
+		private String description;
+		
+		private boolean isSingleFinger;
 		
 		private boolean isHotkey = false;
 		private void init(Context context)
@@ -43,9 +49,16 @@ public class MenuButton extends Button{
 			if (drawable != null)
 				m_drawable = drawable;
 			if (selectDrawable != null)
-				m_selectDrawable = selectDrawable;
-			this.setBackgroundDrawable(m_drawable);
+				m_selectDrawable = selectDrawable;			
+			this.setBackgroundDrawable(m_drawable);		
 		}
+		
+		public void setHotDrawables(String drawableStr){
+			Drawable drawable = Drawable.createFromPath(drawableStr);					
+			this.setBackgroundDrawable(drawable);		
+		}
+		
+		
 		public void setDisabled(String drawableStr){
 			Drawable drawable = Drawable.createFromPath(drawableStr);
 			if (drawable != null)
@@ -59,6 +72,7 @@ public class MenuButton extends Button{
 		public void setFunction(String button_function)
 		{
 			m_button_function = button_function;
+			description = setDescription();
 		}
 		
 		public String getPolicy()
@@ -120,5 +134,74 @@ public class MenuButton extends Button{
 		public boolean isHotkey() {
 			return isHotkey;
 		}
-
+		
+		public boolean isAnglePositive() {
+			if(angle < 0){
+				return false;
+			}
+			return true;			
+		}	
+		
+		private String setDescription(){
+			
+			String desc = null;
+			
+			if (m_button_function.equals("new_window")){
+				desc = "Add New Window";
+			} else if (m_button_function.equals("backward")){
+				desc = "Go Backward";
+			} else if (m_button_function.equals("forward")){
+				desc = "Go Forward";
+			} else if (m_button_function.equals("refresh")){
+				desc = "Refresh Page";
+			} else if (m_button_function.equals("stop")){
+				desc = "Stop loading";
+			} else if (m_button_function.equals("windows")){
+				desc = "Tabs Manager";
+			} else if (m_button_function.equals("windows")){
+				desc = "Tabs Manager";
+			} else if (m_button_function.equals("bookmark")){
+				desc = "Bookmarks";
+			} else if (m_button_function.equals("homepage")){
+					desc = "Home page";
+			} else if (m_button_function.equals("share")){
+				desc = "Share page";			
+			} else if (m_button_function.equals("finger_model")){
+				desc = "Finger model";
+			} else if (m_button_function.equals("settings")){
+				desc = "Settings";
+			} else if (m_button_function.equals("close")){
+				desc = "Exit PadKite";
+			}
+			
+			else if (m_button_function.equals("browser_settings")){
+				desc = "Browser Settings";
+			} else if (m_button_function.equals("miscellaneous")){
+				desc = "Miscellaneous";
+			} else if (m_button_function.equals("set_homepage")){
+				desc = "Set Homepage";
+			} else if (m_button_function.equals("gesture_kit_editor")){
+				desc = "Gesture Editor";
+			} else if (m_button_function.equals("history")){
+				desc = "History";
+			} else if (m_button_function.equals("download")){
+				desc = "Download";
+			}	
+			
+			return desc;
+		}
+		
+		public String getDescription(){
+			return description;
+		}
+		
+		public boolean getIsSingleFinger(){
+			return isSingleFinger;
+		}
+		
+		public void setIsSingleFinger(Boolean b){
+			isSingleFinger=b;
+		}
+		
+		
 }

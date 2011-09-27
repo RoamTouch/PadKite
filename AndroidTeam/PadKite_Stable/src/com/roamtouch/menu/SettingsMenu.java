@@ -28,7 +28,7 @@ enum SettingsMenuFunctions {
 	resize_hitarea,
 	gesture_kit_editor,
 	miscellaneous,
-	help_online,
+	//help_online,
 	download,
 	history,
 }
@@ -112,9 +112,9 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 				break;
 			
 			//Help online	
-			case help_online:
+			/*case help_online:
 				mFloatingCursor.setEventText("Help onlin");
-				break;
+				break;*/
 			
 			//History	
 			case history:
@@ -192,24 +192,19 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 				break;
 			
 			//Help online	
-			case help_online:
+			/*case help_online:
 				mFloatingCursor.loadPage("file:///android_asset/Web Pages/help.html");
-				break;
+				break;*/
 			
 			//Practice gesture	
 			case history:		
 				mFloatingCursor.loadPage("file:///android_asset/Web Pages/history.html");
-				//WebPage page = new WebPage();
-				//mFloatingCursor.loadData(page.getBrowserHistory(mParent));				
+				mFloatingCursor.enableProgressBar();	
 				break;
 			
-			case download:
-				//Intent i = new Intent(mParent,WebPage.class);
-				//i.putExtra("webUrl", "http://www.padkite.com/downloads");
-				//mParent.startActivity(i);
+			case download:				
 				mFloatingCursor.loadPage("file:///android_asset/Web Pages/download.html");
-				//WebPage page = new WebPage();
-				//mFloatingCursor.loadData(page.getDownLoadHistory(mParent));
+				mFloatingCursor.enableProgressBar();
 				break;
 
 			case none:

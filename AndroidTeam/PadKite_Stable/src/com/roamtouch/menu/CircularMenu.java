@@ -55,21 +55,20 @@ public class CircularMenu extends CircularLayout implements OnTouchListener{
 				}
 				break;
 			}
-			case R.id.findtext:{
+			/*case R.id.findtext:{
 				mParent.setTopBarMode(TopBarArea.SEARCH_BAR_MODE);
 				this.setVisibility(INVISIBLE);
 				break;
-			}
+			}*/
 			case R.id.refresh:{
 				mParent.refreshWebView();
 				break;
 			}
 			case R.id.stop:break;
-			case R.id.zoom:
-				
+			/*case R.id.zoom:				
 				mFloatingCursor.enableCircularZoom(true);
-				break;
-			case R.id.resizeHit:break;
+				break;*/
+			//case R.id.resizeHit:break;
 			case R.id.windows:
 				mFloatingCursor.setCurrentMenu(2);
 				break;
@@ -97,9 +96,9 @@ public class CircularMenu extends CircularLayout implements OnTouchListener{
 				mFloatingCursor.setEventText("Settings button");
 				break;
 			
-			case R.id.findtext:
+			/*case R.id.findtext:
 				mFloatingCursor.setEventText("Find Text button");
-				break;
+				break;*/
 			
 			case R.id.refresh:
 				mFloatingCursor.setEventText("Refresh button");
@@ -109,13 +108,13 @@ public class CircularMenu extends CircularLayout implements OnTouchListener{
 				mFloatingCursor.setEventText("Stop button");
 				break;
 				
-			case R.id.zoom:
+			/*case R.id.zoom:
 				mFloatingCursor.setEventText("Circular zoom button");
-				break;
+				break;*/
 				
-			case R.id.resizeHit:
+			/*case R.id.resizeHit:
 				mFloatingCursor.setEventText("Resize hit area button");
-				break;
+				break;*/
 				
 			case R.id.windows:
 				mFloatingCursor.setEventText("Find Text Button");
@@ -143,20 +142,20 @@ public class CircularMenu extends CircularLayout implements OnTouchListener{
 				}
 				break;
 			}
-			case R.id.findtext:{
+			/*case R.id.findtext:{
 				mParent.setTopBarMode(TopBarArea.SEARCH_BAR_MODE);
 				this.setVisibility(INVISIBLE);
 				break;
-			}
+			}*/
 			case R.id.refresh:{
 				mParent.refreshWebView();
 				break;
 			}
 			case R.id.stop:break;
-			case R.id.zoom:				
+			/*case R.id.zoom:				
 				mFloatingCursor.enableCircularZoom(true);
-				break;
-			case R.id.resizeHit:break;
+				break;*/
+			//case R.id.resizeHit:break;
 			case R.id.windows:
 				mFloatingCursor.setCurrentMenu(2);
 				break;

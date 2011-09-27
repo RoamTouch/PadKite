@@ -3,7 +3,12 @@
 **	All rights reserved.													**
 ******************************************************************************-->
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
-   		
+
+		<MenuButton android:button_image="add_normal.png"
+		    		android:button_highlightImage="add_pressed.png"
+                    android:button_function="new_window"
+                    android:hotkey="true"/>
+                       		
    		<MenuButton android:button_image="backward_normal.png"
 					android:button_highlightImage="backward_pressed.png" 
 					android:button_disabled="backward_disabled.png"
@@ -19,40 +24,27 @@
 					android:button_highlightImage="refresh_pressed.png"
 					android:button_function="refresh"/>   
 
-		<MenuButton android:button_image="bookmark_normal.png"
-					android:button_highlightImage="bookmark_pressed.png"
-                    android:button_function="custom_gesture"/>
-           
-        <MenuButton android:button_image="windows_normal.png"
+		<MenuButton android:button_image="windows_normal.png"
 					android:button_highlightImage="windows_pressed.png"
 					android:button_policy="keep"
                     android:button_function="windows"/>
-	
-	     <MenuButton android:button_image="add_normal.png"
-		    		android:button_highlightImage="add_pressed.png"
-                    android:button_function="new_window"
-                    android:hotkey="true" />
+                    
+		<MenuButton android:button_image="bookmark_normal.png"
+					android:button_highlightImage="bookmark_pressed.png"
+                    android:button_function="bookmark"/> 	     
 
-		<MenuButton android:button_image="home_normal.png"
-					android:button_highlightImage="home_pressed.png"
+		<MenuButton android:button_image="homepage_normal.png"
+					android:button_highlightImage="homepage_pressed.png"
 					android:button_function="homepage"/>  
 		
 		<MenuButton android:button_image="share_normal.png"
 					android:button_highlightImage="share_pressed.png"
 					android:button_function="share"/> 
 		
-		<MenuButton android:button_image="zoom_normal.png"
+		<!--<MenuButton android:button_image="zoom_normal.png"
 					android:button_highlightImage="zoom_pressed.png"
-                    android:button_function="zoom"/>
-
-		<MenuButton android:button_image="download_normal.png"
-					android:button_highlightImage="download_pressed.png"
-                    android:button_function="download"/>
-        		             
-		<MenuButton android:button_image="bookmark_edit_normal.png"
-					android:button_highlightImage="bookmark_edit_pressed.png"
-                    android:button_function="bookmark"/>
-
+                    android:button_function="zoom"/>-->		
+	
 		<MenuButton android:button_image="Finger_model_multi.png"
 					android:button_highlightImage="Finger_model_multi.png"
                     android:button_function="finger_model"/>    	

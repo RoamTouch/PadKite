@@ -42,10 +42,7 @@ public class TipController extends FrameLayout implements Runnable {
 		mP = p;		
 	}
 	
-	public void setTipComment(Object[] param){		
-		
-		//Hashtable location = null; 
-		Vector cuagrant34 = new Vector();
+	public void setTipComment(Object[] param, int isFor){		
 		
 		Rect rectTip  	= (Rect) param[0];		
 		String[] tText  = (String[]) param[1];
@@ -57,26 +54,47 @@ public class TipController extends FrameLayout implements Runnable {
 			
 		tV.xPoint = x;
 		tV.yPoint = y;
-						
-		cuagrant34 = mP.getCuadrant34(x, y);		
-		int vertical = (Integer) cuagrant34.get(0);
-		int horizontal = (Integer) cuagrant34.get(1);		
-		Rect xRect =  (Rect) cuagrant34.get(2);	
-		int tipType = (Integer) cuagrant34.get(3);
 		
-		if (horizontal==1){
-			tV.yPos = rectTip.bottom + 120;				
-		} else {
-			tV.yPos = rectTip.top - 120;	
-		}
+		int tipType = 0;
+		
+		switch (isFor) {
+		
+			case SwifteeApplication.IS_FOR_WEB_TIPS:
+				
+				 
+				Vector cuagrant34 = new Vector();
+				
+				cuagrant34 = mP.getCuadrant34(x, y);		
+				int vertical = (Integer) cuagrant34.get(0);
+				int horizontal = (Integer) cuagrant34.get(1);		
+				Rect xRect =  (Rect) cuagrant34.get(2);	
+				tipType = (Integer) cuagrant34.get(3);
+				
+				if (horizontal==1){
+					tV.yPos = rectTip.bottom + 120;				
+				} else {
+					tV.yPos = rectTip.top - 120;	
+				}
+				
+				tV.xPos = xRect.left;		
+				tV.width = xRect.right;
+				
+				break;
+				
+			case SwifteeApplication.IS_FOR_CIRCULAR_MENU_TIPS:
+				
+				tV.yPos = rectTip.top - 70;			
+				tV.xPos = rectTip.left - 15;
+				tV.width = rectTip.right;
+				tipType = SwifteeApplication.SET_TIP_TO_CENTER_DOWN;
+				
+				break;
+			
+		}		
 		
 		tV.setTextLines(tText.length);
 		tV.setTipText(tText);		
- 		
- 		tV.xPos = xRect.left;		
-		tV.width = xRect.right;
-		
-		
+ 				
 		tV.setDraw(tipType);    			
 		task = new TipTimerTask();
 		timer = new Timer();  

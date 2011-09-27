@@ -34,13 +34,13 @@ enum MainMenuFunctions {
 	forward,
 	stop,
 	backward,
-	zoom,
-	homepage,
+	//zoom,
+	//homepage,
 	windows,
 	share,
-	custom_gesture,
-	history,
-	download,
+	//custom_gesture,
+	//history,
+	//download,
 	close,
 	new_window,
 	bookmark,
@@ -156,14 +156,14 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				break;
 				
 			//Zoom
-			case zoom:
-				mFloatingCursor.setEventText("Circular Zoom");
-				break;
+			//case zoom:
+			//	mFloatingCursor.setEventText("Circular Zoom");
+			//	break;
 					
-			//Find text
-			case homepage:
+			//Homepage
+			/*case homepage:
 				mFloatingCursor.setEventText("Go to Home");
-				break;
+				break;*/
 			
 			//Windows	
 			case windows:
@@ -174,13 +174,13 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				mFloatingCursor.setEventText("Share page");
 				break;							
 			//Custom Gesture	
-			case custom_gesture:
-				mFloatingCursor.setEventText("Custom and Bookmark Gestures");
-				break;	
+			//case custom_gesture:
+			//	mFloatingCursor.setEventText("Custom and Bookmark Gestures");
+			//	break;	
 
-			case download:
-				mFloatingCursor.setEventText("Download");
-				break;	
+			//case download:
+			//	mFloatingCursor.setEventText("Download");
+			//	break;	
 
 			case forward:
 				mFloatingCursor.setEventText("Forward");
@@ -247,26 +247,29 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			//Refresh
 			case refresh:
 				mParent.refreshWebView();
+				mFloatingCursor.enableProgressBar();
 				break;
 				
 			//Stop
 			case stop:
 				mFloatingCursor.setEventText("Stop ");
 				mFloatingCursor.stopLoading();
+				mFloatingCursor.disableProgressBar();
 				break;
 				
 			//Zoom
-			case zoom:
+			//case zoom:
 				//mFloatingCursor.disableCircularZoom();
-				mFloatingCursor.enableCircularZoom(policy.equals("keep"));
-				break;
+				//mFloatingCursor.enableCircularZoom(policy.equals("keep"));
+				//break;
 					
 			//Find text
-			case homepage:
+			/*case homepage:
 				SharedPreferences sharedPreferences = mParent.getApplicationContext().getSharedPreferences("Shared_Pref_AppSettings", Context.MODE_WORLD_READABLE);
 				String url = sharedPreferences.getString("home_page","http://www.padkite.com");
-				mFloatingCursor.loadPage(url);				
-				break;
+				mFloatingCursor.loadPage(url);
+				mFloatingCursor.enableProgressBar();
+				break;*/
 				
 			//Windows	
 			case windows:
@@ -288,28 +291,21 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				
 			//Backward	
 			case backward:
-				mFloatingCursor.goBackward();			
+				mFloatingCursor.goBackward();		
+				mFloatingCursor.enableProgressBar();
 				break;
 				
 			case forward:
-				mFloatingCursor.goForward();				
+				mFloatingCursor.goForward();
+				mFloatingCursor.enableProgressBar();
 				break;
 				
 			//Custom Gesture	
-			case custom_gesture:
+			/*case custom_gesture:
 				this.setVisibility(INVISIBLE);
 				mParent.setGestureType(SwifteeApplication.BOOKMARK_GESTURE);
 				mParent.startGesture(false);
-				break;
-				
-			case download:
-				//Intent i = new Intent(mParent,WebPage.class);
-				//i.putExtra("webUrl", "http://www.padkite.com/downloads");
-				//mParent.startActivity(i);
-				mFloatingCursor.loadPage("file:///android_asset/Web Pages/download.html");
-				//WebPage page = new WebPage();
-				//mFloatingCursor.loadData(page.getDownLoadHistory(mParent));
-				break;
+				break;*/		
 			
 			case bookmark:
 				Intent i = new Intent(mParent,GestureRecorder.class);
@@ -347,10 +343,12 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			return;
 		if(isSingle){		
 			SwifteeApplication.setFingerMode(true);
+			fingerButton.setIsSingleFinger(true);
 			fingerButton.setDrawables(PATH+"Finger_model_multi.png",PATH+"Finger_model_multi_pressed.png"); 						
 		}
 		else{
 			SwifteeApplication.setFingerMode(false);
+			fingerButton.setIsSingleFinger(false);
 			fingerButton.setDrawables(PATH+"Finger_model_single.png",PATH+"Finger_model_single_pressed.png");	
 		}		
 	};	

@@ -50,7 +50,6 @@ import roamtouch.webkit.WebHitTestResult;
 import roamtouch.webkit.WebVideoInfo;
 import roamtouch.webkit.WebView;
 import roamtouch.webkit.WebViewClient;
-//import roamtouch.webkit.WebView.HitTestResult;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -665,6 +664,13 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			}		
 		}
 		
+		public void enableProgressBar(){
+			fcProgressBar.enable();
+		}
+		
+		public void disableProgressBar(){
+			fcProgressBar.enable();
+		}
 
 		public void addNewWindow(boolean useSelection) {
 			if (getWindowCount() > 7) {
@@ -835,6 +841,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 						if (currentMenu instanceof CircularLayout) {
 							((CircularLayout) currentMenu).resetMenu();
+							((CircularLayout) currentMenu).drawHotTip();
 							// Log.d("Reset menu", "---------------------------");
 						}
 					}
@@ -1767,17 +1774,17 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			rCtrl.drawNothing();			
 		}	
 		
-		public void drawTip(String[] comment, float X, float Y){		
+		public void drawTip(Rect re, String[] comment, float X, float Y, int isFor){		
 			int _x = Math.round(X);
 			int _y = Math.round(Y);
 			int[] initCoor = {_x,_y}; 
 			Object[] paramTip =  { 
-					rect,					
+					re,					
 					comment,
-					100,
+					1000,
 					initCoor
 				}; 
-			tCtrl.setTipComment(paramTip);		
+			tCtrl.setTipComment(paramTip, isFor);		
 		}		
 		
 		public Rect getRect(){
@@ -2133,7 +2140,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						final String selection = (String) ((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).getText();
 						String word = "Selected \""+selection+"\"";
 						String[] t1 = {word, "draw a gesture", "to execute action"};						
-						drawTip(t1, fcX, fcY);
+						drawTip(rect, t1, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
 						break;
 				
 					case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
@@ -2168,7 +2175,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						mParent.setGestureType(SwifteeApplication.CURSOR_TEXT_GESTURE);
 						mParent.startGesture(true);
 						String[] t1 = {"Line selected", "draw a gesture", "to execute action"};						
-						drawTip(t1, fcX, fcY);
+						drawTip(rect, t1, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
 						break;
 				
 					case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
@@ -2188,7 +2195,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).setText(selectedLink);
 						mParent.setSelection(selectedLink);
 						String[] t3 = {"Link copied", "to clipboard" };						
-						drawTip(t3, fcX, fcY);
+						drawTip(rect, t3, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
 						break;
 				}			
 				
@@ -2205,7 +2212,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						mParent.setGestureType(SwifteeApplication.CURSOR_TEXT_GESTURE);
 						mParent.startGesture(true);
 						String[] t1 = {"Pharagraph selected", "draw a gesture", "to execute action"};						
-						drawTip(t1, fcX, fcY);
+						drawTip(rect, t1, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
 						break;
 					
 					/*case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
@@ -2226,7 +2233,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						mParent.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);
 						mParent.startGesture(true);
 						String[] t3 = {"Link selected", "draw a gesture", "to execute action"};						
-						drawTip(t3, fcX, fcY);
+						drawTip(rect, t3, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
 						break;
 				}			
 				

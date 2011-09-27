@@ -183,6 +183,9 @@ public class SwifteeApplication extends Application{
     public static final int SET_TIP_TO_CENTER_DOWN		= 504;
     public static final int SET_TIP_TO_RIGHT_DOWN		= 505;
     
+    public static final int IS_FOR_WEB_TIPS				= 506;
+    public static final int IS_FOR_CIRCULAR_MENU_TIPS	= 507;
+    
 	/**
 	 * MISC
 	 */
