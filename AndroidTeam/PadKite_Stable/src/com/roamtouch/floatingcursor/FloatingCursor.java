@@ -802,6 +802,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 		public void toggleMenuVisibility() {
 
+			tCtrl.drawNothing();
+			
 			if (animationLock)
 				return;
 
@@ -839,7 +841,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						handler.postDelayed(runnable, 10000);
 						handler.removeCallbacks(parkingRunnable);
 
-						if (currentMenu instanceof CircularLayout) {
+						if (currentMenu instanceof CircularLayout) {							
 							((CircularLayout) currentMenu).resetMenu();
 							((CircularLayout) currentMenu).drawHotTip();
 							// Log.d("Reset menu", "---------------------------");
@@ -858,8 +860,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				if (currentMenu instanceof CircularLayout)
 					eventViewer.setText(((CircularLayout) currentMenu).getName());
 				else if (currentMenu instanceof CircularTabsLayout)
-					eventViewer.setText(((CircularTabsLayout) currentMenu)
-							.getName());
+					eventViewer.setText(((CircularTabsLayout) currentMenu).getName());
 
 				// mP.setTopBarVisibility(VISIBLE);
 				// mP.setTopBarMode(TopBarArea.ADDR_BAR_MODE);
@@ -1781,11 +1782,15 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			Object[] paramTip =  { 
 					re,					
 					comment,
-					1000,
+					//300,
 					initCoor
 				}; 
 			tCtrl.setTipComment(paramTip, isFor);		
 		}		
+		
+		public void drawNone(){
+			rCtrl.drawNothing();
+		}
 		
 		public Rect getRect(){
 			return rect;

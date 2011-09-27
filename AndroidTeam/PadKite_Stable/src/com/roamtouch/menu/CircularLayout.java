@@ -292,6 +292,8 @@ public class CircularLayout extends ViewGroup {
 		hotBut.setFunction(MenuInflater.hotkey_function);
 		hotName = hotBut.getDescription();
 		hotBut.setHotkey(true);
+		int id = hotBut.getId();
+		hotHash.put(id, hotBut); 
 		addView(hotBut);
 		
 	}   
@@ -438,6 +440,7 @@ public class CircularLayout extends ViewGroup {
             mLastMotionY = y;
             
             if(!canScroll(angleDiff, count)){
+            	drawHotTip();
             	return true;
             }
             
@@ -465,13 +468,13 @@ public class CircularLayout extends ViewGroup {
 			handler.removeCallbacks(runnableHot);	
 			
 			if (hotArmed){
-				
+				BrowserActivity.drawNothingTip();
 				hotBut.setFunction(hotFunction);		
 				long downTime = SystemClock.uptimeMillis();
 				long eventTime = SystemClock.uptimeMillis();								
 				MotionEvent hotEvent = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_UP, cX, cY, 0);				
 				hotBut.dispatchTouchEvent(hotEvent);				
-				
+				hotArmed=false;
 			}
 			
 			final VelocityTracker velocityTracker = mVelocityTracker;
@@ -576,31 +579,53 @@ public class CircularLayout extends ViewGroup {
                 			String urlPressed = hotFunction + "_normal.png";
                 			
                 			if (hotFunction.equals("finger_model")){
+                				
 	                			if (hotBut.getIsSingleFinger()){
 	                				urlPressed = "Finger_model_single.png";
 	                			} else {
 	                				urlPressed = "Finger_model_multi.png";
 	                			}
+	                			
 	                		}                 			
-                    		hotBut.setHotDrawables(PATH + urlPressed);
-	                		
-                    		drawHotTip();
+                    		hotBut.setHotDrawables(PATH + urlPressed);          		
                     		
-	                		if (direction==1){           			
-	                    		if (has){  
-	                    			hotHash.remove(id);	                    				
-	                    		}	                			
-	                		} else {           		
-		                		if (!has){		                			
-		                			hotHash.put(id, child);            					                    			
-		                			handler.postDelayed(runnableHot, 500);		                			 
-		                			hotArmed = false;		
-		                		}              
-	                		}        		
-	                	} 
+                    		if (direction==-1){                  		       
+                    		
+	                    		MenuButton checkChid = (MenuButton) hotHash.get(id);                		
+	                    			
+	                    		String childName = child.getFunction();
+	                			String checkName = null;
+	                			if (checkChid!=null){
+	                				checkName = checkChid.getFunction();
+	                			}
+	                			
+	                    		if (!childName.equals(checkName)){              			                 		
+	                    		
+	                    			if (!has) {
+	                    				drawHotTip(); 
+				                		hotHash.put(id, child);            					                    			
+				                		handler.postDelayed(runnableHot, 500);              			 
+				                		hotArmed = false;
+				                	}
+				                		
+			                	}     
+	                    	} else {
+	                    		  
+	                    		//BrowserActivity.drawNothingTip();
+	                    		drawHotTip();   
+		                		if (has){		                		
+	                    			hotHash.remove(id);
+	                    			handler.postDelayed(runnableHot, 500);    
+	                    			hotArmed = false;
+	                    		}
+	                		
+		                	} 
+	                	 
+	                	}
+	                	
 	            	}          
 	            }
-	     }	 
+	      }	 
 	 } 
 	  
 	 Runnable runnableHot = new Runnable(){
@@ -625,7 +650,8 @@ public class CircularLayout extends ViewGroup {
 		 int x = loc[0];
 		 int y = loc[1];
 		 Rect re = new Rect(x, y, w, h);
-		 BrowserActivity.drawTip(re, text, x, y);
+		 BrowserActivity.drawTip(re, text, hotBut.getCenterX(), y);
+		 invalidate();
 	 }
 		 
 	public void fling(float velocityX, float velocityY) 

@@ -130,7 +130,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
           
     //Visuals
     private RingController rCtrl;
-    private TipController tCtrl;
+    private static TipController tCtrl;
     private PointerHolder pHold;
     
     public static boolean landingLoaded=false;
@@ -517,8 +517,17 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	floatingCursor.drawTip(re, comment, X, Y, SwifteeApplication.IS_FOR_CIRCULAR_MENU_TIPS);
     }
     
+    public static void drawNothingTip(){
+    	tCtrl.drawNothing();    	
+    }
+    
+    public void drawNothingRing(){    	
+    	rCtrl.drawNothing();
+    }
+    
     public void startTextGesture()
     {
+    	drawNothingTip();
 		eventViewer.setText("Please make text selection gesture now.");
     	mSelectionGesture.setEnabled(true);
     }

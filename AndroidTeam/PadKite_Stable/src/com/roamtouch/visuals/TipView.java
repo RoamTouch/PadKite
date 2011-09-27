@@ -28,7 +28,9 @@ public class TipView extends View {
     public int xPos;
     public int yPos;
     public int width;
-    public int height;    
+    public int height;   
+    
+    public int xCenter;
     
     public String[] tipText;
     
@@ -40,6 +42,8 @@ public class TipView extends View {
     
     float xPoint;
 	float yPoint;
+	
+	public int isFor;
     
     public TipView(Context context) {
         super(context);       
@@ -59,7 +63,20 @@ public class TipView extends View {
 	    		case 1:	    	   			
 	    			width = (int) pT.measureText(tipText[0].toString());  
 	    			comment(canvas, lineHeight);
-	    	   		canvas.drawText(tipText[0].toString(), xPos+(width/2)+15, yPos-5, pT);	
+	    			int _x;
+	    			if (isFor == SwifteeApplication.IS_FOR_CIRCULAR_MENU_TIPS){
+	    				_x =  xPos+(width/2);
+	 	    			if (tipText[0].toString().equals("Add New Window")){
+	 	    				_x -= 30; 
+	 	    			} 
+	 	    			if (tipText[0].toString().equals("Settings")){
+	 	    				_x += 20; 
+	 	    			}
+	 	    			//width -= 30;
+	    			} else {
+	    				_x = xPos+(width/2)+15;
+	    			}    				    			
+	    	   		canvas.drawText(tipText[0].toString(), _x, yPos-5, pT);	
 	    	   		break;
 	    	   		
 	    	   	case 2:
@@ -80,10 +97,15 @@ public class TipView extends View {
     }
     
     private void comment (Canvas canvas, int commentHeight){   
-    	//Check for cuadrant
-    	
-    	 
-       Path cP = drawComment(xPos,yPos-40, width+30, commentHeight+20, draw);  
+    
+    	int _x;
+    	if (isFor == SwifteeApplication.IS_FOR_CIRCULAR_MENU_TIPS){
+    		_x = xPos - (width/2) + 50; 
+    	} else {
+    		_x = xPos;
+    	}  	
+    	  
+       Path cP = drawComment(_x, yPos-40, width+30, commentHeight+20, draw);  
 	   Paint pF = getPaintFill();
 	   canvas.drawPath(cP, pF);
 	   Paint pS = getPaintStroke();	    	   

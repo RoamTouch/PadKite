@@ -46,8 +46,8 @@ public class TipController extends FrameLayout implements Runnable {
 		
 		Rect rectTip  	= (Rect) param[0];		
 		String[] tText  = (String[]) param[1];
-		time  			= (Integer) param[2];
-		int[] cord 	= (int[]) param[3];
+		//time  			= (Integer) param[2];
+		int[] cord 	= (int[]) param[2];
 		
 		int x = cord[0];
 		int y = cord[1];
@@ -79,15 +79,23 @@ public class TipController extends FrameLayout implements Runnable {
 				tV.xPos = xRect.left;		
 				tV.width = xRect.right;
 				
+				tV.isFor = SwifteeApplication.IS_FOR_WEB_TIPS;
+				
 				break;
 				
 			case SwifteeApplication.IS_FOR_CIRCULAR_MENU_TIPS:
 				
 				tV.yPos = rectTip.top - 70;			
 				tV.xPos = rectTip.left - 15;
+				tV.xCenter = x;
 				tV.width = rectTip.right;
 				tipType = SwifteeApplication.SET_TIP_TO_CENTER_DOWN;
+				tV.isFor = SwifteeApplication.IS_FOR_CIRCULAR_MENU_TIPS;
 				
+				break;
+			
+			case SwifteeApplication.DRAW_NONE:
+				tipType = SwifteeApplication.DRAW_NONE;
 				break;
 			
 		}		
@@ -96,9 +104,9 @@ public class TipController extends FrameLayout implements Runnable {
 		tV.setTipText(tText);		
  				
 		tV.setDraw(tipType);    			
-		task = new TipTimerTask();
+		/*task = new TipTimerTask();
 		timer = new Timer();  
-		timer.schedule(task,time); 		
+		timer.schedule(task,time);*/ 		
 	}   
 
 	
@@ -112,6 +120,12 @@ public class TipController extends FrameLayout implements Runnable {
 			  //tV.postInvalidate();			  
 		  }
 	}
+	
+	/**Draw Nothing**/
+	public void drawNothing(){
+		//this.identifier = id;
+		tV.setDraw(SwifteeApplication.DRAW_NONE);
+	}	
 	
 	public void invalidateTips(){
 		tV.postInvalidate();

@@ -138,6 +138,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			button_function = MainMenuFunctions.none;
 		}
 		
+		BrowserActivity.drawNothingTip();
+		
 		if(event.getAction() == MotionEvent.ACTION_DOWN) {
 			switch(button_function) {
 			//Settings
