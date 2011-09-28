@@ -315,8 +315,10 @@ public class CircularLayout extends ViewGroup {
 			setHotKey();
 			return false;
 		}
-		//else if(last.getAngle()+angleDiff < 164)
-		//	return false;
+		
+		/*if((last.getAngle()+angleDiff)>-500){
+			return false;
+		}*/
 		
 		return true;
 	}
@@ -400,6 +402,7 @@ public class CircularLayout extends ViewGroup {
                 currentAngle = mLastMotionAngle;
             }
             currentAngle = (float)computeAngle1(a, b, x, y);
+            currentAngle=currentAngle*2;
             //Log.d("Action move---------------Current angle",""+currentAngle);
             angleDiff = currentAngle-mLastMotionAngle;
             //Log.d("Angle diff---------------",""+angleDiff);
@@ -467,14 +470,14 @@ public class CircularLayout extends ViewGroup {
 			
 			handler.removeCallbacks(runnableHot);	
 			
-			if (hotArmed){
+			if (hotBut.getIsArmed()){
 				BrowserActivity.drawNothingTip();
 				hotBut.setFunction(hotFunction);		
 				long downTime = SystemClock.uptimeMillis();
 				long eventTime = SystemClock.uptimeMillis();								
 				MotionEvent hotEvent = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_UP, cX, cY, 0);				
 				hotBut.dispatchTouchEvent(hotEvent);				
-				hotArmed=false;
+				hotBut.setIsArmed(false);				
 			}
 			
 			final VelocityTracker velocityTracker = mVelocityTracker;
@@ -516,7 +519,7 @@ public class CircularLayout extends ViewGroup {
 	private String hotName;
 	private String hotFunction;
 	private String hotFlag;
-	private boolean hotArmed;	 
+		 
 	int cX; // = hotBut.getCenterX();
 	int cY; // = hotBut.getCenterY();
 	boolean top;	  
@@ -547,23 +550,16 @@ public class CircularLayout extends ViewGroup {
 	                final int childLeft = child.getCenterX() - BUTTON_RADIUS;
 	                final int childTop = child.getCenterY() - BUTTON_RADIUS;
 	                final int lb = child.getCenterX() + BUTTON_RADIUS;
-	                final int rb = child.getCenterY() + BUTTON_RADIUS;
-	               
-	                /*if(child.shouldDraw()) {
-	                	child.setVisibility(View.VISIBLE);
-	                	child.layout(childLeft, childTop, lb, rb);
-	                } else
-	                	child.setVisibility(View.INVISIBLE);*/
+	                final int rb = child.getCenterY() + BUTTON_RADIUS;              
 	                
-	                //jose            
-	                
+	                //jose    
+	                int count = getChildCount();
+	                Log.v("angle", "angle: "+angle);
 	               
 	                if(child.shouldDraw()) {
 	                	
 	                	child.setVisibility(View.VISIBLE);
-	                	child.layout(childLeft, childTop, lb, rb);
-	                	//top=false;
-	                	
+	                	child.layout(childLeft, childTop, lb, rb);	                              	
 	                	
 	                } else {
 	                	
@@ -575,72 +571,84 @@ public class CircularLayout extends ViewGroup {
 	                		boolean has = hotHash.containsKey(id);
 	                	
 	                		hotName = child.getDescription();
-	                		hotFunction = child.getFunction();	                		
-                			String urlPressed = hotFunction + "_normal.png";
-                			
-                			if (hotFunction.equals("finger_model")){
-                				
-	                			if (hotBut.getIsSingleFinger()){
-	                				urlPressed = "Finger_model_single.png";
-	                			} else {
-	                				urlPressed = "Finger_model_multi.png";
-	                			}
-	                			
-	                		}                 			
-                    		hotBut.setHotDrawables(PATH + urlPressed);          		
-                    		
-                    		if (direction==-1){                  		       
-                    		
-	                    		MenuButton checkChid = (MenuButton) hotHash.get(id);                		
-	                    			
-	                    		String childName = child.getFunction();
-	                			String checkName = null;
-	                			if (checkChid!=null){
-	                				checkName = checkChid.getFunction();
-	                			}
-	                			
-	                    		if (!childName.equals(checkName)){              			                 		
-	                    		
-	                    			if (!has) {
-	                    				drawHotTip(); 
-				                		hotHash.put(id, child);            					                    			
-				                		handler.postDelayed(runnableHot, 500);              			 
-				                		hotArmed = false;
-				                	}
-				                		
-			                	}     
-	                    	} else {
-	                    		  
-	                    		//BrowserActivity.drawNothingTip();
-	                    		drawHotTip();   
-		                		if (has){		                		
-	                    			hotHash.remove(id);
-	                    			handler.postDelayed(runnableHot, 500);    
-	                    			hotArmed = false;
-	                    		}
+	                		hotFunction = child.getFunction();	  
 	                		
-		                	} 
-	                	 
-	                	}
-	                	
+	                		MenuButton checkChid = (MenuButton) hotHash.get(id);                		
+                			
+                    		String childName = child.getFunction();
+                			String checkName = null;
+                			if (checkChid!=null){
+                				checkName = checkChid.getFunction();
+                			}
+                    		
+                    		if ( direction==-1 && !childName.equals(checkName) ){            		              			                 		
+	                    		
+                    			if (!has) {
+                    				setHotButtonImage(false);	                    				
+                    				drawHotTip(); 
+			                		hotHash.put(id, child);            					                    			
+			                		handler.postDelayed(runnableHot, 1000);            		
+			                	}				                		
+			                	    
+	                    		
+	                    	} else if ( direction==1 && childName.equals(checkName)) {
+	                    		
+	                    		hotHash.remove(id);
+	                    		drawHotTip(); 
+	                    		setHotButtonImage(false);
+                   	
+	                    	}		                    		
+	                	}	                	
 	            	}          
 	            }
 	      }	 
 	 } 
-	  
+	 
 	 Runnable runnableHot = new Runnable(){
 		 
 		public void run() {
 			top = false;
-			//BrowserActivity.eventViewer.setText(hotName);
-			String urlPressed = hotFunction + "_pressed.png";
-			hotBut.setHotDrawables(PATH + urlPressed);
-			handler.removeCallbacks(runnableHot);
-			hotArmed=true;
+			setHotButtonImage(true);		
+			handler.removeCallbacks(runnableHot);						
 		}			
 		
 	};
-		 	
+	 
+	 private void setHotButtonImage(boolean armed){		 
+		 
+		 String url = null;
+		 
+		 if (!armed){
+			 
+			hotBut.setIsArmed(false);
+			url = hotFunction + "_normal.png";
+			if (hotFunction.equals("finger_model")){			
+				if (hotBut.getIsSingleFinger()){
+	 				url = "Finger_model_single.png";
+	 			} else {
+	 				url = "Finger_model_multi.png";
+	 			} 			
+	 		}
+			
+		 } else {
+			 
+			hotBut.setIsArmed(true);
+			url = hotFunction + "_pressed.png";
+			if (hotFunction.equals("finger_model")){			
+				if (hotBut.getIsSingleFinger()){
+					url = "Finger_model_single_pressed.png";
+			 	} else {
+			 			url = "Finger_model_multi_pressed.png";
+			 	} 			
+			 }     
+			
+		 }
+		 
+		 handler.removeCallbacks(runnableHot);			
+		 hotBut.setHotDrawables(PATH + url);
+		 
+	 }
+	 
 	 public void drawHotTip(){		         						
 		 String[] text = {hotName};		
 		 int[] loc = new int[2]; 		

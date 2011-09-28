@@ -25,6 +25,8 @@ public class MenuButton extends Button {
 		
 		private boolean isSingleFinger;
 		
+		private boolean isArmed;
+		
 		private boolean isHotkey = false;
 		private void init(Context context)
 		{
@@ -203,5 +205,12 @@ public class MenuButton extends Button {
 			isSingleFinger=b;
 		}
 		
+		public void setIsArmed(boolean is){
+			isArmed = is;
+		}
 		
+		public boolean getIsArmed(){
+			return isArmed;
+			
+		}
 }
