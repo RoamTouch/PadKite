@@ -8,11 +8,16 @@
 		    		android:button_highlightImage="add_pressed.png"
                     android:button_function="new_window"
                     android:hotkey="true"/>
+                    
+        <MenuButton android:button_image="windows_normal.png"
+					android:button_highlightImage="windows_pressed.png"
+					android:button_policy="keep"
+                    android:button_function="windows"/>
                        		
-   		<MenuButton android:button_image="backward_normal.png"
+   		<!--<MenuButton android:button_image="backward_normal.png"
 					android:button_highlightImage="backward_pressed.png" 
 					android:button_disabled="backward_disabled.png"
-                    android:button_function="backward" android:button_policy="" />
+                    android:button_function="backward" android:button_policy="" />-->
 		
 		<MenuButton android:button_image="forward_normal.png"
 					android:button_highlightImage="forward_pressed.png" 
@@ -24,10 +29,7 @@
 					android:button_highlightImage="refresh_pressed.png"
 					android:button_function="refresh"/>   
 
-		<MenuButton android:button_image="windows_normal.png"
-					android:button_highlightImage="windows_pressed.png"
-					android:button_policy="keep"
-                    android:button_function="windows"/>
+		
                     
 		<MenuButton android:button_image="bookmark_normal.png"
 					android:button_highlightImage="bookmark_pressed.png"

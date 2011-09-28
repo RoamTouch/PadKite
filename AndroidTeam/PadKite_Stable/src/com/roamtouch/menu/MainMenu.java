@@ -83,8 +83,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				MenuButton b = (MenuButton) v;
 				if(b.getFunction().equals("refresh"))
 					button = b;
-				if(b.getFunction().equals("backward"))
-					backButton = b;
+				//if(b.getFunction().equals("backward"))
+				//	backButton = b;
 				if(b.getFunction().equals("forward"))
 					fwdButton = b;
 				if(b.getFunction().equals("finger_model"))
@@ -188,9 +188,9 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				mFloatingCursor.setEventText("Forward");
 				break;	
 				
-			case backward:
-				mFloatingCursor.setEventText("Backward");
-				break;
+			//case backward:
+			//	mFloatingCursor.setEventText("Backward");
+			//	break;
 				
 			case close:
 				mFloatingCursor.setEventText("Close Application");
@@ -292,10 +292,10 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				break;
 				
 			//Backward	
-			case backward:
-				mFloatingCursor.goBackward();		
-				mFloatingCursor.enableProgressBar();
-				break;
+			//case backward:
+			//	mFloatingCursor.goBackward();		
+			//	mFloatingCursor.enableProgressBar();
+			//	break;
 				
 			case forward:
 				mFloatingCursor.goForward();

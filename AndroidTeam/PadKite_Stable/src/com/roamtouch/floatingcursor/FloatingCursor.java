@@ -660,6 +660,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					fcWindowTabs.setVisibility(VISIBLE);
 					fcSettingsMenu.setVisibility(INVISIBLE);
 					fcMainMenu.setVisibility(INVISIBLE);
+					fcView.setVisibility(INVISIBLE);
 					break;		
 			}		
 		}
