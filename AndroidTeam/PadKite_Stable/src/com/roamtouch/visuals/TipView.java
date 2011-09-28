@@ -69,6 +69,9 @@ public class TipView extends View {
 	 	    			if (tipText[0].toString().equals("Add New Window")){
 	 	    				_x -= 30; 
 	 	    			} 
+	 	    			if (tipText[0].toString().equals("Tabs Manager")){
+	 	    				_x -= 10; 
+	 	    			} 
 	 	    			if (tipText[0].toString().equals("Settings")){
 	 	    				_x += 20; 
 	 	    			}

@@ -373,7 +373,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	        // Enable the built-in zoom
 	        webView.getSettings().setBuiltInZoomControls(false);	        
 	        webView.getSettings().setJavaScriptEnabled(true);   
-	        webView.getSettings().setPluginState(WebSettings.PluginState.ON);
+	        //webView.getSettings().setPluginState(WebSettings.PluginState.ON);
 	        
 			LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
 			//params.setMargins(0, 20, 0, 0);
@@ -518,7 +518,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     }
     
     public static void drawNothingTip(){
-    	tCtrl.drawNothing();    	
+    	Rect re = new Rect();
+    	String[] rectTip = {""};
+    	int[] cord = {0,0};
+    	Object[] param = {re, rectTip, cord}; 
+    	tCtrl.drawNothing();
+    	tCtrl.setTipComment(param, SwifteeApplication.IS_FOR_CIRCULAR_MENU_TIPS);
     }
     
     public void drawNothingRing(){    	

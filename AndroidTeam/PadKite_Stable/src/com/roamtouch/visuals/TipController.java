@@ -43,11 +43,13 @@ public class TipController extends FrameLayout implements Runnable {
 	}
 	
 	public void setTipComment(Object[] param, int isFor){		
-		
+				
 		Rect rectTip  	= (Rect) param[0];		
-		String[] tText  = (String[]) param[1];
-		//time  			= (Integer) param[2];
+		String[] tText  = (String[]) param[1];					
 		int[] cord 	= (int[]) param[2];
+		if (isFor!=SwifteeApplication.IS_FOR_CIRCULAR_MENU_TIPS){
+			time = (Integer) param[3];
+		}
 		
 		int x = cord[0];
 		int y = cord[1];
@@ -104,9 +106,12 @@ public class TipController extends FrameLayout implements Runnable {
 		tV.setTipText(tText);		
  				
 		tV.setDraw(tipType);    			
-		/*task = new TipTimerTask();
-		timer = new Timer();  
-		timer.schedule(task,time);*/ 		
+		if (isFor!=SwifteeApplication.IS_FOR_CIRCULAR_MENU_TIPS){
+			task = new TipTimerTask();
+			timer = new Timer();  
+			timer.schedule(task,time);
+		}
+		 		
 	}   
 
 	

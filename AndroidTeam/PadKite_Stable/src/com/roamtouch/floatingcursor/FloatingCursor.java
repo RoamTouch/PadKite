@@ -660,7 +660,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					fcWindowTabs.setVisibility(VISIBLE);
 					fcSettingsMenu.setVisibility(INVISIBLE);
 					fcMainMenu.setVisibility(INVISIBLE);
-					fcView.setVisibility(INVISIBLE);
+					fcView.setVisibility(INVISIBLE);					
 					break;		
 			}		
 		}
@@ -1777,14 +1777,22 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		}	
 		
 		public void drawTip(Rect re, String[] comment, float X, float Y, int isFor){		
+			
+			Throwable t = new Throwable(); 
+			StackTraceElement[] elements = t.getStackTrace(); 
+
+			String calleeMethod = elements[0].getMethodName(); 
+			String callerMethodName = elements[1].getMethodName(); 
+			String callerClassName = elements[1].getClassName();
+			
 			int _x = Math.round(X);
 			int _y = Math.round(Y);
 			int[] initCoor = {_x,_y}; 
 			Object[] paramTip =  { 
 					re,					
-					comment,
-					//300,
-					initCoor
+					comment,					
+					initCoor,
+					1000
 				}; 
 			tCtrl.setTipComment(paramTip, isFor);		
 		}		
