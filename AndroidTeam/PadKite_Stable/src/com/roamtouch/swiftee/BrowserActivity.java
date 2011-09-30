@@ -23,6 +23,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
+
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import android.gesture.Gesture;
@@ -141,6 +143,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	//JavaScript Bridge Settings 
 	private static WebSettings wSet;
+	
+	//Google Analitics tracking.
+	private GoogleAnalyticsTracker tracker;
     
     public void closeDialog()
     {
@@ -492,7 +497,20 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         }		
         
         display = getWindowManager().getDefaultDisplay();
+        
+        tracker = GoogleAnalyticsTracker.getInstance();
+        
+        // Start the tracker in manual dispatch mode...
+        tracker.startNewSession("UA-21271893-1", this);
+
 		
+    }
+    
+    @Override
+    protected void onDestroy() {
+      super.onDestroy();
+      // Stop the tracker when it is no longer needed.
+      tracker.stopSession();
     }
     
     public void openMap(String url){
@@ -1172,7 +1190,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         hW[1] = h;        
         
         cuadrant.put(1, loc);
-        cuadrant.put(2, hW);         
+        cuadrant.put(2, hW);    
+        
+        loc=null;
+        hW=null;
         
         return cuadrant;
         
