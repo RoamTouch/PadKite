@@ -55,48 +55,94 @@ public class TipView extends View {
         super.onDraw(canvas);
         
         if (draw != SwifteeApplication.DRAW_NONE){
-        	Paint pT = paintText();	 
-        	 
         	
+        	Paint pT = new Paint();   		
+        	       	
 		    switch (textLines){
 		    
 	    		case 1:	    	   			
+	    			
 	    			width = (int) pT.measureText(tipText[0].toString());  
 	    			comment(canvas, lineHeight);
-	    			int _x;
-	    			if (isFor == SwifteeApplication.IS_FOR_CIRCULAR_MENU_TIPS){
-	    				_x =  xPos+(width/2);
-	 	    			if (tipText[0].toString().equals("Add New Window")){
-	 	    				_x -= 30; 
-	 	    			} 
-	 	    			if (tipText[0].toString().equals("Tabs Manager")){
-	 	    				_x -= 10; 
-	 	    			} 
-	 	    			if (tipText[0].toString().equals("Settings")){
-	 	    				_x += 20; 
-	 	    			}
-	 	    			//width -= 30;
-	    			} else {
-	    				_x = xPos+(width/2)+15;
-	    			}    				    			
-	    	   		canvas.drawText(tipText[0].toString(), _x, yPos-5, pT);	
+	    			int _x = checkCMTextWidth();
+	    			Paint pT1 = paintText(1);
+	    	   		canvas.drawText(tipText[0].toString(), _x, yPos-5, pT1);
+	    			
 	    	   		break;
 	    	   		
-	    	   	case 2:
-	    	   		comment(canvas, lineHeight*2);
-	    	   		canvas.drawText(tipText[0].toString(), xPos+(width/2)+15, yPos-5, pT);
-	    	   		canvas.drawText(tipText[1].toString(), xPos+(width/2)+15, yPos+20, pT);
+	    	   	case 2:	    	   		
+	    	   		
+	    	   		comment(canvas, lineHeight*2);   	       	   		
+	    	   		Object[] paintText21 =  getPaintText(tipText[0], pT);	    	   		       
+	    	   		canvas.drawText((String)paintText21[1], xPos+(width/2)+15, yPos-10, (Paint)paintText21[0]);
+	    	   		
+	    	   		Object[] paintText22 =  getPaintText(tipText[1], pT);
+	    	   		canvas.drawText((String)paintText22[1], xPos+(width/2)+15, yPos+25, (Paint)paintText22[0]);
+	    	   		
 	    	   		break;
 	    	   		
 	    	   	case 3:
-	    	   		comment(canvas, lineHeight*3);
-	    	   		canvas.drawText(tipText[0].toString(), xPos+(width/2)+15, yPos-5, pT);
-	    	   		canvas.drawText(tipText[1].toString(), xPos+(width/2)+15, yPos+20, pT);
-	    	   		canvas.drawText(tipText[2].toString(), xPos+(width/2)+15, yPos+45, pT);
-	    	   		break;   	   
+	    	   		
+	    	   		comment(canvas, lineHeight*3);   	       	   		
+	    	   		Object[] paintText31 =  getPaintText(tipText[0], pT);	    	   		       
+	    	   		canvas.drawText((String)paintText31[1], xPos+(width/2)+15, yPos-10, (Paint)paintText31[0]);
+	    	   		
+	    	   		Object[] paintText32 =  getPaintText(tipText[1], pT);
+	    	   		canvas.drawText((String)paintText32[1], xPos+(width/2)+15, yPos+25, (Paint)paintText32[0]);
+	    	   		
+	    	   		Object[] paintText33 =  getPaintText(tipText[2], pT);
+	    	  		canvas.drawText((String)paintText33[1], xPos+(width/2)+15, yPos+45, (Paint)paintText33[0]);	   	
+	    	   		
+	    	   		break;   	
+	    	   		
 		    }
 		    
         }  	   
+    }
+    
+    private int checkCMTextWidth(){ 
+    	
+    	int _x = 0;
+    	
+		if (isFor == SwifteeApplication.IS_FOR_CIRCULAR_MENU_TIPS){
+			_x =  xPos+(width/2);
+				if (tipText[0].toString().equals("Add New Window")){
+				_x -= 30; 
+			} 
+			if (tipText[0].toString().equals("Tabs Manager")){
+				_x -= 10; 
+			} 
+			if (tipText[0].toString().equals("Settings")){
+				_x += 20; 
+			}
+			//width -= 30;
+		} else {
+			_x = xPos+(width/2)+15;
+		}    
+		
+		return _x;
+	}
+    
+    private Object[] getPaintText(String text, Paint pT){
+    	
+    	Object[] paintText = new Object[2]; 		
+    	
+   		if (text.contains("<b>")){   	
+   			
+   			pT = paintText(0);	 
+   			text = text.replaceFirst("<b>", "");
+   			text = text.replaceFirst("</b>", "");   
+   			paintText[0] = pT;
+   			paintText[1] = text;
+   			
+   		} else {
+   			
+   			pT = paintText(1); 			
+   			paintText[0] = pT;
+   			paintText[1] = text;
+   			
+   		}
+   		return paintText;
     }
     
     private void comment (Canvas canvas, int commentHeight){   
@@ -132,16 +178,27 @@ public class TipView extends View {
         return p;
     }
     
-    private Paint paintText(){
+    private Paint paintText(int what){
     	Paint pText = new Paint();
 		pText.setStyle(Paint.Style.FILL);
 		pText.setTextAlign(Paint.Align.CENTER);
-		pText.setAntiAlias(false);		
-		int [] textColor = SwifteeApplication.DARK_GRAY;		
-		pText.setARGB(100, textColor[0], textColor[1], textColor[2]);
-		//pText.setColor(Color.BLACK);
-		pText.setTypeface(Typeface.DEFAULT_BOLD);
-		pText.setTextSize(22);
+		pText.setAntiAlias(false);
+		//int [] textColor = null;
+		Color color = null;
+		switch (what){
+			case 0:
+				pText.setColor(color.BLACK);
+				//textColor = SwifteeApplication.BLACK;
+				pText.setTextSize(25);
+				break;
+			case 1:
+				//textColor = SwifteeApplication.DARK_GRAY;
+				pText.setColor(color.GRAY);
+				pText.setTextSize(22);
+				break;
+		}
+		//pText.setARGB(100, textColor[0], textColor[1], textColor[2]);	
+		pText.setTypeface(Typeface.DEFAULT_BOLD);		
 		pText.setAntiAlias(true);
 		return pText;
     }

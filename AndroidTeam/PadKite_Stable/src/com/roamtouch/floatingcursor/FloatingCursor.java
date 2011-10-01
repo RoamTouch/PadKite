@@ -28,6 +28,7 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.text.ClipboardManager;
@@ -189,6 +190,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 		
 		// FC Scroll speed
 		private final int FC_SCROLL_SPEED = 35;
+		
+		// Message Ids
+		private static final int FOCUS_NODE_HREF = 102;
+		private String linkTitle;
 		
 		private void initScrollView() {
 			mScroller = new Scroller(mContext);
@@ -1032,6 +1037,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				//rect = new Rect(); 
 				rect =	mWebHitTestResult.getRect();
 				
+				//Link Tittle Message
+				final Message msg = mHandler.obtainMessage(FOCUS_NODE_HREF, 0, 0, 0);
+				mWebView.requestFocusNodeHref(msg);
+				
 				if (!rect.isEmpty()){ //rect.left==0 && rect.right==0){
 					Log.v("identifier", "id: " + identifier);
 					Log.v("identifier", "rect :"+rect);								
@@ -1239,6 +1248,26 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				mWebHitTestResultIdentifer = identifier;
 			}
 		}; //End Of HitTestResutl
+		
+		/**
+		 * Message to handle title of the link.**/
+		private Handler mHandler = new Handler() {
+			/** THIS IS FOR WHEN WE WANT TO READ THE TITLE OF THE LINK**/
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case FOCUS_NODE_HREF: {
+					String url = (String) msg.getData().get("url");
+					if (url == null || url.length() == 0) {
+						break;
+					}
+					String tt = (String) msg.getData().get("title");
+					linkTitle = "<b>" + tt + "</b>";					
+					//Log.v("EXTRA", "title: " + title + " url: " + url);
+
+					}
+				}
+			}
+		};
 		
 		/**
 		 * SFOM If SINGLE_FINGER_OPERATION_MODE at SwifteeApplication is true the
@@ -2152,9 +2181,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						mParent.setGestureType(SwifteeApplication.CURSOR_TEXT_GESTURE);
 						mParent.startGesture(true);
 						final String selection = (String) ((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).getText();
-						String word = "Selected \""+selection+"\"";
-						String[] t1 = {word, "draw a gesture", "to execute action"};						
-						drawTip(rect, t1, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
+						
+						String[] firstText = trimSelectedTextForTip();						
+						drawTip(rect, firstText, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
 						break;
 				
 					case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
@@ -2166,7 +2195,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						break;	
 						
 					default:
-						eventViewer.setText("Executing link...");
+						//eventViewer.setText("Executing link...");
+						String[] t3 = {"Opening ", linkTitle };						
+						drawTip(rect, t3, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);		
 						break;
 				}				
 				if (mWebHitTestResult.getType()!=WebHitTestResult.TEXT_TYPE){
@@ -2188,8 +2219,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						mGesturesEnabled = true;
 						mParent.setGestureType(SwifteeApplication.CURSOR_TEXT_GESTURE);
 						mParent.startGesture(true);
-						String[] t1 = {"Line selected", "draw a gesture", "to execute action"};						
-						drawTip(rect, t1, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
+						String[] secondText = trimSelectedTextForTip(); 									
+						drawTip(rect, secondText, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
 						break;
 				
 					case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
@@ -2208,7 +2239,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						forceRing(fcX, fcY);
 						((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).setText(selectedLink);
 						mParent.setSelection(selectedLink);
-						String[] t3 = {"Link copied", "to clipboard" };						
+						String[] t3 = {linkTitle, "copied to clipboard" };						
 						drawTip(rect, t3, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
 						break;
 				}			
@@ -2225,8 +2256,8 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						mGesturesEnabled = true;
 						mParent.setGestureType(SwifteeApplication.CURSOR_TEXT_GESTURE);
 						mParent.startGesture(true);
-						String[] t1 = {"Pharagraph selected", "draw a gesture", "to execute action"};						
-						drawTip(rect, t1, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
+						String[] thirdText = trimSelectedTextForTip(); 						
+						drawTip(rect, thirdText, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
 						break;
 					
 					/*case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
@@ -2246,7 +2277,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 						mGesturesEnabled = true;
 						mParent.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);
 						mParent.startGesture(true);
-						String[] t3 = {"Link selected", "draw a gesture", "to execute action"};						
+						String[] t3 = {"Draw a gesture for",  linkTitle };
 						drawTip(rect, t3, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
 						break;
 				}			
@@ -2259,13 +2290,23 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				stopFirst(false);
 				stopSecond(false);
 				stopThird(false);
-				stopFourth(false);
-				
-			}
-			
+				stopFourth(false);				
+			}			
 			pointer.setImageResource(R.drawable.kite_cursor);
-			
-			
+				
+		}
+		
+		private String[] trimSelectedTextForTip(){			
+			String selectionText= null;			
+			final String selText = (String) ((ClipboardManager) mParent.getSystemService(Context.CLIPBOARD_SERVICE)).getText();			
+			if (!mReadyToFirst){
+				selectionText = selText.substring(0, 8)+ "...";
+			} else {
+				selectionText = selText;
+			}		
+			String word = "<b>" + selectionText + "</b>" + " selected";
+			String[] t1 = {word, "draw a gesture"};		
+			return t1;
 		}
 		
 		public void forceRing(int X, int Y){
