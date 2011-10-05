@@ -61,8 +61,10 @@ public class TipView extends View {
 		    switch (textLines){
 		    
 	    		case 1:	    	   			
-	    			
-	    			width = (int) pT.measureText(tipText[0].toString());  
+	    			Object[] paintText11 =  getPaintText(tipText[0], pT);
+	    			Paint resPaint = (Paint)paintText11[0];	    			
+	    			String title = (String)paintText11[1];    			
+	    			width = (int) resPaint.measureText(title);  
 	    			comment(canvas, lineHeight);
 	    			int _x = checkCMTextWidth();
 	    			Paint pT1 = paintText(1);
