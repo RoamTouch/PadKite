@@ -608,8 +608,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 			/*
 			 * setTab() method is called only when isFirst = true.
 			 */
-			if(isFirst)
-				fcWindowTabs.setTab(wv);
+			//if(isFirst)
+			//	fcWindowTabs.setTab(wv);
+			
 			mWebView = wv;
 			mWebView.setDrawingCacheEnabled(true);
 			mWebView.setWebChromeClient(new WebClient());					
@@ -663,6 +664,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					break;
 			case 2: currentMenu = fcWindowTabs;
 					fcWindowTabs.setVisibility(VISIBLE);
+					fcWindowTabs.showInitTip();
 					fcSettingsMenu.setVisibility(INVISIBLE);
 					fcMainMenu.setVisibility(INVISIBLE);
 					fcView.setVisibility(INVISIBLE);					
@@ -2727,7 +2729,9 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 				if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL)
 				{
 					mForwardTouch = false;
-					fcView.setVisibility(View.VISIBLE);
+					if (!(currentMenu==fcWindowTabs)){
+						fcView.setVisibility(View.VISIBLE);
+					}
 				}
 
 				mWebView.dispatchTouchEvent(event);
@@ -3046,9 +3050,10 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					mPrevX = 0;
 				}
 				mActivePointerId = INVALID_POINTER_ID;
-
-				if (!mMenuDown)
+				 			
+				if ((!mMenuDown) && (!(currentMenu==fcWindowTabs))) { 
 					fcView.setVisibility(View.VISIBLE);
+				}
 
 				stopSelection();
 				stopHitTest(fcX, fcY,false);
