@@ -1180,7 +1180,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         	loc[0] = 1;
         } else if (xLoc < 0 && yLoc > 0){ //UPPER RIGHT CUADRANT - C2.    
         	loc[0] = 2;
-        } else if (xLoc > 0 && yLoc < 0){ //DOWN LEFT CUADRANT - C3.		
+        } else if (xLoc > 0 && yLoc <= 0){ //DOWN LEFT CUADRANT - C3.		
         	loc[0] = 3;
         } else if (xLoc < 0 && yLoc < 0){ //DOWN RIGHT CUADRANT - C4.		
         	loc[0] = 4;
