@@ -664,7 +664,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 					break;
 			case 2: currentMenu = fcWindowTabs;
 					fcWindowTabs.setVisibility(VISIBLE);
-					fcWindowTabs.showInitTip();
+					fcWindowTabs.drawHotTip(); 
 					fcSettingsMenu.setVisibility(INVISIBLE);
 					fcMainMenu.setVisibility(INVISIBLE);
 					fcView.setVisibility(INVISIBLE);					
@@ -3824,6 +3824,7 @@ public class FloatingCursor extends FrameLayout implements MultiTouchObjectCanva
 
 				BitmapDrawable bd = new BitmapDrawable(getCircleBitmap(view));
 				fcWindowTabs.setCurrentThumbnail(bd, view);
+				fcWindowTabs.setHotThumbnail(bd, view);
 
 				fcMainMenu.setBackEabled(view.canGoBack());
 				fcMainMenu.setFwdEabled(view.canGoForward());

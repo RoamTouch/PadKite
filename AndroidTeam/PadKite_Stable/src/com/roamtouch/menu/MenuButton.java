@@ -2,6 +2,7 @@ package com.roamtouch.menu;
 
 import com.roamtouch.swiftee.R;
 import android.content.Context;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -26,6 +27,11 @@ public class MenuButton extends Button {
 		private boolean isSingleFinger;
 		
 		private boolean isArmed;
+		
+		private String hotTitle;
+		private String tabURL;	
+		
+		private Rect hotRect;	
 		
 		private boolean isHotkey = false;
 		private void init(Context context)
@@ -213,4 +219,30 @@ public class MenuButton extends Button {
 			return isArmed;
 			
 		}
+		
+		public void setHotTitle(String hotTitle) {
+			this.hotTitle = hotTitle;
+		}
+		
+		public String getHotTitle() {
+			return hotTitle;
+		}
+		
+		public void setTabURL(String tabURL) {
+			this.tabURL = tabURL;
+		}
+		
+		public String getTabURL() {
+			return tabURL;
+		}
+
+		public void setHotRect(int le, int to, int ri, int bo) {
+			Rect hotRect = new Rect(le, to, ri, bo);			
+			this.hotRect = hotRect;
+		}
+		
+		public Rect getHotRect() {
+			return hotRect;
+		}
+		
 }

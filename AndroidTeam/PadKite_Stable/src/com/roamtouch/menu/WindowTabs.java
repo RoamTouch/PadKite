@@ -29,13 +29,13 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		mContext = context;
 		LayoutInflater.from(context).inflate(R.layout.window_tabs, this);
 		
-	
 		init();
 		int count = getChildCount();
 		for(int i=1;i<count;i++ ){
 			View v = getChildAt(i);
 			v.setOnClickListener(this);
-		}		
+		}
+		
 	}
 
 	public void setTab(WebView wv){
@@ -51,18 +51,35 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		mParent = parent;		
 	}
 	
-	public void setCurrentThumbnail(BitmapDrawable bd,WebView wv){
+	public void setCurrentThumbnail(BitmapDrawable bd,WebView wv){		
 		int count = getChildCount();
 		for(int i =2;i<count-3;i++){
-			TabButton tab = (TabButton) getChildAt(i);
-			if(wv == tab.getWebView()){
-				tab.setImageDrawable(bd);
+			View something = getChildAt(i);			
+			if (something instanceof TabButton) { //&& (loaded==true)){			
+				TabButton tab = (TabButton) getChildAt(i);
+				if(wv == tab.getWebView()){
+					tab.setImageDrawable(bd);
+				}
 			}
 		}
-	//	TabButton tab = (TabButton) getChildAt(currentTab);
-	//	tab.setBackgroundColor(Color.GRAY);
-	//	tab.setImageDrawable(bd);
 	}
+	
+	public void setHotThumbnail(BitmapDrawable bd,WebView wv){
+		
+		int count = getChildCount();				
+		
+		for( int i=0; i < count; i++ ){					
+			View something = getChildAt(i);			
+			if (something instanceof MenuButton) { //&& (loaded==true)){
+				MenuButton hB = (MenuButton) getChildAt(i);				
+				hB.setBackgroundDrawable(bd);	
+				String tabTitle = wv.getTitle();
+				hB.setHotTitle(tabTitle);
+			}		
+		}		
+		
+	}
+	
 	public void onClick(View v) {
 		int id = v.getId();
 		if(id == 33){

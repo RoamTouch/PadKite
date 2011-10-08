@@ -117,6 +117,10 @@ public class TipView extends View {
 			if (tipText[0].toString().equals("Settings")){
 				_x += 20; 
 			}
+			if (tipText[0].toString().equals("Landing Page")){
+				_x -= 10; 
+			}
+			
 			//width -= 30;
 		} else {
 			_x = xPos+(width/2)+15;

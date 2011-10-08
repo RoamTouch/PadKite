@@ -1,5 +1,7 @@
 package com.roamtouch.floatingcursor;
 
+import java.util.Hashtable;
+
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
 
@@ -60,12 +62,27 @@ public class FloatingCursorView extends View{
     
     public double dD;
     
+    private Hashtable<Integer, int[]> colorTable = new Hashtable();
+    
     //int n = 40;
 
     public FloatingCursorView(Context context) {
         super(context);
         //bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.outer_circle);        
-        innerCircle = new FloatingCursorInnerView(context);
+        innerCircle = new FloatingCursorInnerView(context);      
+        
+        colorTable.put(0, SwifteeApplication.DOTS_GREEN);
+        colorTable.put(2, SwifteeApplication.DOTS_ORANGE);
+        colorTable.put(2, SwifteeApplication.DOTS_YELLOW);
+        colorTable.put(3, SwifteeApplication.DOTS_TURQUOISE);
+        colorTable.put(4, SwifteeApplication.DOTS_LIGHT_BLUE);
+        colorTable.put(5, SwifteeApplication.DOTS_VIOLET);
+        colorTable.put(6, SwifteeApplication.DOTS_PINK);
+        colorTable.put(7, SwifteeApplication.DOTS_APPLE);
+        colorTable.put(8, SwifteeApplication.DOTS_RED);
+        colorTable.put(9, SwifteeApplication.DOTS_CYAN);
+        
+        
     }
 
     protected void setPosition(float x, float y)
@@ -132,6 +149,7 @@ public class FloatingCursorView extends View{
 	            	canvas.drawCircle(x, y, (float) (dD-2), pF);
 	            } else {
 	            	lF.setColor(0xFF545454);
+	            	Log.v("out", "i: "+i);	            	
 	            	canvas.drawCircle(x, y, (float) (dD-1.5), lF);
 	            	pF.setColor(0xFFFFFFFF);
 	            	canvas.drawCircle(x, y, (float) (dD-2), pF);            	

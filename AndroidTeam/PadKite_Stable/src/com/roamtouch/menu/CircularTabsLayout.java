@@ -3,6 +3,7 @@ package com.roamtouch.menu;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import android.content.Context;
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -56,12 +57,13 @@ public class CircularTabsLayout extends ViewGroup {
 	   
 		private float mAngleChange;
 	   
-		private int childStartPoint = 3;
+		private int childStartPoint = 4;
 		
 		private int activetabIndex = 2;
 		
 		protected MenuBGView menuBackground= null;
 		protected ImageView currentWindowIcon = null;
+		protected ImageView currentHotIcon = null;	
 		
 		private String m_name = "Windows";
 		
@@ -98,6 +100,31 @@ public class CircularTabsLayout extends ViewGroup {
 			addView(empty);
 			addView(menuBackground);
 		}		
+		
+		public void drawHotTip() {		
+			   
+			int[] loc = new int[2];
+			int w = hotBut.getWidth();
+			int h = hotBut.getHeight();
+			hotBut.getLocationOnScreen(loc);
+			int x = loc[0];
+			int y = loc[1];
+			Rect re = new Rect(x, y, w, h);
+			
+			//Rect re = hotBut.getHotRect();
+			
+			String tT = hotBut.getHotTitle();			
+			
+			if (tT.equals("Landing Page")) {
+				String[] textTitle = { tT };
+				BrowserActivity.drawTip(re, textTitle, hotBut.getCenterX()-20, y);
+			} else {
+				String tU = hotBut.getTabURL();
+				String[] textURL = { tT, tU };
+				BrowserActivity.drawTip(re, textURL, hotBut.getCenterX()-20, y);
+			}
+			invalidate();			
+		}
 		
 		public CircularTabsLayout(Context context) {
 			super(context);
@@ -144,13 +171,20 @@ public class CircularTabsLayout extends ViewGroup {
 		    final int count = getChildCount();
 		    double t = 0;
 		    t=55;
-
-
-		    Button but = (Button)getChildAt(count-1);
-		    int diff = BUTTON_RADIUS2*2/3;
-		    but.layout(a-diff, b-inR2-diff,a+diff, b-inR2+diff);
-
-		    ImageView cone = (ImageView)getChildAt(count-2);	   
+		  
+		    int diffHot = BUTTON_RADIUS2+13;
+		    currentHotIcon.layout(a-diffHot-(int)1.5, b-inR2-diffHot-(int)10.5, a+diffHot-(int)1.5, b-inR2+diffHot-(int)10.5);
+		    		    
+		    int diff = BUTTON_RADIUS2-3;
+		    int le = a-diff-(int)1.5;
+		    int to = b-inR2-diff-(int)10.5;
+		    int ri = a+diff-(int)1.5;
+		    int bo = b-inR2+diff-(int)10.5;
+		    hotBut.layout(le, to, ri, bo); 
+		    hotBut.setHotRect(le,to,ri,bo);
+		    
+		    		 	
+		    ImageView cone = (ImageView)getChildAt(count-3);	   
 		    if (cone.getVisibility() != GONE) {         
 		    	cone.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
 		    	cone.setClickable(false);
@@ -161,7 +195,7 @@ public class CircularTabsLayout extends ViewGroup {
 				menuBackground.setClickable(false);
 			}
 
-		    for (int i = 2; i < count-childStartPoint; i++) {
+		    for (int i = 3; i < count-childStartPoint; i++) {
 		    	
 		    	View v = getChildAt(i);
 		    	if (!(v instanceof TabButton))
@@ -185,7 +219,6 @@ public class CircularTabsLayout extends ViewGroup {
 
 		    		if(child.shouldDraw()) {
 		    			if(child.getId() == activetabIndex){
-
 		    				currentWindowIcon.layout(childLeft-10, childTop-10, lb+10, rb+10);   
 		    			}
 		    			child.layout(childLeft, childTop, lb, rb);                	
@@ -196,6 +229,8 @@ public class CircularTabsLayout extends ViewGroup {
 	   
 	   public final static String PATH = BrowserActivity.THEME_PATH + "/";
 	   
+	   private MenuButton hotBut;
+	   
 	   public void init(){
 			
 			currentWindowIcon = new ImageView(context);
@@ -204,22 +239,28 @@ public class CircularTabsLayout extends ViewGroup {
 		
 		 	ImageView coneSeparator = new ImageView(context);
 		 	coneSeparator.setBackgroundResource(R.drawable.circleround_cone);
-		 	addView(coneSeparator);
-
-		 	MenuButton but = new MenuButton(context);
-		 	but.setId(33);
-		 	but.setDrawables(PATH+"close_windows_normal.png", PATH+"close_windows_pressed.png");
-		 	addView(but);
+		 	addView(coneSeparator);		 		 	
+		 	
+		 	currentHotIcon = new ImageView(context);
+		 	currentHotIcon.setBackgroundResource(R.drawable.wm_tab_border);
+			addView(currentHotIcon);	
+		 	
+		 	hotBut = new MenuButton(context);
+		 	hotBut.setId(33);	 	
+		 	addView(hotBut);		 	
+		 	
 	   }   
 
 	   public boolean canScroll(float angleDiff,int childCount) {
-		   	TabButton first = (TabButton)getChildAt(2);
+		   	
+		   /*TabButton first = (TabButton)getChildAt(2);
 		   	TabButton last = (TabButton)getChildAt(childCount-4);
 
 		   	if((first.getAngle()+angleDiff)>4)
 		   		return false;
 		   	else if(last.getAngle()+angleDiff < 174)
-		   		return false;
+		   		return false;*/
+		   	
 		   	return true;
 	   }
 	
@@ -395,7 +436,7 @@ public class CircularTabsLayout extends ViewGroup {
 		public void moveChilds(){
 			
 			int count=getChildCount();
-			for (int i = 2; i < count-childStartPoint; i++) {
+			for (int i = 3; i < count-childStartPoint; i++) {
 
 		    	View v = getChildAt(i);
 		    	if (!(v instanceof TabButton))

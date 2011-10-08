@@ -182,8 +182,8 @@ public class CircularLayout extends ViewGroup {
 		   
 		   MenuButton hotKey = (MenuButton)getChildAt(childEndPoint+1);		   
 		   if(hotKey.getVisibility() != GONE){
-			   int diff = (int) (BUTTON_RADIUS);//*1.3);
-			   hotKey.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
+			   int diff =  BUTTON_RADIUS + 12;//* (int)1.6;
+			   hotKey.layout(a-diff-(int)1.5, b-inR-diff-(int)10.5, a+diff-(int)1.5, b-inR+diff-(int)10.5);
 		   }
 
 		  // MenuBGView bg = (MenuBGView)getChildAt(0);
@@ -203,14 +203,14 @@ public class CircularLayout extends ViewGroup {
 			   if (child.getVisibility() != GONE) {    
 			   double angle;				   
             	// Calc coordinates around the circle at the center of cart. system
+			    
 			    angle = (i-1)*t;
-                angle=angle-90 + 46;
+                angle = angle - 90 + 46;
             
             	child.setAngle(angle);
             	child.calculateCenter(a,b,inR,angle);
             	
-            	//Log.i("Circle before if angle,x,y" , "("+ x +","+ y +")angle"+angle);
-            
+            	//Log.i("Circle before if angle,x,y" , "("+ x +","+ y +")angle"+angle);            
             	//Log.i("Circle x,y" , "("+ x +","+ y +")");
  
                 final int childLeft = child.getCenterX() - BUTTON_RADIUS;

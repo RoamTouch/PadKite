@@ -66,7 +66,7 @@ public class LandingPage {
 			+"<html>"
 			+"<head>"
 			+"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">"
-			+"<title>PadKite Start Page</title>"
+			+"<title>Landing Page</title>"
 			+"<script type=\"text/javascript\">"
 			+"var type;"			
 			+"function load(){"

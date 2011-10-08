@@ -154,7 +154,7 @@ public class SwifteeApplication extends Application{
 	public static final int PAINT_RED_MAP	= 208;
 	public static final int PAINT_TURQUOISE	= 209;
 	
-	
+	//RING COLORS
 	public static int[] YELLOW 			= {255, 203, 0};	
 	public static int[] LIGHT_YELLOW 	= {255, 237, 168};	
 	public static int[] GREEN 			= {0, 170, 0};
@@ -168,7 +168,18 @@ public class SwifteeApplication extends Application{
 	public static int[] RED_MAP	 		= {252, 120, 108};
 	public static int[] TURQUOISE 		= {0, 212, 159};
 	
-	
+	//DOTS COLORS
+	public static int[] DOTS_GREEN 		= {124, 160, 21};
+	public static int[] DOTS_ORANGE		= {255, 140, 28};
+	public static int[] DOTS_YELLOW 	= {255, 233, 43};
+	public static int[] DOTS_TURQUOISE 	= {238, 99, 161};
+	public static int[] DOTS_LIGHT_BLUE	= {11, 177, 240};
+	public static int[] DOTS_VIOLET		= {226, 115, 255};
+	public static int[] DOTS_PINK		= {233, 82, 135};
+	public static int[] DOTS_APPLE		= {192, 223, 62};
+	public static int[] DOTS_RED		= {236, 20, 20};
+	public static int[] DOTS_CYAN		= {68, 238, 217};
+		
 	public static final int PERSIST_FIRST_STAGE 	= 600;	
 	public static final int PERSIST_SECOND_STAGE 	= 601;
 	public static final int PERSIST_THIRD_STAGE 	= 602;	
