@@ -169,17 +169,39 @@ public class SwifteeApplication extends Application{
 	public static int[] TURQUOISE 		= {0, 212, 159};
 	
 	//DOTS COLORS
-	public static int[] DOTS_GREEN 		= {124, 160, 21};
-	public static int[] DOTS_ORANGE		= {255, 140, 28};
-	public static int[] DOTS_YELLOW 	= {255, 233, 43};
-	public static int[] DOTS_TURQUOISE 	= {238, 99, 161};
-	public static int[] DOTS_LIGHT_BLUE	= {11, 177, 240};
-	public static int[] DOTS_VIOLET		= {226, 115, 255};
-	public static int[] DOTS_PINK		= {233, 82, 135};
-	public static int[] DOTS_APPLE		= {192, 223, 62};
-	public static int[] DOTS_RED		= {236, 20, 20};
-	public static int[] DOTS_CYAN		= {68, 238, 217};
+	public static int[] DOTS_GREEN 			= {124, 160, 21};
+	public static int[] DOTS_GREEN_BORDER 	= {63, 82, 11};
+	
+	public static int[] DOTS_ORANGE			= {255, 140, 28};
+	public static int[] DOTS_ORANGE_BORDER	= {141, 77, 14};
+	
+	public static int[] DOTS_YELLOW 		= {255, 233, 43};
+	public static int[] DOTS_YELLOW_BORDER	= {137, 125, 4};
+	
+	public static int[] DOTS_TURQUOISE 			= {238, 99, 161};
+	public static int[] DOTS_TURQUOISE_BORDER	= {137, 58, 36};
+	
+	public static int[] DOTS_LIGHT_BLUE			= {11, 177, 240};
+	public static int[] DOTS_LIGHT_BLUE_BORDER	= {6, 81, 110};
+	
+	public static int[] DOTS_VIOLET				= {226, 115, 255};
+	public static int[] DOTS_VIOLET_BORDER		= {120	,162 ,135};
 		
+	public static int[] DOTS_PINK			= {233, 62, 135};
+	public static int[] DOTS_PINK_BORDER	= {115, 41, 69};
+	
+	public static int[] DOTS_APPLE			= {192, 223, 62};
+	public static int[] DOTS_APPLE_BORDER	= {101, 107, 36};
+	
+	public static int[] DOTS_RED			= {236, 20, 20};
+	public static int[] DOTS_RED_BORDER		= {107, 10, 10};
+		
+	public static int[] DOTS_CYAN			= {68, 238, 217};
+	public static int[] DOTS_CYAN_BORDER	= {37, 133, 121};
+			
+	public static int[] DOTS_LIGHT_ORANGE			= {251, 225, 253};
+	public static int[] DOTS_LIGHT_ORANGE_BORDER	= {39, 85, 20};
+	
 	public static final int PERSIST_FIRST_STAGE 	= 600;	
 	public static final int PERSIST_SECOND_STAGE 	= 601;
 	public static final int PERSIST_THIRD_STAGE 	= 602;	

@@ -27,7 +27,6 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.view.animation.Animation.AnimationListener;
 
-
 import com.roamtouch.floatingcursor.FloatingCursorInnerView;;
 
 public class FloatingCursorView extends View{
@@ -63,6 +62,7 @@ public class FloatingCursorView extends View{
     public double dD;
     
     private Hashtable<Integer, int[]> colorTable = new Hashtable();
+    private Hashtable<Integer, int[]> colorTableBorder = new Hashtable();
     
     //int n = 40;
 
@@ -71,17 +71,30 @@ public class FloatingCursorView extends View{
         //bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.outer_circle);        
         innerCircle = new FloatingCursorInnerView(context);      
         
-        colorTable.put(0, SwifteeApplication.DOTS_GREEN);
+        colorTable.put(1, SwifteeApplication.DOTS_GREEN);
         colorTable.put(2, SwifteeApplication.DOTS_ORANGE);
-        colorTable.put(2, SwifteeApplication.DOTS_YELLOW);
-        colorTable.put(3, SwifteeApplication.DOTS_TURQUOISE);
-        colorTable.put(4, SwifteeApplication.DOTS_LIGHT_BLUE);
-        colorTable.put(5, SwifteeApplication.DOTS_VIOLET);
-        colorTable.put(6, SwifteeApplication.DOTS_PINK);
-        colorTable.put(7, SwifteeApplication.DOTS_APPLE);
-        colorTable.put(8, SwifteeApplication.DOTS_RED);
-        colorTable.put(9, SwifteeApplication.DOTS_CYAN);
+        colorTable.put(3, SwifteeApplication.DOTS_YELLOW);
+        colorTable.put(4, SwifteeApplication.DOTS_TURQUOISE);
+        colorTable.put(5, SwifteeApplication.DOTS_LIGHT_BLUE);
+        colorTable.put(6, SwifteeApplication.DOTS_VIOLET);
+        colorTable.put(7, SwifteeApplication.DOTS_PINK);
+        colorTable.put(8, SwifteeApplication.DOTS_APPLE);
+        colorTable.put(9, SwifteeApplication.DOTS_RED);
+        colorTable.put(10, SwifteeApplication.DOTS_CYAN);     
+        colorTable.put(11, SwifteeApplication.DOTS_LIGHT_ORANGE);
         
+        colorTableBorder.put(1, SwifteeApplication.DOTS_GREEN_BORDER);
+        colorTableBorder.put(2, SwifteeApplication.DOTS_ORANGE_BORDER);
+        colorTableBorder.put(3, SwifteeApplication.DOTS_YELLOW_BORDER);
+        colorTableBorder.put(4, SwifteeApplication.DOTS_TURQUOISE_BORDER);
+        colorTableBorder.put(5, SwifteeApplication.DOTS_LIGHT_BLUE_BORDER);
+        colorTableBorder.put(6, SwifteeApplication.DOTS_VIOLET_BORDER);
+        colorTableBorder.put(7, SwifteeApplication.DOTS_PINK_BORDER);
+        colorTableBorder.put(8, SwifteeApplication.DOTS_APPLE_BORDER);
+        colorTableBorder.put(9, SwifteeApplication.DOTS_RED_BORDER);
+        colorTableBorder.put(10, SwifteeApplication.DOTS_CYAN_BORDER);
+        colorTableBorder.put(11, SwifteeApplication.DOTS_LIGHT_ORANGE_BORDER);     
+    
         
     }
 
@@ -118,6 +131,8 @@ public class FloatingCursorView extends View{
         return this.rad;
     }  
     
+    int countColor=1;
+    
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);       
@@ -137,17 +152,47 @@ public class FloatingCursorView extends View{
 	        lF.setColor(0xFFF5CD31);	          
 	        
 	        for (int i = 0; i < SwifteeApplication.getFCAmountOfDots(); i++) {
+	        	
 	            double t = 2 * Math.PI * i / SwifteeApplication.getFCAmountOfDots();
 	            int x = (int) Math.round(rect.exactCenterX() + rad * Math.cos(t));
 	            int y = (int) Math.round(rect.exactCenterY() + rad * Math.sin(t));
 	            if (isOdd(i)){
-	            	pF.setColor(0xFF303030);
-	            	canvas.drawCircle(x, y, (float) dD, pF);
-	            	pF.setColor(0xFF919191);
-	            	canvas.drawCircle(x, y, (float) (dD-1), pF);
-	            	pF.setColor(0xFFB3B3B3);
-	            	canvas.drawCircle(x, y, (float) (dD-2), pF);
-	            } else {
+	            	        	
+	            	if (countColor <= 10){	 
+       		          
+		            			            	
+		            	int[] colB = colorTableBorder.get(countColor);
+		            	int rB = colB[0];
+		        		int gB = colB[1];
+		        		int bB = colB[2];    		
+		            	
+		            	pF.setColor(Color.rgb(rB, gB, bB));	            	
+		            	canvas.drawCircle(x, y, (float) dD, pF);
+		            	
+		          		int[] colT = colorTable.get(countColor);
+	            		int rT = colT[0];
+		        		int gT = colT[1];
+		        		int bT = colT[2];    		
+		        		
+		            	pF.setColor(Color.rgb(rT, gT, bT));
+		            	canvas.drawCircle(x, y, (float) (dD-1), pF);
+		            	
+		            	
+		            	countColor++;
+		            	
+	            	} else {
+	            		countColor=1;
+	            		pF.setColor(0xFFB3B3B3);
+		            	canvas.drawCircle(x, y, (float) (dD-2), pF);
+	            	}      	
+	            	
+	            	countColor++;
+	            	
+	            	if (i==SwifteeApplication.getFCAmountOfDots()-1){
+	            		countColor=1;
+	            	}
+	            	
+	            } else {	            	
 	            	lF.setColor(0xFF545454);
 	            	Log.v("out", "i: "+i);	            	
 	            	canvas.drawCircle(x, y, (float) (dD-1.5), lF);
