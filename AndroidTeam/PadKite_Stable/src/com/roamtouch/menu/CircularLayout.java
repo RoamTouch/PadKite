@@ -5,6 +5,8 @@ import java.util.Vector;
 
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
+import com.roamtouch.swiftee.SwifteeApplication;
+
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Handler;

@@ -1,9 +1,17 @@
 package com.roamtouch.menu;
 
+import roamtouch.webkit.WebView;
+
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
+import com.roamtouch.utils.GetDomainName;
+
 import android.content.Context;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,6 +36,7 @@ public class CircularTabsLayout extends ViewGroup {
 		private int mfcRadius ;
 		private int BUTTON_RADIUS;
 		private int BUTTON_RADIUS2;
+		private int BUTTON_MENU_RADIUS;
 		
 		private boolean mIsBeingDragged = false;
 		private float mLastMotionY,mLastMotionX, mLastMotionAngle=-999;
@@ -54,6 +63,7 @@ public class CircularTabsLayout extends ViewGroup {
 	   
 		private int inR=INNER_RADIUS;
 		private int inR2=INNER_RADIUS;
+		private int inR3=INNER_RADIUS;
 	   
 		private float mAngleChange;
 	   
@@ -62,10 +72,12 @@ public class CircularTabsLayout extends ViewGroup {
 		private int activetabIndex = 2;
 		
 		protected MenuBGView menuBackground= null;
-		protected ImageView currentWindowIcon = null;
-		protected ImageView currentHotIcon = null;	
+		//protected ImageView currentWindowIcon = null;
+		protected ImageView hotBorder = null;	
 		
 		private String m_name = "Windows";
+		
+		private GetDomainName gdn = new GetDomainName();
 		
 		public String getName()
 		{
@@ -79,19 +91,7 @@ public class CircularTabsLayout extends ViewGroup {
 		
 		private void initBG()
 		{
-			// FIXME
-			/*Bitmap menuBG = BitmapFactory.decodeFile("/sdcard/Swiftee/Default Theme/circle.png");
-			//Log.d("FormatTest","Resource32: " + menuBG.getConfig());
-
-			ImageView menuBackground = new ImageView(context);
-			//menuBackground.setImageResource(R.drawable.circle);
-			menuBackground.setImageBitmap(menuBG);
 		
-			// Enable dithering when our 32-bit image gets drawn.
-			//Drawable drawable32 = menuBackground.getDrawable();
-			//drawable32.setDither(true);
-		
-			menuBackground.setScaleType(ImageView.ScaleType.CENTER);*/
 			menuBackground = new MenuBGView(this.context);
 			menuBackground.setRadius(INNER_RADIUS);
 			
@@ -104,24 +104,35 @@ public class CircularTabsLayout extends ViewGroup {
 		public void drawHotTip() {		
 			   
 			int[] loc = new int[2];
-			int w = hotBut.getWidth();
-			int h = hotBut.getHeight();
-			hotBut.getLocationOnScreen(loc);
-			int x = loc[0];
-			int y = loc[1];
-			Rect re = new Rect(x, y, w, h);
+			int w = hotTab.getWidth();
+			int h = hotTab.getHeight();
+			hotTab.getLocationOnScreen(loc);
+			int x = loc[0]-4;
+			int y = loc[1]-16;
+			Rect re = new Rect(x, y, w, h);	
 			
-			//Rect re = hotBut.getHotRect();
-			
-			String tT = hotBut.getHotTitle();			
-			
-			if (tT.equals("Landing Page")) {
-				String[] textTitle = { tT };
-				BrowserActivity.drawTip(re, textTitle, hotBut.getCenterX()-20, y);
-			} else {
-				String tU = hotBut.getTabURL();
-				String[] textURL = { tT, tU };
-				BrowserActivity.drawTip(re, textURL, hotBut.getCenterX()-20, y);
+			String tT = hotTab.getHotTitle();			
+		
+			if (tT!=null){
+				
+				if (tT.equals("Landing Page") || tT.equals("Back")) {
+					
+					String[] textTitle = { tT };
+					BrowserActivity.drawTip(re, textTitle, hotTab.getCenterX()-20, y);
+					
+				} else {
+				
+					String tU = hotTab.getTabURL();	
+					tU = gdn.getDomain(tU);
+					
+					if (tU==null){
+						String[] textURL = {tT};
+						BrowserActivity.drawTip(re, textURL, hotTab.getCenterX(), y);
+					} else {
+						String[] textURL = { tT, tU };
+						BrowserActivity.drawTip(re, textURL, hotTab.getCenterX(), y);
+					}
+				}
 			}
 			invalidate();			
 		}
@@ -173,21 +184,19 @@ public class CircularTabsLayout extends ViewGroup {
 		    t=55;
 		  
 		    int diffHot = BUTTON_RADIUS2+13;
-		    currentHotIcon.layout(a-diffHot-(int)1.5, b-inR2-diffHot-(int)10.5, a+diffHot-(int)1.5, b-inR2+diffHot-(int)10.5);
+		    hotBorder.layout(a-diffHot-(int)1.5, b-inR2-diffHot-(int)10.5, a+diffHot-(int)1.5, b-inR2+diffHot-(int)10.5);
 		    		    
 		    int diff = BUTTON_RADIUS2-3;
 		    int le = a-diff-(int)1.5;
 		    int to = b-inR2-diff-(int)10.5;
 		    int ri = a+diff-(int)1.5;
 		    int bo = b-inR2+diff-(int)10.5;
-		    hotBut.layout(le, to, ri, bo); 
-		    hotBut.setHotRect(le,to,ri,bo);
+		    hotTab.layout(le, to, ri, bo); 
+		    hotTab.setHotRect(le,to,ri,bo);
 		    
-		    		 	
-		    ImageView cone = (ImageView)getChildAt(count-3);	   
-		    if (cone.getVisibility() != GONE) {         
-		    	cone.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
-		    	cone.setClickable(false);
+		    if (coneSeparator.getVisibility() != GONE) {         
+		    	coneSeparator.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
+		    	coneSeparator.setClickable(false);
 		    }
 
 			if (menuBackground.getVisibility() != GONE) {         
@@ -195,7 +204,7 @@ public class CircularTabsLayout extends ViewGroup {
 				menuBackground.setClickable(false);
 			}
 
-		    for (int i = 3; i < count-childStartPoint; i++) {
+		    /*for (int i = 3; i < count-childStartPoint; i++) {
 		    	
 		    	View v = getChildAt(i);
 		    	if (!(v instanceof TabButton))
@@ -218,36 +227,45 @@ public class CircularTabsLayout extends ViewGroup {
 
 
 		    		if(child.shouldDraw()) {
-		    			if(child.getId() == activetabIndex){
-		    				currentWindowIcon.layout(childLeft-10, childTop-10, lb+10, rb+10);   
-		    			}
+		    			
+		    			//if(child.getId() == activetabIndex){
+		    			//	currentWindowIcon.layout(childLeft-10, childTop-10, lb+10, rb+10);   
+		    			//}
+		    			
 		    			child.layout(childLeft, childTop, lb, rb);                	
 		    		}
 		    	}
-		    }			   
+		    }*/			   
 	   }
 	   
 	   public final static String PATH = BrowserActivity.THEME_PATH + "/";
 	   
-	   private MenuButton hotBut;
+	   protected TabButton hotTab;
+	   protected MenuButton backBut;
+	   protected ImageView coneSeparator;
 	   
-	   public void init(){
-			
-			currentWindowIcon = new ImageView(context);
-			currentWindowIcon.setBackgroundResource(R.drawable.wm_current);
-			addView(currentWindowIcon);		   
+	   public void init(){		   
 		
-		 	ImageView coneSeparator = new ImageView(context);
-		 	coneSeparator.setBackgroundResource(R.drawable.circleround_cone);
-		 	addView(coneSeparator);		 		 	
+		    coneSeparator = new ImageView(context);
+		    coneSeparator.setBackgroundResource(R.drawable.circleround_cone);
+		 	addView(coneSeparator);		 
 		 	
-		 	currentHotIcon = new ImageView(context);
-		 	currentHotIcon.setBackgroundResource(R.drawable.wm_tab_border);
-			addView(currentHotIcon);	
+		 	backBut = new MenuButton(context);
+		 	backBut.setDrawables(
+		 			"/sdcard/PadKite/Default Theme/backward_normal.png",
+		 			"/sdcard/PadKite/Default Theme/backward_pressed.png");	
+		 	backBut.setFunction("backward");
+		 	addView(backBut);	 	
 		 	
-		 	hotBut = new MenuButton(context);
-		 	hotBut.setId(33);	 	
-		 	addView(hotBut);		 	
+		 	hotTab = new TabButton(context);
+		 	
+		 	hotTab.setHotkey(true);
+		 	hotTab.setOnTouchListener((OnTouchListener) this);
+		 	addView(hotTab);		 	
+		 	
+		 	hotBorder = new ImageView(context);
+		 	hotBorder.setBackgroundResource(R.drawable.wm_tab_border);
+			addView(hotBorder);	
 		 	
 	   }   
 
@@ -272,9 +290,11 @@ public class CircularTabsLayout extends ViewGroup {
 		   	final int rb = child.getCenterY() + BUTTON_RADIUS;
 
 		   	activetabIndex = child.getId();
-		   	currentWindowIcon.layout(childLeft-10, childTop-10, lb+10, rb+10);   
-		   	currentWindowIcon.setVisibility(VISIBLE);
+		   	//currentWindowIcon.layout(childLeft-10, childTop-10, lb+10, rb+10);   
+		   	//currentWindowIcon.setVisibility(VISIBLE);
+		   	
 	   }
+	   
 		public int getActiveTabIndex(){
 			return activetabIndex;
 		}
@@ -286,6 +306,9 @@ public class CircularTabsLayout extends ViewGroup {
 
 			BUTTON_RADIUS2 = (int)(mfcRadius / 3.5f);
 			inR2 = (int) (mfcRadius-BUTTON_RADIUS2*1.5f); //-5 ;
+			
+			BUTTON_MENU_RADIUS = (int)(mfcRadius / 4.5f) + 10;
+			inR3 = (int) (mfcRadius-BUTTON_MENU_RADIUS*1.5f); //-5 ;
 			
 			outR = 2*mfcRadius;
 			menuBackground.setRadius(mfcRadius);
@@ -306,7 +329,6 @@ public class CircularTabsLayout extends ViewGroup {
 			final int action = event.getAction();
 			final float x = event.getX();
 			final float y = event.getY();
-
 
 			if(Math.pow(x-a, 2)+Math.pow(y-b, 2)-Math.pow(inR-40, 2)<0 && Math.pow(x-a, 2)+Math.pow(y-b, 2)-Math.pow(outR, 2)>0)
 				return false;
@@ -337,7 +359,6 @@ public class CircularTabsLayout extends ViewGroup {
 				mLastMotionAngle = -999;
 				mLastMotionX =0;
 				mLastMotionY =0;
-//				Log.d("inside mLastMotionAngle touch Down"," resetting position!!----------------------");
 				break;
 			}
 			case MotionEvent.ACTION_OUTSIDE:{
@@ -345,7 +366,6 @@ public class CircularTabsLayout extends ViewGroup {
 				mLastMotionAngle = -999;
 				mLastMotionX =0;
 				mLastMotionY =0;
-//				Log.d("inside mLastMotionAngle touch outside"," resetting position!!----------------------");
 			}
 			case MotionEvent.ACTION_MOVE:{
 
@@ -356,32 +376,25 @@ public class CircularTabsLayout extends ViewGroup {
 					mLastMotionAngle = (float)computeAngle1(a, b, x, y);
 					mLastMotionX = x;
 					mLastMotionY = y;
-//					Log.d("inside mLastMotionAngle,"," reseted initial position!!----------------------");
 					currentAngle = mLastMotionAngle;
 				}
-				currentAngle = (float)computeAngle1(a, b, x, y);
-				//Log.d("Action move---------------Current angle",""+currentAngle);
+				currentAngle = (float)computeAngle1(a, b, x, y);				
 				angleDiff = currentAngle-mLastMotionAngle;
-				//Log.d("Angle diff---------------",""+angleDiff);
-
+				
 				// Special case to handle move from fourth quadrant to first quadrant
 				if(Math.abs(angleDiff) > 200) {
 					if(currentAngle < mLastMotionAngle) {
 						if((mLastMotionAngle > 270) && (currentAngle < 90)) {
 							angleDiff = currentAngle + (360 - mLastMotionAngle);
-//							Log.d("Angle diff adjusted---------------",""+angleDiff);
 						}
 					}
 					else {
 						if((mLastMotionAngle < 90) && (currentAngle > 270)) {
 							angleDiff = mLastMotionAngle + (360 - currentAngle);
 							angleDiff = -1*angleDiff;
-//							Log.d("Angle diff adjusted---------------",""+angleDiff);
 						}
 					}
 				}
-
-				//if (yDiff > 3 || xDiff > 3) {
 
 				if(Math.abs(angleDiff) > 0.5 && Math.abs(angleDiff) < 250)  {
 
@@ -400,15 +413,13 @@ public class CircularTabsLayout extends ViewGroup {
 						return true;
 					//if(mLastMotionAngle>270 && currentAngle<90)
 					//	mAngleChange = currentAngle;
-
-
 					moveChilds();
-					//Log.i("x,y" , "("+ x +","+ y +")");
-					//Log.d("x,y,angle: ", x+","+y+","+mLastMotionAngle);
+				
 				}
 				break;
 			}
 			case MotionEvent.ACTION_UP:
+				
 				final VelocityTracker velocityTracker = mVelocityTracker;
 				velocityTracker.computeCurrentVelocity(1000);
 				float initialVelocityY =  velocityTracker.getYVelocity();
@@ -426,54 +437,312 @@ public class CircularTabsLayout extends ViewGroup {
 				mLastMotionAngle = -999;
 				mLastMotionX =0;
 				mLastMotionY =0;
-//				Log.d("inside mLastMotionAngle,"," resetting position!!----------------------");
+				
+				//Go back to main menu
+			    if (hotTab.getHotTitle().equals("Back")){
+			    	
+			    	BrowserActivity.setCurrentMenu(0);
+			    	
+	            } else if (hotTab.isClose()){	            	
+
+	            	long downTime = SystemClock.uptimeMillis();
+    				long eventTime = SystemClock.uptimeMillis();								
+    				MotionEvent hotEvent = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_DOWN, cX, cY, 0);    				
+    				hotTab.dispatchTouchEvent(hotEvent);	            	           	
+	            	
+	            } else { 
+	            	
+	            	BrowserActivity.toggleMenuVisibility();
+	            }
+				
+				
+				
+				
 			}
-
-
 			return true;
 		}
+		
+		int cX; 
+		int cY;
+		private Handler handler = new Handler();
 	
 		public void moveChilds(){
 			
-			int count=getChildCount();
-			for (int i = 3; i < count-childStartPoint; i++) {
-
-		    	View v = getChildAt(i);
-		    	if (!(v instanceof TabButton))
-		    		continue;
-		    	
-		    	TabButton child = (TabButton)v;
+				int count = getChildCount();
 				
-				if (child.getVisibility() != GONE) {            
-					double angle=child.getAngle();
-					angle+=mAngleChange;
-					child.setAngle(angle);
-					child.calculateCenter(a,b,inR,angle);
-
-					final int childLeft = child.getCenterX() - BUTTON_RADIUS;
-					final int childTop = child.getCenterY() - BUTTON_RADIUS;
-					final int lb = child.getCenterX() + BUTTON_RADIUS;
-					final int rb = child.getCenterY() + BUTTON_RADIUS;
-
-					if(child.getId() == activetabIndex){
-						currentWindowIcon.layout(childLeft-10, childTop-10, lb+10, rb+10);   
-						currentWindowIcon.setVisibility(View.VISIBLE);
-					}
+				for (int i = 3; i < count; i++) {
 					
-					//Button but1 = (Button)getChildAt(count-3);
-					if(child.shouldDraw()) {
-						child.setVisibility(View.VISIBLE);
-						child.layout(childLeft, childTop, lb, rb);
-					}
-					else{
-						if(child.getId() == activetabIndex){
-							currentWindowIcon.setVisibility(View.INVISIBLE);
+			    	View something = getChildAt(i);
+			    	
+			    	if (something instanceof MenuButton){
+			    		
+			    		MenuButton back = (MenuButton) something;			    		
+			    				    		
+			    		double angle=back.getAngle();
+		            	angle+=mAngleChange;
+		            	back.setAngle(angle);
+		            	back.calculateCenter(a,b,inR3,angle);           	
+		            	
+		                if (back.shouldDraw()){	
+		                	
+		                	final int childLeft = back.getCenterX() - BUTTON_MENU_RADIUS;
+			                final int childTop = back.getCenterY() - BUTTON_MENU_RADIUS;
+			                final int lb = back.getCenterX() + BUTTON_MENU_RADIUS;
+			                final int rb = back.getCenterY() + BUTTON_MENU_RADIUS;             			    			
+			                
+			                back.setVisibility(View.VISIBLE);              
+			                back.layout(childLeft, childTop, lb, rb);		                
+			                
+			               if (back.isHidden()){	                	
+			            	   
+			            	   int countTabs = BrowserActivity.getTabCount();
+			            	   
+			            	   if (countTabs<=1){
+			            		   
+			            	   	   hotTab.applyInit();
+			            	   	   
+			            	   } else {
+			            	  
+				            	   	TabButton lastTab = (TabButton) getChildAt(countTabs+1);
+				                	BitmapDrawable bitmapDrawable = lastTab.getBitmapDrawable();
+				                	WebView wv = lastTab.getWebView();
+				                	String tabTitle = wv.getTitle();		                	
+				                	hotTab.setHotTitle(tabTitle);	
+				                	String tabUrl = wv.getUrl();
+				                	hotTab.setTabURL(tabUrl);					                	
+				                	hotTab.setBackgroundDrawable(bitmapDrawable);					                	
+				                	
+			            	   }
+				                
+				                back.setHidden(false);
+			                	drawHotTip();		
+			                	
+			                }           
+			                
+		                } else {           	
+		                	
+		                	cleanClose();
+		                	
+		                	if (!back.isAnglePositive()){             		
+		                		          		
+		                		Drawable drawable = Drawable.createFromPath("/sdcard/PadKite/Default Theme/backward_pressed_big.png");          			                		
+		                		hotTab.setBackgroundDrawable(drawable);	                		         		
+		                		hotTab.setHotTitle("Back");            		
+		                		drawHotTip();	              		
+	                			
+		                	}             	
+		                	
+		                	back.setVisibility(View.INVISIBLE);	
+		                	back.setHidden(true);
+		                	
+		            	}     		    		
+			    	
+			    	} else if (something instanceof TabButton){		    		
+			    	
+				    	TabButton child = (TabButton) something;
+						
+				    	if (child.isHotkey()) {
+				    		
+				    		int diffHot = BUTTON_RADIUS2+13;
+							hotBorder.layout(a-diffHot-(int)1.5, b-inR2-diffHot-(int)10.5, a+diffHot-(int)1.5, b-inR2+diffHot-(int)10.5);
+						    		    
+						    int diff = BUTTON_RADIUS2-3;
+						    int le = a-diff-(int)1.5;
+						    int to = b-inR2-diff-(int)10.5;
+						    int ri = a+diff-(int)1.5;
+						    int bo = b-inR2+diff-(int)10.5;  				
+						    hotTab.layout(le, to, ri, bo);
+				    		
+				    	} else {
+				    	
+							if (child.getVisibility() != GONE) {  
+			        
+								double angle=child.getAngle();
+								angle+=mAngleChange;
+								child.setAngle(angle);
+								child.calculateCenter(a,b,inR,angle);
+			
+								final int childLeft = child.getCenterX() - BUTTON_RADIUS;
+								final int childTop = child.getCenterY() - BUTTON_RADIUS;
+								final int lb = child.getCenterX() + BUTTON_RADIUS;
+								final int rb = child.getCenterY() + BUTTON_RADIUS;												
+			
+								if(child.shouldDraw()) {
+									
+									child.setVisibility(View.VISIBLE);
+									child.layout(childLeft, childTop, lb, rb);
+									
+									if (child.isHidden()){
+										
+										int id = child.getId();							
+										child.setHidden(false);						
+										int countTabs = BrowserActivity.getTabCount();
+										
+										cleanClose();									
+										
+										if (id < (countTabs-2)){			
+											
+											BrowserActivity.setActiveWebViewIndex(id+4);									
+											TabButton previous = (TabButton) getChildAt(id+4);
+											BitmapDrawable bd = previous.getBitmapDrawable();
+											WebView wv = previous.getWebView();
+											String ttl = wv.getTitle();											
+											hotTab.setHotTitle(ttl);
+											hotTab.setBackgroundDrawable(bd);												
+											
+										} else if (id == (countTabs-2)) {									
+											
+											BrowserActivity.setActiveWebViewIndex(id+1);	
+											hotTab.applyInit();										
+											handler.postDelayed(runnableClose, 2000);
+											
+										}							
+									}
+									
+									drawHotTip();	
+									
+								} else {		
+											
+									
+									child.setVisibility(View.INVISIBLE);
+									BitmapDrawable bd = child.getBitmapDrawable();
+									hotTab.setBackgroundDrawable(bd);
+									child.setHidden(true);
+									
+									BrowserActivity.setActiveWebViewIndex(child.getId());		
+									
+									handler.postDelayed(runnableClose, 2000);
+									
+									drawHotTip();	
+									
+								}
+							}
 						}
-						child.setVisibility(View.INVISIBLE);
+			    	}
+				}			
+	 }	
+	
+	
+	protected void cleanClose(){
+		hotTab.setClose(false);
+		handler.removeCallbacks(runnableClose);	
+		hotBorder.setBackgroundResource(R.drawable.wm_tab_border);
+	}
+		
+	Runnable runnableClose = new Runnable(){		 
+		public void run() {		
+	  		hotBorder.setBackgroundResource(R.drawable.wm_close);	 
+	  		hotTab.setClose(true);
+			handler.removeCallbacks(runnableClose);	
+			//dontMoveChilds = true;
+			//handler.postDelayed(runnableHideClose, 2000);
+		}					
+	};	
+		
+		
+		
+		
+		public void resetMenu(){
+						
+			int count=getChildCount();
+			
+			for (int i = 3; i < count; i++) {
+
+		    	View something = getChildAt(i);		
+				
+				if (something instanceof MenuButton) {
+					
+					MenuButton but = (MenuButton) getChildAt(i);				
+						
+					double angle = getBackAngle();
+					backBut.setAngle(angle);
+					backBut.calculateCenter(a,b,inR3,angle);		
+
+		    		final int childLeft = but.getCenterX() - BUTTON_MENU_RADIUS;
+		    		final int childTop = but.getCenterY() - BUTTON_MENU_RADIUS;
+		    		final int lb = but.getCenterX() + BUTTON_MENU_RADIUS;
+		    		final int rb = but.getCenterY() + BUTTON_MENU_RADIUS;
+					
+					if(backBut.shouldDraw()) {					
+						backBut.layout(childLeft, childTop, lb, rb); 
+						backBut.setHidden(false);
+					}						
+													    			
+					
+				} else if (something instanceof TabButton) {				
+				
+					TabButton tab = (TabButton) getChildAt(i);
+					
+					if (tab.isHotkey()) {
+						
+						int diffHot = BUTTON_RADIUS2+13;
+						hotBorder.layout(a-diffHot-(int)1.5, b-inR2-diffHot-(int)10.5, a+diffHot-(int)1.5, b-inR2+diffHot-(int)10.5);
+					    		    
+					    int diff = BUTTON_RADIUS2-3;
+					    int le = a-diff-(int)1.5;
+					    int to = b-inR2-diff-(int)10.5;
+					    int ri = a+diff-(int)1.5;
+					    int bo = b-inR2+diff-(int)10.5;  				
+					    hotTab.layout(le, to, ri, bo);
+						
+					} else {		
+											
+						//ImageView tabBorder = tab.getBorderImage();					
+						BitmapDrawable bitmapDrawable = tab.getBitmapDrawable();
+						
+						int t=55;
+						double angle = (i-2)*t;
+			    		angle= angle - 90;
+			    		tab.setAngle(angle);
+			    		tab.calculateCenter(a,b,inR,angle);
+	
+			    		final int childLeft = tab.getCenterX() - BUTTON_RADIUS;
+			    		final int childTop = tab.getCenterY() - BUTTON_RADIUS;
+			    		final int lb = tab.getCenterX() + BUTTON_RADIUS;
+			    		final int rb = tab.getCenterY() + BUTTON_RADIUS;
+			    		   		
+			    		if(tab.shouldDraw()) {   			
+			    			tab.setBackgroundDrawable(bitmapDrawable);	    			   			
+			    			//tabBorder.layout(childLeft-10, childTop-10, lb+10, rb+10);
+			    			tab.layout(childLeft, childTop, lb, rb);	    			
+			    		}	
 					}
-				}
+			    		
+				
 			}
-	 }
+                
+		}	
+		
+	}	
+		
+	private double getBackAngle() {		   
+	   
+		double angle = 0;
+	   
+	   int countTabs = BrowserActivity.getTabCount();
+		
+			switch (countTabs){
+				case 1:				
+					angle = -37; 
+					break;
+				case 2:
+					angle = 20; 
+					break;
+				case 3:
+					angle = 75; 
+					break;
+				case 4:
+					angle = 155; 
+					break;
+				case 5:
+					angle = 180; 
+					break;
+			}
+			
+			return angle;		   
+	   }
+		
+		
 	public void fling(float velocityX, float velocityY) 
 	{
 		//Log.d("Scroll X,Y",getScrollX()+","+getScrollY());

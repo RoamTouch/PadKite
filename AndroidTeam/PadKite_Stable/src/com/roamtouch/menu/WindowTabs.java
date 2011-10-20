@@ -11,11 +11,14 @@ import com.roamtouch.view.EventViewerArea;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 
-public class WindowTabs extends CircularTabsLayout implements OnClickListener{
+public class WindowTabs extends CircularTabsLayout implements OnClickListener, OnTouchListener {
 
 //	private FloatingCursor mFloatingCursor;
 	private BrowserActivity mParent;
@@ -34,8 +37,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 		for(int i=1;i<count;i++ ){
 			View v = getChildAt(i);
 			v.setOnClickListener(this);
-		}
-		
+		}		
 	}
 
 	public void setTab(WebView wv){
@@ -58,37 +60,36 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 			if (something instanceof TabButton) { //&& (loaded==true)){			
 				TabButton tab = (TabButton) getChildAt(i);
 				if(wv == tab.getWebView()){
-					tab.setImageDrawable(bd);
+					//tab.setImageDrawable(bd);
+					tab.setBackgroundDrawable(bd);
+					tab.setBitmapDrawable(bd);
 				}
 			}
 		}
 	}
 	
-	public void setHotThumbnail(BitmapDrawable bd,WebView wv){
+	public void setHotThumbnail(BitmapDrawable bd, WebView wv){
 		
-		int count = getChildCount();				
-		
-		for( int i=0; i < count; i++ ){					
-			View something = getChildAt(i);			
-			if (something instanceof MenuButton) { //&& (loaded==true)){
-				MenuButton hB = (MenuButton) getChildAt(i);				
-				hB.setBackgroundDrawable(bd);	
-				String tabTitle = wv.getTitle();
-				hB.setHotTitle(tabTitle);
-			}		
-		}		
-		
+		hotTab.setBackgroundDrawable(bd);	
+		String tabTitle = wv.getTitle();
+		hotTab.setHotTitle(tabTitle);
+		hotTab.setWebView(wv);
+		hotTab.setBitmapDrawable(bd);
+	
 	}
 	
 	public void onClick(View v) {
 		int id = v.getId();
-		if(id == 33){
+		
+		/*if(id == 33){
 			//addWindow();
 			mParent.removeWebView();
 			removeWindow();
 			return;
 		}
-		else if (v instanceof TabButton){
+		else*/ 
+		
+		if (v instanceof TabButton){
 			TabButton child = (TabButton)v;
 			mParent.setActiveWebViewIndex(id);
 			setActiveTabIndex(child);	
@@ -98,6 +99,24 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 			return;
 		}
 	}
+	
+	public boolean onTouch(View v, MotionEvent m) {
+	    
+    	switch (m.getAction())
+    	{
+	        case MotionEvent.ACTION_DOWN:
+	        {
+	        	mParent.removeWebView();
+				removeWindow();
+				cleanClose();
+				invalidate();
+				resetMenu();
+	        }
+    	}       
+    	return true;
+	}	
+	
+
 	
 	public void setCurrentTab(int i){
 		int count = getChildCount()-3;
@@ -110,19 +129,25 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener{
 	}
 	
 	public void addWindow(String url){		
+		
 		TabButton but = new TabButton(mContext);
-		//but.setBackgroundResource(R.drawable.settings_btn);
-		but.setWebView(createWebView(url));
+		WebView wv = createWebView(url);
+		but.setWebView(wv);			
 		but.setOnClickListener(this);
 		but.setTabIndex(2);
 		addView(but,2);
 		int count = getChildCount();
 		for(int i =3;i<count-3;i++){
-			TabButton tab = (TabButton) getChildAt(i);
-			tab.setTabIndex(i);
+			View something = getChildAt(i);
+			if (something instanceof TabButton) {
+				TabButton tab = (TabButton) getChildAt(i);			
+				tab.setTabIndex(i);
+			}			
 		}
+		
 		mParent.addWebView(but.getWebView());
-		but.setId(mParent.getActiveWebViewIndex()+1);
+		int active = mParent.getActiveWebViewIndex()+1;
+		but.setId(active);		
 		mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()+1);
 		
 		currentTab = 2;

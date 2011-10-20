@@ -1,5 +1,6 @@
 package com.roamtouch.swiftee;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -7,7 +8,9 @@ import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -27,6 +30,7 @@ import org.apache.http.protocol.HTTP;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.floatingcursor.FloatingCursor;
+import com.roamtouch.menu.CircularTabsLayout;
 import android.gesture.Gesture;
 import android.gesture.GestureLibrary;
 import android.gesture.GesturePoint;
@@ -54,8 +58,11 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.gesture.GestureOverlayView;
 import android.gesture.GestureOverlayView.OnGestureListener;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
@@ -71,6 +78,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.speech.RecognizerIntent;
 import android.text.ClipboardManager;
+//import android.util.Base64;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -85,6 +93,7 @@ import roamtouch.webkit.WebSettings;
 import roamtouch.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
@@ -106,7 +115,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	final public static String BASE_PATH = "/sdcard/PadKite";
 	final public static String THEME_PATH = BASE_PATH + "/Default Theme";
 
-	private int activeWebViewIndex = 0;
+	private static int activeWebViewIndex = 0;
 	
 	public WebView webView;
 	private SwifteeOverlayView overlay;
@@ -116,7 +125,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	public static EventViewerArea eventViewer;
 	private GestureLibrary mLibrary;	
 	
-	private FrameLayout webLayout;
+	private static FrameLayout webLayout;
 	private SwifteeGestureView mGestures;
 	private HorizontalScrollView mTutor;
 	
@@ -134,7 +143,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     private String landingPath = Environment.getExternalStorageDirectory()+"/PadKite/Web Assets/loadPage.html";
           
     //Visuals
-    private RingController rCtrl;
+    private static RingController rCtrl;
     private static TipController tCtrl;
     private PointerHolder pHold;
     
@@ -146,7 +155,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	//Google Analitics tracking.
 	private GoogleAnalyticsTracker tracker;
-    
+	
     public void closeDialog()
     {
 		AlertDialog alertDialog;
@@ -156,7 +165,44 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	    alertDialog.setMessage("You got " + floatingCursor.getWindowCount() + " open windows left. Do you really want to quit?");
 	    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
 	      public void onClick(DialogInterface dialog, int which) {
-	    	//mParent.finish();  
+	    	  
+	    	//mParent.finish();
+	    	//JOSE
+	    	  
+	    	/*Hashtable hashTab = CircularTabsLayout.getTabHash();
+	    	
+	    	if (hashTab.size()>1){
+	    		
+		    	for (int i=0; i< hashTab.size(); i++){
+					
+					Vector vector = (Vector) hashTab.get(i);	
+						
+						if ( vector.size() == 4 ){
+							
+							TabButton tab = (TabButton) vector.get(0);						
+							BitmapDrawable bitmapDrawable = (BitmapDrawable) vector.get(2);
+							Bitmap bitmap = ((BitmapDrawable)bitmapDrawable).getBitmap();
+							
+							ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
+							bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object   
+		                    byte[] image = baos.toByteArray();
+		                    String encodedImage = Base64.encodeToString(image, Base64.DEFAULT);
+		                    
+							WebView wv = (WebView) vector.get(3);
+							
+							String tabTitle = wv.getTitle();
+							String url = wv.getUrl();
+							appState.getDatabase().insertWindows(tabTitle, url, encodedImage);
+	
+						}
+		    	}
+		    	
+	    	}*/
+	    	
+	    	
+	    	//STORE WINDOWS ON DATABASE.
+	    	//
+	    	  
 	        System.exit(0);
 
 	    } }); 
@@ -551,6 +597,14 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	rCtrl.drawNothing();
     }
     
+    public static void setCurrentMenu(int menu){
+    	floatingCursor.setCurrentMenu(menu);
+    }
+    
+    public static void toggleMenuVisibility(){
+    	floatingCursor.toggleMenuVisibility();
+    }
+    
     public void startTextGesture()
     {
     	drawNothingTip();
@@ -801,7 +855,50 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		stopGesture();
 	}
 	
-	
+	//public boolean getWindowsManager(Context context) {
+		
+		/*boolean ret = false;
+		//ArrayList<String> wm = new ArrayList<String>();
+		SwifteeApplication appState = ((SwifteeApplication)context.getApplicationContext());
+    	DBConnector database = appState.getDatabase();
+    	Cursor c = database.getFromHistory(1);    	
+    	if (c==null){ 
+    		return ret; 
+    	}    	
+    	int count = c.getCount();
+    	c.moveToPosition(0);    	
+    	int num = 0;
+    	String hi = null;    	
+    	
+		while (!c.isAfterLast() && num < count){		
+			
+			String tabTitle = c.getString(1);
+ 			String url = c.getString(2);
+ 			String bitmapString = c.getString(3); 			
+ 			
+ 			/*TabButton tab = (TabButton) vector.get(0);						
+			BitmapDrawable bitmapDrawable = (BitmapDrawable) vector.get(2);
+			Bitmap bitmap = ((BitmapDrawable)bitmapDrawable).getBitmap();  
+			WebView wv = (WebView) vector.get(3);
+			String tabTitle = wv.getTitle();
+			String url = wv.getUrl();
+			appState.getDatabase().insertWindows(tabTitle, url, bitmap);
+ 			
+ 			
+ 			hi = id+"|"+name+"|"+link+"|"+formatter.format(date);
+ 			history.add(hi);
+			
+ 			//Log.v("VER", "id: "+id+ "  name:  "+name+"  link:  "+link+"  date:  "+date);
+			c.moveToNext();
+			num++;
+			
+		}
+		if (num==count){ 
+			LandingPage.setHistory(history);
+			ret=true;			
+		}*/
+		//return ret;		
+	//}
 	
 	private void bookmarkGestures(String action){
 		
@@ -841,48 +938,34 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		}
 		return points;
 	}
-/*	
-	public void setTopBarVisibility(int visibility){
-			mTopBarArea.setVisibility(visibility);
-	}
-	
-	public void setTopBarMode(int mode){
-		mTopBarArea.setMode(mode);
-	}
-	
-	public void setTopBarURL(String url)
-	{
-		mTopBarArea.setURL(url);
-	}
-*/	
+
 	public void refreshWebView(){
 		webView.reload();
 	}
 
-	public void setActiveWebViewIndex(int activeWebViewIndex) {		
+	public static void setActiveWebViewIndex(int act) {
+		
 		int count = webLayout.getChildCount();
-		if(activeWebViewIndex > -1 && activeWebViewIndex <count){
-			this.activeWebViewIndex = activeWebViewIndex;
-		}
-		else
+		
+		if(act > -1 && act < count){
+			activeWebViewIndex = act;
+		} else { 
 			return;
+		}
+		
 		for(int i=0;i<count;i++){
 			if(i == activeWebViewIndex){
 				WebView wv = (WebView)webLayout.getChildAt(i);
 				wv.setVisibility(View.VISIBLE);
 				floatingCursor.setWebView(wv,false);
 				rCtrl.setWebView(wv);
-			}
-			else
+			} else {
 				webLayout.getChildAt(i).setVisibility(View.INVISIBLE);
+			}
 				
-		}
+		}		
 	}
-	
-	public void setTopBarMode(int mode)
-	{
-		// FIXME: Stub
-	}
+
 
 	public int getActiveWebViewIndex() {
 		return activeWebViewIndex;
@@ -895,7 +978,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		int currentPage = SwifteeApplication.getNewLandingPagesOpened();
 		SwifteeApplication.setNewLandingPagesOpened(currentPage+1);			
 	}
-	public void removeWebView(){
+	
+	public static void removeWebView(){
 		webLayout.removeViewAt(activeWebViewIndex);	
 		setActiveWebViewIndex(activeWebViewIndex);
 		int count = webLayout.getChildCount();
@@ -909,11 +993,11 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		int currentPage = SwifteeApplication.getNewLandingPagesOpened();
 		if (currentPage>0){
 			SwifteeApplication.setNewLandingPagesOpened(currentPage-1);
-		}
+		}		
 	}
 
 	public void adjustTabIndex(WindowTabs winTabs){
-		int count = winTabs.getChildCount() - 3;
+		int count = winTabs.getChildCount() - 4;
 		int wvCount = webLayout.getChildCount();
 		for(int i= 2;i<count;i++){
 			TabButton child = (TabButton)winTabs.getChildAt(i);
@@ -924,11 +1008,22 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 				setActiveWebViewIndex(child.getId());
 				winTabs.setActiveTabIndex(child);	
 				winTabs.setCurrentTab(child.getTabIndex());
-				String url = child.getWebView().getUrl();
-				eventViewer.setText(url);
+				//String url = child.getWebView().getUrl();
+				//eventViewer.setText(url);
 			}
 		}		
 	}
+	
+	/*public void setActiveTabIndex(TabButton child){
+		WindowTabs.setActiveTabIndex(child);
+	}*/
+	
+	public static int getTabCount(){
+		int wvCount = webLayout.getChildCount();
+		return wvCount;
+	}
+	
+	
 	public void setEventViewerMode(int mode){
 			eventViewer.setMode(mode);		
 	}

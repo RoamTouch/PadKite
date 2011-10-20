@@ -1,8 +1,11 @@
 package com.roamtouch.menu;
 
+import roamtouch.webkit.WebView;
+
 import com.roamtouch.swiftee.R;
 import android.content.Context;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -28,11 +31,35 @@ public class MenuButton extends Button {
 		
 		private boolean isArmed;
 		
+		//hotTab
 		private String hotTitle;
 		private String tabURL;	
-		
 		private Rect hotRect;	
 		
+		private WebView mWebView;
+		private BitmapDrawable bitmapDrawable;
+		
+		private boolean isHidden;
+		
+		public boolean isHidden() {
+			return isHidden;
+		}	
+		
+
+		public void setHidden(boolean isHidden) {
+			this.isHidden = isHidden;
+		}
+		
+		public boolean isClose() {
+			return close;
+		}
+
+		public void setClose(boolean close) {
+			this.close = close;
+		}
+
+		private boolean close;
+
 		private boolean isHotkey = false;
 		private void init(Context context)
 		{
@@ -244,5 +271,26 @@ public class MenuButton extends Button {
 		public Rect getHotRect() {
 			return hotRect;
 		}
+		
+		public void setWebView(WebView mWebView) {
+			this.mWebView = mWebView;
+		}
+
+		public WebView getWebView() {
+			return mWebView;
+		}
+		public void setBitmapDrawable(BitmapDrawable bitmapDrawable) {
+			this.bitmapDrawable = bitmapDrawable;
+		}
+		
+		public BitmapDrawable getBitmapDrawable() {
+			return bitmapDrawable;
+		}
+		
+		public void applyInit(){
+			this.setBackgroundDrawable(bitmapDrawable);
+			this.hotTitle = mWebView.getTitle();
+		}
+		
 		
 }

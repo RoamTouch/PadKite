@@ -218,6 +218,7 @@ public class SwifteeApplication extends Application{
     
     public static final int IS_FOR_WEB_TIPS				= 506;
     public static final int IS_FOR_CIRCULAR_MENU_TIPS	= 507;
+    public static final int IS_FOR_CLOSE_WINDOW			= 508;
     
 	/**
 	 * MISC
