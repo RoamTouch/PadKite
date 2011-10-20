@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Vector;
 
 import com.roamtouch.database.DBConnector;
 
@@ -27,7 +28,7 @@ import org.acra.annotation.*;
 
 public class SwifteeApplication extends Application{
 	
-	private DBConnector database;
+	private static DBConnector database;
 	
 	/**
 	 * GLOBAL VARIABLES
@@ -130,6 +131,12 @@ public class SwifteeApplication extends Application{
 	private static String youtube_search;   
 	public static String getYouTubeSearch() {return youtube_search; }
     public static void setYouTubeSearch(String search) { youtube_search = search; }    
+    
+    
+    //Tabs Database Vector.
+	private static Vector tab_vector;   
+	public static Vector getTabVector() {return tab_vector; }
+    public static void setTabVector(Vector tV) { tab_vector = tV; }    
     
       
     /**
@@ -297,7 +304,7 @@ public class SwifteeApplication extends Application{
 		super.onTerminate();
 		database.close();
 	}
-	public DBConnector getDatabase(){
+	public static DBConnector getDatabase(){
 		return database;
 	}
 	public GestureLibrary getGestureLibrary(int gestureType){

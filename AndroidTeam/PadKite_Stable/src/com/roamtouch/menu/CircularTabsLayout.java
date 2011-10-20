@@ -1,12 +1,18 @@
 package com.roamtouch.menu;
 
+import java.io.ByteArrayOutputStream;
+import java.util.Vector;
+
 import roamtouch.webkit.WebView;
 
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
+import com.roamtouch.swiftee.SwifteeApplication;
 import com.roamtouch.utils.GetDomainName;
+import com.roamtouch.utils.Base64;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -202,40 +208,7 @@ public class CircularTabsLayout extends ViewGroup {
 			if (menuBackground.getVisibility() != GONE) {         
 				menuBackground.layout(a-mfcRadius, b-mfcRadius, a+mfcRadius, b+mfcRadius);
 				menuBackground.setClickable(false);
-			}
-
-		    /*for (int i = 3; i < count-childStartPoint; i++) {
-		    	
-		    	View v = getChildAt(i);
-		    	if (!(v instanceof TabButton))
-		    		continue;
-		    	
-		    	TabButton child = (TabButton)v;
-		    	if (child.getVisibility() != GONE) { 
-
-		    		// Calculate coordinates around the circle at the centre of cart. system
-		    		double angle = (i-2)*t;
-		    		angle=angle-90 + 46;
-		    		child.setAngle(angle);
-		    		child.calculateCenter(a,b,inR,angle);
-		    		//child.calCloseButCenter(a,b,inR-50,angle);            	
-
-		    		final int childLeft = child.getCenterX() - BUTTON_RADIUS;
-		    		final int childTop = child.getCenterY() - BUTTON_RADIUS;
-		    		final int lb = child.getCenterX() + BUTTON_RADIUS;
-		    		final int rb = child.getCenterY() + BUTTON_RADIUS;
-
-
-		    		if(child.shouldDraw()) {
-		    			
-		    			//if(child.getId() == activetabIndex){
-		    			//	currentWindowIcon.layout(childLeft-10, childTop-10, lb+10, rb+10);   
-		    			//}
-		    			
-		    			child.layout(childLeft, childTop, lb, rb);                	
-		    		}
-		    	}
-		    }*/			   
+			}		   
 	   }
 	   
 	   public final static String PATH = BrowserActivity.THEME_PATH + "/";
@@ -243,6 +216,7 @@ public class CircularTabsLayout extends ViewGroup {
 	   protected TabButton hotTab;
 	   protected MenuButton backBut;
 	   protected ImageView coneSeparator;
+	   protected static Vector tabVector = new Vector();
 	   
 	   public void init(){		   
 		
@@ -257,17 +231,22 @@ public class CircularTabsLayout extends ViewGroup {
 		 	backBut.setFunction("backward");
 		 	addView(backBut);	 	
 		 	
-		 	hotTab = new TabButton(context);
-		 	
+		 	hotTab = new TabButton(context);		 	
 		 	hotTab.setHotkey(true);
 		 	hotTab.setOnTouchListener((OnTouchListener) this);
-		 	addView(hotTab);		 	
+		 	addView(hotTab);
+		 	
+		 	tabVector.add(hotTab);
 		 	
 		 	hotBorder = new ImageView(context);
 		 	hotBorder.setBackgroundResource(R.drawable.wm_tab_border);
-			addView(hotBorder);	
+			addView(hotBorder);		
 		 	
 	   }   
+	   
+	   public static Vector getTabVector(){		   
+		   return tabVector;
+	   }
 
 	   public boolean canScroll(float angleDiff,int childCount) {
 		   	
@@ -638,8 +617,45 @@ public class CircularTabsLayout extends ViewGroup {
 			//handler.postDelayed(runnableHideClose, 2000);
 		}					
 	};	
+	
+	private SwifteeApplication appState;
 		
+	public void storeWindows(){
 		
+		int count=getChildCount();
+		
+		for (int i = 0; i < count; i++) {
+
+	    	View something = getChildAt(i);		
+	    	
+	    	if (something instanceof TabButton) {				
+				
+				TabButton tab = (TabButton) getChildAt(i);				
+							
+				BitmapDrawable bitmapDrawable = tab.getBitmapDrawable();
+				Bitmap bitmap = ((BitmapDrawable)bitmapDrawable).getBitmap();
+				
+				ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
+				bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object			
+				
+                byte[] image = baos.toByteArray();
+                String encodedImage = Base64.encodeBytes(image);
+                
+                //String encodedImage = Base64.encodeToString(image, Base64.DEFAULT);
+                
+				WebView wv = tab.getWebView();
+				
+				String tabTitle = wv.getTitle();
+				String url = wv.getUrl();
+				
+				Log.v("","");
+				//SwifteeApplication.getDatabase().insertWindows(tabTitle, url, encodedImage);
+				
+			
+	    	}
+		}	
+		
+	}
 		
 		
 		public void resetMenu(){

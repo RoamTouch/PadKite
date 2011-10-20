@@ -136,6 +136,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener, O
 		but.setOnClickListener(this);
 		but.setTabIndex(2);
 		addView(but,2);
+		
 		int count = getChildCount();
 		for(int i =3;i<count-3;i++){
 			View something = getChildAt(i);
@@ -145,6 +146,8 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener, O
 			}			
 		}
 		
+		tabVector.add(but);
+		
 		mParent.addWebView(but.getWebView());
 		int active = mParent.getActiveWebViewIndex()+1;
 		but.setId(active);		
@@ -152,6 +155,39 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener, O
 		
 		currentTab = 2;
 		setActiveTabIndex(but);
+	}
+	
+	public void addWindowFromDatabase(String url, BitmapDrawable bd,  String title){		
+		
+		TabButton tabDatabase = new TabButton(mContext);	
+		tabDatabase.setBackgroundDrawable(bd);	
+		
+		//WebView wv = createWebView(url);		
+		//tabDatabase.setWebView(wv);		
+		//String tabTitle = wv.getTitle();
+		
+		tabDatabase.setHotTitle(title);	
+		tabDatabase.setBitmapDrawable(bd);
+		addView(tabDatabase,2);
+		
+		int count = getChildCount();
+		for(int i =3;i<count-3;i++){
+			View something = getChildAt(i);
+			if (something instanceof TabButton) {
+				TabButton tab = (TabButton) getChildAt(i);			
+				tab.setTabIndex(i);
+			}			
+		}
+		
+		tabVector.add(tabDatabase);
+		
+		mParent.addWebView(tabDatabase.getWebView());
+		int active = mParent.getActiveWebViewIndex()+1;
+		tabDatabase.setId(active);		
+		mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()+1);
+		
+		currentTab = 2;
+		setActiveTabIndex(tabDatabase);
 	}
 	
 	public int getWindowCount()
@@ -221,5 +257,6 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener, O
         int     mScrollX;
         int     mScrollY;
     }
+    
     
 }

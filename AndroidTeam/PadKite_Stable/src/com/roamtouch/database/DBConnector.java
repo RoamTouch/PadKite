@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 
@@ -30,6 +31,12 @@ public class DBConnector {
 		  "url text not null ," +
 		  "title text not null ," +
 		  "type int);" ;
+	
+		private static final String DATABASE_CREATE4 = "create table windows_manager (_id integer primary key autoincrement, "+
+		  "title text not null ," +
+		  "url text not null ," +
+		  "bitmap text not null);"; // +
+		  //"type int);" ;
 
 		private static final String DATABASE_NAME = "padkiteDB";
 		private static final int DATABASE_VERSION = 1;
@@ -48,6 +55,7 @@ public class DBConnector {
 				db.execSQL(DATABASE_CREATE1);
 				db.execSQL(DATABASE_CREATE2);
 				db.execSQL(DATABASE_CREATE3);
+				db.execSQL(DATABASE_CREATE4);
 			}
 
 			@Override
@@ -146,7 +154,7 @@ public class DBConnector {
 			}
 		}
 		
-		public void addBookmark(String name,String url){
+	public void addBookmark(String name,String url){
 			try
 			{
 //				System.out.println("-------------I am here in for adding gesture "+name+"and" + url +" in database------------");
@@ -240,4 +248,44 @@ public class DBConnector {
 				return null;
 			}
 		}
+		
+		public void insertTabs(String title,String url,String bitmap){
+			
+			try {
+				mDatabase.execSQL("INSERT INTO windows_manager(title,url,bitmap) VALUES('"+title+"','"+url+"','"+bitmap+"')");
+			
+			} catch(Exception e) {
+				e.printStackTrace();
+			}			
+    	}
+		
+		public Cursor getTabs(){
+			try
+			{
+				Cursor c = mDatabase.rawQuery("SELECT * FROM windows_manager", null); // WHERE type="+type, null);
+				if(c!=null)
+					if(c.getCount()>0)
+						return c;
+				
+				return null;
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		public void removeTabs(){			
+			try {
+				//mDatabase.execSQL("DELETE FROM windows_manager");		
+				mDatabase.execSQL("TRUNCATE TABLE windows_manager");			
+			} catch(Exception e) {
+				Log.v("error", "e: "+e);
+				e.printStackTrace();
+			}			
+    	}
+		
+		
+		
 }

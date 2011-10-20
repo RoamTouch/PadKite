@@ -1,5 +1,6 @@
 package com.roamtouch.swiftee;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +40,7 @@ import android.gesture.Prediction;
 import com.roamtouch.menu.TabButton;
 import com.roamtouch.menu.WindowTabs;
 import com.roamtouch.swiftee.R;
+import com.roamtouch.utils.Base64;
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SelectionGestureView;
 import com.roamtouch.view.SwifteeGestureView;
@@ -60,6 +62,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -103,9 +106,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 
-	//public static String version = "Version Beta-v2.0.1 - Android 2.1";
-	//public static String version = "Version Beta-v2.0.1 - Android 2.2";
-	public static String version = "Version Beta-v2.0.1 - Android 2.3";
+	//public static String version = "Version Beta-v2.0.2 - Android 2.1";
+	//public static String version = "Version Beta-v2.0.2 - Android 2.2";
+	public static String version = "Version Beta-v2.0.2 - Android 2.3";
 	
 	public static String version_code = "Version Beta-v2.0.1";
 	
@@ -161,56 +164,92 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		AlertDialog alertDialog;
 
     	alertDialog = new AlertDialog.Builder(this).create();
-		alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-	    alertDialog.setMessage("You got " + floatingCursor.getWindowCount() + " open windows left. Do you really want to quit?");
+		
+    	alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+	    
+		alertDialog.setMessage("You got " + floatingCursor.getWindowCount() + " open windows left. Do you really want to quit?");
+	    
 	    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-	      public void onClick(DialogInterface dialog, int which) {
-	    	  
-	    	//mParent.finish();
-	    	//JOSE
-	    	  
-	    	/*Hashtable hashTab = CircularTabsLayout.getTabHash();
-	    	
-	    	if (hashTab.size()>1){
-	    		
-		    	for (int i=0; i< hashTab.size(); i++){
-					
-					Vector vector = (Vector) hashTab.get(i);	
-						
-						if ( vector.size() == 4 ){
-							
-							TabButton tab = (TabButton) vector.get(0);						
-							BitmapDrawable bitmapDrawable = (BitmapDrawable) vector.get(2);
-							Bitmap bitmap = ((BitmapDrawable)bitmapDrawable).getBitmap();
-							
-							ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
-							bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object   
-		                    byte[] image = baos.toByteArray();
-		                    String encodedImage = Base64.encodeToString(image, Base64.DEFAULT);
-		                    
-							WebView wv = (WebView) vector.get(3);
-							
-							String tabTitle = wv.getTitle();
-							String url = wv.getUrl();
-							appState.getDatabase().insertWindows(tabTitle, url, encodedImage);
-	
-						}
-		    	}
+	      
+	    	public void onClick(DialogInterface dialog, int which) {	    	  
+	    
+		    	/*Vector tV = CircularTabsLayout.getTabVector();
 		    	
-	    	}*/
-	    	
-	    	
-	    	//STORE WINDOWS ON DATABASE.
-	    	//
-	    	  
+		    	int size = tV.size();
+		    	
+		    	if (size>1){
+		    		
+			    	for (int i=0; i< size; i++){							
+								
+						TabButton tab = (TabButton) tV.get(i);					
+						
+						BitmapDrawable bitmapDrawable = tab.getBitmapDrawable();
+						Bitmap bitmap = ((BitmapDrawable)bitmapDrawable).getBitmap();
+						
+						ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
+						bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos); 		
+						
+		                byte[] image = baos.toByteArray();
+		                String encodedImage = Base64.encodeBytes(image);              
+		                
+						WebView wv = tab.getWebView();
+						
+						String tabTitle = wv.getTitle();
+						String url = wv.getUrl();					
+						
+						if (!tabTitle.equals("Landing Page")){
+							appState.getDatabase().insertTabs(tabTitle, url, encodedImage);
+						}	
+			    	}			
+		    	}*/
+	    		
 	        System.exit(0);
 
 	    } }); 
 	    alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
-	      public void onClick(DialogInterface dialog, int which) {
+	      public void onClick(DialogInterface dialog, int which) {	    	  
+	    	  appState.getDatabase().removeTabs();  	  
 	        return;
 	    }}); 			  
 	  	alertDialog.show();
+    }
+    
+    public boolean loadTabs(Context context) throws IOException {
+	
+		boolean ret = false;
+		appState = ((SwifteeApplication)context.getApplicationContext());
+		DBConnector database = appState.getDatabase();
+		Cursor c = database.getFromHistory(1);    	
+		
+		if (c==null){ return ret; }    	
+		
+		int count = c.getCount();
+		c.moveToPosition(0);    	
+		int num = 0;
+		String hi = null;    	
+		
+		Vector tempTab = new Vector();
+		
+		while (!c.isAfterLast() && num < count){		
+			
+			String tabTitle = c.getString(1);
+			String url = c.getString(2);
+			String bitmapString = c.getString(3); 	
+			
+			byte[] image = Base64.decode(bitmapString);			
+			InputStream is = new ByteArrayInputStream(image);
+			BitmapDrawable bitmapDrawable = new BitmapDrawable(is);
+			 
+			Object[] tabs = {tabTitle, url, bitmapDrawable}; 
+			
+			tempTab.add(tabs);
+			
+			c.moveToNext();		
+		}
+		
+		SwifteeApplication.setTabVector(tempTab);
+		
+		return ret;		
     }
     
 	 public boolean onKeyDown(int keyCode, android.view.KeyEvent event){
@@ -523,8 +562,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		mTopBarArea.setVisibility(View.GONE);
 		mTopBarArea.setWebView(webView);
 */		
-		
-		
+			
 		//This is a dummy user entry...neeed to remove after
 		appState.getDatabase().registerUser("dummy", "dummy", "dummy@example.com");
 		//appState.getDatabase().deleteAllBookmarks();
@@ -549,7 +587,12 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         // Start the tracker in manual dispatch mode...
         tracker.startNewSession("UA-21271893-1", this);
 
-		
+       /*try {
+			loadTabs(appState);
+       } catch (IOException e) {				
+			e.printStackTrace();
+	   }*/
+        
     }
     
     @Override
