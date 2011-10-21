@@ -208,7 +208,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	    } }); 
 	    alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
 	      public void onClick(DialogInterface dialog, int which) {	    	  
-	    	  appState.getDatabase().removeTabs();  	  
+	    	  //appState.getDatabase().removeTabs();  	  
 	        return;
 	    }}); 			  
 	  	alertDialog.show();
@@ -264,6 +264,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	    		else if (floatingCursor.isMenuVisible())
 	    		{
 		    		floatingCursor.hideMenuFast();
+		    		tCtrl.drawNothing();
 	    		}
 	    		else if(mTutor.getVisibility() == View.VISIBLE){
 	    			cancelGesture(true);
@@ -286,6 +287,17 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		 return true;
 
 		}
+	 
+	 public static boolean checkWindowsTabOpened(){
+		 boolean tabOpened;
+		 if (floatingCursor.currentMenu == floatingCursor.fcWindowTabs){
+			 tabOpened = true;		 
+		 } else {
+			 tabOpened = false;
+		 }
+		 return tabOpened;		 
+	 }
+	 
 
     /** Called when the activity is resumed. */
     @Override

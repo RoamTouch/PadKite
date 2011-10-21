@@ -73,6 +73,8 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener, O
 		hotTab.setBackgroundDrawable(bd);	
 		String tabTitle = wv.getTitle();
 		hotTab.setHotTitle(tabTitle);
+		String tabUrl = wv.getUrl();
+		hotTab.setTabURL(tabUrl);
 		hotTab.setWebView(wv);
 		hotTab.setBitmapDrawable(bd);
 	

@@ -357,12 +357,23 @@ public class SelectionGestureView extends FrameLayout {
 		
 		if (action == MotionEvent.ACTION_DOWN)
 		{
-			mDownX = X;
-			mDownY = Y;
-			mStartEventTime = eventTime;
-			selectionType = null;
-			mEventViewer.setText("Starting selection gesture ...");
-			mFloatingCursor.startSelectionCommand();
+			//Do not allow selection gestures while CM is opened. Problem happening on 2.1 only.
+			if ( mFloatingCursor.currentMenu != mFloatingCursor.fcMainMenu
+					&& mFloatingCursor.currentMenu != mFloatingCursor.fcSettingsMenu
+					&& mFloatingCursor.currentMenu != mFloatingCursor.fcWindowTabs				
+				){
+			
+				mDownX = X;
+				mDownY = Y;
+				mStartEventTime = eventTime;
+				selectionType = null;
+				mEventViewer.setText("Starting selection gesture ...");
+				mFloatingCursor.startSelectionCommand();		
+				
+			} else {
+				return false;
+			}
+			
 		}
 		else if (action == MotionEvent.ACTION_MOVE)
 		{			

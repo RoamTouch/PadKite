@@ -121,22 +121,28 @@ public class CircularTabsLayout extends ViewGroup {
 		
 			if (tT!=null){
 				
-				if (tT.equals("Landing Page") || tT.equals("Back")) {
+				if (tT.equals("Landing Page") || tT.equals("Back")) {					
 					
 					String[] textTitle = { tT };
-					BrowserActivity.drawTip(re, textTitle, hotTab.getCenterX()-20, y);
+					re.left = re.left - 13; 
+					BrowserActivity.drawTip(re, textTitle, hotTab.getCenterX(), y);
 					
 				} else {
-				
+					
 					String tU = hotTab.getTabURL();	
-					tU = gdn.getDomain(tU);
+					tU = gdn.getDomain(tU);				
 					
 					if (tU==null){
+					
 						String[] textURL = {tT};
 						BrowserActivity.drawTip(re, textURL, hotTab.getCenterX(), y);
+						
 					} else {
+						
 						String[] textURL = { tT, tU };
+						re.top = re.top - 50; 
 						BrowserActivity.drawTip(re, textURL, hotTab.getCenterX(), y);
+						
 					}
 				}
 			}
@@ -567,7 +573,9 @@ public class CircularTabsLayout extends ViewGroup {
 											WebView wv = previous.getWebView();
 											String ttl = wv.getTitle();											
 											hotTab.setHotTitle(ttl);
+											String url = wv.getUrl();
 											hotTab.setBackgroundDrawable(bd);												
+											hotTab.setTabURL(url);
 											
 										} else if (id == (countTabs-2)) {									
 											
@@ -585,6 +593,11 @@ public class CircularTabsLayout extends ViewGroup {
 									
 									child.setVisibility(View.INVISIBLE);
 									BitmapDrawable bd = child.getBitmapDrawable();
+									WebView wv = child.getWebView();
+									String ttl = wv.getTitle();											
+									hotTab.setHotTitle(ttl);
+									String url = wv.getUrl();
+									hotTab.setTabURL(url);
 									hotTab.setBackgroundDrawable(bd);
 									child.setHidden(true);
 									
@@ -614,7 +627,16 @@ public class CircularTabsLayout extends ViewGroup {
 	  		hotTab.setClose(true);
 			handler.removeCallbacks(runnableClose);	
 			//dontMoveChilds = true;
-			//handler.postDelayed(runnableHideClose, 2000);
+			handler.postDelayed(runnableHideClose, 4000);
+		}					
+	};	
+	
+	Runnable runnableHideClose = new Runnable(){		 
+		public void run() {		
+			hotBorder.setBackgroundResource(R.drawable.wm_tab_border);
+	  		hotTab.setClose(false);
+			handler.removeCallbacks(runnableHideClose);		
+			//dontMoveChilds = false;
 		}					
 	};	
 	

@@ -128,6 +128,7 @@ public class TabButton extends Button {
 		public void applyInit(){
 			this.setBackgroundDrawable(bitmapDrawable);
 			this.hotTitle = mWebView.getTitle();
+			this.tabURL = mWebView.getUrl();
 		}
 		
 		public boolean isClose() {

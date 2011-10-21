@@ -156,60 +156,65 @@ public class FloatingCursorView extends View{
 	            double t = 2 * Math.PI * i / SwifteeApplication.getFCAmountOfDots();
 	            int x = (int) Math.round(rect.exactCenterX() + rad * Math.cos(t));
 	            int y = (int) Math.round(rect.exactCenterY() + rad * Math.sin(t));
+	            
 	            if (isOdd(i)){
-	            	        	
-	            	if (countColor <= 10){	 
-       		          
-		            			            	
-		            	int[] colB = colorTableBorder.get(countColor);
-		            	int rB = colB[0];
-		        		int gB = colB[1];
-		        		int bB = colB[2];    		
-		            	
-		            	pF.setColor(Color.rgb(rB, gB, bB));	            	
+	            	
+	            	if (SwifteeApplication.getFCDotDiam()==4){
+	            	
+	            		pF.setColor(0xFF000000);
 		            	canvas.drawCircle(x, y, (float) dD, pF);
-		            	
-		          		int[] colT = colorTable.get(countColor);
-	            		int rT = colT[0];
-		        		int gT = colT[1];
-		        		int bT = colT[2];    		
-		        		
-		            	pF.setColor(Color.rgb(rT, gT, bT));
+		            	pF.setColor(0xFF616161);
 		            	canvas.drawCircle(x, y, (float) (dD-1), pF);
-		            	
+		            	pF.setColor(0xFFB3B3B3);
+		            	canvas.drawCircle(x, y, (float) (dD-2), pF);
+	            	
+	            	} else {
+	            	        	
+		            	if (countColor <= 11){       		          
+			            			            	
+			            	int[] colB = colorTableBorder.get(countColor);
+			            	int rB = colB[0];
+			        		int gB = colB[1];
+			        		int bB = colB[2];    		
+			            	
+			            	pF.setColor(Color.rgb(rB, gB, bB));	            	
+			            	canvas.drawCircle(x, y, (float) dD, pF);
+			            	
+			          		int[] colT = colorTable.get(countColor);
+		            		int rT = colT[0];
+			        		int gT = colT[1];
+			        		int bT = colT[2];    		
+			        		
+			            	pF.setColor(Color.rgb(rT, gT, bT));
+			            	canvas.drawCircle(x, y, (float) (dD-1), pF);	            	
+			            	
+			            	countColor++;
+			            	
+		            	} else {
+		            		countColor=1;
+		            		pF.setColor(0xFFB3B3B3);
+			            	canvas.drawCircle(x, y, (float) (dD-2), pF);
+		            	}      	
 		            	
 		            	countColor++;
 		            	
-	            	} else {
-	            		countColor=1;
-	            		pF.setColor(0xFFB3B3B3);
-		            	canvas.drawCircle(x, y, (float) (dD-2), pF);
-	            	}      	
+		            	if (i==SwifteeApplication.getFCAmountOfDots()-1){
+		            		countColor=1;
+		            	}		            
+	            	}       	
 	            	
-	            	countColor++;
+	            } else {	
 	            	
-	            	if (i==SwifteeApplication.getFCAmountOfDots()-1){
-	            		countColor=1;
-	            	}
-	            	
-	            } else {	            	
-	            	lF.setColor(0xFF545454);
+	            	lF.setColor(0xFF000000);
 	            	Log.v("out", "i: "+i);	            	
 	            	canvas.drawCircle(x, y, (float) (dD-1.5), lF);
 	            	pF.setColor(0xFFFFFFFF);
-	            	canvas.drawCircle(x, y, (float) (dD-2), pF);            	
+	            	canvas.drawCircle(x, y, (float) (dD-2), pF);        
+	            	
 	            }
 	                    
 	        }  
-	    }
-        
-		//rect = new Rect(0,0,SwifteeApplication.getWidth(), SwifteeApplication.getHeight());
-        
-        /*rect = new Rect((int)x-r,(int)y-r,(int)x+r,(int)y+r);
-        if (bitmap != null) {
-            canvas.drawBitmap(bitmap, null, rect, null);
-        }*/       
-        
+	    }  
         
     }   
     

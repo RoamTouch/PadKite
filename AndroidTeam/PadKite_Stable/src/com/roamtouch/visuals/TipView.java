@@ -2,6 +2,7 @@ package com.roamtouch.visuals;
 
 import java.util.Timer;
 
+import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
 import android.content.Context;
@@ -60,7 +61,8 @@ public class TipView extends View {
         	       	
 		    switch (textLines){
 		    
-	    		case 1:	    	   			
+	    		case 1:	    	   		
+	    			
 	    			Object[] paintText11 =  getPaintText(tipText[0], pT);
 	    			Paint resPaint = (Paint)paintText11[0];	    			
 	    			String title = (String)paintText11[1];    			
@@ -72,14 +74,40 @@ public class TipView extends View {
 	    			
 	    	   		break;
 	    	   		
-	    	   	case 2:	    	   		
+	    	   	case 2:	     	   		
+	    	   			       	   		
+	    	   		Object[] paintText21 =  getPaintText(tipText[0], pT);	    	   		
+	    	   		Paint onePaint = (Paint)paintText21[0];	    			
+	    			String oneLine = (String)paintText21[1]; 		
+	    			int width21 = (int) onePaint.measureText(oneLine); 	   		
 	    	   		
-	    	   		comment(canvas, lineHeight*2);   	       	   		
-	    	   		Object[] paintText21 =  getPaintText(tipText[0], pT);	    	   		       
-	    	   		canvas.drawText((String)paintText21[1], xPos+(width/2)+15, yPos-10, (Paint)paintText21[0]);
+	    			Object[] paintText22 =  getPaintText(tipText[1], pT);
+	    			Paint twoPaint = (Paint)paintText22[0];	    			
+	    			String twoLine = (String)paintText22[1]; 		
+	    			int width22 = (int) twoPaint.measureText(twoLine);    			
 	    	   		
-	    	   		Object[] paintText22 =  getPaintText(tipText[1], pT);
-	    	   		canvas.drawText((String)paintText22[1], xPos+(width/2)+15, yPos+25, (Paint)paintText22[0]);
+	    	   		if ( width21 > width22 ) {	    	   			
+	    	   			width = width21;	    	   			
+	    	   		} else {	    	   			
+	    	   			width = width22;	    	   			
+	    	   		}  				
+	    	   		
+	    	   		int xText;
+	    	   		
+	    	   		if (BrowserActivity.checkWindowsTabOpened() && textLines == 2 ){
+	    	   			xText = xPos + (width/3)-20;
+	    	   		} else {
+	    	   			width += 10;
+	    	   			xText = xPos + (width/3) + 10;
+	    	   		}
+	    	   		
+	    	   		comment(canvas, lineHeight*2);  
+	    	   		
+	    	   		//canvas.drawText((String)paintText21[1], xPos+(width/2)+15, yPos+10, onePaint);	    	   		
+	    	   		//canvas.drawText((String)paintText22[1], xPos+(width/2)+15, yPos+45, twoPaint);
+	    	   		
+	    	   		canvas.drawText((String)paintText21[1], xText, yPos+10, onePaint);	    	   		
+	    	   		canvas.drawText((String)paintText22[1], xText, yPos+45, twoPaint);
 	    	   		
 	    	   		break;
 	    	   		
@@ -106,25 +134,39 @@ public class TipView extends View {
     	
     	int _x = 0;
     	
-		if (isFor == SwifteeApplication.IS_FOR_CIRCULAR_MENU_TIPS){
+    	if (isFor == SwifteeApplication.IS_FOR_CIRCULAR_MENU_TIPS){	
+	
 			_x =  xPos+(width/2);
-				if (tipText[0].toString().equals("Add New Window")){
-				_x -= 30; 
-			} 
-			if (tipText[0].toString().equals("Tabs Manager")){
+			
+			if (tipText[0].toString().equals("Add New Window")){
+				_x -= 25;
+			} else if (tipText[0].toString().equals("Tabs Manager")){
 				_x -= 10; 
-			} 
-			if (tipText[0].toString().equals("Settings")){
-				_x += 20; 
+			} else if (tipText[0].toString().equals("Go Forward")){
+				_x += 5;
+			} else if (tipText[0].toString().equals("Refresh Page")){
+				_x -= 5;			
+			} else if (tipText[0].toString().equals("Bookmarks")){
+				_x += 5;
+			} else if (tipText[0].toString().equals("Home Page")){
+				_x += 60;
+			} else if (tipText[0].toString().equals("Share Page")){
+				_x += 80;
+			} else if (tipText[0].toString().equals("Finger Model")){
+				_x -= 80;					
+			} else if (tipText[0].toString().equals("Settings")){
+				_x += 20;
 			}
+		
 			if (tipText[0].toString().equals("Landing Page")){
-				_x -= 10; 
+				_x -= 8; 
+			} else if (tipText[0].toString().equals("Back")){
+				_x += 40; 
 			}
 			
-			//width -= 30;
 		} else {
 			_x = xPos+(width/2)+15;
-		}    
+		}      
 		
 		return _x;
 	}
@@ -154,13 +196,30 @@ public class TipView extends View {
     private void comment (Canvas canvas, int commentHeight){   
     
     	int _x;
+    	int _y;
+    	
     	if (isFor == SwifteeApplication.IS_FOR_CIRCULAR_MENU_TIPS){
-    		_x = xPos - (width/2) + 50; 
+    		
+    		if (BrowserActivity.checkWindowsTabOpened() && textLines == 2 ){
+    			
+    			_x = xPos - (width/2) + 35;
+    			_y = yPos-20;
+    			
+    		} else {    		
+    			
+    			_x = xPos - (width/2) + 50;
+    			_y = yPos-40;
+    			
+    		}
+    		
     	} else {
-    		_x = xPos;
+    		
+    		_x = xPos - 30;
+    		_y = yPos - 20;
+    		
     	}  	
     	  
-       Path cP = drawComment(_x, yPos-40, width+30, commentHeight+20, draw);  
+       Path cP = drawComment(_x, _y, width+30, commentHeight+20, draw);  
 	   Paint pF = getPaintFill();
 	   canvas.drawPath(cP, pF);
 	   Paint pS = getPaintStroke();	    	   

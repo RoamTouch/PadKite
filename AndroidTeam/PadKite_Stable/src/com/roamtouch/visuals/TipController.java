@@ -88,7 +88,7 @@ public class TipController extends FrameLayout implements Runnable {
 			case SwifteeApplication.IS_FOR_CIRCULAR_MENU_TIPS:
 				
 				tV.yPos = rectTip.top - 70;			
-				tV.xPos = rectTip.left - 15;
+				tV.xPos = rectTip.left;
 				tV.xCenter = x;
 				tV.width = rectTip.right;
 				tipType = SwifteeApplication.SET_TIP_TO_CENTER_DOWN;

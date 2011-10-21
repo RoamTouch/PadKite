@@ -62,6 +62,7 @@ import android.widget.Scroller;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.VideoView;
 
+import com.roamtouch.utils.GetDomainName;
 import com.roamtouch.view.EventViewerArea;
 import com.roamtouch.view.SelectionGestureView;
 import com.roamtouch.view.WebPage;
@@ -78,6 +79,8 @@ import com.roamtouch.menu.WindowTabs;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
+
+import android.app.SearchManager;
 
 public class FloatingCursor extends FrameLayout implements
 		MultiTouchObjectCanvas<FloatingCursor.FCObj> {
@@ -197,6 +200,8 @@ public class FloatingCursor extends FrameLayout implements
 	// Message Ids
 	private static final int FOCUS_NODE_HREF = 102;
 	private String linkTitle;
+	private String linkUrl;
+	private GetDomainName gdn = new GetDomainName();
 
 	private void initScrollView() {
 		mScroller = new Scroller(mContext);
@@ -276,8 +281,7 @@ public class FloatingCursor extends FrameLayout implements
 		case MotionEvent.ACTION_UP:
 
 			// Set FC dot to original size again.
-			SwifteeApplication.setFCDotDiam(SwifteeApplication
-					.getFCDotInitialDiam());
+			SwifteeApplication.setFCDotDiam(SwifteeApplication.getFCDotInitialDiam());
 
 			// Erase draws.
 
@@ -659,7 +663,7 @@ public class FloatingCursor extends FrameLayout implements
 			currentMenu = fcMainMenu;
 			fcMainMenu.setVisibility(VISIBLE);
 			fcSettingsMenu.setVisibility(INVISIBLE);
-			fcWindowTabs.setVisibility(INVISIBLE);
+			fcWindowTabs.setVisibility(INVISIBLE);			
 			break;
 		case 1:
 			currentMenu = fcSettingsMenu;
@@ -676,6 +680,7 @@ public class FloatingCursor extends FrameLayout implements
 			fcView.setVisibility(INVISIBLE);
 			if (currentMenu instanceof CircularTabsLayout) {
 				((CircularTabsLayout) currentMenu).resetMenu();
+				((CircularTabsLayout) currentMenu).drawHotTip();
 			}
 			break;
 		}
@@ -821,7 +826,7 @@ public class FloatingCursor extends FrameLayout implements
 
 		animationLock = true;
 
-		eventViewer.setMode(EventViewerArea.TEXT_ONLY_MODE);
+		//eventViewer.setMode(EventViewerArea.TEXT_ONLY_MODE);
 		AlphaAnimation menuAnimation;
 
 		// Reset FC
@@ -869,11 +874,11 @@ public class FloatingCursor extends FrameLayout implements
 			});
 			currentMenu.startAnimation(menuAnimation);
 			vibrator.vibrate(25);
-			if (currentMenu instanceof CircularLayout)
+			
+			/*if (currentMenu instanceof CircularLayout)
 				eventViewer.setText(((CircularLayout) currentMenu).getName());
 			else if (currentMenu instanceof CircularTabsLayout)
-				eventViewer.setText(((CircularTabsLayout) currentMenu)
-						.getName());
+				eventViewer.setText(((CircularTabsLayout) currentMenu).getName());*/
 
 			// mP.setTopBarVisibility(VISIBLE);
 			// mP.setTopBarMode(TopBarArea.ADDR_BAR_MODE);
@@ -979,6 +984,7 @@ public class FloatingCursor extends FrameLayout implements
 
 	protected void stopHitTest(int X, int Y, boolean setIcon) {
 		if (mHitTestMode) {
+			
 			// FIXME: ?
 			// sendEvent(MotionEvent.ACTION_MOVE, X, Y);
 			// sendEvent(MotionEvent.ACTION_UP, 0, 0);
@@ -1261,12 +1267,12 @@ public class FloatingCursor extends FrameLayout implements
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case FOCUS_NODE_HREF: {
-				String url = (String) msg.getData().get("url");
-				if (url == null || url.length() == 0) {
+				linkUrl = (String) msg.getData().get("url");
+				if (linkUrl == null || linkUrl.length() == 0) {
 					break;
 				}
-				String tt = (String) msg.getData().get("title");
-				linkTitle = "<b>" + tt + "</b>";
+				linkTitle = (String) msg.getData().get("title");
+				//linkTitle = "<b>" + tt + "</b>";
 				// Log.v("EXTRA", "title: " + title + " url: " + url);
 
 			}
@@ -1698,8 +1704,7 @@ public class FloatingCursor extends FrameLayout implements
 		Object[] param_default = { rect, SwifteeApplication.GREEN, "OPEN",
 				SwifteeApplication.PAINT_GREEN };
 		Log.v("rect", "first : " + rect + " identifier: " + identifier);
-		rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, param_default,
-				identifier);
+		rCtrl.setDrawStyle(SwifteeApplication.DRAW_TAB, param_default,identifier);
 	}
 
 	/**
@@ -1781,7 +1786,7 @@ public class FloatingCursor extends FrameLayout implements
 		int _x = Math.round(X);
 		int _y = Math.round(Y);
 		int[] initCoor = { _x, _y };
-		Object[] paramTip = { re, comment, initCoor, 1000 };
+		Object[] paramTip = { re, comment, initCoor, 2500 };
 		tCtrl.setTipComment(paramTip, isFor);
 	}
 
@@ -1893,7 +1898,7 @@ public class FloatingCursor extends FrameLayout implements
 		if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE
 				|| mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE
 				|| mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
-			eventViewer.setText("Executing link ...");
+			//eventViewer.setText("Executing link ...");
 
 			sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
 			// pointer.setImageResource(R.drawable.address_bar_cursor);
@@ -1904,7 +1909,7 @@ public class FloatingCursor extends FrameLayout implements
 				|| mWebHitTestResult.getType() == WebHitTestResult.INPUT_TYPE
 				|| mWebHitTestResult.getType() == WebHitTestResult.SELECT_TYPE
 				|| mWebHitTestResult.getType() == -1) {
-			eventViewer.setText("Clicking ...");
+			//eventViewer.setText("Clicking ...");
 			cancelSelection();
 
 			sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY);
@@ -1913,14 +1918,14 @@ public class FloatingCursor extends FrameLayout implements
 		} else {
 
 			if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE) {
-				eventViewer.setText("Selecting image ...");
+				//eventViewer.setText("Selecting image ...");
 
 				mWebView.executeSelectionCommand(fcX, fcY,
 						WebView.SELECT_OBJECT);
 				mWebView.executeSelectionCommand(fcX, fcY,
 						WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
 			} else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE) {
-				eventViewer.setText("Selecting word ...");
+				//eventViewer.setText("Selecting word ...");
 
 				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD);
 				mWebView.executeSelectionCommand(fcX, fcY,
@@ -1948,13 +1953,13 @@ public class FloatingCursor extends FrameLayout implements
 		if (mWebHitTestResult == null)
 			return;
 		if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE) {
-			eventViewer.setText("Detected Long-Touch. Selecting image ...");
+			//eventViewer.setText("Detected Long-Touch. Selecting image ...");
 			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
 			mWebView.executeSelectionCommand(fcX, fcY,
 					WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
 			mLongTouchEnabled = true;
 		} else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE) {
-			eventViewer.setText("Detected Long-Touch. Selecting word ...");
+			//eventViewer.setText("Detected Long-Touch. Selecting word ...");
 			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD);
 			mWebView.executeSelectionCommand(fcX, fcY,
 					WebView.COPY_TO_CLIPBOARD);
@@ -1962,7 +1967,7 @@ public class FloatingCursor extends FrameLayout implements
 		} else if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE
 				|| mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE
 				|| mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
-			eventViewer.setText("Detected Long-Touch. Selecting link ...");
+			//eventViewer.setText("Detected Long-Touch. Selecting link ...");
 			selectedLink = mWebHitTestResult.getExtra();
 			Point focusCenter = mWebHitTestResult.getPoint();
 			focusCenter.y += 100;
@@ -1980,9 +1985,7 @@ public class FloatingCursor extends FrameLayout implements
 			// WebView.COPY_TO_CLIPBOARD);
 			mLongTouchEnabled = true;
 		} else if (mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE) {
-			eventViewer
-					.setText("Detected Long-Touch. Pasting clipboard contents ...");
-
+			//eventViewer.setText("Detected Long-Touch. Pasting clipboard contents ...");
 			final String selection = (String) ((ClipboardManager) mParent
 					.getSystemService(Context.CLIPBOARD_SERVICE)).getText();
 
@@ -2139,16 +2142,17 @@ public class FloatingCursor extends FrameLayout implements
 				break;
 
 			case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
-				eventViewer.setText("Opening image in link...");
+				//eventViewer.setText("Opening image in link...");
 				break;
 
 			case WebHitTestResult.EDIT_TEXT_TYPE:
-				eventViewer.setText("Opening keyboard...");
+				//eventViewer.setText("Opening keyboard...");
 				break;
 
 			default:
-				// eventViewer.setText("Executing link...");
-				String[] t3 = { "Opening ", linkTitle };
+				// eventViewer.setText("Executing link...");				
+				String linkLabel = checkLink();
+				String[] t3 = { "Opening ", linkLabel };				
 				drawTip(rect, t3, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
 				break;
 			}
@@ -2176,7 +2180,7 @@ public class FloatingCursor extends FrameLayout implements
 				break;
 
 			case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
-				eventViewer.setText("Opening image in link...");
+				//eventViewer.setText("Opening image in link...");
 				mWebView.executeSelectionCommand(fcX, fcY,
 						WebView.SELECT_OBJECT);
 				mWebView.executeSelectionCommand(fcX, fcY,
@@ -2187,7 +2191,7 @@ public class FloatingCursor extends FrameLayout implements
 				pasteTextIntoInputText(fcX, fcY, false);
 				final String selection = (String) ((ClipboardManager) mParent
 						.getSystemService(Context.CLIPBOARD_SERVICE)).getText();
-				eventViewer.setText("Pasting text..." + selection);
+				//eventViewer.setText("Pasting text..." + selection);
 				break;
 
 			default:
@@ -2196,7 +2200,8 @@ public class FloatingCursor extends FrameLayout implements
 						.getSystemService(Context.CLIPBOARD_SERVICE))
 						.setText(selectedLink);
 				mParent.setSelection(selectedLink);
-				String[] t3 = { linkTitle, "copied to clipboard" };
+				String linkLabel = checkLink();				
+				String[] t3 = { linkLabel, "copied to clipboard" };
 				drawTip(rect, t3, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
 				break;
 			}
@@ -2227,7 +2232,7 @@ public class FloatingCursor extends FrameLayout implements
 			 */
 
 			case WebHitTestResult.EDIT_TEXT_TYPE:
-				eventViewer.setText("Opening voice recognition...");
+				//eventViewer.setText("Opening voice recognition...");
 				mParent.startVoiceRecognitionActivity(fcX, fcY);
 				break;
 
@@ -2239,7 +2244,8 @@ public class FloatingCursor extends FrameLayout implements
 				mGesturesEnabled = true;
 				mParent.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);
 				mParent.startGesture(true);
-				String[] t3 = { "Draw a gesture for", linkTitle };
+				String linkLabel = checkLink();				
+				String[] t3 = { "Draw a gesture for", linkLabel };
 				drawTip(rect, t3, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
 				break;
 			}
@@ -2248,7 +2254,6 @@ public class FloatingCursor extends FrameLayout implements
 			stopFourth(false);
 
 		} else {
-
 			stopFirst(false);
 			stopSecond(false);
 			stopThird(false);
@@ -2256,6 +2261,24 @@ public class FloatingCursor extends FrameLayout implements
 		}
 		pointer.setImageResource(R.drawable.kite_cursor);
 
+	}
+	
+	private String checkLink(){
+		
+		String linkeLabel = null;
+		if ( linkTitle==null ){
+			
+			if ( linkUrl==null ){
+				linkeLabel = selectedLink; 
+			} else {
+				linkeLabel = linkUrl;
+			}
+			linkeLabel = gdn.getDomain(linkeLabel);
+			
+		} else {
+			linkeLabel = linkTitle;
+		}	
+		return linkeLabel;
 	}
 
 	private String[] trimSelectedTextForTip() {
@@ -2344,8 +2367,7 @@ public class FloatingCursor extends FrameLayout implements
 			final int xDiff = (int) Math.abs(fcX - selX);
 
 			if (yDiff > mTouchSlop || xDiff > mTouchSlop) {
-				eventViewer
-						.setText("Please select now more text with the FC ...");
+				//eventViewer.setText("Please select now more text with the FC ...");
 				mSelectionStarted = true;
 				stopHitTest(fcX, fcY, true);
 				pointer.setImageResource(R.drawable.text_cursor);
@@ -3666,11 +3688,11 @@ public class FloatingCursor extends FrameLayout implements
 			}
 
 			return true;
-		}
-
+		}		
+		
 		@Override
-		public void onPageStarted(WebView view, String url, Bitmap b) {
-
+		public void onPageStarted(WebView view, String url, Bitmap b) {		
+			
 			if (url.startsWith("file:///") && url.contains("box=#")) {
 
 				String entry = currentSearch;
