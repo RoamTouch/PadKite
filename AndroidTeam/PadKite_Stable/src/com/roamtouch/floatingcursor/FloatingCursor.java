@@ -281,7 +281,8 @@ public class FloatingCursor extends FrameLayout implements
 		case MotionEvent.ACTION_UP:
 
 			// Set FC dot to original size again.
-			SwifteeApplication.setFCDotDiam(SwifteeApplication.getFCDotInitialDiam());
+			SwifteeApplication.setFCDotDiam(SwifteeApplication
+					.getFCDotInitialDiam());
 
 			// Erase draws.
 
@@ -622,7 +623,6 @@ public class FloatingCursor extends FrameLayout implements
 		mWebView.setDrawingCacheEnabled(true);
 		mWebView.setWebChromeClient(new WebClient());
 		mWebView.setWebViewClient(new GestureWebViewClient());
-
 		fcMainMenu.setBackEabled(mWebView.canGoBack());
 		fcMainMenu.setFwdEabled(mWebView.canGoForward());
 	}
@@ -1786,7 +1786,7 @@ public class FloatingCursor extends FrameLayout implements
 		int _x = Math.round(X);
 		int _y = Math.round(Y);
 		int[] initCoor = { _x, _y };
-		Object[] paramTip = { re, comment, initCoor, 2500 };
+		Object[] paramTip = { re, comment, initCoor, 1000 };
 		tCtrl.setTipComment(paramTip, isFor);
 	}
 
@@ -3331,25 +3331,68 @@ public class FloatingCursor extends FrameLayout implements
 		// page to be moved.
 	}
 
-	public class WebClient extends WebChromeClient // implements
-													// OnCompletionListener,
-													// OnErrorListener
+	public class WebClient extends WebChromeClient implements OnCompletionListener, OnErrorListener
 	{
 
-		/*
-		 * @Override public void onShowCustomView(View view, CustomViewCallback
-		 * callback) { super.onShowCustomView(view, callback); if (view
-		 * instanceof FrameLayout){ FrameLayout frame = (FrameLayout) view; if
-		 * (frame.getFocusedChild() instanceof VideoView){ VideoView video =
-		 * (VideoView) frame.getFocusedChild(); frame.removeView(video);
-		 * mParent.setContentView(video); video.setOnCompletionListener(this);
-		 * video.setOnErrorListener(this); video.start(); } } }
-		 * 
-		 * public void onCompletion(MediaPlayer mp) { Log.d(TAG,
-		 * "Video completo"); mParent.setContentView(R.layout.main); WebView wb
-		 * = (WebView) mParent.findViewById(R.id.webView);
-		 * mParent.refreshWebView(); }
-		 */
+		private VideoView mCustomVideoView;
+		private FrameLayout mCustomViewContainer;
+		private WebChromeClient.CustomViewCallback mCustomViewCallback;
+		private FrameLayout mContentView;
+		
+		 @Override 
+		 public void onShowCustomView(View view, CustomViewCallback callback) { 
+			 super.onShowCustomView(view, callback); 
+			 if (view instanceof FrameLayout){ 			
+				 mCustomViewContainer = (FrameLayout) view;
+		            mCustomViewCallback = callback;
+		            mContentView = (FrameLayout) view;		            
+		            if (mCustomViewContainer.getFocusedChild() instanceof VideoView) {
+		                mCustomVideoView = (VideoView) mCustomViewContainer.getFocusedChild();		               
+		                mContentView.setVisibility(View.GONE);
+		                mCustomViewContainer.setVisibility(View.VISIBLE);
+		                mParent.setContentView(mCustomViewContainer);
+		                mCustomVideoView.setOnCompletionListener(this);
+		                mCustomVideoView.setOnErrorListener(this);
+		                mCustomVideoView.start();
+		            }
+		      } 
+		}
+		 
+		 /*public void onCompletion(MediaPlayer mp) { 
+			 Log.d(TAG,"Video completo"); 
+			 mParent.setContentView(R.layout.main); 
+			 WebView wb = (WebView) mParent.findViewById(R.id.webView);
+			 mParent.refreshWebView(); 
+		}*/
+		 
+		 public void onHideCustomView() {
+		        if (mCustomVideoView == null)
+		            return;
+		        // Hide the custom view.
+		        mCustomVideoView.setVisibility(View.GONE);
+		        // Remove the custom view from its container.
+		        mCustomViewContainer.removeView(mCustomVideoView);
+		        mCustomVideoView = null;
+		        mCustomViewContainer.setVisibility(View.GONE);
+		        mCustomViewCallback.onCustomViewHidden();
+		        // Show the content view.
+		        mContentView.setVisibility(View.VISIBLE);
+		    }
+
+		    @Override
+		    public void onCompletion(MediaPlayer mp) {
+		        mp.stop();
+		        mCustomViewContainer.setVisibility(View.GONE);
+		        onHideCustomView();
+		        mParent.setContentView(mContentView);
+		    }
+
+		    @Override
+		    public boolean onError(MediaPlayer mp, int what, int extra) {
+		    	mParent.setContentView(R.layout.main);
+		        return true;
+		    }
+		 
 
 		// Class used to use a dropdown for a <select> element
 		private class InvokeListBox implements Runnable {
@@ -3680,7 +3723,11 @@ public class FloatingCursor extends FrameLayout implements
 
 				mParent.sendMail(url);
 
-			} else {
+			} else if (url.startsWith("vnd.youtube:")) {			
+				  
+				mParent.playVideo(url);
+				
+			} else {	
 
 				view.loadUrl(url);
 				fcProgressBar.enable();

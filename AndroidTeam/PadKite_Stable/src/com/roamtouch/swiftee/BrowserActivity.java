@@ -106,9 +106,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 
-	//public static String version = "Version Beta-v2.0.2 - Android 2.1";
-	//public static String version = "Version Beta-v2.0.2 - Android 2.2";
 	public static String version = "Version Beta-v2.0.2 - Android 2.3";
+	//public static String version = "Version Beta-v2.0.2 - Android 2.2";
+	//public static String version = "Version Beta-v2.0.2 - Android 2.1";
 	
 	public static String version_code = "Version Beta-v2.0.1";
 	
@@ -623,6 +623,13 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     	MailTo mt = MailTo.parse(url);
         Intent i = newEmailIntent(this, mt.getTo(), mt.getSubject(), mt.getBody(), mt.getCc());
         startActivity(i);
+    }
+    
+    public void playVideo(String url){    	
+    	Intent intent = new Intent(Intent.ACTION_VIEW); 
+		intent.setDataAndType(Uri.parse(url), "video/3gpp");
+		intent.setClassName("com.google.android.youtube","com.google.android.youtube.PlayerActivity");
+		startActivity(intent);
     }
     
     public static Intent newEmailIntent(Context context, String address, String subject, String body, String cc) {
