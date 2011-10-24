@@ -2,6 +2,7 @@ package com.roamtouch.floatingcursor;
 
 import java.net.URISyntaxException;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import org.metalev.multitouch.controller.MultiTouchController;
 import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCanvas;
@@ -663,18 +664,26 @@ public class FloatingCursor extends FrameLayout implements
 			currentMenu = fcMainMenu;
 			fcMainMenu.setVisibility(VISIBLE);
 			fcSettingsMenu.setVisibility(INVISIBLE);
-			fcWindowTabs.setVisibility(INVISIBLE);			
+			fcWindowTabs.setVisibility(INVISIBLE);		
+			if (currentMenu instanceof CircularLayout) {
+				((CircularLayout) currentMenu).resetMenu(1);
+				((CircularLayout) currentMenu).drawHotTip();
+			}	
 			break;
 		case 1:
 			currentMenu = fcSettingsMenu;
 			fcSettingsMenu.setVisibility(VISIBLE);
 			fcMainMenu.setVisibility(INVISIBLE);
 			fcWindowTabs.setVisibility(INVISIBLE);
+			fcView.setVisibility(INVISIBLE);
+			if (currentMenu instanceof CircularLayout) {
+				((CircularLayout) currentMenu).resetMenu(2);
+				((CircularLayout) currentMenu).drawHotTip();
+			}			
 			break;
 		case 2:
 			currentMenu = fcWindowTabs;
 			fcWindowTabs.setVisibility(VISIBLE);
-			// fcWindowTabs.drawHotTip();
 			fcSettingsMenu.setVisibility(INVISIBLE);
 			fcMainMenu.setVisibility(INVISIBLE);
 			fcView.setVisibility(INVISIBLE);
@@ -859,7 +868,7 @@ public class FloatingCursor extends FrameLayout implements
 					handler.removeCallbacks(parkingRunnable);
 
 					if (currentMenu instanceof CircularLayout) {
-						((CircularLayout) currentMenu).resetMenu();
+						((CircularLayout) currentMenu).resetMenu(1);
 						((CircularLayout) currentMenu).drawHotTip();
 						// Log.d("Reset menu", "---------------------------");
 					}
@@ -1786,7 +1795,7 @@ public class FloatingCursor extends FrameLayout implements
 		int _x = Math.round(X);
 		int _y = Math.round(Y);
 		int[] initCoor = { _x, _y };
-		Object[] paramTip = { re, comment, initCoor, 1000 };
+		Object[] paramTip = { re, comment, initCoor, 2000 };
 		tCtrl.setTipComment(paramTip, isFor);
 	}
 
@@ -2150,10 +2159,16 @@ public class FloatingCursor extends FrameLayout implements
 				break;
 
 			default:
-				// eventViewer.setText("Executing link...");				
-				String linkLabel = checkLink();
-				String[] t3 = { "Opening ", linkLabel };				
-				drawTip(rect, t3, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
+				// eventViewer.setText("Executing link...");	
+				Vector actions = getActionText("Opening ");							 			
+				if (actions.size()==1){
+					String[] t1 = { (String) actions.get(0) };
+					drawTip(rect, t1, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
+				} else if (actions.size()==2) {
+					String[] t2 = { (String) actions.get(0), (String) actions.get(1) };
+					drawTip(rect, t2, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
+				}
+				
 				break;
 			}
 			if (mWebHitTestResult.getType() != WebHitTestResult.TEXT_TYPE) {
@@ -2199,10 +2214,17 @@ public class FloatingCursor extends FrameLayout implements
 				((ClipboardManager) mParent
 						.getSystemService(Context.CLIPBOARD_SERVICE))
 						.setText(selectedLink);
-				mParent.setSelection(selectedLink);
-				String linkLabel = checkLink();				
-				String[] t3 = { linkLabel, "copied to clipboard" };
-				drawTip(rect, t3, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
+				mParent.setSelection(selectedLink);			
+				
+				Vector actions = getActionText("Copied to clipboard");				 			
+				if (actions.size()==1){
+					String[] t1 = { (String) actions.get(0) };
+					drawTip(rect, t1, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
+				} else if (actions.size()==2) {
+					String[] t2 = { (String) actions.get(0), (String) actions.get(1) };
+					drawTip(rect, t2, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
+				}
+				
 				break;
 			}
 
@@ -2244,9 +2266,17 @@ public class FloatingCursor extends FrameLayout implements
 				mGesturesEnabled = true;
 				mParent.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);
 				mParent.startGesture(true);
-				String linkLabel = checkLink();				
-				String[] t3 = { "Draw a gesture for", linkLabel };
-				drawTip(rect, t3, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
+				
+				Vector actions = getActionText("Draw a gesture for");				 			
+				if (actions.size()==1){
+					String[] t1 = { (String) actions.get(0) };
+					drawTip(rect, t1, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
+				} else if (actions.size()==2) {
+					String[] t2 = { (String) actions.get(0), (String) actions.get(1) };
+					drawTip(rect, t2, fcX, fcY, SwifteeApplication.IS_FOR_WEB_TIPS);
+				}
+				
+				
 				break;
 			}
 
@@ -2263,7 +2293,7 @@ public class FloatingCursor extends FrameLayout implements
 
 	}
 	
-	private String checkLink(){
+	/*private String checkLink(){
 		
 		String linkeLabel = null;
 		if ( linkTitle==null ){
@@ -2279,7 +2309,70 @@ public class FloatingCursor extends FrameLayout implements
 			linkeLabel = linkTitle;
 		}	
 		return linkeLabel;
-	}
+	}*/
+	
+	private Vector getActionText(String what){	
+
+		String action = null;
+		String url = null;
+		Vector ret = new Vector();		
+		
+		if ( linkTitle==null ){
+			
+			if ( selectedLink==null ){
+				url = linkUrl; 
+			} else {
+				url = selectedLink;
+			}
+			
+		} else {
+			url = linkTitle;
+		}	
+		
+		if (mWebHitTestResult.getType() == WebHitTestResult.GEO_TYPE) {
+						
+			action = what + " Map";			
+			
+		} else if (url.contains("@")) {
+			
+			action = "Sending Mail To";
+			StringTokenizer tokens = new StringTokenizer(url, "?");
+			String first = tokens.nextToken();// this will contain "Fruit".
+			url = first;
+			//url = first.substring(7, first.length());
+			linkUrl = null;
+			
+		} else if (url.startsWith("vnd.youtube:")) {			
+			
+			action =  what +" Video";
+			
+		} else if (url.startsWith("http://")){
+			
+			action =  what + "Link";
+			url = gdn.getDomain(url);
+			
+		} else if (url.contains("html#video")){
+			
+			action = "Search Video";
+			url=null;
+			
+		} else if (url.contains("html#image")){
+			
+			action = "Search Image";
+			url=null;
+		}
+		
+		ret.add(action);
+		
+		if (url!=null){
+			ret.add(url);
+		}
+		
+		
+		return ret;
+		
+	}	
+	
 
 	private String[] trimSelectedTextForTip() {
 		String selectionText = null;
@@ -2780,8 +2873,8 @@ public class FloatingCursor extends FrameLayout implements
 			int scrollY = Y - CircleY;
 			double length = Math.hypot(scrollX, scrollY);
 
-			// Double tap
-			if (!mSoftKeyboardVisible) {
+			// Double tap hack
+			/*if (!mSoftKeyboardVisible) {
 				long thisTime = System.currentTimeMillis();
 				if (thisTime - lastTouchTime < 250) {
 
@@ -2801,7 +2894,7 @@ public class FloatingCursor extends FrameLayout implements
 					// Too slow :)
 					lastTouchTime = thisTime;
 				}
-			}
+			}*/
 
 			/*
 			 * if (X > innerCircleX - innerCirRad && X < innerCircleX +

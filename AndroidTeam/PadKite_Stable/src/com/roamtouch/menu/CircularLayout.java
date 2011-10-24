@@ -24,8 +24,7 @@ import android.app.Instrumentation;
  * Circular layout containing menu items and performing circular wheel animation
  * 
  */
-public class CircularLayout extends ViewGroup {
-	
+public class CircularLayout extends ViewGroup {	
 	   
 	/**
 	 * Calculate the radius for menu buttons and inner radius 
@@ -86,20 +85,7 @@ public class CircularLayout extends ViewGroup {
 		protected MenuBGView menuBackground= null;
 		
 		private void initBG()
-		{
-			// FIXME
-			/*Bitmap menuBG = BitmapFactory.decodeFile("/sdcard/Swiftee/Default Theme/circle.png");
-			//Log.d("FormatTest","Resource32: " + menuBG.getConfig());
-
-			ImageView menuBackground = new ImageView(context);
-			//menuBackground.setImageResource(R.drawable.circle);
-			menuBackground.setImageBitmap(menuBG);
-		
-			// Enable dithering when our 32-bit image gets drawn.
-			//Drawable drawable32 = menuBackground.getDrawable();
-			//drawable32.setDither(true);
-		
-			menuBackground.setScaleType(ImageView.ScaleType.CENTER);*/
+		{		
 			menuBackground = new MenuBGView(this.context);
 			menuBackground.setRadius(INNER_RADIUS);
 		
@@ -114,11 +100,7 @@ public class CircularLayout extends ViewGroup {
 			setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
 			setWillNotDraw(false);
 			final ViewConfiguration configuration = ViewConfiguration.get(context);
-			mTouchSlop = configuration.getScaledTouchSlop();
-			//Log.d("Touch slope", ""+mTouchSlop);
-//			mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
-//			mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
-			//Log.d
+			mTouchSlop = configuration.getScaledTouchSlop();	
 			this.context = context;		
 			initBG();
 		   }
@@ -230,34 +212,53 @@ public class CircularLayout extends ViewGroup {
 	public void setAngleChange(float angleChange){
 		mAngleChange = angleChange;
 	}
-	public void resetMenu(){
+	
+	private int menu;
+	
+	public void resetMenu(int m){	
+		
+		menu=m;
+		setHotKey(menu);
+		
 		hotBut.setVisibility(View.VISIBLE);
 		double t = 55;
+		
 		for (int i = 1; i < childEndPoint; i++) {
-			   MenuButton child = (MenuButton)getChildAt(i);
-			   if (child.getVisibility() != GONE) {    
+			
+			final MenuButton child = (MenuButton)getChildAt(i);
+			if (child.getVisibility() != GONE) {    
 			   double angle;				   
          	// Calc coordinates around the circle at the center of cart. system
 			    angle = (i-1)*t;
-             angle=angle-90 + 46;
+            angle=angle-90 + 46;
          
          	child.setAngle(angle);
-         	child.calculateCenter(a,b,inR,angle);
-         	
-         	//Log.i("Circle before if angle,x,y" , "("+ x +","+ y +")angle"+angle);
-         
-         	//Log.i("Circle x,y" , "("+ x +","+ y +")");
+         	child.calculateCenter(a,b,inR,angle); 
 
-             final int childLeft = child.getCenterX() - BUTTON_RADIUS;
-             final int childTop = child.getCenterY() - BUTTON_RADIUS;
-             final int lb = child.getCenterX() + BUTTON_RADIUS;
-             final int rb = child.getCenterY() + BUTTON_RADIUS;
+            final int childLeft = child.getCenterX() - BUTTON_RADIUS;
+            final int childTop = child.getCenterY() - BUTTON_RADIUS;
+            final int lb = child.getCenterX() + BUTTON_RADIUS;
+            final int rb = child.getCenterY() + BUTTON_RADIUS;
             
-             if(child.shouldDraw()) {
-                 child.layout(childLeft, childTop, lb, rb);                	
-             }
+            if(child.shouldDraw()) {
+                child.layout(childLeft, childTop, lb, rb);                	
+            }           
             
-            setHotKey();
+            //Draws the clicked button on the hotKey before executing
+            child.setOnTouchListener(new OnTouchListener() {          	 
+    			@Override
+    		    public boolean onTouch(View v, MotionEvent event) {   				
+    				int action = event.getAction();		
+    				if (action == event.ACTION_DOWN){
+    					//Set hotwith child
+    					setHotWithChild(child);
+    					drawHotTip();    	    					
+    					//Execute armed hotBut
+    					runHotWithDelay(400);    					
+    				} 			
+    				return true;}
+    			}
+    		);
      		
          }
      }			   
@@ -265,18 +266,23 @@ public class CircularLayout extends ViewGroup {
 		mLastMotionY = 0;
 		mLastMotionX = 0;
 		mLastMotionAngle=-999;	
-		moveChilds();
-		/*for (int i = 1; i < childEndPoint; i++) {
-			MenuButton child = (MenuButton)getChildAt(i);
-			child.setAngle(0);
-			child.calculateCenter(a,b,inR,0);
-		}*/
-	}
+		moveChilds();	
+	}	
 	
-	private void setHotKey(){	
+	private void setHotKey(int menu){	
+		
+		if (menu==1){
+			
+	    	hotBut.setDrawables(MenuInflater.hotkey_image_main,MenuInflater.hotkey_highlight_main);	
+			hotBut.setFunction(MenuInflater.hotkey_function_main);
+			
+		}  else if (menu==2) {
+			
+			hotBut.setDrawables(MenuInflater.hotkey_image_settings,MenuInflater.hotkey_highlight_settings);	
+			hotBut.setFunction(MenuInflater.hotkey_function_settings);
+		}
 		hotName = hotBut.getDescription();
-    	hotBut.setDrawables(MenuInflater.hotkey_image,MenuInflater.hotkey_highlight);	
-		hotBut.setFunction(MenuInflater.hotkey_function);
+		hotBut.setIsArmed(true);
 	}
 	
 	public double getZoomAngle(){
@@ -291,31 +297,22 @@ public class CircularLayout extends ViewGroup {
 		addView(coneSeparator);
 			
 		hotBut = new MenuButton(context);
-		hotBut.setDrawables(MenuInflater.hotkey_image,MenuInflater.hotkey_highlight);	
-		hotBut.setFunction(MenuInflater.hotkey_function);
-		hotName = hotBut.getDescription();
+		//hotBut.setDrawables(MenuInflater.hotkey_image,MenuInflater.hotkey_highlight);	
+		//hotBut.setFunction(MenuInflater.hotkey_function);
+		//hotName = hotBut.getDescription();
 		hotBut.setHotkey(true);
+		
 		int id = hotBut.getId();
 		hotHash.put(id, hotBut); 
-		addView(hotBut);
-		
+		addView(hotBut);		
 	}   
-/*
-	@Override
-	protected void dispatchDraw(Canvas canvas) {
 
-		Paint p=new Paint();
-		p.setColor(Color.GRAY);
-
-		super.dispatchDraw(canvas);
-	}
-*/
 	public boolean canScroll(float angleDiff,int childCount) {
 		MenuButton first = (MenuButton)getChildAt(1);
 		MenuButton last = (MenuButton)getChildAt(childEndPoint-2);
 		
 		if((first.getAngle()+angleDiff)>-40){
-			setHotKey();
+			setHotKey(menu);
 			return false;
 		}
 		
@@ -429,68 +426,67 @@ public class CircularLayout extends ViewGroup {
             		
            //if (yDiff > 3 || xDiff > 3) {
             
-            if(Math.abs(angleDiff) > 0.5 && Math.abs(angleDiff) < 250)  {
-            
-          
-     	    //checkForMotionDir(x,y);
-            //computeAngle(x,y);
-            mAngleChange = angleDiff;
-            if(mAngleChange<0)
-            	direction = -1;
-            else
-            	direction = 1;
-			int count=getChildCount();
-			
-			mLastMotionAngle = currentAngle;
-			mLastMotionX = x;
-            mLastMotionY = y;
-            
-            if(!canScroll(angleDiff, count)){
-            	drawHotTip();            	
-            	//caca
-            	String url = null;
-    			if (hotBut.getFunction().equals("new_window")){			
-    				url = "add_pressed.png";    			 		
-    			 }  
-    			hotBut.setHotDrawables(PATH + url);    			
-            	return true;
-            }
-            
-            
-            //if(mLastMotionAngle>270 && currentAngle<90)
-            //	mAngleChange = currentAngle;
-            
-            //Log.v("top", "top: "+top);
-            //if (top){
-           // 	return true;            	
-           // }
-               
-            moveChilds();
-            
-            
-        	//Log.i("x,y" , "("+ x +","+ y +")");
-			
-			
-            //Log.d("x,y,angle: ", x+","+y+","+mLastMotionAngle);
+            if(Math.abs(angleDiff) > 0.5 && Math.abs(angleDiff) < 250)  {            
+	          
+	     	    //checkForMotionDir(x,y);
+	            //computeAngle(x,y);
+	            mAngleChange = angleDiff;
+	            if(mAngleChange<0)
+	            	direction = -1;
+	            else
+	            	direction = 1;
+				int count=getChildCount();
+				
+				mLastMotionAngle = currentAngle;
+				mLastMotionX = x;
+	            mLastMotionY = y;
+	            
+	            if(!canScroll(angleDiff, count)){
+	            	drawHotTip();            	
+	            	//caca
+	            	String url = null;
+	    			if (hotBut.getFunction().equals("new_window")){			
+	    				url = "add_pressed.png";    			 		
+	    			}  else if (hotBut.getFunction().equals("new_window")){
+	    				url = "gesturekiteditor_pressed.png";
+	    			}
+	    			hotBut.setHotDrawables(PATH + url);    			
+	            	return true;
+	            }
+	            
+	            
+	            //if(mLastMotionAngle>270 && currentAngle<90)
+	            //	mAngleChange = currentAngle;
+	            
+	            //Log.v("top", "top: "+top);
+	            //if (top){
+	            // 	return true;            	
+	            // }
+	               
+	            moveChilds();            
+	            
+	        	//Log.i("x,y" , "("+ x +","+ y +")");
+	            //Log.d("x,y,angle: ", x+","+y+","+mLastMotionAngle);
 			}
             break;
 		}
 		case MotionEvent.ACTION_UP:
 			
-			//handler.removeCallbacks(runnableHot);	
-			
-			//if (hotBut.getIsArmed()){
-			if (isNew){
+			/**
+			 * EXECUTES HotBut on UP.
+			 */
+			if (isNew && menu==1){ //Main
 				hotFunction="new_window";
+			} else if (isNew && menu==2){ //Settings
+				hotFunction="gesture_kit_editor";
 			}
-			BrowserActivity.drawNothingTip();
-			hotBut.setFunction(hotFunction);		
-			long downTime = SystemClock.uptimeMillis();
-			long eventTime = SystemClock.uptimeMillis();								
-			MotionEvent hotEvent = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_UP, cX, cY, 0);				
-			hotBut.dispatchTouchEvent(hotEvent);				
-			hotBut.setIsArmed(false);				
-			//}
+			if (hotBut.getIsArmed()){
+				BrowserActivity.drawNothingTip();
+				hotBut.setFunction(hotFunction);
+				runHotWithDelay(500);
+			} else {
+				BrowserActivity.toggleMenuVisibility();
+			}
 			
 			final VelocityTracker velocityTracker = mVelocityTracker;
             velocityTracker.computeCurrentVelocity(1000);
@@ -537,9 +533,19 @@ public class CircularLayout extends ViewGroup {
 	boolean top;	  
 	private Hashtable hotHash = new Hashtable(); 
 	boolean fling; 
-	boolean isNew;
-	 
-	 public void moveChilds(){
+	boolean isNew;	
+	private MenuButton setBack;
+	Handler buttonHandler = new Handler();
+
+	public void moveChilds(){		
+		
+		Throwable t = new Throwable(); StackTraceElement[] elements =
+		t.getStackTrace();				 
+		String calleeMethod = elements[0].getMethodName(); String
+		callerMethodName = elements[1].getMethodName(); String
+		callerClassName = elements[1].getClassName();				
+		Log.v("call", "callerMethodName: "+callerMethodName+ " callerClassName: "+callerClassName );
+		
 		 
 		 for (int i = 1; i < childEndPoint; i++) {
 				
@@ -592,98 +598,135 @@ public class CircularLayout extends ViewGroup {
                 			String checkName = null;
                 			if (checkChid!=null){
                 				checkName = checkChid.getFunction();
-                			}
-                    		
-                			setHotButtonImage(2);	
-                			drawHotTip();
-                		
+                			}        			       			
                 			
-                			/*if (childName.equals("new_window")){
-                				handler.postDelayed(runnableHot, 600);  
-                			}*/
+                			String url = null;
+                			hotBut.setIsArmed(true);
+                			url = hotFunction + "_pressed.png";
+                			
+                			if (hotFunction.equals("finger_model")){                				
+                				if (!SwifteeApplication.getFingerMode()){
+                					 url = "Finger_model_single_pressed.png";
+                			 	} else {
+                			 		url = "Finger_model_multi_pressed.png";
+                			 	} 			
+                			 } 
+                			 
+                			 if (child.getFunction().equals("backward")){  
+                				 if (!child.isEnabled()){
+                					 url = "backward_disabled_hot.png";          
+                					 hotName = "<g>Go Backward";
+                					 hotBut.setIsArmed(false);    
+                				 }
+                				 
+                			 } else if (child.getFunction().equals("forward")){  
+                				 if (!child.isEnabled()){
+                					 url = "forward_disabled_hot.png";          
+                					 hotName = "<g>Go Forward";
+                					 hotBut.setIsArmed(false);    
+                				 }
+                			 }                  			 
+                			 
+                			 hotBut.setVisibility(View.VISIBLE);
+                			 hotBut.setHotDrawables(PATH + url);
+                			 
+                			drawHotTip();         		
                 			
                     		if ( direction==-1 && !childName.equals(checkName) ){
-                    			isNew=false;
-                    		}
-	                    		
-                    		/*	if (!has) {
-                    				//setHotButtonImage(1);	                    				
-                    				//drawHotTip(); 
-			                		hotHash.put(id, child);            					                    			
-			                		//handler.postDelayed(runnableHot, 600);            		
-			                	}				                		
-			                	    
-	                    		
-	                    	} else if ( direction==1 && childName.equals(checkName)) {
-	                    		
-	                    		//handler.removeCallbacks(runnableHot);	
-	                    		hotHash.remove(id);
-	                    		//drawHotTip();
-	                    		//BrowserActivity.drawNothingTip();
-	                    		//setHotButtonImage(1);
-                   	
-	                    	}*/		                    		
+                    			isNew=false;                    			
+                    			
+                    			//Backward-Forward switch
+                    			/*if (child.getFunction().equals("backward")){  
+                        			if (child.isEnabled()){
+                        				setBack = child;             			       
+                        				buttonHandler.postDelayed(backForButs, 1500);
+                        			}
+                        		}*/
+
+                    			//Backward-Forward switch
+                    			/*if (child.getFunction().equals("homepage")){  
+                        			setBack = child;             			       
+                        			buttonHandler.postDelayed(bookMarkButs, 1500);                      			
+                        		}*/	
+                    		}                              		
 	                	}	                	
 	            	}          
 	            }
 	      }	 
 	 } 
 	 
-	 /*Runnable runnableHot = new Runnable(){
-		 
+	/*Runnable backForButs = new Runnable() {
 		public void run() {
-			top = false;
-			setHotButtonImage(2);		
-			handler.removeCallbacks(runnableHot);						
-		}			
-		
-	};*/
-	 
-	 private void setHotButtonImage(int armed){		 
-		 
-		 String url = null;
-		 
-		 switch (armed) {
-			 
-		 case 1:
-			 
-			hotBut.setIsArmed(false);
-			url = hotFunction + "_normal.png";
-			if (hotFunction.equals("finger_model")){			
-				if (hotBut.getIsSingleFinger()){
-	 				url = "Finger_model_single.png";
-	 			} else {
-	 				url = "Finger_model_multi.png";
-	 			} 			
-	 		}
-			break;
-			
-		 
-		 case 2:	 
-			hotBut.setIsArmed(true);
-			url = hotFunction + "_pressed.png";
-			if (hotFunction.equals("finger_model")){			
-				if (hotBut.getIsSingleFinger()){
-					url = "Finger_model_single_pressed.png";
-			 	} else {
-			 			url = "Finger_model_multi_pressed.png";
-			 	} 			
-			 }  
-			break;
-			
-		 case 3:
-			 url="";
-			 break;
+			if (setBack.getFunction().equals(hotFunction)){
+				setHotWithChild(setBack);
+			} else {
+				buttonHandler.removeCallbacks(backForButs); 
+			}
 		}
+	 };*/
+	 
+	 /*Runnable bookMarkButs = new Runnable() {
+			public void run() {
+				if (setBack.getFunction().equals(hotFunction)){
+					setHotWithChild(setBack);
+				} else {
+					buttonHandler.removeCallbacks(bookMarkButs); 
+				}
+			}
+		 };*/
+	 
+	 private void setHotWithChild(MenuButton child){		 
+		String childFunc = null;
+		childFunc = child.getFunction();			
+		hotName = child.getDescription();
+		hotFunction = child.getFunction();
+		String url = childFunc + "_pressed.png";
+		hotBut.setHotDrawables(PATH + url); 	
+		hotBut.setFunction(childFunc);
+		drawHotTip();				  
+	}
+	 
+	 /*private void setHotWithChild(MenuButton child){
 		 
-		 if (armed==3){
-			 hotBut.setVisibility(View.INVISIBLE);
-		 } else {
-			 //handler.removeCallbacks(runnableHot);
-			 hotBut.setVisibility(View.VISIBLE);
-			 hotBut.setHotDrawables(PATH + url);
-		 }
-		 
+			String childFunc = null;
+			
+			if (child.getFunction().equals("backward")){
+				
+				childFunc = "forward";
+				hotName = "Go Forward";
+				hotFunction = childFunc;				 
+				buttonHandler.removeCallbacks(backForButs);      
+
+			} else if (child.getFunction().equals("backward")) {
+				
+				childFunc = "set_homepage";
+				hotName = "Set Homepag";
+				hotFunction = childFunc;				 
+				buttonHandler.removeCallbacks(bookMarkButs);
+				
+			} else {
+				childFunc = child.getFunction();			
+				hotName = child.getDescription();
+				hotFunction = child.getFunction();		     
+			}
+			 
+			String url = childFunc + "_pressed.png";
+			hotBut.setHotDrawables(PATH + url); 	
+			hotBut.setFunction(childFunc);
+			drawHotTip();				  
+		}*/
+	 
+	 private void runHotWithDelay(int delay){		 
+		 Handler showHotHandler = new Handler(); 
+			showHotHandler.postDelayed(new Runnable() { 
+		         public void run() { 
+		        	long downTime = SystemClock.uptimeMillis();
+		        	long eventTime = SystemClock.uptimeMillis();								
+		        	MotionEvent hotEvent = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_UP, cX, cY, 0);				
+		        	hotBut.dispatchTouchEvent(hotEvent);				
+		        	hotBut.setIsArmed(false);	
+		         } 
+		  }, delay);			
 	 }
 	 
 	 public void drawHotTip(){		         						
@@ -722,13 +765,7 @@ public class CircularLayout extends ViewGroup {
 			}
 			
 			moveChilds();
-			//Toast.makeText(context, "scrollTo:" + mScroller.getCurrX() +
-			//"," + mScroller.getCurrY(), Toast.LENGTH_SHORT).show();
-			//scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
-			//mAngleChange = mScroller.get;
-			//moveChilds();
-			// FIXME: Update cursor image
-			// Keep on drawing until the animation has finished.
+			
 			postInvalidate();
 		}
 	}
@@ -762,7 +799,9 @@ public class CircularLayout extends ViewGroup {
 			String url = null;
 			if (hotBut.getFunction().equals("new_window")){			
 				url = "add_pressed.png";    			 		
-			 }  
+			 }  else if (hotBut.getFunction().equals("new_window")){
+ 				url = "gesturekiteditor_pressed.png";
+ 			}
 			isNew=true;
 			hotBut.setHotDrawables(PATH + url);
 

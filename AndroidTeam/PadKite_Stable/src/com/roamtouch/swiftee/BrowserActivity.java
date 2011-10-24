@@ -665,7 +665,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     
     public static void toggleMenuVisibility(){
     	floatingCursor.toggleMenuVisibility();
-    }
+    }   
     
     public void startTextGesture()
     {

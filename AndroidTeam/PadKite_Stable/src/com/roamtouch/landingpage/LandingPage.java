@@ -96,7 +96,7 @@ public class LandingPage {
 			+"<div align=\"center\">"			
 			//+"	<form id=\"urlform\" action=\"#\" onSubmit=\"return loadSearch()\">\n"			
 			+"<form id=\"urlform\" action=\"#\" onsubmit=\"return load()\">"				
-			+"<label>Enter address</label>     <a href=\"#\" name=\"ImageLink\" onclick=\"sendType('image')\">Image</a>    <a href=\"#\" name=\"VideoLink\" onclick=\"sendType('video');\">Video</a>\n"			
+			+"<label>Enter address</label>     <a href=\"#image\" name=\"ImageLink\" onclick=\"sendType('image')\">Image</a>    <a href=\"#video\" name=\"VideoLink\" onclick=\"sendType('video');\">Video</a>\n"			
 			//+"<input type=\"text\" name=\"url\"></input><br>"		
 			+"<input name=\"box\" class=\"input\" type=\"text\" size=\"30\" height=\"10\"></input>"
 			//+"<input type=\"button\" value=\"Load Webpage\" action=\"#\" onclick=\"return load()\"></input>"			

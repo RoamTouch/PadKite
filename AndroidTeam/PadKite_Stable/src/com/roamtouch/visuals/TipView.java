@@ -1,6 +1,8 @@
 package com.roamtouch.visuals;
 
+import java.util.StringTokenizer;
 import java.util.Timer;
+import java.util.Vector;
 
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
@@ -63,27 +65,28 @@ public class TipView extends View {
 		    
 	    		case 1:	    	   		
 	    			
-	    			Object[] paintText11 =  getPaintText(tipText[0], pT);
-	    			Paint resPaint = (Paint)paintText11[0];	    			
-	    			String title = (String)paintText11[1];    			
+	    			Vector paintText11 = new Vector();
+	    			paintText11 =  getPaintText(tipText[0], pT);
+	    			Paint resPaint = (Paint)paintText11.get(0);	    			
+	    			String title = (String)paintText11.get(1);	 			
 	    			width = (int) resPaint.measureText(title);  
 	    			comment(canvas, lineHeight);
 	    			int _x = checkCMTextWidth();
-	    			Paint pT1 = paintText(1);
-	    	   		canvas.drawText(tipText[0].toString(), _x, yPos-5, pT1);
+	    			//Paint pT1 = paintText(1);
+	    	   		canvas.drawText(title, _x, yPos-5, resPaint);
 	    			
 	    	   		break;
 	    	   		
 	    	   	case 2:	     	   		
 	    	   			       	   		
-	    	   		Object[] paintText21 =  getPaintText(tipText[0], pT);	    	   		
-	    	   		Paint onePaint = (Paint)paintText21[0];	    			
-	    			String oneLine = (String)paintText21[1]; 		
+	    	   		Vector paintText21 =  getPaintText(tipText[0], pT);	    	   		
+	    	   		Paint onePaint = (Paint)paintText21.get(0);    			
+	    			String oneLine = (String)paintText21.get(1);		
 	    			int width21 = (int) onePaint.measureText(oneLine); 	   		
 	    	   		
-	    			Object[] paintText22 =  getPaintText(tipText[1], pT);
-	    			Paint twoPaint = (Paint)paintText22[0];	    			
-	    			String twoLine = (String)paintText22[1]; 		
+	    			Vector paintText22 =  getPaintText(tipText[1], pT);
+	    			Paint twoPaint = (Paint)paintText22.get(0);       			
+	    			String twoLine = (String)paintText22.get(1);		
 	    			int width22 = (int) twoPaint.measureText(twoLine);    			
 	    	   		
 	    	   		if ( width21 > width22 ) {	    	   			
@@ -106,22 +109,22 @@ public class TipView extends View {
 	    	   		//canvas.drawText((String)paintText21[1], xPos+(width/2)+15, yPos+10, onePaint);	    	   		
 	    	   		//canvas.drawText((String)paintText22[1], xPos+(width/2)+15, yPos+45, twoPaint);
 	    	   		
-	    	   		canvas.drawText((String)paintText21[1], xText, yPos+10, onePaint);	    	   		
-	    	   		canvas.drawText((String)paintText22[1], xText, yPos+45, twoPaint);
+	    	   		canvas.drawText(oneLine, xText, yPos+10, onePaint);	    	   		
+	    	   		canvas.drawText(twoLine, xText, yPos+45, twoPaint);
 	    	   		
 	    	   		break;
 	    	   		
 	    	   	case 3:
 	    	   		
 	    	   		comment(canvas, lineHeight*3);   	       	   		
-	    	   		Object[] paintText31 =  getPaintText(tipText[0], pT);	    	   		       
-	    	   		canvas.drawText((String)paintText31[1], xPos+(width/2)+15, yPos-10, (Paint)paintText31[0]);
+	    	   		Vector paintText31 =  getPaintText(tipText[0], pT);	    	   		       
+	    	   		canvas.drawText((String)paintText31.get(1), xPos+(width/2)+15, yPos-10, (Paint)paintText31.get(0));
 	    	   		
-	    	   		Object[] paintText32 =  getPaintText(tipText[1], pT);
-	    	   		canvas.drawText((String)paintText32[1], xPos+(width/2)+15, yPos+25, (Paint)paintText32[0]);
+	    	   		Vector paintText32 =  getPaintText(tipText[1], pT);
+	    	   		canvas.drawText((String)paintText32.get(1), xPos+(width/2)+15, yPos+25, (Paint)paintText32.get(0));
 	    	   		
-	    	   		Object[] paintText33 =  getPaintText(tipText[2], pT);
-	    	  		canvas.drawText((String)paintText33[1], xPos+(width/2)+15, yPos+45, (Paint)paintText33[0]);	   	
+	    	   		Vector paintText33 =  getPaintText(tipText[2], pT);
+	    	  		canvas.drawText((String)paintText33.get(1), xPos+(width/2)+15, yPos+45, (Paint)paintText33.get(0));	   	
 	    	   		
 	    	   		break;   	
 	    	   		
@@ -171,26 +174,34 @@ public class TipView extends View {
 		return _x;
 	}
     
-    private Object[] getPaintText(String text, Paint pT){
+    private Vector getPaintText(String text, Paint pT){    	
     	
-    	Object[] paintText = new Object[2]; 		
+    	Vector paintTextVector = new Vector();
     	
-   		if (text.contains("<b>")){   	
+    	if (text.contains("<b>")){   	
    			
    			pT = paintText(0);	 
    			text = text.replaceFirst("<b>", "");
-   			text = text.replaceFirst("</b>", "");   
-   			paintText[0] = pT;
-   			paintText[1] = text;
+   			text = text.replaceFirst("</b>", "");   			 			
+   			paintTextVector.add(pT);
+   			paintTextVector.add(text);   			
+   		
+   		} else if (text.contains("<g>")){
    			
-   		} else {
+   			pT = paintText(2);	 
+   			String t = null; 
+   			t =	text.replaceFirst("<g>", "");  	
+   			paintTextVector.add(pT);
+   			paintTextVector.add(t);	
    			
+   		} else {  			
    			pT = paintText(1); 			
-   			paintText[0] = pT;
-   			paintText[1] = text;
    			
-   		}
-   		return paintText;
+   			paintTextVector.add(pT);
+   			paintTextVector.add(text);   		
+   		}	
+   		
+   		return paintTextVector;
     }
     
     private void comment (Canvas canvas, int commentHeight){   
@@ -260,6 +271,17 @@ public class TipView extends View {
 				//textColor = SwifteeApplication.DARK_GRAY;
 				pText.setColor(color.GRAY);
 				pText.setTextSize(22);
+				break;
+			case 2:							
+				
+				/*int r = SwifteeApplication.LIGHT_GRAY[0];
+				int g = SwifteeApplication.LIGHT_GRAY[1];
+				int b = SwifteeApplication.LIGHT_GRAY[2];	
+				int col = Color.rgb(r, g, b);		
+				pText.setColor(col);*/
+				
+				pText.setColor(color.LTGRAY);
+				pText.setTextSize(22);				
 				break;
 		}
 		//pText.setARGB(100, textColor[0], textColor[1], textColor[2]);	

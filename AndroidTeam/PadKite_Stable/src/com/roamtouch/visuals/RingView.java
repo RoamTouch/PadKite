@@ -160,9 +160,8 @@ public class RingView extends View {
     	
     	Path pathTab = drawTabShape(tabFinalXPos, yPosTab-12, tabFinalXPos+tabWidth, close);  
     	Paint pSquare = paintTab();
-    	canvas.drawPath(pathTab, pSquare);          	
-    	
-		//canvas.drawText(text, textFinalXPos, yPosTab-9, pText);	        	
+    	canvas.drawPath(pathTab, pSquare);      
+			
 		pathTab.close();	
 		
 		return pText;
@@ -178,9 +177,7 @@ public class RingView extends View {
 		cY = centerY;
 	}
     
-    private void finalDrawRing(Canvas canvas){    	
-    	
-    	//Path ring = drawRing(ringRect.left-5, ringRect.top-4, ringRect.right-2, ringRect.bottom-ringRect.top+7);
+    private void finalDrawRing(Canvas canvas){
     	Path ring = drawRing(x, y, W, H);
     	Paint p = new Paint();
         p.setAntiAlias(true);

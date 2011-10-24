@@ -4,7 +4,17 @@
 ******************************************************************************-->
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
    		
-   		              
+   		<MenuButton android:button_image="gesturekiteditor_normal.png"
+					android:button_highlightImage="gesturekiteditor_pressed.png"
+					android:button_function="gesture_kit_editor"
+					android:button_policy="keep"
+					android:hotkey="true"
+		/>  
+		
+		<MenuButton android:button_image="bookmark_edit_normal.png"
+					android:button_highlightImage="bookmark_edit_pressed.png"
+                    android:button_function="bookmark"/>   
+					              
    		<MenuButton android:button_image="browsersettings_normal.png"
 					android:button_highlightImage="browsersettings_pressed.png" 
 					android:button_function="browser_settings"
@@ -17,17 +27,11 @@
 					android:button_policy="keep"
 		/>
 		
-		<MenuButton android:button_image="sethomepage_normal.png"
+		<!--<MenuButton android:button_image="sethomepage_normal.png"
 					android:button_highlightImage="sethomepage_pressed.png"
 					android:button_function="set_homepage"
 					android:button_policy="keep"
-		/>  
-
-		<MenuButton android:button_image="gesturekiteditor_normal.png"
-					android:button_highlightImage="gesturekiteditor_pressed.png"
-					android:button_function="gesture_kit_editor"
-					android:button_policy="keep"/>  
-	
+		/>-->
 		
 		<MenuButton android:button_image="history_normal.png"
 					android:button_highlightImage="history_pressed.png"
@@ -35,11 +39,7 @@
                     
          <MenuButton android:button_image="download_normal.png"
 					android:button_highlightImage="download_pressed.png"
-                    android:button_function="download"/>       
-                    
-         <MenuButton android:button_image="bookmark_edit_normal.png"
-					android:button_highlightImage="bookmark_edit_pressed.png"
-                    android:button_function="bookmark"/>         
+                    android:button_function="download"/>         
 
 	
 </merge>

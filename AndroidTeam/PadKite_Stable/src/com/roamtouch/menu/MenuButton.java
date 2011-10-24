@@ -27,9 +27,7 @@ public class MenuButton extends Button {
 		
 		private String description;
 		
-		private boolean isSingleFinger;
-		
-		private boolean isArmed;
+		private boolean isArmed;	
 		
 		//hotTab
 		private String hotTitle;
@@ -39,12 +37,11 @@ public class MenuButton extends Button {
 		private WebView mWebView;
 		private BitmapDrawable bitmapDrawable;
 		
-		private boolean isHidden;
+		private boolean isHidden;	
 		
 		public boolean isHidden() {
 			return isHidden;
 		}	
-		
 
 		public void setHidden(boolean isHidden) {
 			this.isHidden = isHidden;
@@ -230,14 +227,6 @@ public class MenuButton extends Button {
 			return description;
 		}
 		
-		public boolean getIsSingleFinger(){
-			return isSingleFinger;
-		}
-		
-		public void setIsSingleFinger(Boolean b){
-			isSingleFinger=b;
-		}
-		
 		public void setIsArmed(boolean is){
 			isArmed = is;
 		}
@@ -290,7 +279,7 @@ public class MenuButton extends Button {
 		public void applyInit(){
 			this.setBackgroundDrawable(bitmapDrawable);
 			this.hotTitle = mWebView.getTitle();
-		}
+		}	
 		
 		
 }

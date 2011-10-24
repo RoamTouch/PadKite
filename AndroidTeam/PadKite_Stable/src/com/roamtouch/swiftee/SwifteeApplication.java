@@ -174,6 +174,7 @@ public class SwifteeApplication extends Application{
 	public static int[] BLACK	 		= {0, 0, 0};
 	public static int[] RED_MAP	 		= {252, 120, 108};
 	public static int[] TURQUOISE 		= {0, 212, 159};
+	public static int[] LIGHT_GRAY 		= {50, 50, 50};	
 	
 	//DOTS COLORS
 	public static int[] DOTS_GREEN 			= {124, 160, 21};

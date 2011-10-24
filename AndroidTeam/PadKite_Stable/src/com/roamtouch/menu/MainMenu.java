@@ -35,7 +35,7 @@ enum MainMenuFunctions {
 	stop,
 	backward,
 	//zoom,
-	//homepage,
+	homepage,
 	windows,
 	share,
 	//custom_gesture,
@@ -83,8 +83,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				MenuButton b = (MenuButton) v;
 				if(b.getFunction().equals("refresh"))
 					button = b;
-				//if(b.getFunction().equals("backward"))
-				//	backButton = b;
+				if(b.getFunction().equals("backward"))
+					backButton = b;				
 				if(b.getFunction().equals("forward"))
 					fwdButton = b;
 				if(b.getFunction().equals("finger_model"))
@@ -140,7 +140,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		
 		BrowserActivity.drawNothingTip();
 		
-		if(event.getAction() == MotionEvent.ACTION_DOWN) {
+		/*if(event.getAction() == MotionEvent.ACTION_DOWN) {
+			
 			switch(button_function) {
 			//Settings
 			case settings:
@@ -163,9 +164,9 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 			//	break;
 					
 			//Homepage
-			/*case homepage:
+			case homepage:
 				mFloatingCursor.setEventText("Go to Home");
-				break;*/
+				break;
 			
 			//Windows	
 			case windows:
@@ -216,7 +217,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				mFloatingCursor.setEventText("No function defined for: " + b.getFunction());
 				break;
 			}
-		}
+		}*/
+		
 		if(event.getAction() == MotionEvent.ACTION_UP){			
 			mParent.setEventViewerMode(EventViewerArea.TEXT_ONLY_MODE);
 
@@ -266,12 +268,12 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				//break;
 					
 			//Find text
-			/*case homepage:
+			case homepage:
 				SharedPreferences sharedPreferences = mParent.getApplicationContext().getSharedPreferences("Shared_Pref_AppSettings", Context.MODE_WORLD_READABLE);
 				String url = sharedPreferences.getString("home_page","http://www.padkite.com");
 				mFloatingCursor.loadPage(url);
 				mFloatingCursor.enableProgressBar();
-				break;*/
+				break;
 				
 			//Windows	
 			case windows:
@@ -292,10 +294,10 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				break;
 				
 			//Backward	
-			//case backward:
-			//	mFloatingCursor.goBackward();		
-			//	mFloatingCursor.enableProgressBar();
-			//	break;
+			case backward:
+				mFloatingCursor.goBackward();		
+				mFloatingCursor.enableProgressBar();
+				break;
 				
 			case forward:
 				mFloatingCursor.goForward();
@@ -303,20 +305,22 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				break;
 				
 			//Custom Gesture	
-			/*case custom_gesture:
+			//case custom_gesture:
+			case bookmark:
 				this.setVisibility(INVISIBLE);
 				mParent.setGestureType(SwifteeApplication.BOOKMARK_GESTURE);
 				mParent.startGesture(false);
-				break;*/		
+				break;		
 			
-			case bookmark:
+			/*case bookmark:
 				Intent i = new Intent(mParent,GestureRecorder.class);
 				i.putExtra("Gesture_Name",  mFloatingCursor.getCurrentTitle());
 				i.putExtra("url", mFloatingCursor.getCurrentURL());
 				i.putExtra("isNewBookmark", true);
 				i.putExtra("Gesture_Type", SwifteeApplication.BOOKMARK_GESTURE);
 				mParent.startActivity(i);
-				break;			
+				break;*/			
+				
 			case finger_model:
 				if (SwifteeApplication.getFingerMode()){
 					toggleSingleOrMulti(false);									
@@ -344,22 +348,23 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 		if(fingerButton == null)
 			return;
 		if(isSingle){		
-			SwifteeApplication.setFingerMode(true);
-			fingerButton.setIsSingleFinger(true);
+			SwifteeApplication.setFingerMode(true);			
 			fingerButton.setDrawables(PATH+"Finger_model_multi.png",PATH+"Finger_model_multi_pressed.png"); 						
 		}
 		else{
-			SwifteeApplication.setFingerMode(false);
-			fingerButton.setIsSingleFinger(false);
+			SwifteeApplication.setFingerMode(false);			
 			fingerButton.setDrawables(PATH+"Finger_model_single.png",PATH+"Finger_model_single_pressed.png");	
 		}		
 	};	
+	
 	public void setBackEabled(boolean b){
 		if(backButton!=null)
 			backButton.setEnabled(b);
 	};
+	
 	public void setFwdEabled(boolean b){
 		if(fwdButton!=null)
 			fwdButton.setEnabled(b);
-	}
+	}	
+
 }
