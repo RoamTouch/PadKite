@@ -146,7 +146,7 @@ public class TipView extends View {
 			} else if (tipText[0].toString().equals("Tabs Manager")){
 				_x -= 10; 
 			} else if (tipText[0].toString().equals("Go Forward")){
-				_x += 5;
+				_x += 10;
 			} else if (tipText[0].toString().equals("Refresh Page")){
 				_x -= 5;			
 			} else if (tipText[0].toString().equals("Bookmarks")){
@@ -154,7 +154,7 @@ public class TipView extends View {
 			} else if (tipText[0].toString().equals("Home Page")){
 				_x += 60;
 			} else if (tipText[0].toString().equals("Share Page")){
-				_x += 80;
+				_x += 90;
 			} else if (tipText[0].toString().equals("Finger Model")){
 				_x -= 80;					
 			} else if (tipText[0].toString().equals("Settings")){
@@ -166,6 +166,24 @@ public class TipView extends View {
 			} else if (tipText[0].toString().equals("Back")){
 				_x += 40; 
 			}
+			
+			if (tipText[0].toString().equals("Gesture Editor")){
+				_x -= 10; 
+			} else if (tipText[0].toString().equals("Add Bookmark")){
+				_x -= 10; 
+			} else if (tipText[0].toString().equals("Browser Settings")){
+				_x -= 25;  
+			} else if (tipText[0].toString().equals("Miscellaneous")){
+				_x -= 10; 
+			} else if (tipText[0].toString().equals("Set Homepage")){
+				_x -= 70; 
+			}  else if (tipText[0].toString().equals("History")){
+				_x += 25; 
+			} else if (tipText[0].toString().equals("Download")){
+				_x += 10; 
+			} else if (tipText[0].toString().equals("Back to Main Menu")){
+				_x -= 35; 
+			}		
 			
 		} else {
 			_x = xPos+(width/2)+15;

@@ -252,31 +252,117 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		return ret;		
     }
     
-	 public boolean onKeyDown(int keyCode, android.view.KeyEvent event){
-	        
-	    	if (keyCode == KeyEvent.KEYCODE_MENU) { 
-	    		floatingCursor.toggleMenuVisibility();
+    long start;
+    long current;
+    boolean touchUpMenu;
+    boolean reStart;
+    
+    @Override	
+	public boolean onKeyDown(int keyCode, android.view.KeyEvent event){    	
+               
+	    	if (keyCode == KeyEvent.KEYCODE_MENU) { 	
+	    		
+	    		current = System.currentTimeMillis();    		
+	    		
+	    		if (!floatingCursor.isMenuVisible()){	    			
+	    			start = System.currentTimeMillis();
+	    			floatingCursor.toggleMenuVisibility();
+	    			return touchUpMenu;	   			
+	    		} 	 
+	    		
+	    		if (reStart){
+	    			floatingCursor.setCurrentMenu(0);
+	    			start = System.currentTimeMillis();
+	    			reStart=false;	    			
+	    		}
+	    		
+	    		long check4WM = current-start;
+	    		
+	    		if (	check4WM > 1200 && 
+	    				floatingCursor.isMenuVisible() && 
+	    				floatingCursor.getCurrentMenu()==0	){
+	    			
+	    			floatingCursor.setCurrentMenu(2);	    			
+	    			return touchUpMenu;	    			
+	    		} 
+	    		
+	    		long check4Settings = current-start;
+	    		
+	    		if (	check4Settings > 2400 && 
+	    				floatingCursor.isMenuVisible() && 
+	    				floatingCursor.getCurrentMenu()==2	){
+	    			
+	    			floatingCursor.setCurrentMenu(1);	    			
+	    			mHandler.postDelayed(new Runnable() {	    				
+	            		public void run()
+	            		{
+	            			reStart=true;			
+	            		}	    			
+	            	}, 1200); 				    			
+	    			return touchUpMenu;
+	    		}    		
 	    	}
+	    	
 	    	else if(keyCode == KeyEvent.KEYCODE_BACK){
-	    		if(floatingCursor.isCircularZoomEnabled()){
+	    		
+	    		/*if(floatingCursor.isCircularZoomEnabled()){
 	    			floatingCursor.disableCircularZoom();
 	    		}
-	    		else if (floatingCursor.isMenuVisible())
+	    		else*/ 
+	    		
+	    		if (floatingCursor.isMenuVisible())
 	    		{
+	    			
 		    		floatingCursor.hideMenuFast();
 		    		tCtrl.drawNothing();
-	    		}
-	    		else if(mTutor.getVisibility() == View.VISIBLE){
+		    		
+	    		} else if(mTutor.getVisibility() == View.VISIBLE){
+	    			
 	    			cancelGesture(true);
-	    		}
-	    		else if(webView.canGoBack())
+	    			
+	    		} else if(webView.canGoBack()){
+	    			
 	    			webView.goBack();
-	    		else
+	    			
+	    		} else {
+	    			
 	    			//BrowserActivity.this.finish();
 	    			closeDialog();
-	    	}
-	   		return false;
+	    			
+	    		}
+	    	}	    	
+	    	
+	    	return touchUpMenu;
 	  }
+	 
+    
+    @Override	
+	public boolean onKeyUp(int keyCode, android.view.KeyEvent event){
+    	touchUpMenu=true;
+		return false;	    	
+    }
+    
+	 //http://stackoverflow.com/questions/7272989/how-can-i-create-a-long-touch-event-on-the-physical-menu-button
+	 
+	 /*@Override	
+	 public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+	
+	     if (keyCode == KeyEvent.KEYCODE_MENU) {
+	    	 
+	    	 if (floatingCursor.getCurrentMenu()==0){	    	 
+	    	  	 
+	    		 floatingCursor.setCurrentMenu(1);
+	    		 
+	    	 } else if (floatingCursor.getCurrentMenu()==1){
+	    		 
+	    		 floatingCursor.setCurrentMenu(2);
+	    	 }
+	         return true;	
+	     }     
+	     return false;
+	 }*/
+	 
+	
 	 
 	 public boolean isOnline() {
 		 ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -296,6 +382,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			 tabOpened = false;
 		 }
 		 return tabOpened;		 
+	 }
+	 
+	 public static int getCurrentMenu(){
+		 return floatingCursor.getCurrentMenu();
 	 }
 	 
 
@@ -1027,7 +1117,6 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 				
 		}		
 	}
-
 
 	public int getActiveWebViewIndex() {
 		return activeWebViewIndex;

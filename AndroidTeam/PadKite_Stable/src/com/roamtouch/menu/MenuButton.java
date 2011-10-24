@@ -206,7 +206,9 @@ public class MenuButton extends Button {
 				desc = "Exit PadKite";
 			}
 			
-			else if (m_button_function.equals("browser_settings")){
+			else if (m_button_function.equals("bookmark_edit")){
+				desc = "Add Bookmark";
+			} else if (m_button_function.equals("browser_settings")){
 				desc = "Browser Settings";
 			} else if (m_button_function.equals("miscellaneous")){
 				desc = "Miscellaneous";
@@ -218,8 +220,9 @@ public class MenuButton extends Button {
 				desc = "History";
 			} else if (m_button_function.equals("download")){
 				desc = "Download";
-			}	
-			
+			} else if (m_button_function.equals("back_menu")){
+				desc = "Back to Main Menu";
+			}			
 			return desc;
 		}
 		
@@ -279,7 +282,6 @@ public class MenuButton extends Button {
 		public void applyInit(){
 			this.setBackgroundDrawable(bitmapDrawable);
 			this.hotTitle = mWebView.getTitle();
-		}	
-		
+		}		
 		
 }

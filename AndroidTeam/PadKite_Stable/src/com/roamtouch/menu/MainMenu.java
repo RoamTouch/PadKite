@@ -54,7 +54,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 	private BrowserActivity mParent;
 	public static boolean USER_REGISTERED = true;
 	//private DBConnector database;
-	private MenuButton button,backButton,fwdButton,fingerButton;
+	private MenuButton button,backButton,fwdButton,fingerButton,shareButton;
 	public static String PATH = BrowserActivity.THEME_PATH + "/";
 	
 //	private EventViewerArea eventViewer;
@@ -89,6 +89,8 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 					fwdButton = b;
 				if(b.getFunction().equals("finger_model"))
 					fingerButton = b;
+				if(b.getFunction().equals("share"))
+					shareButton = b;			
 			}
 		}
 	}
@@ -310,16 +312,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				this.setVisibility(INVISIBLE);
 				mParent.setGestureType(SwifteeApplication.BOOKMARK_GESTURE);
 				mParent.startGesture(false);
-				break;		
-			
-			/*case bookmark:
-				Intent i = new Intent(mParent,GestureRecorder.class);
-				i.putExtra("Gesture_Name",  mFloatingCursor.getCurrentTitle());
-				i.putExtra("url", mFloatingCursor.getCurrentURL());
-				i.putExtra("isNewBookmark", true);
-				i.putExtra("Gesture_Type", SwifteeApplication.BOOKMARK_GESTURE);
-				mParent.startActivity(i);
-				break;*/			
+				break;			
 				
 			case finger_model:
 				if (SwifteeApplication.getFingerMode()){
@@ -365,6 +358,11 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 	public void setFwdEabled(boolean b){
 		if(fwdButton!=null)
 			fwdButton.setEnabled(b);
+	}
+	
+	public void setShareEabled(boolean b){
+		if(shareButton!=null)
+			shareButton.setEnabled(b);
 	}	
 
 }

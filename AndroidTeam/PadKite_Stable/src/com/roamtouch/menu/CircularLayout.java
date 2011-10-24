@@ -87,8 +87,7 @@ public class CircularLayout extends ViewGroup {
 		private void initBG()
 		{		
 			menuBackground = new MenuBGView(this.context);
-			menuBackground.setRadius(INNER_RADIUS);
-		
+			menuBackground.setRadius(INNER_RADIUS);		
 			addView(menuBackground);
 		}		
 		
@@ -213,12 +212,12 @@ public class CircularLayout extends ViewGroup {
 		mAngleChange = angleChange;
 	}
 	
-	private int menu;
+	//private int menu;
 	
-	public void resetMenu(int m){	
+	public void resetMenu(){
 		
-		menu=m;
-		setHotKey(menu);
+		int current = BrowserActivity.getCurrentMenu(); 
+		setHotKey(current);
 		
 		hotBut.setVisibility(View.VISIBLE);
 		double t = 55;
@@ -271,12 +270,12 @@ public class CircularLayout extends ViewGroup {
 	
 	private void setHotKey(int menu){	
 		
-		if (menu==1){
+		if (menu==0){
 			
 	    	hotBut.setDrawables(MenuInflater.hotkey_image_main,MenuInflater.hotkey_highlight_main);	
 			hotBut.setFunction(MenuInflater.hotkey_function_main);
 			
-		}  else if (menu==2) {
+		}  else if (menu==1) {
 			
 			hotBut.setDrawables(MenuInflater.hotkey_image_settings,MenuInflater.hotkey_highlight_settings);	
 			hotBut.setFunction(MenuInflater.hotkey_function_settings);
@@ -296,12 +295,9 @@ public class CircularLayout extends ViewGroup {
 		coneSeparator.setBackgroundResource(R.drawable.circleround_cone);
 		addView(coneSeparator);
 			
-		hotBut = new MenuButton(context);
-		//hotBut.setDrawables(MenuInflater.hotkey_image,MenuInflater.hotkey_highlight);	
-		//hotBut.setFunction(MenuInflater.hotkey_function);
-		//hotName = hotBut.getDescription();
+		hotBut = new MenuButton(context);		
 		hotBut.setHotkey(true);
-		
+		hotBut.setOnTouchListener((OnTouchListener) this);
 		int id = hotBut.getId();
 		hotHash.put(id, hotBut); 
 		addView(hotBut);		
@@ -312,7 +308,7 @@ public class CircularLayout extends ViewGroup {
 		MenuButton last = (MenuButton)getChildAt(childEndPoint-2);
 		
 		if((first.getAngle()+angleDiff)>-40){
-			setHotKey(menu);
+			setHotKey(BrowserActivity.getCurrentMenu());
 			return false;
 		}
 		
@@ -447,7 +443,7 @@ public class CircularLayout extends ViewGroup {
 	            	String url = null;
 	    			if (hotBut.getFunction().equals("new_window")){			
 	    				url = "add_pressed.png";    			 		
-	    			}  else if (hotBut.getFunction().equals("new_window")){
+	    			}  else if (hotBut.getFunction().equals("gesture_kit_editor")){
 	    				url = "gesturekiteditor_pressed.png";
 	    			}
 	    			hotBut.setHotDrawables(PATH + url);    			
@@ -475,15 +471,15 @@ public class CircularLayout extends ViewGroup {
 			/**
 			 * EXECUTES HotBut on UP.
 			 */
-			if (isNew && menu==1){ //Main
+			if (isNew && BrowserActivity.getCurrentMenu()==0){ //Main
 				hotFunction="new_window";
-			} else if (isNew && menu==2){ //Settings
+			} else if (isNew && BrowserActivity.getCurrentMenu()==1){ //Settings
 				hotFunction="gesture_kit_editor";
 			}
 			if (hotBut.getIsArmed()){
 				BrowserActivity.drawNothingTip();
 				hotBut.setFunction(hotFunction);
-				runHotWithDelay(500);
+				runHotWithDelay(100);
 			} else {
 				BrowserActivity.toggleMenuVisibility();
 			}
@@ -532,33 +528,24 @@ public class CircularLayout extends ViewGroup {
 	int cY; // = hotBut.getCenterY();
 	boolean top;	  
 	private Hashtable hotHash = new Hashtable(); 
-	boolean fling; 
+	boolean fling;
 	boolean isNew;	
 	private MenuButton setBack;
 	Handler buttonHandler = new Handler();
 
 	public void moveChilds(){		
 		
-		Throwable t = new Throwable(); StackTraceElement[] elements =
-		t.getStackTrace();				 
-		String calleeMethod = elements[0].getMethodName(); String
-		callerMethodName = elements[1].getMethodName(); String
-		callerClassName = elements[1].getClassName();				
-		Log.v("call", "callerMethodName: "+callerMethodName+ " callerClassName: "+callerClassName );
-		
-		 
-		 for (int i = 1; i < childEndPoint; i++) {
+		for (int i = 1; i < childEndPoint; i++) {
 				
 	            MenuButton child = (MenuButton)getChildAt(i);
 	            
 	            if (child.getVisibility() != GONE) {         
 	            	
 	            	if(child.isHotkey()){
-						   int diff = BUTTON_RADIUS/2;
-						   child.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);
-						   
-						   continue;
-					   }
+					   int diff = BUTTON_RADIUS/2;
+					   child.layout(a-diff, b-inR-diff,a+diff, b-inR+diff);						   
+					   continue;
+					}
 	            	
 	            	//child.setClickable(false);
 	            	double angle=child.getAngle();
@@ -625,7 +612,29 @@ public class CircularLayout extends ViewGroup {
                 					 hotName = "<g>Go Forward";
                 					 hotBut.setIsArmed(false);    
                 				 }
-                			 }                  			 
+                				 
+                			 } else if (child.getFunction().equals("set_homepage")){  
+                				 if (!child.isEnabled()){
+                					 url = "sethomepage_disabled_hot.png";          
+                					 hotName = "<g>Set Homepage";
+                					 hotBut.setIsArmed(false);    
+                				 }
+                				 
+                			 }	else if (child.getFunction().equals("bookmark_edit")){  
+                				 if (!child.isEnabled()){
+                					 url = "bookmark_edit_normal_hot.png";          
+                					 hotName = "<g>Add Bookmark";
+                					 hotBut.setIsArmed(false);    
+                				 }
+                				 
+                			 }  else if (child.getFunction().equals("share")){  
+                				 if (!child.isEnabled()){
+                					 url = "share_normal_hot.png";          
+                					 hotName = "<g>Share page";
+                					 hotBut.setIsArmed(false);    
+                				 }
+                			 }                     			         			 
+                			 
                 			 
                 			 hotBut.setVisibility(View.VISIBLE);
                 			 hotBut.setHotDrawables(PATH + url);
@@ -655,26 +664,6 @@ public class CircularLayout extends ViewGroup {
 	      }	 
 	 } 
 	 
-	/*Runnable backForButs = new Runnable() {
-		public void run() {
-			if (setBack.getFunction().equals(hotFunction)){
-				setHotWithChild(setBack);
-			} else {
-				buttonHandler.removeCallbacks(backForButs); 
-			}
-		}
-	 };*/
-	 
-	 /*Runnable bookMarkButs = new Runnable() {
-			public void run() {
-				if (setBack.getFunction().equals(hotFunction)){
-					setHotWithChild(setBack);
-				} else {
-					buttonHandler.removeCallbacks(bookMarkButs); 
-				}
-			}
-		 };*/
-	 
 	 private void setHotWithChild(MenuButton child){		 
 		String childFunc = null;
 		childFunc = child.getFunction();			
@@ -686,44 +675,15 @@ public class CircularLayout extends ViewGroup {
 		drawHotTip();				  
 	}
 	 
-	 /*private void setHotWithChild(MenuButton child){
-		 
-			String childFunc = null;
-			
-			if (child.getFunction().equals("backward")){
-				
-				childFunc = "forward";
-				hotName = "Go Forward";
-				hotFunction = childFunc;				 
-				buttonHandler.removeCallbacks(backForButs);      
-
-			} else if (child.getFunction().equals("backward")) {
-				
-				childFunc = "set_homepage";
-				hotName = "Set Homepag";
-				hotFunction = childFunc;				 
-				buttonHandler.removeCallbacks(bookMarkButs);
-				
-			} else {
-				childFunc = child.getFunction();			
-				hotName = child.getDescription();
-				hotFunction = child.getFunction();		     
-			}
-			 
-			String url = childFunc + "_pressed.png";
-			hotBut.setHotDrawables(PATH + url); 	
-			hotBut.setFunction(childFunc);
-			drawHotTip();				  
-		}*/
-	 
 	 private void runHotWithDelay(int delay){		 
 		 Handler showHotHandler = new Handler(); 
 			showHotHandler.postDelayed(new Runnable() { 
 		         public void run() { 
 		        	long downTime = SystemClock.uptimeMillis();
-		        	long eventTime = SystemClock.uptimeMillis();								
+		        	long eventTime = SystemClock.uptimeMillis();	        	
 		        	MotionEvent hotEvent = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_UP, cX, cY, 0);				
-		        	hotBut.dispatchTouchEvent(hotEvent);				
+		        	hotBut.dispatchTouchEvent(hotEvent);
+		        	hotEvent.recycle();		        	
 		        	hotBut.setIsArmed(false);	
 		         } 
 		  }, delay);			
@@ -795,11 +755,11 @@ public class CircularLayout extends ViewGroup {
             case MotionEvent.ACTION_DOWN:
                 /* Remember location of down touch */
 		
-            	//caca
+            //caca
 			String url = null;
 			if (hotBut.getFunction().equals("new_window")){			
 				url = "add_pressed.png";    			 		
-			 }  else if (hotBut.getFunction().equals("new_window")){
+			 }  else if (hotBut.getFunction().equals("gesture_kit_editor")){
  				url = "gesturekiteditor_pressed.png";
  			}
 			isNew=true;
@@ -825,57 +785,6 @@ public class CircularLayout extends ViewGroup {
 	        return false;
 	    }
 	   
-/*	   public void checkForMotionDir(float x,float y){
-		  
-		  
-	        mVelocityTracker.computeCurrentVelocity(1000, 360);
-	        float xVelocity=mVelocityTracker.getXVelocity();
-	        float yVelocity=mVelocityTracker.getYVelocity();
-	        float temp=5;
-	        Log.d("Velocity x,y","("+xVelocity+","+yVelocity+")");
-	        
-	        
-	        
-		   final float diffX = x - mLastMotionX;
-           final float diffY = y - mLastMotionY;
-	        //Check if menu rotates Clockwise or Anticlockwise
-	        		if(x>160 && y<160){
-	        			//inside first quadrant;
-	        			if(xVelocity>0 && yVelocity >0){
-	        				mAngleChange=temp;
-	        			}
-	        			else
-	        				mAngleChange=-temp;
-	        		}
-	        		else if(x>160 && y>160){
-	        			//inside second quadrant;	 
-	        			if(xVelocity<0 && yVelocity >0){
-	        				mAngleChange=temp;
-	        			}
-	        			else
-	        				mAngleChange=-temp;
-	        		}
-	        		else if(x<160 && y>160){
-	        			//inside third quadrant;
-	        			if(xVelocity<0 && yVelocity <0){
-	        				mAngleChange=temp;
-	        			}
-	        			else
-	        				mAngleChange=-temp;
-	        		}
-	        		else {
-	        			//inside fourth quadrant;	  
-	        			if(xVelocity>0 && yVelocity <0){
-	        				mAngleChange=temp;
-	        			}
-	        			else
-	        				mAngleChange=-temp;
-	        		}
-	        		
-	        		
-	   }
-*/	   
-	   
 	   public double computeAngle1(float centerX, float centerY, float currentX, float currentY) {
 		   double angle;
 		   double radius;
@@ -898,7 +807,7 @@ public class CircularLayout extends ViewGroup {
 		   prevRadius = Math.sqrt((mLastMotionX - a)*(mLastMotionX - a) + (mLastMotionY - b)*(mLastMotionY - b));
 		   currentRadius = Math.sqrt((x-a)*(x-a)+(y-b)+(y-b));
 		   
-///		   Log.d("prev rad, curr radius", prevRadius+","+currentRadius);
+		   ///Log.d("prev rad, curr radius", prevRadius+","+currentRadius);
 		   
 		   //prevRadius = currentRadius = inR;
 		  // float r=distanceFromCenter(x, y);
@@ -910,12 +819,11 @@ public class CircularLayout extends ViewGroup {
 		   
 		   float lastAngle=(float) Math.toDegrees(Math.acos(d1));
 		   float currAngle=(float) Math.toDegrees(Math.acos(d2));
-///		   Log.d("Before:: CurrentAngle,LastAngle  :: x, y:", currAngle+","+lastAngle+"("+x+","+y+")");
-		/*   if(y>160)
-			   mAngleChange=currAngle-lastAngle;
-		   else
-			   mAngleChange=lastAngle-currAngle;
-			   */
+		   ///Log.d("Before:: CurrentAngle,LastAngle  :: x, y:", currAngle+","+lastAngle+"("+x+","+y+")");
+		   /*   if(y>160)
+			   		mAngleChange=currAngle-lastAngle;
+		   		else
+			   		mAngleChange=lastAngle-currAngle;*/
 		   
 		   if(y<b) {
 			   currAngle = 180 + (180 - currAngle);
@@ -923,9 +831,9 @@ public class CircularLayout extends ViewGroup {
 		   if(mLastMotionY < b) {
 			   lastAngle = 180 + (180 - lastAngle);
 		   }
-///		   Log.d("After:: CurrentAngle,LastAngle", currAngle+","+lastAngle);
+		   ///Log.d("After:: CurrentAngle,LastAngle", currAngle+","+lastAngle);
 		   mAngleChange = currAngle - lastAngle;
-///		   Log.d("Difference:: (a,b) ", ""+mAngleChange+"("+a+","+b+")");
+		   ///Log.d("Difference:: (a,b) ", ""+mAngleChange+"("+a+","+b+")");
 		   //Log.d("ComputeAngle", ""+mAngleChange);
 	   }
 	
@@ -1003,3 +911,74 @@ public class CircularLayout extends ViewGroup {
 		}
 	   
 }
+
+/*	   public void checkForMotionDir(float x,float y){
+
+
+mVelocityTracker.computeCurrentVelocity(1000, 360);
+float xVelocity=mVelocityTracker.getXVelocity();
+float yVelocity=mVelocityTracker.getYVelocity();
+float temp=5;
+Log.d("Velocity x,y","("+xVelocity+","+yVelocity+")");
+
+
+
+final float diffX = x - mLastMotionX;
+final float diffY = y - mLastMotionY;
+//Check if menu rotates Clockwise or Anticlockwise
+		if(x>160 && y<160){
+			//inside first quadrant;
+			if(xVelocity>0 && yVelocity >0){
+				mAngleChange=temp;
+			}
+			else
+				mAngleChange=-temp;
+		}
+		else if(x>160 && y>160){
+			//inside second quadrant;	 
+			if(xVelocity<0 && yVelocity >0){
+				mAngleChange=temp;
+			}
+			else
+				mAngleChange=-temp;
+		}
+		else if(x<160 && y>160){
+			//inside third quadrant;
+			if(xVelocity<0 && yVelocity <0){
+				mAngleChange=temp;
+			}
+			else
+				mAngleChange=-temp;
+		}
+		else {
+			//inside fourth quadrant;	  
+			if(xVelocity>0 && yVelocity <0){
+				mAngleChange=temp;
+			}
+			else
+				mAngleChange=-temp;
+		}
+		
+		
+}
+*/	  
+
+/*Runnable backForButs = new Runnable() {
+public void run() {
+	if (setBack.getFunction().equals(hotFunction)){
+		setHotWithChild(setBack);
+	} else {
+		buttonHandler.removeCallbacks(backForButs); 
+	}
+}
+};*/
+
+/*Runnable bookMarkButs = new Runnable() {
+	public void run() {
+		if (setBack.getFunction().equals(hotFunction)){
+			setHotWithChild(setBack);
+		} else {
+			buttonHandler.removeCallbacks(bookMarkButs); 
+		}
+	}
+ };*/

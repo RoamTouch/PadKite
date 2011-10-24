@@ -39,6 +39,7 @@
 		
 		<MenuButton android:button_image="share_normal.png"
 					android:button_highlightImage="share_pressed.png"
+					android:button_disabled="share_disabled.png"
 					android:button_function="share"/> 
 		
 		<!--<MenuButton android:button_image="zoom_normal.png"

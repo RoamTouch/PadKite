@@ -665,19 +665,21 @@ public class FloatingCursor extends FrameLayout implements
 			fcMainMenu.setVisibility(VISIBLE);
 			fcSettingsMenu.setVisibility(INVISIBLE);
 			fcWindowTabs.setVisibility(INVISIBLE);		
+			fcView.setVisibility(INVISIBLE);	
 			if (currentMenu instanceof CircularLayout) {
-				((CircularLayout) currentMenu).resetMenu(1);
+				((CircularLayout) currentMenu).resetMenu();
 				((CircularLayout) currentMenu).drawHotTip();
 			}	
 			break;
 		case 1:
 			currentMenu = fcSettingsMenu;
 			fcSettingsMenu.setVisibility(VISIBLE);
+			fcSettingsMenu.requestFocus();
 			fcMainMenu.setVisibility(INVISIBLE);
 			fcWindowTabs.setVisibility(INVISIBLE);
-			fcView.setVisibility(INVISIBLE);
+			fcView.setVisibility(INVISIBLE);			
 			if (currentMenu instanceof CircularLayout) {
-				((CircularLayout) currentMenu).resetMenu(2);
+				((CircularLayout) currentMenu).resetMenu();
 				((CircularLayout) currentMenu).drawHotTip();
 			}			
 			break;
@@ -695,6 +697,18 @@ public class FloatingCursor extends FrameLayout implements
 		}
 	}
 
+	public int getCurrentMenu(){		
+		int current = 0;
+		if (currentMenu == fcMainMenu){
+			current=0;
+		} else if (currentMenu == fcSettingsMenu){
+			current=1;
+		} if (currentMenu == fcWindowTabs){
+			current=2;
+		} 
+		return current;		
+	}
+	
 	public void enableProgressBar() {
 		fcProgressBar.enable();
 	}
@@ -868,7 +882,7 @@ public class FloatingCursor extends FrameLayout implements
 					handler.removeCallbacks(parkingRunnable);
 
 					if (currentMenu instanceof CircularLayout) {
-						((CircularLayout) currentMenu).resetMenu(1);
+						((CircularLayout) currentMenu).resetMenu();
 						((CircularLayout) currentMenu).drawHotTip();
 						// Log.d("Reset menu", "---------------------------");
 					}
@@ -3899,6 +3913,21 @@ public class FloatingCursor extends FrameLayout implements
 
 			fcMainMenu.setBackEabled(view.canGoBack());
 			fcMainMenu.setFwdEabled(view.canGoForward());
+			
+			if (url.startsWith("file:////sdcard/PadKite/Web%20Assets/loadPage")
+				|| url.startsWith("file:///android_asset/Web%20Pages/history.html")
+			    || url.startsWith("file:///android_asset/Web%20Pages/download.html"))				
+			{
+				fcSettingsMenu.setHomePageEnabled(false);
+				fcSettingsMenu.setBookmarkEdit(false);
+				fcMainMenu.setShareEabled(false);
+				
+			} else {
+				
+				fcSettingsMenu.setHomePageEnabled(true);
+				fcSettingsMenu.setBookmarkEdit(true);
+				fcMainMenu.setShareEabled(true);
+			}
 
 			if (url.startsWith("file:///android_asset/Web%20Pages/history.html")) {
 				int start = 0;
@@ -3913,8 +3942,7 @@ public class FloatingCursor extends FrameLayout implements
 				WebPage page = new WebPage();
 				loadData(page.getBrowserHistory(mParent, parts[0], start));
 
-			} else if (url
-					.startsWith("file:///android_asset/Web%20Pages/download.html")) {
+			} else if (url.startsWith("file:///android_asset/Web%20Pages/download.html")) {
 				int start = 0;
 				String[] parts = url.split("\\?", 2);
 				try {

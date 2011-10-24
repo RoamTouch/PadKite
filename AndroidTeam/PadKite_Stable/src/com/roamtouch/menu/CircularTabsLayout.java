@@ -704,8 +704,8 @@ public class CircularTabsLayout extends ViewGroup {
 					if(backBut.shouldDraw()) {					
 						backBut.layout(childLeft, childTop, lb, rb); 
 						backBut.setHidden(false);
-					}						
-													    			
+					}	
+					invalidate();
 					
 				} else if (something instanceof TabButton) {				
 				
@@ -722,8 +722,9 @@ public class CircularTabsLayout extends ViewGroup {
 					    int ri = a+diff-(int)1.5;
 					    int bo = b-inR2+diff-(int)10.5;  				
 					    hotTab.layout(le, to, ri, bo);
+					    hotTab.applyInit();	
 						
-					} else {		
+					} else {	
 											
 						//ImageView tabBorder = tab.getBorderImage();					
 						BitmapDrawable bitmapDrawable = tab.getBitmapDrawable();

@@ -7,8 +7,10 @@ package com.roamtouch.menu;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.settings.BrowserSettingActivity;
 import com.roamtouch.settings.GestureEditor;
+import com.roamtouch.settings.GestureRecorder;
 import com.roamtouch.settings.MiscListActivity;
 import com.roamtouch.swiftee.BrowserActivity;
+import com.roamtouch.swiftee.SwifteeApplication;
 import com.roamtouch.view.WebPage;
 
 import android.app.AlertDialog;
@@ -23,6 +25,7 @@ import android.view.View.OnTouchListener;
 
 enum SettingsMenuFunctions {
 	none,
+	bookmark_edit,
 	browser_settings,
 	set_homepage,
 	resize_hitarea,
@@ -31,12 +34,16 @@ enum SettingsMenuFunctions {
 	//help_online,
 	download,
 	history,
+	back_menu
 }
 
-public class SettingsMenu extends CircularLayout implements OnTouchListener{
+public class SettingsMenu extends CircularLayout implements OnTouchListener {
 	
 	private FloatingCursor mFloatingCursor;
 	private BrowserActivity mParent;
+	private MenuButton setHomePage;
+	private MenuButton bookmarkEdit;
+	
 	
 	public SettingsMenu(Context context) {
 		super(context);
@@ -53,7 +60,17 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 			View v = getChildAt(i);
 			v.setId(i);
 			v.setOnTouchListener(this);
+			
+			if ((v instanceof MenuButton)){
+				MenuButton b = (MenuButton) v;
+				if(b.getFunction().equals("set_homepage"))
+					setHomePage = b;				
+				if(b.getFunction().equals("bookmark_edit"))
+					bookmarkEdit = b;
+			}
+			
 		}
+		
 	}
 
 
@@ -63,8 +80,7 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 	public void setParent(BrowserActivity parent){
 		mParent = parent;
 	}
-
-
+	
 	public boolean onTouch(View v, MotionEvent event) {
 		
 		if (!(v instanceof MenuButton))
@@ -84,53 +100,6 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 			button_function = SettingsMenuFunctions.none;
 		}
 	
-		if(event.getAction() == MotionEvent.ACTION_DOWN){
-			switch(button_function){
-			//Browser Settings
-			case browser_settings:
-				mFloatingCursor.setEventText("Browser Settings ");
-				break;
-				
-			//Set home page
-			case set_homepage:
-				mFloatingCursor.setEventText("Set home page ");
-				break;
-				
-			//Resize hit area
-			case resize_hitarea:
-				mFloatingCursor.setEventText("Resize hit area ");
-				break;
-				
-			//Gesture kit editor
-			case gesture_kit_editor:
-				mFloatingCursor.setEventText("Gesture kit editor ");
-				break;
-					
-			//Miscellaneous
-			case miscellaneous:
-				mFloatingCursor.setEventText("Miscellaneous ");
-				break;
-			
-			//Help online	
-			/*case help_online:
-				mFloatingCursor.setEventText("Help onlin");
-				break;*/
-			
-			//History	
-			case history:
-				mFloatingCursor.setEventText("History");
-				break;
-			
-			// Download
-			case download:
-				mFloatingCursor.setEventText("Download");
-				break;	
-				
-			default:
-				mFloatingCursor.setEventText("No function defined for: " + b.getFunction());
-				break;
-		}
-		}
 		if(event.getAction() == MotionEvent.ACTION_UP){
 
 			String policy = b.getPolicy();
@@ -144,6 +113,16 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 			}
 			
 			switch(button_function){
+			
+			//Edit Bookmark
+			case bookmark_edit:
+				Intent bE = new Intent(mParent,GestureRecorder.class);
+				bE.putExtra("Gesture_Name",  mFloatingCursor.getCurrentTitle());
+				bE.putExtra("url", mFloatingCursor.getCurrentURL());
+				bE.putExtra("isNewBookmark", true);
+				bE.putExtra("Gesture_Type", SwifteeApplication.BOOKMARK_GESTURE);
+				mParent.startActivity(bE);
+			break;	
 			
 			//Browser Settings
 			case browser_settings:
@@ -206,13 +185,28 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener{
 				mFloatingCursor.loadPage("file:///android_asset/Web Pages/download.html");
 				mFloatingCursor.enableProgressBar();
 				break;
+				
+			case back_menu:
+				mFloatingCursor.setCurrentMenu(0);
+				break;
 
 			case none:
 			default:
 				// Nothing to be done
 				break;
-		}
+			}
 		}
 		return false;
 	}
+	
+	public void setHomePageEnabled(boolean b){
+		if(setHomePage!=null)
+			setHomePage.setEnabled(b);
+	};
+	
+	public void setBookmarkEdit(boolean b){
+		if(bookmarkEdit!=null)
+			bookmarkEdit.setEnabled(b);
+	};
+	
 }
