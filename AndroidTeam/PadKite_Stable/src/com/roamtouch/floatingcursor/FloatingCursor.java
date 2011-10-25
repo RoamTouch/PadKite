@@ -2411,8 +2411,14 @@ public class FloatingCursor extends FrameLayout implements
 	 * **/
 	// final Instrumentation instrumentation = new Instrumentation();
 
+	int _x_;
+	int _y_;
+	
 	public void pasteTextIntoInputText(int X, int Y, boolean ENTER) {
 
+		_x_ = X;
+		_y_ = Y;
+		
 		sendEvent(MotionEvent.ACTION_DOWN, X, Y);
 		sendEvent(MotionEvent.ACTION_UP, X, Y);
 
@@ -2420,6 +2426,8 @@ public class FloatingCursor extends FrameLayout implements
 			public void run() {
 				String selection = (String) ((ClipboardManager) mParent
 						.getSystemService(Context.CLIPBOARD_SERVICE)).getText();
+				Log.v("paste", "selection"+selection);
+				mWebView.focusNodeAt(_x_, _y_);
 				mWebView.pasteText(selection);
 			}
 		}, 500);
@@ -2492,94 +2500,7 @@ public class FloatingCursor extends FrameLayout implements
 
 		mWebView.executeSelectionCommand(fcX, fcY, WebView.CLEAR_SELECTION);
 	}
-
-	/*
-	 * 
-	 * protected void clickSelection(int X, int Y) { if (mWebHitTestResult ==
-	 * null) return;
-	 * 
-	 * //Toast.makeText(mContext, "Clicking sel ..." +
-	 * mWebHitTestResult.getType(), Toast.LENGTH_LONG).show();
-	 * 
-	 * if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE ||
-	 * mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE ||
-	 * mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
-	 * // Toast.makeText(mContext, "Clicking link ...",
-	 * Toast.LENGTH_LONG).show(); /** sendEvent(MotionEvent.ACTION_DOWN, X, Y);
-	 * pointer.setImageResource(R.drawable.address_bar_cursor);
-	 * sendEvent(MotionEvent.ACTION_UP, X, Y); startHitTest(X,Y); * /
-	 * 
-	 * mWebView.focusNodeAt(X,Y);
-	 * 
-	 * mGesturesEnabled = true; mWebView.executeSelectionCommand(X, Y,
-	 * WebView.START_SELECTION); mWebView.executeSelectionCommand(X, Y,
-	 * WebView.STOP_SELECTION); mWebView.executeSelectionCommand(X, Y,
-	 * WebView.SELECT_WORD_OR_LINK); mWebView.executeSelectionCommand(X, Y,
-	 * WebView.COPY_TO_CLIPBOARD); //
-	 * mParent.startGesture(SwifteeApplication.CURSOR_LINK_GESTURE); }
-	 * if(mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE){
-	 * sendEvent(MotionEvent.ACTION_DOWN, X, Y);
-	 * //pointer.setImageResource(R.drawable.address_bar_cursor);
-	 * sendEvent(MotionEvent.ACTION_UP, X, Y); } else if
-	 * (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE) {
-	 * eventViewer.setText("Selecting image ...");
-	 * 
-	 * mGesturesEnabled = true; mWebView.executeSelectionCommand(X, Y,
-	 * WebView.SELECT_OBJECT); mWebView.executeSelectionCommand(X, Y,
-	 * WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
-	 * //pointer.setImageResource(R.drawable.address_bar_cursor);
-	 * //removeTouchPoint();
-	 * 
-	 * // FIXME: Add Downloading of image } else if (mWebHitTestResult.getType()
-	 * == WebHitTestResult.TEXT_TYPE) {
-	 * eventViewer.setText("Selecting word ...");
-	 * 
-	 * mGesturesEnabled = true; mWebView.executeSelectionCommand(X, Y,
-	 * WebView.SELECT_WORD_OR_LINK); mWebView.executeSelectionCommand(X, Y,
-	 * WebView.COPY_TO_CLIPBOARD);
-	 * 
-	 * pointer.setImageResource(R.drawable.no_target_cursor); // Re-start
-	 * HitTest functionality startHitTest(X,Y); //
-	 * mParent.startGesture(SwifteeApplication.CURSOR_TEXT_GESTURE);
-	 * //removeTouchPoint();
-	 * 
-	 * // This is called by onClipBoardUpdate changed if mGesturesEnabled is
-	 * true // mParent.startGesture(); } }
-	 * 
-	 * protected void cancelSelection() { sendEvent(MotionEvent.ACTION_CANCEL,
-	 * selX, selY); }
-	 * 
-	 * protected void stopSelection(int X, int Y) { if (mSelectionMode) {
-	 * mSelectionMode = false;
-	 * 
-	 * if (!mSelectionStarted) clickSelection(X,Y); else {
-	 * sendEvent(MotionEvent.ACTION_UP, X, Y);
-	 * pointer.setImageResource(R.drawable.no_target_cursor);
-	 * mParent.startGesture(SwifteeApplication.CURSOR_TEXT_GESTURE); }
-	 * removeTouchPoint(); } }
-	 * 
-	 * protected void checkClickSelection(int X, int Y) { if (mSelectionMode) {
-	 * if (!mSelectionStarted) { clickSelection(X,Y); mSelectionMode = false; }
-	 * } }
-	 * 
-	 * protected void moveSelection(int X, int Y) { if (mSelectionMode) { if
-	 * (!mSelectionStarted) { final int yDiff = (int) Math.abs(Y - selY); final
-	 * int xDiff = (int) Math.abs(X - selX);
-	 * 
-	 * if (yDiff > mTouchSlop || xDiff > mTouchSlop) { // FIXME: Change to
-	 * Velu's selection API pointer.setImageResource(R.drawable.text_cursor);
-	 * mWebView.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new
-	 * KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
-	 * sendEvent(MotionEvent.ACTION_DOWN, X, Y);
-	 * //mWebView.executeSelectionCommand(X, Y, WebView.SELECT_WORD_OR_LINK);
-	 * mSelectionStarted = true; } } else sendEvent(MotionEvent.ACTION_MOVE, X,
-	 * Y); } }
-	 * 
-	 * protected void startSelection(int X, int Y) { if (!mSelectionMode) {
-	 * mSelectionStarted = false; mSelectionMode = true; selX = X; selY = Y;
-	 * eventViewer.setText("Start selection gesture now ..."); } }
-	 */
-
+	
 	private boolean mTouchPointValid = false;
 
 	private static final int INVALID_POINTER_ID = -1;
@@ -3887,6 +3808,20 @@ public class FloatingCursor extends FrameLayout implements
 			}
 			fcMainMenu.toggleCloseORRefresh(false);
 		}
+		   
+		
+	   /* public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event){
+
+	        int keyCode = event.getKeyCode();
+	        String key = event.getCharacters();
+
+	        if (keyCode == event.KEYCODE_ENTER){                
+	            //view.loadUrl(url);
+	        } else {
+	            //mParent.searchSuggestion(url);            
+	        }                
+	        return false;
+	    }*/
 
 		@Override
 		public void onPageFinished(WebView view, String url) {
