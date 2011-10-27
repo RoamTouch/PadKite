@@ -172,17 +172,17 @@ public class SettingsMenu extends CircularLayout implements OnTouchListener {
 			
 			//Help online	
 			/*case help_online:
-				mFloatingCursor.loadPage("file:///android_asset/Web Pages/help.html");
+				mFloatingCursor.loadPage(BrowserActivity.WEB_PAGES_PATH + "/help.html");
 				break;*/
 			
 			//Practice gesture	
 			case history:		
-				mFloatingCursor.loadPage("file:///android_asset/Web Pages/history.html");
+				mFloatingCursor.loadPage( "file:////" + BrowserActivity.WEB_PAGES_PATH + "/history.html");
 				mFloatingCursor.enableProgressBar();	
 				break;
 			
 			case download:				
-				mFloatingCursor.loadPage("file:///android_asset/Web Pages/download.html");
+				mFloatingCursor.loadPage("file:////" + BrowserActivity.WEB_PAGES_PATH + "/download.html");
 				mFloatingCursor.enableProgressBar();
 				break;
 				

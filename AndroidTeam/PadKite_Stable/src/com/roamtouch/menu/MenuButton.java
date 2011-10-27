@@ -121,9 +121,17 @@ public class MenuButton extends Button {
 			this.angle = angle;
 		}
 
-		public double getAngle() {
+		public double getAngle() { 
 			return angle;
 		}
+		
+		/*public boolean shouldTop(int[] backTops, int countTabs){		   	 
+		    double topAngle =  backTops[countTabs-1];
+			if (angle < topAngle ) { 
+				return false;
+			}			
+			return true;
+		}*/
 
 		public void calculateCenter(int h,int k,int r,double angle){
 			centerX=h+(int) (r*Math.cos(Math.toRadians(angle)));

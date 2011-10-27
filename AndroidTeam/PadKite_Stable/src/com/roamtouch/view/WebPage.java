@@ -79,7 +79,7 @@ public class WebPage {
     	String data = "Could not open " + file + ". Please contact support.";
     	    	
     	try {
-    		InputStream is = appState.getAssets().open("Web Pages/" + file);
+    		InputStream is = appState.getAssets().open("WebPages/" + file);
     		byte[] bytes=new byte[is.available()];
     		is.read(bytes);
     		data = new String(bytes);

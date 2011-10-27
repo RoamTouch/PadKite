@@ -23,6 +23,7 @@ public class TabButton extends Button {
 		private String tabURL;
 		private Rect hotRect;	
 		private boolean close;
+		private ImageView border;
 		
 		public TabButton(Context context, AttributeSet attrs) {
 			super(context, attrs);					
@@ -66,7 +67,7 @@ public class TabButton extends Button {
 			if(angle < -90 || angle > 270)
 				return false;
 			return true;
-		}
+		}	
 
 		public void setWebView(WebView mWebView) {
 			this.mWebView = mWebView;

@@ -106,18 +106,22 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	public static int DEVICE_WIDTH,DEVICE_HEIGHT;
 
-	public static String version = "Version Beta-v2.0.2 - Android 2.3";
-	//public static String version = "Version Beta-v2.0.2 - Android 2.2";
-	//public static String version = "Version Beta-v2.0.2 - Android 2.1";
+	//public static String version = "Version Beta-v2.0.3 - Android 2.3";
+	public static String version = "Version Beta-v2.0.2 - Android 2.2";
+	//public static String version = "Version Beta-v2.0.3 - Android 2.1";
 	
 	public static String version_code = "Version Beta-v2.0.1";
 	
 	final public static boolean developerMode = false;
 	public boolean isInParkingMode = false;
 	
-	final public static String BASE_PATH = "/sdcard/PadKite";
-	final public static String THEME_PATH = BASE_PATH + "/Default Theme";
-
+	final public static String BASE_PATH = Environment.getExternalStorageDirectory() + "/PadKite";
+	
+	final public static String THEME_PATH = BASE_PATH + "/DefaultTheme";
+	final public static String GESTURES_PATH = BASE_PATH + "/GestureLibrary";
+	final public static String WEB_PAGES_PATH = BASE_PATH + "/WebPages";
+	final public static String WEB_ASSETS_PATH = BASE_PATH + "/WebAssets";
+	
 	private static int activeWebViewIndex = 0;
 	
 	public WebView webView;
@@ -143,7 +147,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     
     public final LandingPage lp = new LandingPage(this); //HERE ONLY PLACE TO INSTANSIATE LANDINGPAGE.
     
-    private String landingPath = Environment.getExternalStorageDirectory()+"/PadKite/Web Assets/loadPage.html";
+    private String landingPath = "file:////" + BrowserActivity.WEB_ASSETS_PATH + "/loadPage.html";
           
     //Visuals
     private static RingController rCtrl;
@@ -619,6 +623,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		//Tips controller.
 		tCtrl = (TipController)findViewById(R.id.tipController);		
 		tCtrl.setParent(this);	
+		tCtrl.setWebView(webView);
 		
 		//Pointer Holder controller.
 		pHold = (PointerHolder)findViewById(R.id.pointerHolder);
@@ -1453,7 +1458,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	 */
 	public Vector getCuadrant34(int X, int Y) {
 		
-		Vector cuadrant 		= new Vector();
+		Vector cuadrant = new Vector();
 		int verticals 	= 0;
 		int horizontals = 0;
 		Rect xRect = new Rect(); 
@@ -1478,11 +1483,11 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         
         int xModule = w/3;
         
-        if (X > 0 && X < xModule){
+        if (X > 0 && X < xModule){ //First Vertical Sector      
         	
-        	verticals = 1;        	
         	xRect.left = 20;
         	xRect.right = xModule+20;
+        	verticals = 1;        
         	
         	if (horizontals==1){
         		tipType = SwifteeApplication.SET_TIP_TO_LEFT_UP;
@@ -1490,19 +1495,19 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         		tipType = SwifteeApplication.SET_TIP_TO_LEFT_DOWN;
         	}
         	
-        } else if (X > xModule && X < xModule*2){
+        } else if (X > xModule && X < xModule*2){ //Second Vertical Sector
         	
-        	verticals = 2;
         	xRect.left = xModule-20;
         	xRect.right = xModule+20;   
+        	verticals = 2;
         	
         	if (horizontals==1){
         		tipType = SwifteeApplication.SET_TIP_TO_CENTER_UP;
         	} else {
         		tipType = SwifteeApplication.SET_TIP_TO_CENTER_DOWN;
         	}
-        	
-        } else if (X > xModule*2 && X < xModule*3){
+        	 
+        } else if (X > xModule*2 && X < xModule*3){ //Third Vertical Sector
         	
         	xRect.left = w/2-20;
         	xRect.right = xModule+20;        	
@@ -1520,8 +1525,6 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         cuadrant.add(horizontals);
         cuadrant.add(xRect);
         cuadrant.add(tipType);
-        //cuadrant.add(xModule);
-        //cuadrant.add(yModule);
         
         return cuadrant;        
 	}

@@ -2341,6 +2341,7 @@ public class FloatingCursor extends FrameLayout implements
 			
 		} else {
 			url = linkTitle;
+			action =  what + " Link";
 		}	
 		
 		if (mWebHitTestResult.getType() == WebHitTestResult.GEO_TYPE) {
@@ -3849,9 +3850,9 @@ public class FloatingCursor extends FrameLayout implements
 			fcMainMenu.setBackEabled(view.canGoBack());
 			fcMainMenu.setFwdEabled(view.canGoForward());
 			
-			if (url.startsWith("file:////sdcard/PadKite/Web%20Assets/loadPage")
-				|| url.startsWith("file:///android_asset/Web%20Pages/history.html")
-			    || url.startsWith("file:///android_asset/Web%20Pages/download.html"))				
+			if (url.startsWith( "file:////" + BrowserActivity.WEB_ASSETS_PATH + "/loadPage")
+				|| url.equals( "file:////" + BrowserActivity.WEB_PAGES_PATH + "/history.html")
+			    || url.equals( "file:////" + BrowserActivity.WEB_PAGES_PATH + "/download.html"))				
 			{
 				fcSettingsMenu.setHomePageEnabled(false);
 				fcSettingsMenu.setBookmarkEdit(false);
@@ -3864,7 +3865,7 @@ public class FloatingCursor extends FrameLayout implements
 				fcMainMenu.setShareEabled(true);
 			}
 
-			if (url.startsWith("file:///android_asset/Web%20Pages/history.html")) {
+			if (url.startsWith(BrowserActivity.WEB_ASSETS_PATH + "/history.html")) {
 				int start = 0;
 				String[] parts = url.split("\\?", 2);
 				try {
@@ -3877,7 +3878,7 @@ public class FloatingCursor extends FrameLayout implements
 				WebPage page = new WebPage();
 				loadData(page.getBrowserHistory(mParent, parts[0], start));
 
-			} else if (url.startsWith("file:///android_asset/Web%20Pages/download.html")) {
+			} else if (url.startsWith(BrowserActivity.WEB_ASSETS_PATH + "/download.html")) {
 				int start = 0;
 				String[] parts = url.split("\\?", 2);
 				try {
@@ -3894,14 +3895,7 @@ public class FloatingCursor extends FrameLayout implements
 			// Send Javascript for proxy bridge to identify page. webview.
 			final String currentWeb = "javascript:"
 					+ "pBridge.currentPage(theUrl);";
-			view.loadUrl(currentWeb);
-
-			/*
-			 * if (url.startsWith("file:////mnt/sdcard/PadKite/")){ if
-			 * (url.contains("loadPage.html")){ mParent.landingLoaded = true; }
-			 * }
-			 */
-			// "file:////mnt/sdcard/PadKite/Web%Assets/loadPage.html"
+			view.loadUrl(currentWeb);			
 		}
 
 		public Bitmap getCircleBitmap(WebView view) {
@@ -3935,8 +3929,10 @@ public class FloatingCursor extends FrameLayout implements
 				boolean isReload) {
 			if (!isReload && !url.startsWith("data:text/html")
 					&& !url.startsWith("file:///android_asset/")) {
+				
 				// Log.d("---History--------", "url = "+url+"  Title ="+
 				// view.getTitle());
+				
 				dbConnector.addToHistory(System.currentTimeMillis() + "", url,
 						view.getTitle(), 1);
 			}

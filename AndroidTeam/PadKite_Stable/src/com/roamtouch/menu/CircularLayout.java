@@ -304,17 +304,19 @@ public class CircularLayout extends ViewGroup {
 	}   
 
 	public boolean canScroll(float angleDiff,int childCount) {
+		
 		MenuButton first = (MenuButton)getChildAt(1);
-		MenuButton last = (MenuButton)getChildAt(childEndPoint-2);
+		
+		//MenuButton last = (MenuButton)getChildAt(childEndPoint-2);
 		
 		if((first.getAngle()+angleDiff)>-40){
 			setHotKey(BrowserActivity.getCurrentMenu());
 			return false;
 		}
 		
-		/*if((last.getAngle()+angleDiff)>-500){
-			return false;
-		}*/
+		//if((last.getAngle()+angleDiff)>-500){
+		//	return false;
+		//}
 		
 		return true;
 	}

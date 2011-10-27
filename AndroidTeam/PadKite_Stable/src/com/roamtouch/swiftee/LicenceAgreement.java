@@ -33,7 +33,7 @@ public class LicenceAgreement extends Activity{
         }
         	
         WebView wv = (WebView) findViewById(R.id.webView);
-        wv.loadUrl("file:///android_asset/Web Pages/agreement.html");
+        wv.loadUrl( "file:////" + BrowserActivity.WEB_PAGES_PATH + "/agreement.html");
         
         Button accept = (Button) findViewById(R.id.accept);
         Button decline = (Button) findViewById(R.id.decline);

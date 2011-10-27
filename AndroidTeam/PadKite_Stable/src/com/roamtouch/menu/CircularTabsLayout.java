@@ -11,7 +11,9 @@ import com.roamtouch.swiftee.SwifteeApplication;
 import com.roamtouch.utils.GetDomainName;
 import com.roamtouch.utils.Base64;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -23,6 +25,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -232,8 +235,8 @@ public class CircularTabsLayout extends ViewGroup {
 		 	
 		 	backBut = new MenuButton(context);
 		 	backBut.setDrawables(
-		 			"/sdcard/PadKite/Default Theme/backward_normal.png",
-		 			"/sdcard/PadKite/Default Theme/backward_pressed.png");	
+		 			BrowserActivity.THEME_PATH + "/backward_normal.png",
+		 			BrowserActivity.THEME_PATH + "/backward_pressed.png");	
 		 	backBut.setFunction("backward");
 		 	addView(backBut);	 	
 		 	
@@ -252,10 +255,12 @@ public class CircularTabsLayout extends ViewGroup {
 	   
 	   public static Vector getTabVector(){		   
 		   return tabVector;
-	   }
-
+	   }   
+	   
+	   boolean topStop;
+	   
 	   public boolean canScroll(float angleDiff,int childCount) {
-		   	
+		   
 		   /*TabButton first = (TabButton)getChildAt(2);
 		   	TabButton last = (TabButton)getChildAt(childCount-4);
 
@@ -263,8 +268,8 @@ public class CircularTabsLayout extends ViewGroup {
 		   		return false;
 		   	else if(last.getAngle()+angleDiff < 174)
 		   		return false;*/
-		   	
-		   	return true;
+		  
+		   return true;
 	   }
 	
 	   public void setActiveTabIndex(TabButton child){
@@ -396,10 +401,17 @@ public class CircularTabsLayout extends ViewGroup {
 
 					if(!canScroll(angleDiff, count))
 						return true;
+					
 					//if(mLastMotionAngle>270 && currentAngle<90)
 					//	mAngleChange = currentAngle;
-					moveChilds();
-				
+
+					int topAngle = resetTops[BrowserActivity.getTabCount()-1];				
+	    			if ( topAngle < backBut.getAngle() ) {
+	    				moveChilds(false);
+	    			} else {
+	    				moveChilds(true);
+	    			}  			
+	    			
 				}
 				break;
 			}
@@ -409,7 +421,6 @@ public class CircularTabsLayout extends ViewGroup {
 				velocityTracker.computeCurrentVelocity(1000);
 				float initialVelocityY =  velocityTracker.getYVelocity();
 				float initialVelocityX =  velocityTracker.getXVelocity();
-				//Log.d("X and Y velocity","x:"+initialVelocityX+"y:"+initialVelocityY);
 				if (Math.abs(initialVelocityX) > 0.2) {
 					fling(Math.abs(initialVelocityX), initialVelocityY);
 				}
@@ -423,35 +434,73 @@ public class CircularTabsLayout extends ViewGroup {
 				mLastMotionX =0;
 				mLastMotionY =0;
 				
+				
+				handler.removeCallbacks(runnableClose);	
+            	handler.removeCallbacks(runnableHideClose);	
+				
 				//Go back to main menu
 			    if (hotTab.getHotTitle().equals("Back")){
 			    	
-			    	BrowserActivity.setCurrentMenu(0);
+			    	BrowserActivity.setCurrentMenu(0);	
+			    	resetMenu();
 			    	
 	            } else if (hotTab.isClose()){	            	
-
-	            	long downTime = SystemClock.uptimeMillis();
-    				long eventTime = SystemClock.uptimeMillis();								
-    				MotionEvent hotEvent = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_DOWN, cX, cY, 0);    				
-    				hotTab.dispatchTouchEvent(hotEvent);	            	           	
+            	
+	            	AlertDialog alertDialog;
+	            	alertDialog = new AlertDialog.Builder(context).create();	        		
+	            	alertDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);	        	    
+	        		
+	            	String message = "Do you want to close web page "	            			
+            			+ hotTab.getHotTitle();
 	            	
-	            } else { 
+	            	if (hotTab.getHotTitle().equals("Landing Page")){
+	            		//message
+	            	}
+	            	
+	            	alertDialog.setMessage("Do you want to close web page "	            			
+	            			+ hotTab.getHotTitle()
+	            			+ "\n" 
+	            			+ hotTab.getTabURL());	        		
+	        		
+	        	    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+	        	    	
+	        	    	public void onClick(DialogInterface dialog, int which) {
+	        	    		
+	        	    		//Force touch hotKey loaded.
+	        	    		long downTime = SystemClock.uptimeMillis();
+	        				long eventTime = SystemClock.uptimeMillis();								
+	        				MotionEvent hotEvent = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_DOWN, cX, cY, 0);    				
+	        				hotTab.dispatchTouchEvent(hotEvent);
+	        				resetMenu();
+	        				
+	        	    	 } }); 
+	        	    
+	        	    alertDialog.setButton2("Cancel", new DialogInterface.OnClickListener() {
+	        	    	public void onClick(DialogInterface dialog, int which) { 	 
+	        	    		cleanClose();
+	        	    		return;
+	        	    }});
+	        	    
+	        	  	alertDialog.show();          	
+	            	         	           	
+	            	
+	            } else {            	
 	            	
 	            	BrowserActivity.toggleMenuVisibility();
-	            }
-				
-				
-				
-				
+	            	resetMenu();
+	            }			
 			}
 			return true;
 		}
+		
+		
+		//int [] backTops = {100, 60, 82, 329, 180};	
 		
 		int cX; 
 		int cY;
 		private Handler handler = new Handler();
 	
-		public void moveChilds(){
+		public void moveChilds(boolean move){
 			
 				int count = getChildCount();
 				
@@ -461,7 +510,9 @@ public class CircularTabsLayout extends ViewGroup {
 			    	
 			    	if (something instanceof MenuButton){
 			    		
-			    		MenuButton back = (MenuButton) something;			    		
+			    		MenuButton back = (MenuButton) something;
+			    		
+			    		Log.v("back", "back andgle: "+back.getAngle() + " tabs:" +BrowserActivity.getTabCount());
 			    				    		
 			    		double angle=back.getAngle();
 		            	angle+=mAngleChange;
@@ -475,9 +526,11 @@ public class CircularTabsLayout extends ViewGroup {
 			                final int lb = back.getCenterX() + BUTTON_MENU_RADIUS;
 			                final int rb = back.getCenterY() + BUTTON_MENU_RADIUS;             			    			
 			                
-			                back.setVisibility(View.VISIBLE);              
-			                back.layout(childLeft, childTop, lb, rb);		                
-			                
+			                back.setVisibility(View.VISIBLE);  
+			                if (move){
+			                	back.layout(childLeft, childTop, lb, rb);
+			                }
+			                               
 			               if (back.isHidden()){	                	
 			            	   
 			            	   int countTabs = BrowserActivity.getTabCount();
@@ -555,7 +608,9 @@ public class CircularTabsLayout extends ViewGroup {
 								if(child.shouldDraw()) {
 									
 									child.setVisibility(View.VISIBLE);
-									child.layout(childLeft, childTop, lb, rb);
+									if (move){
+										child.layout(childLeft, childTop, lb, rb);
+									}
 									
 									if (child.isHidden()){
 										
@@ -635,8 +690,7 @@ public class CircularTabsLayout extends ViewGroup {
 		public void run() {		
 			hotBorder.setBackgroundResource(R.drawable.wm_tab_border);
 	  		hotTab.setClose(false);
-			handler.removeCallbacks(runnableHideClose);		
-			//dontMoveChilds = false;
+			handler.removeCallbacks(runnableHideClose);
 		}					
 	};	
 	
@@ -754,32 +808,14 @@ public class CircularTabsLayout extends ViewGroup {
 		
 	}	
 		
-	private double getBackAngle() {		   
-	   
-		double angle = 0;
-	   
-	   int countTabs = BrowserActivity.getTabCount();
+	int [] resetTops = {-37, 20, 75, 155, 180};	
 		
-			switch (countTabs){
-				case 1:				
-					angle = -37; 
-					break;
-				case 2:
-					angle = 20; 
-					break;
-				case 3:
-					angle = 75; 
-					break;
-				case 4:
-					angle = 155; 
-					break;
-				case 5:
-					angle = 180; 
-					break;
-			}
-			
-			return angle;		   
-	   }
+	private double getBackAngle() {
+	   double angle = 0;	   
+	   int countTabs = BrowserActivity.getTabCount();
+	   angle = resetTops[countTabs-1];	
+	   return angle;		   
+	}
 		
 		
 	public void fling(float velocityX, float velocityY) 
@@ -801,7 +837,7 @@ public class CircularTabsLayout extends ViewGroup {
 					mScroller.forceFinished(true);
 	            	return;
 			}
-			moveChilds();
+			moveChilds(true);
 			postInvalidate();
 		}
 	}

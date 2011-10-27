@@ -254,9 +254,10 @@ public class SwifteeApplication extends Application{
 		
 		if(isSdCardReady()){
 			// FIXME: For now force an update!		
-			copyFilestoSdcard("Default Theme", true);
-			copyFilestoSdcard("Gesture Library", false);
-			copyFilestoSdcard("Web Assets", true);
+			copyFilestoSdcard("WebPages", true);
+			copyFilestoSdcard("DefaultTheme", true);
+			copyFilestoSdcard("GestureLibrary", false);
+			copyFilestoSdcard("WebAssets", true);		
 		}
 		if(database.checkIfBookmarkAdded()){
 			database.addBookmark();
@@ -321,22 +322,22 @@ public class SwifteeApplication extends Application{
 		switch(gestureType){
 			case CURSOR_TEXT_GESTURE:
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.text_gestures);
-				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/text_gestures");
+				mLibrary = GestureLibraries.fromFile(BrowserActivity.GESTURES_PATH + "/text_gestures");
 				mLibrary.load();
 				break;
 			case CURSOR_LINK_GESTURE:
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.link_gestures);
-				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/link_gestures");
+				mLibrary = GestureLibraries.fromFile(BrowserActivity.GESTURES_PATH + "/link_gestures");
 				mLibrary.load();
 				break;
 			case CURSOR_IMAGE_GESTURE:
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.image_gestures);
-				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/image_gestures");
+				mLibrary = GestureLibraries.fromFile(BrowserActivity.GESTURES_PATH + "/image_gestures");
 				mLibrary.load();
 				break;
 			case CURSOR_NOTARGET_GESTURE:
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.notarget_gestures);
-				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/notarget_gestures");
+				mLibrary = GestureLibraries.fromFile(BrowserActivity.GESTURES_PATH + "/notarget_gestures");
 				mLibrary.load();
 				break;
 			case CURSOR_VIDEO_GESTURE:
@@ -346,17 +347,17 @@ public class SwifteeApplication extends Application{
 				break;
 			case CUSTOM_GESTURE:
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.custom_gestures);
-				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/custom_gestures");
+				mLibrary = GestureLibraries.fromFile(BrowserActivity.GESTURES_PATH + "/custom_gestures");
 				mLibrary.load();
 				break;
 			case BOOKMARK_GESTURE:
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.bookmarks);
-				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/bookmarks");
+				mLibrary = GestureLibraries.fromFile(BrowserActivity.GESTURES_PATH + "/bookmarks");
 				mLibrary.load();
 				break;
 			case SHARE_GESTURE:				
 				//mLibrary = GestureLibraries.fromRawResource(this, R.raw.bookmarks);
-				mLibrary = GestureLibraries.fromFile(BrowserActivity.BASE_PATH + "/Gesture Library/share_gestures");
+				mLibrary = GestureLibraries.fromFile(BrowserActivity.GESTURES_PATH + "/share_gestures");
 				mLibrary.load();
 				break;
 		}		
