@@ -12,11 +12,10 @@ public class GetDomainName
 	}
 	  
 	  
-	public String getDomain(String urlAddress){
+	public static String getDomain(String urlAddress){
 		String domain = null;
 		  
-		  try{		  
-			  
+		  try{		  			  
 			  URL url = new URL(urlAddress);
 			  domain = url.getHost();
 			 

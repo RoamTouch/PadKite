@@ -19,7 +19,13 @@ public class LicenceAgreement extends Activity{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        /**
+         * Disable Title Bar by default, 
+         * enable it to read memory monitor onDraws.
+         **/ 
+        if(SwifteeApplication.getMemoryStatusEnabled()){
+        	getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        }
         setContentView(R.layout.aggrement);
         
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);

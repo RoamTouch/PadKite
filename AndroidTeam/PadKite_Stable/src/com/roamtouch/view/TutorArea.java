@@ -49,6 +49,7 @@ public class TutorArea extends LinearLayout implements OnClickListener {
 	{
 		final Bitmap bitmap = Bitmap.createBitmap(width, height,
                 Bitmap.Config.ARGB_8888);
+		
         final Canvas canvas = new Canvas(bitmap);
 
         final Paint paint = new Paint();

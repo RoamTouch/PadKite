@@ -1,6 +1,7 @@
 package com.roamtouch.view;
 
 import com.roamtouch.floatingcursor.FloatingCursor;
+import com.roamtouch.swiftee.SwifteeApplication;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -49,6 +50,9 @@ public class SwifteeOverlayView extends FrameLayout {
 		// Which is especially important for forwarding gestures for example.
 		
 		// Also we do not want FC to be dependent on any android interface.
+		
+		SwifteeApplication.setMasterX(event.getX());
+		SwifteeApplication.setMasterY(event.getY());
 		
 		if (m_floatingCursor != null)
 		{

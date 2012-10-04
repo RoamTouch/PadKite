@@ -29,7 +29,7 @@ import android.view.animation.Animation.AnimationListener;
 
 import com.roamtouch.floatingcursor.FloatingCursorInnerView;;
 
-public class FloatingCursorView extends View{
+public class FloatingCursorView extends View {
 	
 	public static final String TAG = "FloatingCursorView";
 
@@ -69,31 +69,31 @@ public class FloatingCursorView extends View{
     public FloatingCursorView(Context context) {
         super(context);
         //bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.outer_circle);        
-        innerCircle = new FloatingCursorInnerView(context);      
+        innerCircle = new FloatingCursorInnerView(context);
         
-        colorTable.put(1, SwifteeApplication.DOTS_GREEN);
-        colorTable.put(2, SwifteeApplication.DOTS_ORANGE);
-        colorTable.put(3, SwifteeApplication.DOTS_YELLOW);
-        colorTable.put(4, SwifteeApplication.DOTS_TURQUOISE);
-        colorTable.put(5, SwifteeApplication.DOTS_LIGHT_BLUE);
-        colorTable.put(6, SwifteeApplication.DOTS_VIOLET);
-        colorTable.put(7, SwifteeApplication.DOTS_PINK);
-        colorTable.put(8, SwifteeApplication.DOTS_APPLE);
-        colorTable.put(9, SwifteeApplication.DOTS_RED);
-        colorTable.put(10, SwifteeApplication.DOTS_CYAN);     
-        colorTable.put(11, SwifteeApplication.DOTS_LIGHT_ORANGE);
+        colorTable.put(1, SwifteeApplication.CIRCLE_PANTONE_801C);
+        colorTable.put(2, SwifteeApplication.CIRCLE_PANTONE_802C);
+        colorTable.put(3, SwifteeApplication.CIRCLE_PANTONE_803C);
+        colorTable.put(4, SwifteeApplication.CIRCLE_PANTONE_804C);
+        colorTable.put(5, SwifteeApplication.CIRCLE_PANTONE_805C);
+        colorTable.put(6, SwifteeApplication.CIRCLE_PANTONE_806C);
+        colorTable.put(7, SwifteeApplication.CIRCLE_PANTONE_807C);
+        colorTable.put(8, SwifteeApplication.CIRCLE_PANTONE_808C);
+        colorTable.put(9, SwifteeApplication.CIRCLE_PANTONE_809C);
+        colorTable.put(10, SwifteeApplication.CIRCLE_PANTONE_810C);     
+        colorTable.put(11, SwifteeApplication.CIRCLE_PANTONE_811C);
         
-        colorTableBorder.put(1, SwifteeApplication.DOTS_GREEN_BORDER);
-        colorTableBorder.put(2, SwifteeApplication.DOTS_ORANGE_BORDER);
-        colorTableBorder.put(3, SwifteeApplication.DOTS_YELLOW_BORDER);
-        colorTableBorder.put(4, SwifteeApplication.DOTS_TURQUOISE_BORDER);
-        colorTableBorder.put(5, SwifteeApplication.DOTS_LIGHT_BLUE_BORDER);
-        colorTableBorder.put(6, SwifteeApplication.DOTS_VIOLET_BORDER);
-        colorTableBorder.put(7, SwifteeApplication.DOTS_PINK_BORDER);
-        colorTableBorder.put(8, SwifteeApplication.DOTS_APPLE_BORDER);
-        colorTableBorder.put(9, SwifteeApplication.DOTS_RED_BORDER);
-        colorTableBorder.put(10, SwifteeApplication.DOTS_CYAN_BORDER);
-        colorTableBorder.put(11, SwifteeApplication.DOTS_LIGHT_ORANGE_BORDER);     
+        colorTableBorder.put(1, SwifteeApplication.CIRCLE_PANTONE_173C);
+        colorTableBorder.put(2, SwifteeApplication.CIRCLE_PANTONE_362C);
+        colorTableBorder.put(3, SwifteeApplication.CIRCLE_PANTONE_456C);
+        colorTableBorder.put(4, SwifteeApplication.CIRCLE_PANTONE_154C);
+        colorTableBorder.put(5, SwifteeApplication.CIRCLE_PANTONE_429C);
+        colorTableBorder.put(6, SwifteeApplication.CIRCLE_PANTONE_235C);
+        colorTableBorder.put(7, SwifteeApplication.CIRCLE_PANTONE_2425C);
+        colorTableBorder.put(8, SwifteeApplication.CIRCLE_PANTONE_343C);
+        colorTableBorder.put(9, SwifteeApplication.CIRCLE_PANTONE_392C);
+        colorTableBorder.put(10, SwifteeApplication.CIRCLE_PANTONE_1535C);
+        colorTableBorder.put(11, SwifteeApplication.CIRCLE_PANTONE_7526C);     
     
         
     }
@@ -130,6 +130,10 @@ public class FloatingCursorView extends View{
     {
         return this.rad;
     }  
+    
+    public void setInvalidate(){
+    	invalidate();
+    }
     
     int countColor=1;
     

@@ -35,9 +35,9 @@ public class SlideShow extends Activity implements OnGestureListener, OnClickLis
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		super.onCreate(savedInstanceState);
-		getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-		
+		super.onCreate(savedInstanceState); 
+       
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);  	
 		
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 

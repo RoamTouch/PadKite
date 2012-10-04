@@ -83,7 +83,9 @@ public class SdCardError extends Activity implements Runnable {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+      
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        
         setContentView(R.layout.sdcard_error);
         
         isAppLaunched = getIntent().getBooleanExtra("isAppLaunched", false);

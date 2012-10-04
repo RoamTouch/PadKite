@@ -322,7 +322,7 @@ public class MainMenu extends CircularLayout implements OnTouchListener{
 				}
 				break;				
 			case new_window:				
-				mFloatingCursor.addNewWindow(false);
+				mFloatingCursor.addNewWindow(false, false);
 				break;
 				
 			case close:

@@ -33,8 +33,7 @@ public class GestureEditor extends Activity implements OnItemClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        isForPracticeGesture = getIntent().getBooleanExtra("isForPracticeGesture", false);
-        
+        isForPracticeGesture = getIntent().getBooleanExtra("isForPracticeGesture", false);        
         setContentView(R.layout.gesture_editor);
         ListView list = (ListView) this.findViewById(R.id.gesturesList);
         list.setOnItemClickListener(this);

@@ -10,6 +10,7 @@ import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
 import com.roamtouch.utils.GetDomainName;
 import com.roamtouch.utils.Base64;
+import com.roamtouch.utils.FindColor;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -21,6 +22,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
+import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -28,6 +30,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+
 
 /**
  * Circular layout containing menu items and performing circular wheel animation
@@ -88,6 +91,8 @@ public class CircularTabsLayout extends ViewGroup {
 		
 		private GetDomainName gdn = new GetDomainName();
 		
+		private FindColor findColor;
+		
 		public String getName()
 		{
 			return m_name;
@@ -109,6 +114,8 @@ public class CircularTabsLayout extends ViewGroup {
 			addView(empty);
 			addView(menuBackground);
 		}		
+		
+		int z=0;
 		
 		public void drawHotTip() {		
 			   
@@ -136,15 +143,29 @@ public class CircularTabsLayout extends ViewGroup {
 					tU = gdn.getDomain(tU);				
 					
 					if (tU==null){
-					
-						String[] textURL = {tT};
-						BrowserActivity.drawTip(re, textURL, hotTab.getCenterX(), y);
+											
+						if (!hotTab.isHasOptional()){								
+							String[] textURL = {tT};
+							BrowserActivity.drawTip(re, textURL, hotTab.getCenterX(), y);						
+						} else {							
+							String[] textURL = { (String)hotTab.getOptionalMessage()[z] , tT };
+							z++; if(z==3){ z=0; }
+							BrowserActivity.drawTip(re, textURL, hotTab.getCenterX(), y);
+						}
 						
 					} else {
 						
-						String[] textURL = { tT, tU };
 						re.top = re.top - 50; 
-						BrowserActivity.drawTip(re, textURL, hotTab.getCenterX(), y);
+						
+						if (!hotTab.isHasOptional()){
+							String[] textURL = { tT, tU };
+							BrowserActivity.drawTip(re, textURL, hotTab.getCenterX(), y);
+						} else {
+							String[] textURL = { (String)hotTab.getOptionalMessage()[z], tT };
+							z++; if(z==3){ z=0; }
+							BrowserActivity.drawTip(re, textURL, hotTab.getCenterX(), y);
+							
+						}
 						
 					}
 				}
@@ -245,7 +266,7 @@ public class CircularTabsLayout extends ViewGroup {
 		 	hotTab.setOnTouchListener((OnTouchListener) this);
 		 	addView(hotTab);
 		 	
-		 	tabVector.add(hotTab);
+		 	//tabVector.add(hotTab);
 		 	
 		 	hotBorder = new ImageView(context);
 		 	hotBorder.setBackgroundResource(R.drawable.wm_tab_border);
@@ -486,7 +507,7 @@ public class CircularTabsLayout extends ViewGroup {
 	            	
 	            } else {            	
 	            	
-	            	BrowserActivity.toggleMenuVisibility();
+	            	BrowserActivity.setToggleMenuVisibility();
 	            	resetMenu();
 	            }			
 			}
@@ -548,7 +569,8 @@ public class CircularTabsLayout extends ViewGroup {
 				                	hotTab.setHotTitle(tabTitle);	
 				                	String tabUrl = wv.getUrl();
 				                	hotTab.setTabURL(tabUrl);					                	
-				                	hotTab.setBackgroundDrawable(bitmapDrawable);					                	
+				                	hotTab.setBackgroundDrawable(bitmapDrawable);	
+				                	hotTab.invalidate();
 				                	
 			            	   }
 				                
@@ -564,7 +586,8 @@ public class CircularTabsLayout extends ViewGroup {
 		                	if (!back.isAnglePositive()){             		
 		                		          		
 		                		Drawable drawable = Drawable.createFromPath("/sdcard/PadKite/Default Theme/backward_pressed_big.png");          			                		
-		                		hotTab.setBackgroundDrawable(drawable);	                		         		
+		                		hotTab.setBackgroundDrawable(drawable);
+		                		hotTab.invalidate();
 		                		hotTab.setHotTitle("Back");            		
 		                		drawHotTip();	              		
 	                			
@@ -629,7 +652,8 @@ public class CircularTabsLayout extends ViewGroup {
 											String ttl = wv.getTitle();											
 											hotTab.setHotTitle(ttl);
 											String url = wv.getUrl();
-											hotTab.setBackgroundDrawable(bd);												
+											hotTab.setBackgroundDrawable(bd);
+											hotTab.invalidate();
 											hotTab.setTabURL(url);
 											
 										} else if (id == (countTabs-2)) {									
@@ -654,6 +678,7 @@ public class CircularTabsLayout extends ViewGroup {
 									String url = wv.getUrl();
 									hotTab.setTabURL(url);
 									hotTab.setBackgroundDrawable(bd);
+									hotTab.invalidate();
 									child.setHidden(true);
 									
 									BrowserActivity.setActiveWebViewIndex(child.getId());		
@@ -694,7 +719,7 @@ public class CircularTabsLayout extends ViewGroup {
 		}					
 	};	
 	
-	private SwifteeApplication appState;
+	protected SwifteeApplication appState;
 		
 	public void storeWindows(){
 		
@@ -758,8 +783,16 @@ public class CircularTabsLayout extends ViewGroup {
 					if(backBut.shouldDraw()) {					
 						backBut.layout(childLeft, childTop, lb, rb); 
 						backBut.setHidden(false);
-					}	
-					invalidate();
+					}			
+					
+					/*invalidate();	
+					int[] p = getLocation(backBut);		
+					int xB = p[0];
+					int yB = p[1];
+					int color = FindColor.Find(something, xB, yB);		
+					if (color==1){
+						
+					}*/
 					
 				} else if (something instanceof TabButton) {				
 				
@@ -795,18 +828,28 @@ public class CircularTabsLayout extends ViewGroup {
 			    		final int rb = tab.getCenterY() + BUTTON_RADIUS;
 			    		   		
 			    		if(tab.shouldDraw()) {   			
-			    			tab.setBackgroundDrawable(bitmapDrawable);	    			   			
+			    			tab.setBackgroundDrawable(bitmapDrawable);
+			    			tab.invalidate();
 			    			//tabBorder.layout(childLeft-10, childTop-10, lb+10, rb+10);
 			    			tab.layout(childLeft, childTop, lb, rb);	    			
 			    		}	
-					}
-			    		
+					}  		
 				
-			}
-                
+			}                
 		}	
-		
 	}	
+		
+	private int[] getLocation(View v){		
+		int[] loc = new int[2]; 		
+		int w = v.getWidth();
+		int h = v.getHeight();
+		v.getLocationOnScreen(loc);
+		int x = loc[0];
+		int y = loc[1];
+		int[] pair = new int[2];
+		pair[0] = x; pair[1] = y;
+		return pair;
+	}
 		
 	int [] resetTops = {-37, 20, 75, 155, 180};	
 		

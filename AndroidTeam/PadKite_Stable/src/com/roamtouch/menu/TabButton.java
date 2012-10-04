@@ -24,7 +24,11 @@ public class TabButton extends Button {
 		private Rect hotRect;	
 		private boolean close;
 		private ImageView border;
+		boolean landing;	
 		
+		boolean hasOptional;
+		private String[] optionalMessage;	
+
 		public TabButton(Context context, AttributeSet attrs) {
 			super(context, attrs);					
 		}
@@ -139,7 +143,30 @@ public class TabButton extends Button {
 		public void setClose(boolean close) {
 			this.close = close;
 		}
+		
+		public boolean isLanding() {
+			return landing;
+		}
+
+		public void setLanding(boolean landing) {
+			this.landing = landing;
+		}
 	
 		
+		/**
+		 * Optional message to display while loading.
+		 **/
+		public boolean isHasOptional() {
+			return hasOptional;
+		}
+		public void setHasOptional(boolean hasOptional) {
+			this.hasOptional = hasOptional;
+		}
+		public String[] getOptionalMessage() {
+			return optionalMessage;
+		}
+		public void setOptionalMessage(String[] optionalMessage) {
+			this.optionalMessage = optionalMessage;
+		}		
 				
 }

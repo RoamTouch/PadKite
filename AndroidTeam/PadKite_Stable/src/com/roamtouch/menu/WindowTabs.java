@@ -1,22 +1,33 @@
 package com.roamtouch.menu;
 
 
+import java.io.ByteArrayOutputStream;
+import java.net.URL;
+import java.util.Vector;
+
 import roamtouch.webkit.WebView;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
 import com.roamtouch.swiftee.SwifteeHelper;
+import com.roamtouch.utils.Base64;
 import com.roamtouch.view.EventViewerArea;
+
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class WindowTabs extends CircularTabsLayout implements OnClickListener, OnTouchListener {
 
@@ -28,9 +39,10 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener, O
 
 	public WindowTabs(Context context) {
 		super(context);
-				
-		mContext = context;
+		mContext = context;	
 		LayoutInflater.from(context).inflate(R.layout.window_tabs, this);
+		
+		appState = ((SwifteeApplication)context.getApplicationContext());
 		
 		init();
 		int count = getChildCount();
@@ -54,30 +66,50 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener, O
 	}
 	
 	public void setCurrentThumbnail(BitmapDrawable bd,WebView wv){		
+		
 		int count = getChildCount();
 		for(int i =2;i<count-3;i++){
+			
 			View something = getChildAt(i);			
 			if (something instanceof TabButton) { //&& (loaded==true)){			
+				
 				TabButton tab = (TabButton) getChildAt(i);
+				
 				if(wv == tab.getWebView()){
+					
 					//tab.setImageDrawable(bd);
 					tab.setBackgroundDrawable(bd);
+					tab.invalidate();
 					tab.setBitmapDrawable(bd);
+					String title = wv.getTitle();
+					if (!title.equals("Landing Page")){
+						//|| !title.equals("Download")
+						//|| !title.equals("History")){						
+						if (tabVector.size()==0){
+							tabVector.add(tab);
+						} else {
+							for (int j=0; j<tabVector.size(); j++){
+								TabButton tabV = (TabButton) tabVector.get(j);
+								if (!(tab==tabV)){
+									tabVector.add(tab);
+								}					
+							}
+						}
+					}
 				}
 			}
 		}
 	}
 	
-	public void setHotThumbnail(BitmapDrawable bd, WebView wv){
-		
-		hotTab.setBackgroundDrawable(bd);	
+	public void setHotThumbnail(BitmapDrawable bd, WebView wv){		
+		hotTab.setBackgroundDrawable(bd);
+		hotTab.invalidate();
 		String tabTitle = wv.getTitle();
 		hotTab.setHotTitle(tabTitle);
 		String tabUrl = wv.getUrl();
 		hotTab.setTabURL(tabUrl);
 		hotTab.setWebView(wv);
-		hotTab.setBitmapDrawable(bd);
-	
+		hotTab.setBitmapDrawable(bd);	
 	}
 	
 	public void onClick(View v) {
@@ -108,7 +140,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener, O
     	{
 	        case MotionEvent.ACTION_DOWN:
 	        {
-	        	mParent.removeWebView();
+	        	mParent.removeWebView();	        	
 				removeWindow();
 				cleanClose();
 				invalidate();
@@ -130,10 +162,10 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener, O
 		return currentTab;
 	}
 	
-	public void addWindow(String url){		
+	public void addWindow(String url, boolean background){		
 		
 		TabButton but = new TabButton(mContext);
-		WebView wv = createWebView(url);
+		WebView wv = createWebView(url, background);
 		but.setWebView(wv);			
 		but.setOnClickListener(this);
 		but.setTabIndex(2);
@@ -148,7 +180,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener, O
 			}			
 		}
 		
-		tabVector.add(but);
+		//tabVector.add(but);
 		
 		mParent.addWebView(but.getWebView());
 		int active = mParent.getActiveWebViewIndex()+1;
@@ -159,14 +191,15 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener, O
 		setActiveTabIndex(but);
 	}
 	
-	public void addWindowFromDatabase(String url, BitmapDrawable bd,  String title){		
+	public TabButton addWindowFromDatabase(String url, BitmapDrawable bd,  String title){		
 		
 		TabButton tabDatabase = new TabButton(mContext);	
-		tabDatabase.setBackgroundDrawable(bd);	
+		tabDatabase.setBackgroundDrawable(bd);
+		tabDatabase.invalidate();
 		
 		//WebView wv = createWebView(url);		
 		//tabDatabase.setWebView(wv);		
-		//String tabTitle = wv.getTitle();
+		//String tabTitle = wv.getTitle();	
 		
 		tabDatabase.setHotTitle(title);	
 		tabDatabase.setBitmapDrawable(bd);
@@ -181,25 +214,48 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener, O
 			}			
 		}
 		
-		tabVector.add(tabDatabase);
-		
-		mParent.addWebView(tabDatabase.getWebView());
-		int active = mParent.getActiveWebViewIndex()+1;
-		tabDatabase.setId(active);		
-		mParent.setActiveWebViewIndex(mParent.getActiveWebViewIndex()+1);
+		//tabVector.add(tabDatabase);
 		
 		currentTab = 2;
 		setActiveTabIndex(tabDatabase);
+		
+		return tabDatabase;
+		
 	}
+	
+	/*private class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
+	     protected Long doInBackground(URL... urls) {
+	         int count = urls.length;
+	         long totalSize = 0;
+	         for (int i = 0; i < count; i++) {
+	             totalSize += Downloader.downloadFile(urls[i]);
+	             publishProgress((int) ((i / (float) count) * 100));
+	         }
+	         return totalSize;
+	     }
+
+	     protected void onProgressUpdate(Integer... progress) {
+	         setProgressPercent(progress[0]);
+	     }
+
+	     protected void onPostExecute(Long result) {
+	         showDialog("Downloaded " + result + " bytes");
+	     }
+	 }*/
 	
 	public int getWindowCount()
 	{
 		return getChildCount() - 5;
 	}
 	
-	public WebView createWebView(String url){
+	public WebView createWebView(String url, boolean background){
 		
 		WebView webView = new WebView(mContext);
+		
+		if (background){
+			webView.setVisibility(INVISIBLE);
+		}
+		
 		webView.setId(mParent.getActiveWebViewIndex()+1);
 		webView.setScrollbarFadingEnabled(true);
         webView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
@@ -215,7 +271,7 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener, O
 			
 			String[] u = SwifteeHelper.getHomepage(2);
 			String _url = u[0]+u[1]+u[2];
-			webView.loadUrl(_url);
+			webView.loadUrl(_url);			
 			
 		} else {
 			
@@ -234,12 +290,19 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener, O
 	}
 	public void removeWindow(){
 		if(getChildCount()>5){
-			removeViewAt(currentTab);
-			if(currentTab>2)
-				currentTab--;
-			else
-				currentTab=2;
 			TabButton child = (TabButton)getChildAt(currentTab);
+			removeViewAt(currentTab);
+			for (int i=0; i<tabVector.size();i++){
+				TabButton tabV = (TabButton)tabVector.get(i);
+				if (tabV==child){
+					tabVector.remove(i);
+				}
+			}
+			if(currentTab>2){
+				currentTab--;
+			} else {			
+				currentTab=2;
+			}
 			setActiveTabIndex(child);
 			mParent.adjustTabIndex(this);
 		}
@@ -258,7 +321,18 @@ public class WindowTabs extends CircularTabsLayout implements OnClickListener, O
         float   mScale;
         int     mScrollX;
         int     mScrollY;
-    }
+    }    
+      
+    public void removeAllTabs(){
+		int count = getChildCount();
+		for(int i =3;i<count-3;i++){
+			View something = getChildAt(i);
+			if (something instanceof TabButton) {
+				TabButton tab = (TabButton) getChildAt(i);			
+				removeView(tab);
+			}			
+		}
+	}
     
     
 }

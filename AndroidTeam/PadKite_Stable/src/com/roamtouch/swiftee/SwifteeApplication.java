@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import com.roamtouch.database.DBConnector;
@@ -17,12 +18,15 @@ import com.roamtouch.database.DBConnector;
 import android.app.Application;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
+import android.graphics.Rect;
 import android.os.Environment;
 import android.util.Log;
 //import android.os.Environment;
 
 import org.acra.*;
 import org.acra.annotation.*;
+
+import roamtouch.webkit.WebHitTestResult;
 
 @ReportsCrashes(formKey = "dFZDbUZHbnVGamZqdDJQQUlZX2tzc1E6MQ") 
 
@@ -33,17 +37,57 @@ public class SwifteeApplication extends Application{
 	/**
 	 * GLOBAL VARIABLES
 	 * **/
+	
+	//screen resolution width.
+	private static int screen_width;   
+	public static int getScreenWidth() {return screen_width; }
+	public static void setScreenWidth(int sW) { screen_width = sW; }   
+	
+	//screen resolution height.
+	private static int screen_height;   
+	public static int getScreenHeight() {return screen_height; }
+	public static void setScreenHeight(int sH) { screen_height = sH; }
+	
+	//Device Ip Address
+	private static String ip_adress;   
+	public static String getIpAdress() {return ip_adress; }
+	public static void setIpAdress(String ip) { ip_adress = ip; }
+	
+	// Open link types	
+	public static final int OPEN_LINK		 			= 80;
+	public static final int OPEN_LINK_IN_NEW_WINDOW		= 81;
+	public static final int OPEN_LINK_IN_BACKGROUND		= 82;
+	private static int openType = OPEN_LINK;   
+	public static int getOpenType() {return openType; }
+	public static void setOp0enTye(int oT) { openType = oT; }
+	
+	//Master X touch
+	private static float masterX;   
+	public static float getMasterX() {return masterX; }
+	public static void setMasterX(float mX) { masterX = mX; }
+	    
+	//Master Y touch
+	private static float masterY;   
+	public static float getMasterY() {return masterY; }
+	public static void setMasterY(float mY) { masterY = mY; }
+	
+	//CURSOR RELOCATION POSITIONS
+	public static final int RELOCATE_FROM_POINTER			= 300;
+	public static final int RELOCATE_FROM_FINGER_X_POSITION	= 301;
+	public static final int RELOCATE_FROM_FINGER_Y_POSITION	= 302;
+	public static final int RESTORE_NO_VALUE				= -1;
+	
 	// POSITION 0 = "Cursor Gestures"	
-	public static final int CURSOR_TEXT_GESTURE = 1;
-	public static final int CURSOR_LINK_GESTURE = 2;
-	public static final int CURSOR_IMAGE_GESTURE = 3;
-	public static final int CURSOR_NOTARGET_GESTURE = 4;
-	public static final int CURSOR_VIDEO_GESTURE = 5;
+	public static final int CURSOR_TEXT_GESTURE 		= 1;
+	public static final int CURSOR_LINK_GESTURE 		= 2;
+	public static final int CURSOR_IMAGE_GESTURE 		= 3;
+	public static final int CURSOR_NOTARGET_GESTURE 	= 4;
+	public static final int CURSOR_VIDEO_GESTURE 		= 5;
 	
 	// POSITION 6 = "Circular Menu Gestures"	
-	public static final int BOOKMARK_GESTURE = 7;
-	public static final int SHARE_GESTURE = 8;
-	public static final int CUSTOM_GESTURE = 9;	
+	public static final int BOOKMARK_GESTURE 			= 7;
+	public static final int SHARE_GESTURE 				= 8;
+	public static final int CUSTOM_GESTURE 				= 9;	
 	
 	
 	//Single or multi finger operations, true defaul. //SFOM 
@@ -56,10 +100,23 @@ public class SwifteeApplication extends Application{
 	public static int getSingleFingerSteps() {return single_finger_steps; }
     public static void setSingleFingerSteps(int sfs) { single_finger_steps = sfs; }    
 	
+    
+    /**ORIENTATION**/
+    public static final int ORIENTATION_LANDSCAPE					= 3001;
+    public static final int ORIENTATION_PORTRAIT					= 3002;
+    //Single or multi finger operations, true defaul. //SFOM 
+  	private static int orientation;   
+  	public static int getOrientation() {return orientation; }
+    public static void setOrientation(int o) { 
+    	
+    	orientation = o; 
+    
+    }
+    
 	/**
 	 * FLOATING 
 	 * CURSOR
-	 * **/
+	 ***/
     
     //Sets and gets the amount of dots within the circle.	
     private static int fc_mount_of_dots = 40;   
@@ -87,11 +144,27 @@ public class SwifteeApplication extends Application{
     //Landing page path. 
     //private static String landing_page_load_path = "file:///android_asset/loadPage.html";
     //public static String getLandingPageLoadPath() {return landing_page_load_path; }
+    
     public static String landing_page_store_path = Environment.getExternalStorageDirectory()+"/PadKite/loadPage.html";
     public static String getLandingPageStorePath() {return landing_page_store_path; }
-    
-    public static String landingPath = Environment.getExternalStorageDirectory()+"/PadKite/Web Assets/loadPage.html";
-    
+
+    //Lading page FD-Container hidden
+  	private static boolean landing_shrinked;   
+  	public static boolean getLandingShrinked() {return landing_shrinked; }
+    public static void setLandingShrinked(boolean lPS) { landing_shrinked = lPS; }    
+       
+    //Panel UID	
+  	private static String panel_uid = "3495877598435";   
+  	public static String getPanelUID() {return panel_uid; }
+    public static void setPanelUID(String pu) { panel_uid = pu; }    
+   
+    //Landing Root path
+	public static String langingPageRootPath = "file:////" + Environment.getExternalStorageDirectory()+"/PadKite/Web Assets/loadPage";
+    public static String landingPath = langingPageRootPath + ".html";
+    public static String getLangingPageRootPath() {
+		return langingPageRootPath;
+	}
+ 
     //Amount of new landing pages opened.
 	private static int new_landing_amount=0;   
 	public static int getNewLandingPagesOpened() {return new_landing_amount; }
@@ -132,87 +205,621 @@ public class SwifteeApplication extends Application{
 	public static String getYouTubeSearch() {return youtube_search; }
     public static void setYouTubeSearch(String search) { youtube_search = search; }    
     
+    //Search Wiki.
+   	private static String wiki_search;   
+   	public static String getWikiSearch() {return wiki_search; }
+    public static void setWikiSearch(String search) { wiki_search = search; }
+    
+    //Search Wiki.
+   	private static String wiki_abstract;   
+   	public static String getWikiAbstract() {return wiki_abstract; }
+    public static void setWikiAbstract(String abs) { wiki_abstract = abs; }
+    
+    //YouTube Watch
+   	private static String youtube_watch;   
+   	public static String getYouTubeWatch() {return youtube_watch; }
+    public static void setYouTubeWatch(String watch) { youtube_watch = watch; }   
+    
+    //Google Suggestions for Input text.
+	private static String google_suggestion;   
+	public static String getGoogleSuggestion() {return google_suggestion; }
+    public static void setGoogleSuggestion(String google) { google_suggestion = google; }  
+    
+    //Wikipedia Suggestions for Input text.
+  	private static String wikipedia_suggestion;   
+  	public static String getWikipediaSuggestion() {return wikipedia_suggestion; }
+    public static void setWikipediaSuggestion(String wiki) { wikipedia_suggestion = wiki; }  
+    
+    //YouTube Suggestions for Input text.
+  	private static String youtube_suggestion;   
+  	public static String getYouTubeSuggestion() {return youtube_suggestion; }
+    public static void setYouTubeSuggestion(String you) { youtube_suggestion = you; }
     
     //Tabs Database Vector.
 	private static Vector tab_vector;   
 	public static Vector getTabVector() {return tab_vector; }
-    public static void setTabVector(Vector tV) { tab_vector = tV; }    
+    public static void setTabVector(Vector tV) { tab_vector = tV; }
     
-      
+    //Expanded.
+  	private static boolean expanded;   
+  	public static boolean getExpanded() {return expanded; }
+    public static void setExpanded(boolean e) { 
+    	
+    	
+		 Throwable t = new Throwable(); StackTraceElement[] elements =
+		 t.getStackTrace(); String calleeMethod =
+		 elements[0].getMethodName(); String callerMethodName =
+		 elements[1].getMethodName(); String callerClassName =
+		 elements[1].getClassName(); Log.v("call",
+		 "callerMethodName: "+callerMethodName+
+		 " callerClassName: "+callerClassName );
+		
+    	
+    	expanded = e; 
+    	
+   }
+    
+    //Expanded AMOUNTS factor.
+    public static final int PADKITE_EXPANDED 	= 5;
+    public static final int FINGER_EXPANDED 	= 8;
+    
+    //Tab height.
+  	private static int tab_height = 35;   
+  	public static int getTabHeight() {return tab_height; }
+    public static void setTabHeight(int tH) { tab_height = tH; }
+    
+    //ActiveTab.
+  	private static int active_tab_index;    
+  	public static int getActiveTabIndex() {return active_tab_index; }
+    public static void setActiveTabIndex(int aT) { 
+    	
+       	active_tab_index = aT; 
+    	
+    }  
+    
+    //Percentage size of tabs per cType
+       
+    public static final int PERCENTAGE_TAB_WINDOWS_MANAGER			= 50;
+    public static final int PERCENTAGE_TAB_TEXT						= 50;
+    public static final int PERCENTAGE_TAB_PADKITE_IMPUT			= 30;
+    public static final int PERCENTAGE_TAB_PANEL					= 40;    
+          
+    //Tab CERO Rectangle (horizontal dimension only)
+    private static Rect TAB_CERO_RECT = new Rect();      
+	public static Rect getTabCeroRect() {return TAB_CERO_RECT; }
+    public static void setTabCeroRect(Rect tCR) { TAB_CERO_RECT = tCR; }
+    
+    //Tab FIRST Rectangle (horizontal dimension only)
+    private static Rect TAB_FIRST_RECT = new Rect();         
+	public static Rect getTabFirstRect() {return TAB_FIRST_RECT; }
+    public static void setTabFirstRect(Rect tFR) { TAB_FIRST_RECT = tFR; }
+    
+    //Tab SECOND Rectangle (horizontal dimension only)
+    private static Rect TAB_SECOND_RECT= new Rect();      
+	public static Rect getTabSecondRect() {return TAB_SECOND_RECT; }
+    public static void setTabSecondRect(Rect tSR) { TAB_SECOND_RECT = tSR; }
+    
+    //Tab THIRD Rectangle (horizontal dimension only)
+    private static Rect TAB_THIRD_RECT = new Rect();    
+	public static Rect getTabThirdRect() {return TAB_THIRD_RECT; }
+    public static void setTabThirdRect(Rect tTR) { TAB_THIRD_RECT = tTR; }
+    
+    //Tab FOURTH Rectangle (horizontal dimension only)
+    private static Rect TAB_FOURTH_RECT = new Rect();      
+	public static Rect getTabFourthRect() {return TAB_FOURTH_RECT; }
+    public static void setTabFourthRect(Rect tFR) { TAB_FOURTH_RECT = tFR; }  
+    
+    
+    //ANCHOR Tab height, VARIABLE.
+    public static int PERCENTAGE_TAB_ANCHOR					= 60;    
+  	public static int getPercentegeTabAnchor() {return PERCENTAGE_TAB_ANCHOR; }
+    public static void SetPercentegeTabAnchor(int tA) { PERCENTAGE_TAB_ANCHOR = tA; }  
+    /**SOCKET CLIENT STATUS**/
+    
+    public static final int CLIENT_DISCONNECTED			= 830;
+    public static final int CLIENT_CONNECTION_OPENED	= 831;
+    public static final int CLIENT_CONNECTED			= 832;
+    public static final int CLIENT_CONNECTION_CLOSED	= 833;
+    
+    public static final int CLIENT_MOUSE_DOWN			= 834; 
+    public static final int CLIENT_MOUSE_MOVE			= 835;
+    public static final int CLIENT_MOUSE_UP				= 836;
+    public static final int CLIENT_MOUSE_DOUBLE			= 837;
+    public static final int CLIENT_MESSAGE_URL			= 838;  
+    public static final int CLIENT_MESSAGE_KEY			= 839;
+   
+  	private static int socket_status = CLIENT_DISCONNECTED;   
+  	public static int getSocketStatus() {return socket_status; }
+    public static void setSocketStatus(int sS) {	socket_status = sS; }    
+    //Tab height.
+    //public static int PERCENTAGE_TAB_PANEL_INPUT					= 60; //with 2;    
+  	//public static int getPercentegeTabInput() {return PERCENTAGE_TAB_PANEL_INPUT; }
+    //public static void SetPercentegeTabInput(int tH) { PERCENTAGE_TAB_PANEL_INPUT = tH; }  
+    
+    
+    //Standard Tab height.
+  	/*private static int standard_tab_height = 35;   
+  	public static int getStandardTabHeight() {return standard_tab_height; }    
+    
+    //Link Tab height.
+  	private static int link_tab_height = 30;   
+  	public static int getLinkTabHeight() {return link_tab_height; }
+  	
+  	//	Text Tab height.
+  	private static int text_tab_height = 40;   
+  	public static int getTextTabHeight() {return text_tab_height; }*/ 	
+  	
+  	
+    //Tabs edge size.
+  	private static int tabs_edge = 20;   
+  	public static int getEdge() {return tabs_edge; }
+    public static void setEdge(int e) { tabs_edge = e; }
+    
+    //Tabs edge size.
+  	private static int amount_of_tabs;   
+  	public static int getTabsAmountOf() {return amount_of_tabs; }
+    public static void setTabsAmountOf(int aT) { amount_of_tabs = aT; }    
+    
+    //Suggestion Row Height.
+  	private static int suggestion_row_height;   
+  	public static int getSuggestionRowHeight() {return suggestion_row_height; }
+    public static void setSuggestionRowHeight(int sRH) { suggestion_row_height = sRH; }
+    
+    //Suggestion Row Amount - Dynamic.
+  	private static int suggestion_row_amount;   
+  	public static int getRowAmount() {return suggestion_row_amount; }
+    public static void setRowAmount(int sRA) { suggestion_row_amount = sRA; }
+    
+    //Amount of Rows.
+  	private static int amount_of_rows_expanded = 5;   
+  	public static int getAmountOfRowsExpanded() {return amount_of_rows_expanded; }
+  	public static void setAmountOfRowsExpanded(int aRE) { amount_of_rows_expanded = aRE; }
+
+    //Amount of Rows.
+  	private static int amount_of_rows = 6;   
+  	public static int getAmountOfRows() {return amount_of_rows; }
+  	public static void setAmountOfRows(int aR) { amount_of_rows = aR; }
+  	
+  	//Amount of Rows.
+  	private static boolean for_suggestion_array = false;   
+  	public static boolean getSetForSuggestionArray() {return for_suggestion_array; }
+  	public static void setSetForSuggestionArray(boolean fSA) { for_suggestion_array = fSA; }
+    
+    //IndexHit.
+  	private static int object_index_hit;   
+  	public static int getObjectIndexHit() {return object_index_hit; }
+    public static void setObjectIndexHit(int oIH) { object_index_hit = oIH; }  
+  
+    //PadKite Index.
+  	private static int pk_index = -1;   
+  	public static int getPKIndex() {return pk_index; }
+    public static void setPKIndex(int pkI) { pk_index = pkI; }
+    
+    //IndexHit.
+  	private static int pk_index_hit;   
+  	public static int getPKTabIndex() {return pk_index_hit; }
+    public static void setPKTabIndex(int pkIH) { pk_index_hit = pkIH; }  
+    
+    //Suggestion Input Text.
+  	private static String input_text = null;   
+  	public static String getInputText() {return input_text; }
+  	public static void setInputText(String iT) { input_text = iT; } 
+  	//Landing Input Top.
+  	private static int landing_input_top;   
+  	public static int getLandingInputTop() {return landing_input_top; }
+    public static void setLandingInputTop(int lIT) {	landing_input_top = lIT; }
+    
+    //Right button arrow enabled
+  	private static boolean up_row_enabled;   
+  	public static boolean getUpRowEnabled() {return up_row_enabled; }
+    public static void setUpRowEnabled(boolean uRE) { up_row_enabled = uRE; }
+    
+    /**
+     * Size of rows
+     ***/
+    //	More
+  	private static int array_more_bigger_row;   
+  	public static int getArrayMoreBiggerRow() {return array_more_bigger_row; }
+    public static void setArrayMoreBiggerRow(int higherMore) { array_more_bigger_row = higherMore; }   
+    
+    // Help
+  	private static int array_help_bigger_row;   
+  	public static int getArrayHelpBiggerRow() {return array_help_bigger_row; }
+    public static void setArrayHelpBiggerRow(int higherHelp) { array_help_bigger_row = higherHelp; }     
+        
+    //	Open
+  	private static int array_open_bigger_row;   
+  	public static int getArrayOpenBiggerRow() {return array_open_bigger_row; }
+    public static void setArrayOpenBiggerRow(int higherOpen) { array_open_bigger_row = higherOpen; }     
+    
+    //More Anchor
+  	private static int array_more_anchor_bigger_row;   
+  	public static int getArrayMoreAnchorBiggerRow() {return array_more_anchor_bigger_row; }
+    public static void setArrayMoreAnchorBiggerRow(int higherMoreAnchor) { array_more_anchor_bigger_row = higherMoreAnchor; }   
+
+    //Text
+  	private static int array_text_bigger_row;   
+  	public static int getArrayTextBiggerRow() {return array_text_bigger_row; }
+    public static void setArrayTextBiggerRow(int higherText) { array_text_bigger_row = higherText; }
+    
+    //ClipBoard
+  	//private static int array_clipboard_bigger_row;   
+  	//public static int getArrayClipBoardBiggerRow() {return array_clipboard_bigger_row; }
+    //public static void setArrayClipBoardBiggerRow(int higherClipBoard) { array_clipboard_bigger_row = higherClipBoard; }
+    
     /**
      * RINGS
      * AND
      * TIPS 
-     * **/	
-    public static final int DRAW_TAB						= 100;
-    public static final int DRAW_RING						= 101;
-    public static final int DRAW_NONE						= 102;
-    public static final int DRAW_TIP						= 103;
-    public static final int DRAW_RING_AND_TAB 				= 104;    
+     * **/  
+    
+    /**PANTONE 
+	 * COLORS KITE**/	
+    
+    //http://www.pantone.com/pages/pantone/colorfinder.aspx
+	
+    // 192C
+	public static int[] PANTONE_189C_L1			= {248, 164, 187};
+	public static int[] PANTONE_190C_L2			= {248, 121, 155};
+	public static int[] PANTONE_191C_L3			= {241, 68, 111};
+	public static int[] PANTONE_192C_MAIN		= {231, 13, 71};
+	public static int[] PANTONE_193C_D3			= {192, 20, 60};
+	public static int[] PANTONE_194C_D2			= {155, 36, 62};
+	public static int[] PANTONE_195C_D1			= {121, 49, 65};	
+	
+	// 158C		
+	public static int[] PANTONE_155C_L1			= {240, 213, 166};
+	public static int[] PANTONE_156C_L2			= {240, 192, 130};	
+	public static int[] PANTONE_157C_L3			= {239, 152, 74};
+	public static int[] PANTONE_158C_MAIN		= {234, 113, 37};
+	public static int[] PANTONE_159C_D3			= {205, 90, 19};
+	public static int[] PANTONE_160C_D2			= {162, 80, 24};
+	public static int[] PANTONE_161C_D1			= {99, 59, 27};
+	
+	// 130C		
+	public static int[] PANTONE_127C_L1			= {243, 222, 116};
+	public static int[] PANTONE_128C_L2			= {246, 214, 84};	
+	public static int[] PANTONE_129C_L3			= {245, 207, 71};
+	public static int[] PANTONE_130C_MAIN		= {244, 170, 0};
+	public static int[] PANTONE_131C_D3			= {169, 119, 0};
+	public static int[] PANTONE_132C_D2			= {164, 119, 0};
+	public static int[] PANTONE_133C_D1			= {110, 88, 25};	
+	
+	// 375C		
+	public static int[] PANTONE_372C_L1			= {215, 235, 156};
+	public static int[] PANTONE_373C_L2			= {207, 243, 119};	
+	public static int[] PANTONE_375C_L3			= {193, 231, 112};
+	public static int[] PANTONE_375C_MAIN		= {143, 212, 0};
+	public static int[] PANTONE_376C_D3			= {119, 184, 0};
+	public static int[] PANTONE_377C_D2			= {113, 149, 0};
+	public static int[] PANTONE_378C_D1			= {84, 95, 29};	
 
-    public static final int PAINT_GRAY	 	= 200;
-	public static final int PAINT_GREEN	 	= 201;
-	public static final int PAINT_BLUE	 	= 202;	
-	public static final int PAINT_YELLOW	= 203;
-	public static final int PAINT_VIOLET	= 204;
-	public static final int PAINT_RED		= 205;
-	public static final int PAINT_ORANGE	= 206;
-	public static final int PAINT_BLACK		= 207;	
-	public static final int PAINT_RED_MAP	= 208;
-	public static final int PAINT_TURQUOISE	= 209;
+	// 2736C		
+	public static int[] PANTONE_2706C_L1			= {203, 209, 232};
+	public static int[] PANTONE_2716C_L2			= {157, 170, 226};	
+	public static int[] PANTONE_2726C_L3			= {72, 93, 197};
+	public static int[] PANTONE_2736C_MAIN			= {28, 41, 167};
+	public static int[] PANTONE_2746C_D3			= {26, 39, 145};
+	public static int[] PANTONE_2756C_D2			= {22, 33, 108};
+	public static int[] PANTONE_2766C_D1			= {23, 33, 84};
 	
-	//RING COLORS
-	public static int[] YELLOW 			= {255, 203, 0};	
-	public static int[] LIGHT_YELLOW 	= {255, 237, 168};	
-	public static int[] GREEN 			= {0, 170, 0};
-	public static int[] VIOLET 			= {223, 43, 240};
-	public static int[] BLUE 			= {0, 114, 225};
+	// 7488C		
+	public static int[] PANTONE_7485C_L1			= {217, 228, 205};
+	public static int[] PANTONE_7486C_L2			= {196, 228, 165};	
+	public static int[] PANTONE_7487C_L3			= {150, 223, 115};
+	public static int[] PANTONE_7488C_MAIN			= {112, 213, 81};
+	public static int[] PANTONE_7489C_D3			= {115, 174, 87};
+	public static int[] PANTONE_7490C_D2			= {108, 149, 60};
+	public static int[] PANTONE_7491C_D1			= {115, 133, 57};
+	
+	// 603C		
+	public static int[] PANTONE_600C_L1				= {238, 235, 172};
+	public static int[] PANTONE_601C_L2				= {238, 234, 157};	
+	public static int[] PANTONE_602C_L3				= {238, 232, 141};
+	public static int[] PANTONE_603C_MAIN			= {238, 226, 84};
+	public static int[] PANTONE_604C_D3				= {236, 222, 41};
+	public static int[] PANTONE_605C_D2				= {226, 204, 0};
+	public static int[] PANTONE_606C_D1				= {213, 187, 0};
+	
+	// 246C		
+	public static int[] PANTONE_243C_L1				= {239, 198, 227};
+	public static int[] PANTONE_244C_L2				= {233, 159, 219};	
+	public static int[] PANTONE_245C_L3				= {226, 130, 210};
+	public static int[] PANTONE_246C_MAIN			= {200, 33, 172};
+	public static int[] PANTONE_247C_D3				= {183, 11, 155};
+	public static int[] PANTONE_248C_D2				= {159, 24, 136};
+	public static int[] PANTONE_249C_D1				= {120, 41, 100};
+	
+	// GreenC		
+	public static int[] PANTONE_331C_L1				= {175, 232, 219};
+	public static int[] PANTONE_332C_L2				= {159, 230, 217};	
+	public static int[] PANTONE_333C_L3				= {64, 218, 197};
+	public static int[] PANTONE_GreenC_MAIN			= {0, 170, 134};
+	public static int[] PANTONE_334C_D3				= {0, 152, 121};
+	public static int[] PANTONE_335C_D2				= {0, 126, 102};
+	public static int[] PANTONE_336C_D1				= {0, 102, 82};
+		
+	// PurpleC		
+	public static int[] PANTONE_250C_L1				= {215, 170, 227};
+	public static int[] PANTONE_251C_L2				= {199, 140, 21};	
+	public static int[] PANTONE_252C_L3				= {167, 77, 195};
+	public static int[] PANTONE_PurpleC_MAIN		= {147, 37, 178};
+	public static int[] PANTONE_253C_D3				= {172, 39, 169};
+	public static int[] PANTONE_254C_D2				= {155, 44, 152};
+	public static int[] PANTONE_255C_D1				= {112, 44, 106};
+	
+	// Process Blue C		
+	public static int[] PANTONE_304C_L1				= {159, 221, 234};
+	public static int[] PANTONE_305C_L2				= {95, 206, 234};	
+	public static int[] PANTONE_306C_L3				= {0, 182, 227};
+	public static int[] PANTONE_ProcessBlueC_MAIN	= {0, 133, 207};
+	public static int[] PANTONE_307C_D3				= {0, 114, 177};
+	public static int[] PANTONE_308C_D2				= {0, 90, 132};
+	public static int[] PANTONE_309C_D1				= {0, 61, 77};
+	
+	// Process Yellow C		
+	public static int[] PANTONE_100C_L1				= {243, 235, 123};
+	public static int[] PANTONE_101C_L2				= {246, 236, 90};	
+	public static int[] PANTONE_102C_L3				= {251, 231, 0};
+	public static int[] PANTONE_YellowC_MAIN		= {254, 224, 0};
+	public static int[] PANTONE_103C_D3				= {199, 172, 0};
+	public static int[] PANTONE_104C_D2				= {175, 154, 0};
+	public static int[] PANTONE_105C_D1				= {135, 121, 36};
+	
+	// Process Rhodamine Red C		
+	public static int[] PANTONE_230C_L1				= {249, 165, 213};
+	public static int[] PANTONE_231C_L2				= {246, 119, 197};	
+	public static int[] PANTONE_232C_L3				= {239, 63, 172};
+	public static int[] PANTONE_RhodamineRedC_MAIN	= {229, 29, 155};
+	public static int[] PANTONE_233C_D3				= {202, 0, 131};
+	public static int[] PANTONE_234C_D2				= {165, 0, 105};
+	public static int[] PANTONE_235C_D1				= {136, 6, 86};
+	
+	// 444C
+	public static int[] PANTONE_441C_L1				= {188, 197, 193};
+	public static int[] PANTONE_442C_L2				= {167, 178, 177};	
+	public static int[] PANTONE_443C_L3				= {146, 157, 158};
+	public static int[] PANTONE_444C_MAIN			= {113, 127, 129};
+	public static int[] PANTONE_445C_D3				= {75, 84, 87};
+	public static int[] PANTONE_446C_D2				= {62, 69, 69};
+	public static int[] PANTONE_447C_D1				= {52, 55, 53};
+	
+	// 631C
+	public static int[] PANTONE_628C_L1				= {192, 226, 230};
+	public static int[] PANTONE_629C_L2				= {159, 215, 225};	
+	public static int[] PANTONE_630C_L3				= {129, 204, 221};
+	public static int[] PANTONE_631C_MAIN			= {52, 181, 208};
+	public static int[] PANTONE_632C_D3				= {0, 154, 188};
+	public static int[] PANTONE_633C_D2				= {0, 125, 164};
+	public static int[] PANTONE_634C_D1				= {0, 102, 144};
+	
+	// 3965C
+	public static int[] PANTONE_3935C_L1			= {244, 137, 115};
+	public static int[] PANTONE_3945C_L2			= {243, 232, 0};	
+	public static int[] PANTONE_3955C_L3			= {234, 223, 0};
+	public static int[] PANTONE_3965C_MAIN			= {227, 215, 0};
+	public static int[] PANTONE_3975C_D3			= {182, 164, 0};
+	public static int[] PANTONE_3985C_D2			= {152, 134, 0};
+	public static int[] PANTONE_3995C_D1			= {106, 94, 22};	
+		
+	// 3965C
+	public static int[] PANTONE_337C_L1			= {152, 218, 198};
+	public static int[] PANTONE_338C_L2			= {115, 209, 183};	
+	public static int[] PANTONE_339C_L3			= {0, 179, 138};
+	public static int[] PANTONE_340C_MAIN		= {0, 150, 97};
+	public static int[] PANTONE_341C_D3			= {0, 124, 90};
+	public static int[] PANTONE_342C_D2			= {0, 105, 78};
+	public static int[] PANTONE_343C_D1			= {0, 86, 67};	
+		
+	//PANTONE RINGS INPUT	
+	public static final int RING_PANTONE_192C_MAIN 		= 230;
+	public static final int RING_PANTONE_YellowC_MAIN 	= 231;
+	public static final int RING_PANTONE_246C_MAIN 		= 232;	
+	public static final int RING_PANTONE_631C_MAIN 		= 233;
+	
+	//PANTONE SHARED COMMON
+	public static final int RING_PANTONE_444C_MAIN 		= 234;
+	
+	// PANTONE RING PANEL
+	public static final int RING_PANTONE_375C_MAIN 			= 237;	
+	public static final int RING_PANTONE_130C_MAIN 			= 236;
+	public static final int RING_PANTONE_2736C_MAIN	 		= 235;
+	public static final int RING_PANTONE_ProcessBlueC_MAIN	= 238;	
+	
+	//PANTONE ANCHOR 
+	public static final int RING_PANTONE_340C_MAIN			= 239;	
+	
+	//PANTONE SET
+	public static final int RING_PANTONE_158C_MAIN			= 240;	
+	
+
+    //Tab according to index  
+    public static final int	TABINDEX_NOTHING	  				= -1;
+    public static final int TABINDEX_CERO						= 0;
+    public static final int TABINDEX_FIRST						= 1;
+    public static final int TABINDEX_SECOND						= 2;    
+    public static final int TABINDEX_THIRD						= 3;
+    public static final int TABINDEX_FOURTH						= 4;
+    public static final int TABINDEX_FIFTH						= 5;  
+    
+    public static final int DRAW_TABS							= 100;
+    public static final int DRAW_INPUT_TABS						= 101;
+    public static final int DRAW_DEFAULT_TABS				 	= 102;
+    public static final int DRAW_RING							= 103;
+    public static final int DRAW_NOTHING						= 104;
+    public static final int DRAW_TIP							= 105;
+    public static final int DRAW_RING_AND_TAB 					= 106;   
+
+    public static final int PAINT_GRAY	 		= 200;
+	public static final int PAINT_GREEN	 		= 201;
+	public static final int PAINT_BLUE	 		= 202;	
+	public static final int PAINT_YELLOW		= 203;
+	public static final int PAINT_VIOLET		= 204;
+	public static final int PAINT_RED			= 205;
+	public static final int PAINT_ORANGE		= 206;
+	public static final int PAINT_BLACK			= 207;	
+	public static final int PAINT_RED_MAP		= 208;
+	public static final int PAINT_TURQUOISE		= 209;
+	public static final int PAINT_DARK_GRAY	 	= 210;
+	public static final int PAINT_LIGHT_BLUE 	= 211;
+	public static final int PAINT_LIGHT_GRAY 	= 212;
+	public static final int PAINT_FUXIA 	 	= 213;
+	public static final int PAINT_APPLE 	 	= 214;
+	public static final int PAINT_WHITE 	 	= 215;
+	public static final int PAINT_BLUE_PANEL 	= 216;
+	
+
+	
+	//RING COLORS	
+	public static int[] YELLOW 				= {255, 203, 0};	
+	public static int[] YELLOW_LIGHT		= {250, 234, 170};
+	public static int[] YELLOW_DARK			= {199, 159, 0};
+	public static int[] YELLOW_VERY_DARK	= {161, 159, 0};
+	public static int[] YELLOW_VERY_LIGHT	= {255, 250, 240};
+
+	public static int[] GREEN 				= {0, 170, 0};
+	public static int[] GREEN_LIGHT 		= {130, 232, 130};
+	public static int[] GREEN_DARK 			= {97, 171, 97};
+	public static int[] GREEN_VERY_DARK 	= {1, 133, 1};
+	public static int[] GREEN_VERY_LIGHT 	= {255, 247, 255};
+	
+	public static int[] VIOLET 				= {223, 43, 240};
+	public static int[] VIOLET_LIGHT		= {237, 182, 242};
+	public static int[] VIOLET_DARK			= {151, 45, 161};
+	public static int[] VIOLET_VERY_DARK	= {98, 30, 105};
+	public static int[] VIOLET_VERY_LIGHT	= {243, 250, 255};
+	
+	public static int[] FUXIA 				= {140, 2, 245};
+	public static int[] FUXIA_LIGHT			= {212, 182, 250};
+	public static int[] FUXIA_DARK			= {79, 28, 117};
+	public static int[] FUXIA_VERY_DARK		= {72, 2, 125};
+	public static int[] FUXIA_VERY_LIGHT	= {250, 245, 255};
+	
+	public static int[] BLUE 				= {0, 114, 225};
+	public static int[] BLUE_LIGHT			= {142, 187, 232};
+	public static int[] BLUE_DARK			= {30, 94, 158};
+	public static int[] BLUE_VERY_DARK		= {20, 64, 107};
+	public static int[] BLUE_VERY_LIGHT		= {247, 251, 255};
+	
+	public static int[] APPLE 				= {157, 194, 23};
+	public static int[] APPLE_LIGHT			= {206, 222, 149};
+	public static int[] APPLE_DARK			= {128, 158, 19};
+	public static int[] APPLE_VERY_DARK		= {74, 92, 11};
+	public static int[] APPLE_VERY_LIGHT	= {252, 255, 240};
+	
 	public static int[] RED 			= {255, 59, 20};
+	public static int[] RED_LIGHT 		= {255, 183, 168};
+	public static int[] RED_DARK 		= {173, 67, 45};
+	public static int[] RED_VERY_DARK 	= {112, 32, 13};
+	public static int[] RED_VERY_LIGHT 	= {255, 246, 245};
+	
 	public static int[] GRAY 			= {180, 180, 180};	
-	public static int[] DARK_GRAY 		= {10, 10, 10};
-	public static int[] ORANGE	 		= {240, 210, 43};
-	public static int[] BLACK	 		= {0, 0, 0};
-	public static int[] RED_MAP	 		= {252, 120, 108};
-	public static int[] TURQUOISE 		= {0, 212, 159};
-	public static int[] LIGHT_GRAY 		= {50, 50, 50};	
+	public static int[] GRAY_DARK 		= {170, 170, 170};
+	public static int[] GRAY_VERY_DARK	= {70, 70, 70};
+	public static int[] DARK_VERY_DARK	= {45, 45, 45};
+	public static int[] DARK_VERY_LIGHT	= {250, 250, 250};
 	
-	//DOTS COLORS
-	public static int[] DOTS_GREEN 			= {124, 160, 21};
-	public static int[] DOTS_GREEN_BORDER 	= {63, 82, 11};
+	public static int[] ORANGE	 			= {240, 210, 43};
+	public static int[] ORANGE_LIGHT		= {245, 231, 152};
+	public static int[] ORANGE_DARK			= {168, 147, 65};
+	public static int[] ORANGE_VERY_DARK	= {113, 111, 27};
+	public static int[] ORANGE_VERY_LIGHT	= {255, 252, 235};
 	
-	public static int[] DOTS_ORANGE			= {255, 140, 28};
-	public static int[] DOTS_ORANGE_BORDER	= {141, 77, 14};
+	public static int[] BLACK	 			= {30, 30, 30};
+	public static int[] BLACK_LIGHT			= {220, 220, 220};
+	public static int[] BLACK_DARK	 		= {50, 50, 50};
+	public static int[] BLACK_VERY_DARK		= {0, 0, 0};
+	public static int[] BLACK_VERY_LIGHT	= {250, 250, 250};
 	
-	public static int[] DOTS_YELLOW 		= {255, 233, 43};
-	public static int[] DOTS_YELLOW_BORDER	= {137, 125, 4};
+	public static int[] RED_MAP	 			= {252, 120, 108};
+	public static int[] RED_MAP_LIGHT   	= {252, 190, 184};
+	public static int[] RED_MAP_DARK   		= {181, 21, 5};
+	public static int[] RED_MAP_VERY_DARK   = {125, 14, 18};
+	public static int[] RED_MAP_VERY_LIGHT  = {255, 243, 242};
 	
-	public static int[] DOTS_TURQUOISE 			= {238, 99, 161};
-	public static int[] DOTS_TURQUOISE_BORDER	= {137, 58, 36};
+	public static int[] TURQUOISE 				= {0, 212, 159};
+	public static int[] TURQUOISE_LIGHT			= {141, 227, 205};
+	public static int[] TURQUOISE_DARK			= {2, 163, 23};
+	public static int[] TURQUOISE_VERY_DARK		= {20, 80, 105};
+	public static int[] TURQUOISE_VERY_LIGHT	= {242, 251, 255};
 	
-	public static int[] DOTS_LIGHT_BLUE			= {11, 177, 240};
-	public static int[] DOTS_LIGHT_BLUE_BORDER	= {6, 81, 110};
+	public static int[] LIGHT_GRAY 				= {150, 150, 150};
+	public static int[] LIGHT_GRAY_LIGHT		= {230, 230, 230};
+	public static int[] LIGHT_GRAY_DARK			= {150, 150, 150};
+	public static int[] LIGHT_GRAY_VERY_DARK	= {50, 50, 50};
+	public static int[] LIGHT_GRAY_VERY_LIGHT	= {250, 250, 250};
 	
-	public static int[] DOTS_VIOLET				= {226, 115, 255};
-	public static int[] DOTS_VIOLET_BORDER		= {120	,162 ,135};
+	public static int[] LIGTH_BLUE 				= {10, 182, 240};	
+	public static int[] LIGTH_BLUE_LIGHT		= {165, 223, 242};
+	public static int[] LIGTH_BLUE_DARK 		= {9, 134, 176};
+	public static int[] LIGTH_BLUE_VERY_DARK	= {6, 87, 115};
+	public static int[] LIGTH_BLUE_VERY_LIGHT	= {240, 251, 255};
+	
+	public static int[] BLUE_PANEL 				= {108, 127, 161};	
+	public static int[] BLUE_PANEL_LIGHT		= {140, 165, 207};
+	public static int[] BLUE_PANEL_DARK 		= {69, 80, 99};
+	public static int[] BLUE_PANEL_VERY_DARK	= {42, 49, 61};
+	public static int[] BLUE_PANEL_VERY_LIGHT	= {242, 247, 255};
+	
+	public static int[] WHITE	 		= {255, 255, 255};	
+	
+	//CIRCULAR MOUSE
+	public static int[] CIRCLE_PANTONE_801C				= {0, 174, 227};
+	public static int[] CIRCLE_PANTONE_173C				= {156, 60, 37};
+	
+	public static int[] CIRCLE_PANTONE_802C				= {33, 218, 63};
+	public static int[] CIRCLE_PANTONE_362C				= {57, 137, 47};
 		
-	public static int[] DOTS_PINK			= {233, 62, 135};
-	public static int[] DOTS_PINK_BORDER	= {115, 41, 69};
+	public static int[] CIRCLE_PANTONE_803C				= {255, 231, 26};
+	public static int[] CIRCLE_PANTONE_456C				= {156, 132, 26};
 	
-	public static int[] DOTS_APPLE			= {192, 223, 62};
-	public static int[] DOTS_APPLE_BORDER	= {101, 107, 36};
-	
-	public static int[] DOTS_RED			= {236, 20, 20};
-	public static int[] DOTS_RED_BORDER		= {107, 10, 10};
+	public static int[] CIRCLE_PANTONE_804C				= {255, 152, 58};
+	public static int[] CIRCLE_PANTONE_154C				= {156, 92, 39};
 		
-	public static int[] DOTS_CYAN			= {68, 238, 217};
-	public static int[] DOTS_CYAN_BORDER	= {37, 133, 121};
-			
-	public static int[] DOTS_LIGHT_ORANGE			= {251, 225, 253};
-	public static int[] DOTS_LIGHT_ORANGE_BORDER	= {39, 85, 20};
+	public static int[] CIRCLE_PANTONE_805C				= {255, 83, 91};
+	public static int[] CIRCLE_PANTONE_429C				= {153, 56, 57};
 	
-	public static final int PERSIST_FIRST_STAGE 	= 600;	
-	public static final int PERSIST_SECOND_STAGE 	= 601;
-	public static final int PERSIST_THIRD_STAGE 	= 602;	
+	public static int[] CIRCLE_PANTONE_806C				= {255, 23, 163};
+	public static int[] CIRCLE_PANTONE_235C				= {140, 14, 90};
+	
+	public static int[] CIRCLE_PANTONE_807C				= {221, 10, 178};
+	public static int[] CIRCLE_PANTONE_2425C			= {118, 6, 95};
+
+	public static int[] CIRCLE_PANTONE_808C				= {0, 176, 145};
+	public static int[] CIRCLE_PANTONE_343C				= {1, 88, 78};	
+	
+	public static int[] CIRCLE_PANTONE_809C				= {226, 225, 0};	
+	public static int[] CIRCLE_PANTONE_392C				= {109, 109, 0};	
+	
+	public static int[] CIRCLE_PANTONE_810C				= {255, 199, 14};
+	public static int[] CIRCLE_PANTONE_1535C			= {143, 62, 17};
+	
+	public static int[] CIRCLE_PANTONE_811C				= {255, 102, 63};
+	public static int[] CIRCLE_PANTONE_7526C			= {154, 68, 40};
+	
+	public static int[] CIRCLE_PANTONE_812C				= {255, 37, 108};	
+	public static int[] CIRCLE_PANTONE_813C				= {238, 11, 169};
+	public static int[] CIRCLE_PANTONE_814C				= {124, 92, 203};
+	
+	
+	//CIRCULAR MOUSE
+	public static int[] PANTONE_801C				= {0, 174, 227};
+	public static int[] PANTONE_802C				= {33, 218, 63};
+	public static int[] PANTONE_803C				= {255, 231, 26};
+	public static int[] PANTONE_804C				= {255, 152, 58};
+	public static int[] PANTONE_805C				= {255, 83, 91};
+	public static int[] PANTONE_806C				= {255, 23, 163};
+	public static int[] PANTONE_807C				= {221, 10, 178};
+	public static int[] PANTONE_808C				= {0, 176, 145};
+	public static int[] PANTONE_809C				= {226, 225, 0};
+	public static int[] PANTONE_810C				= {255, 199, 14};
+	public static int[] PANTONE_811C				= {255, 102, 63};
+	
+	public static final int PERSIST_CERO_STAGE 		= 600;	
+	public static final int PERSIST_FIRST_STAGE 	= 601;
+	public static final int PERSIST_SECOND_STAGE 	= 602;
+	public static final int PERSIST_THIRD_STAGE 	= 603;
+	public static final int PERSIST_FOURTH_STAGE 	= 604;	
 	
 	/**TIPS**/
     // Variables for Tips
@@ -227,23 +834,179 @@ public class SwifteeApplication extends Application{
     public static final int IS_FOR_WEB_TIPS				= 506;
     public static final int IS_FOR_CIRCULAR_MENU_TIPS	= 507;
     public static final int IS_FOR_CLOSE_WINDOW			= 508;
+    public static final int IS_FOR_CONTENT_OBJECT		= 509;    
     
+    public static final int TYPE_PADKITE_WINDOWS_MANAGER	= 20;
+    public static final int TYPE_PADKITE_TAB				= 21;
+    public static final int TYPE_PADKITE_ROW				= 22;
+    public static final int TYPE_PADKITE_BUTTON				= 23;
+    public static final int TYPE_PADKITE_BACKGROUND			= 24;
+    public static final int TYPE_PADKITE_PANEL				= 25;
+    public static final int TYPE_PADKITE_INPUT				= 26;
+    public static final int TYPE_PADKITE_TIP_BUTTON			= 27;
+    public static final int TYPE_PADKITE_MORE_LINKS			= 28;
+    public static final int TYPE_PADKITE_SERVER				= 30;
+    public static final int TYPE_PADKITE_BACKGROUND_ROW		= 31;
+    
+    public static final int TAB_ROUNDED_ANGLE_UP				= 1000;
+    public static final int TAB_ROUNDED_ANGLE_DOWN				= 1001;
+    public static final int TAB_ALL_ROUDED						= 1002;
+    public static final int TAB_SUGGESTIONS						= 1003;   
+    
+    public static final int SUGGESTION_FRAME_FOR_BUTTONS				= 1004;
+    
+    public static final int TAB_SUGGESTION_FRAME						= 1006;
+    public static final int TAB_SUGGESTION_FRAME_BIGGER_RIGHT			= 1007;
+    public static final int TAB_SUGGESTION_FRAME_BIGGER_CENTER			= 1008;
+    public static final int TAB_SUGGESTION_FRAME_BIGGER_LEFT			= 1009;    
+    public static final int TAB_SUGGESTION_BUTTON						= 1010;
+    
+    public static final int TAB_LINK							= 1011;
+    public static final int TAB_TEXT							= 1012;
+    public static final int TIP_FOR_CONTENT_OBJECT				= 1013;
+    
+    public static final int ANCHOR_SPINNER_BACKGROUND					= 1014;
+    public static final int ANCHOR_SPINNER_BACKGROUND_ORIENTED_RIGHT	= 1015;
+    public static final int ANCHOR_SPINNER_BACKGROUND_ORIENTED_LEFT		= 1016;
+    
+    public static final int DRAW_ROW_TOP						= 1017;
+    public static final int DRAW_ROW_MIDDLE						= 1018;
+    public static final int DRAW_ROW_BOTTOM						= 1019;
+    public static final int DRAW_ROW_ROUNDED					= 1020;    
+    
+    public static final int LINK_DATA_NOT_REACHABLE				= 5000;    
+    public static final int LINK_DATA_NOT_CALLED				= 5001;    
+    public static final int LINK_DATA_CALLED					= 5002;
+    public static final int LINK_DATA_LOADED					= 5003;
+    public static final int LINK_DATA_PARSED					= 5004;
+    
+    public static final int JSOUP_SITE_NOT_REACHABLE			= 5005;
+    public static final int JSOUP_NOTHING						= 5006;
+    public static final int JSOUP_CALLED						= 5007;
+    public static final int JSOUP_LOADED						= 5008;
+    public static final int JSOUP_PARSED						= 5009;
+    
+    public static final int SUGGESTION_NO_DATA_CALLED			= -1;
+    public static final int SUGGESTION_DATA_CALLED				= 5011;
+    public static final int SUGGESTION_DATA_LOADED				= 5012;
+    
+    public static final int PADKITE_INPUT_SPINNER_BACKGROUND				= 5013;
+    public static final int PADKITE_INPUT_SPINNER_BACKGROUND_ORIENTED_RIGHT	= 5014;
+    public static final int PADKITE_INPUT_SPINNER_BACKGROUND_ORIENTED_LEFT	= 5015;
+    
+    private static int padkite_input_spinner_status = SUGGESTION_NO_DATA_CALLED;   
+  	public static int getPadKiteInputSpinnerStatus() {return padkite_input_spinner_status; }
+  	
+    public static void setPadKiteInputSpinnerStatus(int status) {   	
+    	Log.v("status", "status Wsiftee :" + status);   	
+    	padkite_input_spinner_status = status;     	
+    }
+    
+    //Videos are loaded into array
+    private static boolean is_array_videos;   
+  	public static boolean getIsArrayVideo() {return is_array_videos; }
+    public static void setIsArrayVideo(boolean iAV) { is_array_videos = iAV; }
+    
+    //VWiki are loaded into array
+    private static boolean is_array_wikis;   
+  	public static boolean getIsArrayWiki() {return is_array_wikis; }
+    public static void setIsArrayWiki(boolean iAW) { is_array_wikis = iAW; }
+    
+    //Videos rowns amount :: IMPORTANT remote control does not work with this true.
+    private static boolean memory_status_enabled = false;   
+  	public static boolean getMemoryStatusEnabled() {return memory_status_enabled; }
+    public static void setMemoryStatusEnabled(boolean mSE) { memory_status_enabled = mSE; }
+    
+    //Videos rowns amount
+    private static int video_row_amounts = 3;   
+  	public static int getVideoRowsAmount() {return video_row_amounts; }
+    public static void setVideoRowsAmount(int vRA) { video_row_amounts = vRA; }
+    
+    //Wikis rowns amount	
+    private static int wiki_row_amounts = 4;   
+  	public static int getWikiRowsAmount() {return wiki_row_amounts; }
+    public static void setWikiRowsAmount(int wRA) { wiki_row_amounts = wRA; }
+    
+    /**
+     * SUGGESTION BUTTONS.*/   
+    public static int active_search_check = -1;    
+  	public static int getActiveSearchCheck() {return active_search_check;}  	
+  	public static String getActiveSearchTerm() {return activeSearchTerm;}	   
+  	public static String getActiveSearch() {return active_search;}
+  	
+  	 //Videos rowns amount
+    private static String[] suggestion_buttons_array;   
+  	public static String[] getSuggestionButtonsArray() {return suggestion_buttons_array; }
+    public static void setSuggestionButtonsArray(String[] sBA) { suggestion_buttons_array = sBA; }
+  	
+  	public static String activeSearchTerm;
+  	private static String active_search;
+  	
+  	public static void setActiveSearch(int aS) {	
+ 		
+  		active_search_check = aS;
+  		
+  		switch(aS){
+  			case SwifteeApplication.WEB_SEARCH:
+				active_search = SwifteeApplication.getGoogleSearch();
+				activeSearchTerm = "Searching on Google";
+				break;
+  			case SwifteeApplication.WIKI_BUTTON:
+  				active_search = SwifteeApplication.getWikiSearch();
+  				activeSearchTerm = "Searching on Wikipedia";
+  				break;
+  			case SwifteeApplication.VIDEO_BUTTON:
+  				active_search = SwifteeApplication.getYouTubeSearch();
+  				activeSearchTerm = "Searching on YouTube";
+  				break;
+  			case SwifteeApplication.IMAGE_BUTTON:
+  				active_search = SwifteeApplication.getImageSearch();
+  				activeSearchTerm = "Searching on Google Image";
+  				break;  			
+  		}  		
+    }
+    
+  	public static final int WEB_SEARCH								= -1;
+    public static final int WIKI_BUTTON								= 2000;
+    public static final int VIDEO_BUTTON							= 2001;
+    public static final int IMAGE_BUTTON							= 2002;  
+   
+    public static final int TAB_ORIENT_LEFT							= 2003;
+    public static final int TAB_ORIENT_RIGHT						= 2004;    
+    public static final int TAB_ORIENT_CENTER						= 2005;    
+    
+    public static final int TIP_CONTENT_ORIENT_UP					= 2006;
+    public static final int TIP_CONTENT_ORIENT_BOTTOM				= 2007;    
+    public static final int LINK_TAB_ORIENT_UP						= 2008;
+    public static final int LINK_TAB_ORIENT_DOWN					= 2009;
+    public static final int FRAME_ORIENT_DOWN						= 2010;
+    public static final int FRAME_ORIENT_UP							= 2011;
+    
+    public static final int TEXT_TAB_ORIENT_UP						= 2012;
+    public static final int TEXT_TAB_ORIENT_DOWN					= 2013;    
+   
+    public static final int S_CONTROLLER_REDRAW_ALL					= 2014;
+    public static final int S_CONTROLLER_REDRAW_FRAME_AND_BUTTONS 	= 2015;
+    public static final int S_CONTROLLER_REDRAW_NOTHING				= 2016;
+       
 	/**
 	 * MISC
-	 */
-    
+	 */    
 	//Set voice recognition settings.
 	private static boolean voice_recognition=true;   
 	public static boolean getVoiceRecognitionEnabled() {return voice_recognition; }
-    public static void setVoiceRecognitionEnabled(boolean voice) { voice_recognition = voice; }   
-        
-    
+    public static void setVoiceRecognitionEnabled(boolean voice) { voice_recognition = voice; } 
     
        
     // Tip message
     private static String tip_message;   
 	public static String getTipMessage() {return tip_message; }
-    public static void setTipMessage(String tM) { tip_message = tM; }
+    public static void setTipMessage(String tM) { tip_message = tM; }    
+    
+    // Tip message bigger
+    private static boolean tip_message_bigger;   
+	public static boolean getTipMessageBigger() {return tip_message_bigger; }
+    public static void setTipMessageBigger(boolean tMB) { tip_message_bigger = tMB; }    
     
 	@Override
 	public void onCreate(){
@@ -257,17 +1020,20 @@ public class SwifteeApplication extends Application{
 			copyFilestoSdcard("WebPages", true);
 			copyFilestoSdcard("DefaultTheme", true);
 			copyFilestoSdcard("GestureLibrary", false);
-			copyFilestoSdcard("WebAssets", true);		
+			copyFilestoSdcard("WebAssets", true);
+			copyFilestoSdcard("WebAssets/images", true);
+			copyFilestoSdcard("Images", true);	
 		}
-		if(database.checkIfBookmarkAdded()){
-			database.addBookmark();
-		}
+		//if(database.checkIfBookmarkAdded()){
+		//	database.addBookmark();
+		//}
 	}
 	public boolean isSdCardReady(){
 		return Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);  
 	}
 	
 	public void copyFilestoSdcard(String dir, boolean force){
+		
 		try{
 			String arr[] = getAssets().list(dir);
 			
@@ -386,5 +1152,494 @@ public class SwifteeApplication extends Application{
 		    Log.v("TAG", "Error" + e);			
 		}		
 	 }	
+	
+	/**
+	 * HitTest Font Size
+	 **/
+	
+	//Font Size 
+    private static int hit_test_font_size;   
+	public static int getHitTestFontSize(){ return hit_test_font_size; }
+    public static int setHitTestFontSize(int htfs) { return hit_test_font_size = htfs; }   
+	
+	/**
+     * SUGESTION BUTTONS ASSETS
+     */   
+	
+	//Input Spinner ON OFF
+    private static boolean input_spinner_on;   
+    public static boolean getInputSpinnerOn() {return input_spinner_on; }
+    public static void setInputSpinnerOn(boolean sIO) { input_spinner_on = sIO; }
+    
+    // Anchor Spinner ON OFF
+    private static boolean anchor_spinner_on;   
+    public static boolean getAchorSpinnerOn() {return anchor_spinner_on; }
+    public static void setAchorSpinnerOn(boolean aSO) { anchor_spinner_on = aSO; }
+    
+    // Anchor Spinner ON OFF
+    private static int spinner_speed = 150;   //measured in radians 
+    public static int getSpinnerSpeed() {return spinner_speed; }
+    public static void setSpinnerSpeed(int sS) { spinner_speed = sS; }
+    
+    //Master rectangle coming from Hittest
+    private static Rect master_rect;   
+	public static Rect getMasterRect() {return master_rect; }
+    public static void setMasterRect(Rect mR) { master_rect = mR; }  
+    
+    //HitTest Identifier
+    private static int identifier;   
+	public static int getIdentifier() {return identifier; }
+    public static void setIdentifier(int i) { identifier = i; }
+    
+    //Master rectangle from ringControlled applied scroll
+    private static Rect master_scroll_rect;   
+	public static Rect getMasterScrollRect() {return master_scroll_rect; }
+    public static void setMasterScrollRect(Rect mSR) { master_scroll_rect = mSR; }
+    
+    //Original rect when anchor for spinner
+    private static Rect original_anchor_rect;   
+   	public static Rect getOriginalAnchorRect() {return original_anchor_rect; }
+    public static void setOriginalAnchorRect(Rect oAR) { original_anchor_rect = oAR; }
+    
+    private static Rect suggestion_rect;   
+	public static Rect getSuggestionRect() {return suggestion_rect; }
+    public static void setSuggestionRect(Rect r) { suggestion_rect = r; }  
+    
+    //Complete Rect anchor + master
+    private static Rect complete_rect;   
+   	public static Rect getCompleteRect() {return complete_rect; }
+    public static void setCompleteRect(Rect cR) { complete_rect = cR; }
+    
+    //Tip Message rect
+    private static Rect tip_message_rect;   
+   	public static Rect getTipMessageRect() {return tip_message_rect; }
+    public static void setTipMessageRect(Rect tMR) { tip_message_rect = tMR; }
+    
+    
+    
+    private static int[] suggestion_color;   
+	public static int[] getSuggestionColor(){ return suggestion_color; }
+    public static void setSuggestionColor(int[] r) { suggestion_color = r; }
+    
+    private static int[] active_color_for_tip;   
+	public static int[] getActiveColor(){ return active_color_for_tip; }
+    public static void setActiveColor(int[] a) { active_color_for_tip = a; }
+    
+    //Global result type written from Hittest 
+    private static int result_type;   
+	public static int getResultType(){ return result_type; }
+    public static int setResultType(int r) { return result_type = r; }   
+	
+    //When suggestion text is bigger than the link rect. 
+    private static Rect bigger_rect_resize;   
+	public static Rect getBiggerRectResize(){ return bigger_rect_resize; }
+    public static void setBiggerRectResize(Rect brr) { bigger_rect_resize = brr; } 
+    
+    //text bigger
+    private static int text_is_bigger = -1;   
+	public static int getTextIsBigger(){ return text_is_bigger; }
+    public static void setTextIsBigger(int tib) { text_is_bigger = tib; }   
+    
+    public static final int TEXT_IS_NOT_BIGGER		= -1;
+    public static final int TEXT_IS_BIGGER_LEFT		= 3000;
+    public static final int TEXT_IS_BIGGER_RIGHT	= 3001;
+    public static final int TEXT_IS_BIGGER_CENTER	= 3002;
+    
+    public static final int VERTICAL_LEFT_COLUMN	= 3010;
+    public static final int VERTICAL_CENTER_COLUMN	= 3011;
+    public static final int VERTICAL_RIGHT_COLUMN	= 3012;
+    
+    //vertical position
+    private static int vertical_position;   
+	public static int getVerticalPosition(){ return vertical_position; }
+	
+    public static void setVerticalPosition(int vP) {    	
+    	
+		 Throwable t = new Throwable(); StackTraceElement[] elements =
+		 t.getStackTrace(); String calleeMethod =
+		 elements[0].getMethodName(); String callerMethodName =
+		 elements[1].getMethodName(); String callerClassName =
+		 elements[1].getClassName(); Log.v("call",
+		 "callerMethodName: "+callerMethodName+
+		 " callerClassName: "+callerClassName );		 
+    	
+    	vertical_position = vP; 
+    	
+    }   
+
+    //Scroll
+    private static int scrolling_direction = -1;   
+	public static int getScrollingDirection(){ return scrolling_direction; }
+    public static void setScrollingDirection(int sD) { scrolling_direction = sD; }
+    
+    public static final int SCROLLING_DIRECTION_DOWN		= 4025;
+    public static final int SCROLLING_DIRECTION_UP			= 4026;    
+    
+       
+    //Left text bigger than link boolean
+   /* private static boolean text_is_bigger_right;   
+	public static boolean getTextIsBiggerRight(){ return text_is_bigger_right; }
+    public static void setTextIsBiggerRight(boolean tib) { text_is_bigger_right = tib; }
+    
+    //Center text bigger than link boolean
+    private static boolean text_is_bigger_center;   
+	public static boolean getTextIsBiggerCenter(){ return text_is_bigger_center; }
+    public static void setTextIsBiggerCenter(boolean tib) { text_is_bigger_center = tib; } 
+    
+    //Left text bigger than link boolean
+    private static boolean text_is_bigger_left;   
+	public static boolean getTextIsBiggerLeft(){ return text_is_bigger_left; }
+    public static void setTextIsBiggerLeft(boolean tib) { text_is_bigger_left = tib; }*/ 
+    
+	//Tab 0
+    private static Rect tab_0 = new Rect();;   
+	public static Rect getTab_0_Rect() {return tab_0; }
+    public static void setTab_0_Rect(Rect r) { tab_0 = r; }
+    
+	//Tab 1
+    private static Rect tab_1 = new Rect();;   
+	public static Rect getTab_1_Rect() {return tab_1; }
+    public static void setTab_1_Rect(Rect r) { tab_1 = r; }
+        
+	//Tab 2
+    private static Rect tab_2 = new Rect();;   
+	public static Rect getTab_2_Rect() {return tab_2; }
+    public static void setTab_2_Rect(Rect r) { tab_2 = r; }
+    
+	//Tab 3
+    private static Rect tab_3 = new Rect();;   
+	public static Rect getTab_3_Rect() {return tab_3; }
+    public static void setTab_3_Rect(Rect r) { tab_3 = r; }
+    
+	//Tab 4
+    private static Rect tab_4 = new Rect();   
+	public static Rect getTab_4_Rect() {return tab_4; }
+    public static void setTab_4_Rect(Rect r) { tab_4 = r; }
+    
+	//Tab 5
+    private static Rect tab_5 = new Rect();   
+	public static Rect getTab_5_Rect() {return tab_5; }
+    public static void setTab_5_Rect(Rect r) { tab_5 = r; }    
+  
+	//Active Rect
+    private static Rect active_rect = new Rect();   
+	public static Rect getActiveRect() {return active_rect; }
+    public static void setActiveRect(Rect r) { 
+    	active_rect = r; 
+    }
+	
+    //Anchor Rect
+    private static Rect anchor_rect = new Rect();   
+	public static Rect getAnchorRect() {return anchor_rect; }
+    public static void setAnchorRect(Rect aR) {	anchor_rect = aR; }
+    
+    //Spinner Bottom Rect
+    private static Rect spinner_bottom_rect = new Rect();   
+	public static Rect getSpinnerBackgroundRect() {return spinner_bottom_rect; }
+    public static void setSpinnerBackgroundRect(Rect sB) { spinner_bottom_rect = sB; }
+    
+	//Row 0
+    private static Rect suggestion_row_0 = new Rect();   
+	public static Rect getSuggestionRow_0_Rect() {return suggestion_row_0; }
+    public static void setSuggestionRow_0_Rect(Rect r) { suggestion_row_0 = r; }
+    
+    //Row 1
+    private static Rect suggestion_row_1 = new Rect();   
+	public static Rect getSuggestionRow_1_Rect() {return suggestion_row_1; }
+    public static void setSuggestionRow_1_Rect(Rect r) { suggestion_row_1 = r; }
+    
+    //Row 2
+    private static Rect suggestion_row_2 = new Rect();   
+	public static Rect getSuggestionRow_2_Rect() {return suggestion_row_2; }
+    public static void setSuggestionRow_2_Rect(Rect r) { suggestion_row_2 = r; }
+    
+    //Row 3
+    private static Rect suggestion_row_3 = new Rect();   
+	public static Rect getSuggestionRow_3_Rect() {return suggestion_row_3; }
+    public static void setSuggestionRow_3_Rect(Rect r) { suggestion_row_3 = r; }  
+    
+    //Row 4
+    private static Rect suggestion_row_4 = new Rect();   
+	public static Rect getSuggestionRow_4_Rect() {return suggestion_row_4; }
+    public static void setSuggestionRow_4_Rect(Rect r) { suggestion_row_4 = r; }
+    
+    //Row 5
+    private static Rect suggestion_row_5 = new Rect();   
+	public static Rect getSuggestionRow_5_Rect() {return suggestion_row_5; }
+    public static void setSuggestionRow_5_Rect(Rect r) { suggestion_row_5 = r; }    
+    
+    //Suggestion button 0
+    private static Rect suggestion_button_0 = new Rect();   
+	public static Rect getSuggestionButton_0_Rect() {return suggestion_button_0; }
+    public static void setSuggestionButton_0_Rect(Rect r) { suggestion_button_0 = r; }
+    
+    //Suggestion button 1
+    private static Rect suggestion_button_1 = new Rect();   
+	public static Rect getSuggestionButton_1_Rect() {return suggestion_button_1; }
+    public static void setSuggestionButton_1_Rect(Rect r) { suggestion_button_1 = r; }
+    
+    //Suggestion button 2
+    private static Rect suggestion_button_2 = new Rect();   
+	public static Rect getSuggestionButton_2_Rect() {return suggestion_button_2; }
+    public static void setSuggestionButton_2_Rect(Rect r) { suggestion_button_2 = r; }
+    
+    //Suggestion button 3
+    private static Rect suggestion_button_3 = new Rect();   
+	public static Rect getSuggestionButton_3_Rect() {return suggestion_button_3; }
+    public static void setSuggestionButton_3_Rect(Rect r) { suggestion_button_3 = r; } 
+    
+    //Suggestion button 2
+    private static Rect suggestion_button_4 = new Rect();   
+	public static Rect getSuggestionButton_4_Rect() {return suggestion_button_4; }
+    public static void setSuggestionButton_4_Rect(Rect r) { suggestion_button_4 = r; }    
+    
+    //Suggestion button 5
+    private static Rect suggestion_button_5 = new Rect();   
+	public static Rect getSuggestionButton_5_Rect() {return suggestion_button_5; }
+    public static void setSuggestionButton_5_Rect(Rect r) { suggestion_button_5 = r; }  
+    
+    //Bottom form big
+    private static Rect bottom_form_button_0 = new Rect();   
+	public static Rect getBottomFormButton_0_Rect() {return bottom_form_button_0; }
+    public static void setBottomFormButton_0_Rect(Rect r) { bottom_form_button_0 = r; }    
+    
+    //Bottom form small
+    private static Rect bottom_form_button_1 = new Rect();   
+	public static Rect getBottomFormButton_1_Rect() {return bottom_form_button_1; }
+    public static void setBottomFormButton_1_Rect(Rect r) { bottom_form_button_1 = r; }
+    
+    //Bottom form between lines
+    private static Rect bottom_form_button_2 = new Rect();   
+	public static Rect getBottomFormButton_2_Rect() {return bottom_form_button_2; }
+    public static void setBottomFormButton_2_Rect(Rect r) { bottom_form_button_2 = r; }
+    
+    //Tip button
+    private static Rect tip_button = new Rect();   
+	public static Rect getTipButton_Rect() {return tip_button; }
+    public static void setTipButton_Rect(Rect tR) { tip_button = tR; }
+    
+    //Tip withbutton
+    private static boolean has_tip_button;   
+	public static boolean getHasTipButton() {return has_tip_button; }
+    public static void setHasTipButton(boolean tB) { has_tip_button = tB; }
+    
+    //**IMAGES BUTTONS**//
+    
+    //Image button # 0
+    private static Rect image_button_0 = new Rect();   
+	public static Rect get_Image_Button_0() {return image_button_0; }
+    public static void set_Image_Button_0(Rect iB0) { image_button_0 = iB0; }
+        
+    //Image button # 1
+    private static Rect image_button_1 = new Rect();   
+	public static Rect get_Image_Button_1() {return image_button_1; }
+    public static void set_Image_Button_1(Rect iB1) { image_button_1 = iB1; }
+    
+    //Image button # 2
+    private static Rect image_button_2 = new Rect();   
+	public static Rect get_Image_Button_2() {return image_button_2; }
+    public static void set_Image_Button_2(Rect iB2) { image_button_2 = iB2; }
+    
+    //Image button # 3
+    private static Rect image_button_3 = new Rect();   
+	public static Rect get_Image_Button_3() {return image_button_3; }
+    public static void set_Image_Button_3(Rect iB3) { image_button_3 = iB3; }
+    
+    //Image button # 4
+    private static Rect image_button_4 = new Rect();   
+	public static Rect get_Image_Button_4() {return image_button_4; }
+    public static void set_Image_Button_4(Rect iB4) { image_button_4 = iB4; }
+    
+    //Image button # 5
+    private static Rect image_button_5 = new Rect();   
+	public static Rect get_Image_Button_5() {return image_button_5; }
+    public static void set_Image_Button_5(Rect iB5) { image_button_5 = iB5; }
+    
+    //Image button # 6
+    private static Rect image_button_6 = new Rect();   
+	public static Rect get_Image_Button_6() {return image_button_6; }
+    public static void set_Image_Button_6(Rect iB6) { image_button_6 = iB6; }
+    
+    //Image button # 7
+    private static Rect image_button_7 = new Rect();   
+	public static Rect get_Image_Button_7() {return image_button_7; }
+    public static void set_Image_Button_7(Rect iB7) { image_button_7 = iB7; }    
+
+    //Image button # 8
+    private static Rect image_button_8 = new Rect();   
+	public static Rect get_Image_Button_8() {return image_button_8; }
+    public static void set_Image_Button_8(Rect iB8) { image_button_8 = iB8; }    
+
+    //Suggestion Row Text Size
+    private static int suggestion_row_text_size = 18;   
+	public static int getSuggestionRowTextSize() {return suggestion_row_text_size; }
+    public static void setSuggestionRowTextSize(int tS) { suggestion_row_text_size = tS; }   
+    
+    //FloatingCurstos cType
+    private static int cType;   
+	public static int getCType() {return cType; }
+    public static void setCType(int cT) { cType = cT; }
+    
+    //FloatingCurstos Last Known Web Hit Type
+    private static int lastKnownHitType;
+
+	public static int getLastKnownHitType() {return lastKnownHitType; }
+    public static void setLastKnownHitType(int lKHT) { lastKnownHitType = lKHT; }
+    
+    //Amount of params from the ring to the tab
+    public static int getAmountOfObjectsPerType(int cType){
+    	int objs = 0;
+    	switch (cType){
+    		case WebHitTestResult.TEXT_TYPE:	
+    		case WebHitTestResult.SRC_ANCHOR_TYPE:	
+    		case TYPE_PADKITE_INPUT:
+    		case TYPE_PADKITE_PANEL:
+    		case TYPE_PADKITE_WINDOWS_MANAGER:
+    		case TYPE_PADKITE_TAB:
+    		case TYPE_PADKITE_ROW:
+    		case TYPE_PADKITE_TIP_BUTTON:
+    		case TYPE_PADKITE_BUTTON:
+    		case TYPE_PADKITE_SERVER:
+    			objs = 4;    			
+    			break;    		      	
+    	}
+    	return objs; 	
+    } 
+
+    
+    public static void cleanAllRects(){
+    	
+    	tab_0.left  	= 0;
+    	tab_0.right 	= 0;
+    	tab_0.top 		= 0;
+    	tab_0.bottom	= 0;
+    	
+    	tab_1.left  	= 0;
+    	tab_1.right 	= 0;
+    	tab_1.top 		= 0;
+    	tab_1.bottom	= 0;
+    	
+    	tab_2.left  	= 0;
+    	tab_2.right 	= 0;
+    	tab_2.top 		= 0;
+    	tab_2.bottom	= 0;
+    	
+    	tab_3.left  	= 0;
+    	tab_3.right 	= 0;
+    	tab_3.top 		= 0;
+    	tab_3.bottom	= 0;
+    	
+    	tab_4.left  	= 0;
+    	tab_4.right 	= 0;
+    	tab_4.top 		= 0;
+    	tab_4.bottom	= 0;   
+    	
+    	TAB_CERO_RECT.left 		= 0;
+    	TAB_CERO_RECT.right 	= 0;
+    	TAB_CERO_RECT.top 		= 0;
+    	TAB_CERO_RECT.bottom 	= 0;
+
+    	TAB_FIRST_RECT.left 	= 0;
+    	TAB_FIRST_RECT.right 	= 0;
+    	TAB_FIRST_RECT.top 		= 0;
+    	TAB_FIRST_RECT.bottom 	= 0;
+    	
+    	TAB_SECOND_RECT.left 	= 0;
+    	TAB_SECOND_RECT.right 	= 0;
+    	TAB_SECOND_RECT.top 	= 0;
+    	TAB_SECOND_RECT.bottom 	= 0;
+    	
+    	TAB_THIRD_RECT.left 	= 0;
+    	TAB_THIRD_RECT.right 	= 0;
+    	TAB_THIRD_RECT.top 		= 0;
+    	TAB_THIRD_RECT.bottom 	= 0;
+    	
+    	TAB_FOURTH_RECT.left 	= 0;
+    	TAB_FOURTH_RECT.right 	= 0;
+    	TAB_FOURTH_RECT.top 	= 0;
+    	TAB_FOURTH_RECT.bottom 	= 0;
+    	
+    	if (BrowserActivity.isSuggestionActivated()){
+    		
+    		suggestion_row_0.left 	= 0;
+    		suggestion_row_0.right 	= 0;
+    		suggestion_row_0.top 	= 0;
+    		suggestion_row_0.bottom = 0;
+    		suggestion_row_0.left 	= 0;
+    		
+    		suggestion_row_0.left 	= 0;
+    		suggestion_row_1.right 	= 0;
+    		suggestion_row_1.top 	= 0;
+    		suggestion_row_1.bottom = 0;
+    		suggestion_row_1.left 	= 0;
+    		
+    		suggestion_row_3.left 	= 0;
+    		suggestion_row_2.right 	= 0;
+    		suggestion_row_2.top 	= 0;
+    		suggestion_row_2.bottom = 0;
+    		suggestion_row_2.left 	= 0;
+    		
+    		suggestion_row_3.left 	= 0;
+    		suggestion_row_3.right 	= 0;
+    		suggestion_row_3.top 	= 0;
+    		suggestion_row_3.bottom = 0;
+    		suggestion_row_3.left 	= 0;
+    		
+    		suggestion_row_4.left 	= 0;
+    		suggestion_row_4.right 	= 0;
+    		suggestion_row_4.top 	= 0;
+    		suggestion_row_4.bottom = 0;
+    		suggestion_row_4.left 	= 0;
+    		
+    		suggestion_row_5.left 	= 0;
+    		suggestion_row_5.right 	= 0;
+    		suggestion_row_5.top 	= 0;
+    		suggestion_row_5.bottom = 0;
+    		suggestion_row_5.left 	= 0;   		
+    		
+    		
+    		suggestion_button_0.left 	= 0;
+    		suggestion_button_0.right 	= 0;
+    		suggestion_button_0.top 	= 0;
+    		suggestion_button_0.bottom 	= 0;
+    		
+    		suggestion_button_1.left 	= 0;
+    		suggestion_button_1.right 	= 0;
+    		suggestion_button_1.top 	= 0;
+    		suggestion_button_1.bottom 	= 0;
+    		
+    		suggestion_button_2.left 	= 0;
+    		suggestion_button_2.right 	= 0;
+    		suggestion_button_2.top 	= 0;
+    		suggestion_button_2.bottom 	= 0;
+    		
+    		suggestion_button_3.left 	= 0;
+    		suggestion_button_3.right 	= 0;
+    		suggestion_button_3.top 	= 0;
+    		suggestion_button_3.bottom 	= 0;
+    		    		
+    		suggestion_button_4.left 	= 0;
+    		suggestion_button_4.right 	= 0;
+    		suggestion_button_4.top 	= 0;
+    		suggestion_button_4.bottom 	= 0;
+    		
+    		suggestion_button_5.left 	= 0;
+    		suggestion_button_5.right 	= 0;
+    		suggestion_button_5.top 	= 0;
+    		suggestion_button_5.bottom 	= 0;
+    		
+    		
+    		bottom_form_button_0.left 	= 0;
+    		bottom_form_button_0.top 	= 0;
+    		bottom_form_button_0.right 	= 0;
+    		bottom_form_button_0.bottom = 0;    		
+    		
+    		bottom_form_button_1.left 	= 0;
+    		bottom_form_button_1.top 	= 0;
+    		bottom_form_button_1.right 	= 0;
+    		bottom_form_button_1.bottom = 0;    		  		
+    		
+    	}
+    }
 	
 }

@@ -483,7 +483,7 @@ public class CircularLayout extends ViewGroup {
 				hotBut.setFunction(hotFunction);
 				runHotWithDelay(100);
 			} else {
-				BrowserActivity.toggleMenuVisibility();
+				BrowserActivity.setToggleMenuVisibility();
 			}
 			
 			final VelocityTracker velocityTracker = mVelocityTracker;
@@ -700,7 +700,8 @@ public class CircularLayout extends ViewGroup {
 		 int x = loc[0];
 		 int y = loc[1];
 		 Rect re = new Rect(x, y, w, h);
-		 BrowserActivity.drawTip(re, text, hotBut.getCenterX(), y);
+		 int centerX = hotBut.getCenterX();
+		 BrowserActivity.drawTip(re, text, centerX, y);
 		 invalidate();
 	 }
 		 

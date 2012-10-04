@@ -3,7 +3,7 @@
       android:versionCode="1"
       android:versionName="1.44.1"
       package="com.roamtouch.swiftee">
-    <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true" android:name="SwifteeApplication">
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true" android:name=".SwifteeApplication">
         <activity android:name=".BrowserActivity"
                   android:label="@string/app_name"
                   android:launchMode="singleTask"
@@ -70,10 +70,16 @@
 				<data android:scheme="myapp" android:host="twitt" />
 			</intent-filter>
 		</activity>    
+		
+        <receiver android:name=".receiver.SDInfoReceiver" android:enabled="true">
+			<intent-filter>
+				<action android:name="com.roamtouch.utils.SDInfoReceiver" />
+			</intent-filter>
+		</receiver>
          
     </application>
 
-<uses-sdk android:targetSdkVersion="7" android:minSdkVersion="7" android:maxSdkVersion="7"></uses-sdk>
+<uses-sdk android:targetSdkVersion="8" android:minSdkVersion="8" android:maxSdkVersion="8"></uses-sdk>
 
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
@@ -83,6 +89,7 @@
 <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS"></uses-permission>
 <uses-permission android:name="com.android.browser.permission.WRITE_HISTORY_BOOKMARKS"></uses-permission>
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
 
 <!--Maps
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>

@@ -97,7 +97,7 @@ public class GestureActions {
 
 			}
 			if (link.contains("m.youtube.com"))
-					link = "http://www.youtube.com/watch?v=" + videoId;
+					link = SwifteeApplication.getYouTubeWatch() + videoId;
 			mVideoId = videoId;
 		}
 		return link;
@@ -110,14 +110,12 @@ public class GestureActions {
 	
 	public void search(FloatingCursor fc)
 	{
-		//fc.loadPage("http://www.google.com/m/search?q=" + URLEncoder.encode(mSelection));
 		fc.loadPage(SwifteeApplication.getGoogleSearch()+URLEncoder.encode(mSelection));
 		fc.enableProgressBar();
 	}
 
 	public void searchPicture(FloatingCursor fc)
 	{
-		//fc.loadPage("http://www.google.com/m/search?site=images&q=" + URLEncoder.encode(mSelection));
 		fc.loadPage(SwifteeApplication.getImageSearch()+URLEncoder.encode(mSelection));
 		fc.enableProgressBar();
 	}
@@ -125,7 +123,6 @@ public class GestureActions {
 	
 	public void searchYouTube(FloatingCursor fc)
 	{
-		//fc.loadPage("http://m.youtube.com/results?search_query=" + URLEncoder.encode(mSelection));
 		fc.loadPage(SwifteeApplication.getYouTubeSearch()+ URLEncoder.encode(mSelection));
 		fc.enableProgressBar();
 	}
@@ -308,7 +305,7 @@ public class GestureActions {
 
 	public void wikipedia(FloatingCursor fc)
 	{	
-    	fc.loadPage("http://en.wikipedia.org/w/index.php?search=" + URLEncoder.encode(mSelection) + "&go=Go");
+    	fc.loadPage(SwifteeApplication.getWikiSearch() + URLEncoder.encode(mSelection));
     	fc.enableProgressBar();
 	}
 
@@ -323,9 +320,8 @@ public class GestureActions {
 	}
 	
 	public void openLink(FloatingCursor floatingCursor)
-	{
-		
-    	floatingCursor.addNewWindow(true);
+	{		
+    	floatingCursor.addNewWindow(true, false);
 	}
 	
 	public void send()
@@ -352,4 +348,14 @@ public class GestureActions {
 			e.printStackTrace();
 		}
 	}
+	
+	public void chooser()
+	{	
+		Intent chooseIntent = new Intent (Intent.ACTION_CHOOSER) ;
+		chooseIntent.putExtra (Intent.EXTRA_INTENT, chooseIntent) ;
+		chooseIntent.putExtra (Intent.EXTRA_TITLE, "Select activity") ;
+		mParent.startActivity (chooseIntent) ; 
+		
+	}
+	
 }

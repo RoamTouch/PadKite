@@ -168,7 +168,8 @@ public class Gesture implements Parcelable {
      * @return the bitmap
      */
     public Bitmap toBitmap(int width, int height, int edge, int numSample, int color) {
-        final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+    	
+    	final Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         final Canvas canvas = new Canvas(bitmap);
 
         canvas.translate(edge, edge);
@@ -203,8 +204,10 @@ public class Gesture implements Parcelable {
      * @return the bitmap
      */
     public Bitmap toBitmap(int width, int height, int inset, int color) {
+    	
         final Bitmap bitmap = Bitmap.createBitmap(width, height,
                 Bitmap.Config.ARGB_8888);
+        
         final Canvas canvas = new Canvas(bitmap);
 
         final Paint paint = new Paint();

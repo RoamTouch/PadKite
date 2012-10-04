@@ -38,10 +38,14 @@ public class CircularProgressBar extends View {
 	    public boolean isEnabled=false;
 	    
 	    Handler handler; 
+	    
+	    FloatingCursor fC;
 		
 		
-		public CircularProgressBar(Context context,int r) {
+		public CircularProgressBar(Context context,int r, FloatingCursor f) {
 			super(context);
+			
+			fC = f;
 			
 		  	mPaints = new Paint();
 			mUseCenters = new boolean[4];
@@ -86,6 +90,7 @@ public class CircularProgressBar extends View {
 		}
 		
 		public void enable(){
+			fC.sandCursor();
 			isEnabled = true;
 			this.setVisibility(VISIBLE);			
 		}
@@ -107,6 +112,7 @@ public class CircularProgressBar extends View {
 	            	//setVisibility(INVISIBLE);
 	            } 
 			}, 600); 	
+			fC.kiteCursor();
 		}		
 
 		protected void setPosition(float x, float y) {

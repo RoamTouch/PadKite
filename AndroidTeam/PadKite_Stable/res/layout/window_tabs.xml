@@ -9,8 +9,8 @@
 	        		android:layout_width="fill_parent"
 	        		android:layout_height="wrap_content"
             		android:gravity="center"
-	        		android:background="@drawable/windows_btn">                 
+	        		android:background="@drawable/windows_btn">               
 	        		
-	        	</com.roamtouch.menu.TabButton>  		    	
+	        	</com.roamtouch.menu.TabButton>  		      	
 
     	</merge >

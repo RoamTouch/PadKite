@@ -35,4 +35,20 @@ public class Result {
 	public String p_Tooltip;
 
 	
+	/////////////////////////////
+		
+	@SerializedName("set")
+	public String w_Set;
+	
+	@SerializedName("title")
+	public String w_Title;
+	
+	@SerializedName("url")
+	public String w_Url;
+	
+	@SerializedName("bitmap")
+	public String w_Bitmap;	
+
+	
+	
 }

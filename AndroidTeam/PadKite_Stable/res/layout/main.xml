@@ -36,29 +36,42 @@
 					android:id="@+id/ringController"
 				    android:layout_width="fill_parent"
 				    android:layout_height="fill_parent">
-				</com.roamtouch.visuals.RingController>		
+				</com.roamtouch.visuals.RingController>	
 				
-				<com.roamtouch.floatingcursor.FloatingCursor 
+				<com.roamtouch.visuals.SuggestionController 
 					xmlns:android="http://schemas.android.com/apk/res/android"
-					android:id="@+id/floatingCursor"
-	    			android:layout_width="fill_parent"
-	    			android:layout_height="fill_parent">
-				</com.roamtouch.floatingcursor.FloatingCursor>	
-				
+					android:id="@+id/suggestionController"
+				    android:layout_width="fill_parent"
+				    android:layout_height="fill_parent">			    
+				</com.roamtouch.visuals.SuggestionController>
 				
 				<com.roamtouch.visuals.TipController 
 			     	xmlns:android="http://schemas.android.com/apk/res/android"
 					android:id="@+id/tipController"
 			    	android:layout_width="fill_parent"
 			    	android:layout_height="fill_parent">
-					</com.roamtouch.visuals.TipController>					
+					</com.roamtouch.visuals.TipController>	
+					
+				<com.roamtouch.visuals.TextCursorHolder
+					xmlns:android="http://schemas.android.com/apk/res/android"
+					android:id="@+id/textCursorHolder"
+			    	android:layout_width="fill_parent"
+			   		android:layout_height="fill_parent">
+					</com.roamtouch.visuals.TextCursorHolder>			    					
+				
+				<com.roamtouch.floatingcursor.FloatingCursor 
+					xmlns:android="http://schemas.android.com/apk/res/android"
+					android:id="@+id/floatingCursor"
+	    			android:layout_width="fill_parent"
+	    			android:layout_height="fill_parent">
+				</com.roamtouch.floatingcursor.FloatingCursor>						
 					
 				<com.roamtouch.visuals.PointerHolder
 					xmlns:android="http://schemas.android.com/apk/res/android"
 					android:id="@+id/pointerHolder"
 			    	android:layout_width="fill_parent"
 			   		android:layout_height="fill_parent">
-					</com.roamtouch.visuals.PointerHolder>						
+					</com.roamtouch.visuals.PointerHolder>					 			
 	
 			</com.roamtouch.view.SwifteeGestureView>
 

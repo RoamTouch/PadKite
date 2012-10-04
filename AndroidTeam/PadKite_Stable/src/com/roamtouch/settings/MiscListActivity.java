@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
+import com.roamtouch.swiftee.SwifteeApplication;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -69,9 +71,8 @@ public class MiscListActivity extends Activity implements OnItemClickListener {
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+		super.onCreate(savedInstanceState);	
+        getWindow().requestFeature(Window.FEATURE_NO_TITLE);     
 		
 		scale = getResources().getDisplayMetrics().density;
 		item_height = (int) (60 * scale + 0.5f); //Converting to Pixel
