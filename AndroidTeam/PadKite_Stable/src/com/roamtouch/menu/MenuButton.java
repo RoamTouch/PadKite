@@ -1,6 +1,6 @@
 package com.roamtouch.menu;
 
-import roamtouch.webkit.WebView;
+import android.webkit.WebView;
 
 import com.roamtouch.swiftee.R;
 import android.content.Context;

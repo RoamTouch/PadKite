@@ -2,8 +2,9 @@ package com.roamtouch.visuals;
 
 import java.util.Vector;
 
-import roamtouch.webkit.WebHitTestResult;
-import roamtouch.webkit.WebView;
+import com.roamtouch.webhook.WebHitTestResult;
+
+import android.webkit.WebView;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -19,6 +20,7 @@ import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
+import com.roamtouch.utils.COLOR;
 import com.roamtouch.utils.ColorUtils;
 import com.roamtouch.visuals.RingView;
 
@@ -98,21 +100,21 @@ public class RingController extends FrameLayout {
 		rV.setGrandParent(mP, fC);	
 	}			
 	
-	public void ringToOriginalColor(){		
-		/** Turn color back to NONE, in case 3 colors back to GRAY.**/			 
+	/*public void ringToOriginalColor(){		
+		//Turn color back to NONE, in case 3 colors back to GRAY.			 
 		if (SwifteeApplication.getSingleFingerSteps()== 3){
-			setRingcolor(SwifteeApplication.PAINT_GRAY);				
+			setRingcolor(COLOR.PAINT_GRAY);				
 		} else if (SwifteeApplication.getSingleFingerSteps()== 2){		
-			setRingcolor(SwifteeApplication.PAINT_BLUE);
+			setRingcolor(COLOR.PAINT_BLUE);
 		}		
-	}	
+	}*/	
 	
 	/**
 	 * Paing WebKit ring blue on start if two fingers.
 	 */
-	public void paintRingBlue(){
-		setRingcolor(SwifteeApplication.PAINT_BLUE);
-	}
+	/*public void paintRingBlue(){
+		setRingcolor(COLOR.PAINT_BLUE);
+	}*/
 	
 	public void invalidateTips(){
 		rV.postInvalidate();
@@ -197,7 +199,7 @@ public class RingController extends FrameLayout {
         	
         	SwifteeApplication.setMasterScrollRect(re);
         	      	
-        	if (cType == WebHitTestResult.TEXT_TYPE){        		
+        	if (cType == WebHitTestResult.TYPE_TEXT_TYPE){        		
         		mRect.left = re.left - 10;        		 
         		mRect.top = re.top - 10;        		
         		mRect.right = re.right + 10;
@@ -230,7 +232,7 @@ public class RingController extends FrameLayout {
 	    			break;
 	    			
 	    		case SwifteeApplication.TYPE_PADKITE_SERVER:	
-	    		case WebHitTestResult.SRC_ANCHOR_TYPE:	    			
+	    		case WebHitTestResult.TYPE_SRC_ANCHOR_TYPE:	    			
 	    			if (titles.length<=2){
 	    				percentage = SwifteeApplication.PERCENTAGE_TAB_ANCHOR;
 	    			} else {
@@ -239,13 +241,13 @@ public class RingController extends FrameLayout {
 	    			percentTab = (percentage*W)/100;	   			
 	    			break;
 	    			
-	    		case WebHitTestResult.TEXT_TYPE:
+	    		case WebHitTestResult.TYPE_TEXT_TYPE:
 	    			percentage = SwifteeApplication.PERCENTAGE_TAB_TEXT; 
 	    			percentTab = (percentage*W)/100;   			
 	    			break;      		
 		    }			
 			
-			if ( cType == WebHitTestResult.SRC_ANCHOR_TYPE
+			if ( cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE
 				|| cType == SwifteeApplication.TYPE_PADKITE_WINDOWS_MANAGER
 				|| cType == SwifteeApplication.TYPE_PADKITE_SERVER){
 								
@@ -259,7 +261,7 @@ public class RingController extends FrameLayout {
 				y = mRect.top - SwifteeApplication.getTabHeight() - 6;
       	    	H = SwifteeApplication.getTabHeight();
       	    	
-      	    } else if ( cType == WebHitTestResult.TEXT_TYPE ){
+      	    } else if ( cType == WebHitTestResult.TYPE_TEXT_TYPE ){
       	    	
       	    	yRing = mRect.top;      	    	
       	    	hRing = mRect.bottom - mRect.top;   	
@@ -286,7 +288,7 @@ public class RingController extends FrameLayout {
         		data[i][5] = tabColors[i];
         		data[i][6] = x + 30; //Text
         		
-        		if (cType != WebHitTestResult.TEXT_TYPE){       		
+        		if (cType != WebHitTestResult.TYPE_TEXT_TYPE){       		
         			data[i][7] = ringColors[i];
         		}
         		
@@ -309,7 +311,7 @@ public class RingController extends FrameLayout {
         	hitPKTabIndex = SwifteeApplication.getPKTabIndex();
         	if (hitPKTabIndex==-1){ hitPKTabIndex=0;}
         	setTabToTop(hitPKTabIndex,type);   
-        	if ( cType == WebHitTestResult.TEXT_TYPE ){ H = yRing + hRing; 	}
+        	if ( cType == WebHitTestResult.TYPE_TEXT_TYPE ){ H = yRing + hRing; 	}
         	
         	boolean expanded = SwifteeApplication.getExpanded();  				
         			
@@ -344,10 +346,9 @@ public class RingController extends FrameLayout {
 		
 		boolean isParser = fC.isFromParser();
 		
-		if ( cType != WebHitTestResult.TEXT_TYPE && !isParser ){			
+		if ( cType != WebHitTestResult.TYPE_TEXT_TYPE && !isParser ){			
 			int col = (Integer) data[tabIndex][7];		
-			fC.setFocusNodeAtRect(SwifteeApplication.getMasterRect());
-			setRingcolor(col);
+			//setRingcolor(col);
 		}	
 		
 		switch (amountTabs){
@@ -403,7 +404,7 @@ public class RingController extends FrameLayout {
 				top[1] = data[1];
 				data[1][13] = 1;
 				
-				if (cType == WebHitTestResult.TEXT_TYPE){					
+				if (cType == WebHitTestResult.TYPE_TEXT_TYPE){					
 					data[2][5] = data[2][12];
 					data[1][5] = data[1][12];
 					int[] col = (int[]) data[0][5]; 
@@ -421,7 +422,7 @@ public class RingController extends FrameLayout {
 				top[1] = data[0];
 				data[1][13] = 0;
 				
-				if (cType == WebHitTestResult.TEXT_TYPE){
+				if (cType == WebHitTestResult.TYPE_TEXT_TYPE){
 					data[2][5] = data[2][12]; 
 					data[0][5] = data[0][12];
 					int[] col = (int[]) data[1][5];
@@ -438,7 +439,7 @@ public class RingController extends FrameLayout {
 				top[1] = data[1];
 				data[1][13] = 1;
 				
-				if (cType == WebHitTestResult.TEXT_TYPE){
+				if (cType == WebHitTestResult.TYPE_TEXT_TYPE){
 					data[0][5] = data[0][12];
 					data[1][5] = data[1][12];
 					int[] col = (int[]) data[2][5];
@@ -674,18 +675,15 @@ public class RingController extends FrameLayout {
 	 * Sets the link ring color to blue, green and red
 	 * @param color
 	 */
-	private int colorId;
-	
+	/*private int colorId;	
 	public void setRingcolor(int colorId){		
-		
-		this.colorId = colorId;			
-		loopRingColor();	
-		
+		this.colorId = colorId;				
+		loopRingColor();		
 		//loopRingColor();
-		/*setRingColor = new RingColor();
-		setRingColor.execute();
-		setRingColor.execute();*/
-	};
+		//setRingColor = new RingColor();
+		//setRingColor.execute();
+		//setRingColor.execute();
+	};*/
 		
 	/*public void persistRingColor(){		
 		//Thread ring = new Thread(){			
@@ -748,7 +746,7 @@ public class RingController extends FrameLayout {
 	}*/
 	
 	
-	 public	void loopRingColor(){
+	 /*public	void loopRingColor(){
 		
 		switch (colorId){
 		
@@ -814,9 +812,9 @@ public class RingController extends FrameLayout {
 			cW.setCursorOuterColors(0xff000000, 0xff000000, 0xff000000, 0xff000000);
 			cW.setCursorInnerColors(0xff000000, 0xff000000, 0xff000000, 0xff000000);
 			
-			/*cW.setSelectionColor(0xffFFEBAB);	
-			cW.setCursorOuterColors(0xff1C1805, 0xff1C1805, 0xff1C1805, 0xff1C1805);
-			cW.setCursorInnerColors(0xff858585, 0xff858585, 0xff858585, 0xff858585);*/
+			//cW.setSelectionColor(0xffFFEBAB);	
+			/cW.setCursorOuterColors(0xff1C1805, 0xff1C1805, 0xff1C1805, 0xff1C1805);
+			//cW.setCursorInnerColors(0xff858585, 0xff858585, 0xff858585, 0xff858585);
 			
 			cW.invalidate();
 			break;
@@ -965,7 +963,7 @@ public class RingController extends FrameLayout {
 			break;
 		}
 		
-	}
+	}*/
 	
 	
 	public void setWebView(WebView wv){
@@ -984,5 +982,18 @@ public class RingController extends FrameLayout {
 		this.ringVectors = ringVectors;
 	}	
 	
+	
+	public void drawRing(int identifier, int type, Rect re, int[] color) {	
+		
+		if (this.identifier != identifier) { 	
+			rV.setRingColors(color);
+			rV.setXYWH(re.left, re.top, re.right, re.bottom);		
+			rV.setDrawType(SwifteeApplication.DRAW_RING);		
+		}	
+		
+		this.identifier = identifier;
+		
+		
+	}
 	
 }

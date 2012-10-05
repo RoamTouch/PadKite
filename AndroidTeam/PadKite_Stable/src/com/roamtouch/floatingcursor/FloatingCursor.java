@@ -56,7 +56,9 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.webkit.WebChromeClient;
-import com.roamtouch.webhoock.WebHitTestResult;
+
+import com.roamtouch.webhook.WebHitTestResult;
+
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Adapter;
@@ -70,6 +72,7 @@ import android.widget.Scroller;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.VideoView;
 
+import com.roamtouch.utils.COLOR;
 import com.roamtouch.utils.GetDomainName;
 import com.roamtouch.utils.ScreenLocation;
 import com.roamtouch.utils.StringUtils;
@@ -816,51 +819,15 @@ public class FloatingCursor extends FrameLayout implements
 						
 						mWebView.invalidate();
 						
-						if (mP.isTipsActivated()
-								|| (mSoftKeyboardVisible == true && !hidden)) {
+						if (mP.isTipsActivated() || (mSoftKeyboardVisible == true && !hidden)) {
 							ret = true;
 							return true;
-						}					
+						}	
 						
-						mWebHitTestResult = mWebView.getHitTestResultAt(x, y);
-						
-						resultType = mWebHitTestResult.getType();					
-						
-						if (resultType != 0 && resultType != 1 && resultType != -1) {
-							
-							cType=resultType; 
-							rect = mWebHitTestResult.getRect();							
-							SwifteeApplication.setMasterRect(rect);					
-							identifier = mWebHitTestResult.getIdentifier();		
-							SwifteeApplication.setIdentifier(identifier);
-							mWebHitTestResultIdentifer = identifier;
-							
-							if (resultType == WebHitTestResult.SRC_ANCHOR_TYPE
-									|| resultType == WebHitTestResult.ANCHOR_TYPE
-									|| resultType == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
-								
-								selectedLink = mWebHitTestResult.getExtra();
-								selectedHref = mWebHitTestResult.getHref();
-							
-								if (selectedLink.equals("")) {
-									checkAnchorLinks(selectedHref);
-								} else {
-									checkAnchorLinks(selectedLink);
-								}
-							
-							} else if (resultType == WebHitTestResult.EDIT_TEXT_TYPE) {
-								if (isLandingPage) {
-									cType = SwifteeApplication.TYPE_PADKITE_INPUT;									
-								}
-							}
-							
-							setLastKnownHitType(resultType);
-							
-							if (rect.left == 0) {
-								Log.v("fuck", "fuck");
-							}
-						}							
-					}		
+						mWebView.loadUrl("javascript:hover('" + x + "','" +  y + "','" +  WebHitTestResult.CALLBACK_SINGLE_TOUCH + "');");
+															
+					}
+					
 					checkIsAnchorTab(x, y);	 
 					
 				}
@@ -884,7 +851,7 @@ public class FloatingCursor extends FrameLayout implements
 								switchTabIndex(SwifteeApplication.TABINDEX_CERO);
 								hitPKIndex = SwifteeApplication.TABINDEX_NOTHING;
 								ceroPkInput(true);
-								lastKnownHitType = WebHitTestResult.EDIT_TEXT_TYPE;
+								lastKnownHitType = WebHitTestResult.TYPE_EDIT_TEXT_TYPE;
 								ret = true;
 								
 							} else {								
@@ -895,8 +862,8 @@ public class FloatingCursor extends FrameLayout implements
 						
 						case SwifteeApplication.TYPE_PADKITE_TAB: 
 							
-							if (getLastKnownHitType()== WebHitTestResult.SRC_ANCHOR_TYPE){
-								cType = WebHitTestResult.SRC_ANCHOR_TYPE; 											
+							if (getLastKnownHitType()== WebHitTestResult.TYPE_SRC_ANCHOR_TYPE){
+								cType = WebHitTestResult.TYPE_SRC_ANCHOR_TYPE; 											
 							} //else if (getLastKnownHitType()== WebHitTestResult.EDIT_TEXT_TYPE){
 								//cType = WebHitTestResult.EDIT_TEXT_TYPE; 					
 							//}
@@ -917,8 +884,8 @@ public class FloatingCursor extends FrameLayout implements
 											
 						case SwifteeApplication.TYPE_PADKITE_ROW: 
 							
-								if (getLastKnownHitType()== WebHitTestResult.SRC_ANCHOR_TYPE){
-									cType = WebHitTestResult.SRC_ANCHOR_TYPE; 											
+								if (getLastKnownHitType()== WebHitTestResult.TYPE_SRC_ANCHOR_TYPE){
+									cType = WebHitTestResult.TYPE_SRC_ANCHOR_TYPE; 											
 								} 
 								
 								//else if (getLastKnownHitType()== WebHitTestResult.EDIT_TEXT_TYPE){
@@ -936,12 +903,12 @@ public class FloatingCursor extends FrameLayout implements
 							
 							buttonOver(getHitPKIndex());
 							
-							if (getLastKnownHitType()== WebHitTestResult.SRC_ANCHOR_TYPE){
-								cType = WebHitTestResult.SRC_ANCHOR_TYPE;
-								SwifteeApplication.setCType(WebHitTestResult.SRC_ANCHOR_TYPE);								
-							} else if (getLastKnownHitType()== WebHitTestResult.EDIT_TEXT_TYPE){
-								cType = WebHitTestResult.EDIT_TEXT_TYPE;
-								SwifteeApplication.setCType(WebHitTestResult.EDIT_TEXT_TYPE);
+							if (getLastKnownHitType()== WebHitTestResult.TYPE_SRC_ANCHOR_TYPE){
+								cType = WebHitTestResult.TYPE_SRC_ANCHOR_TYPE;
+								SwifteeApplication.setCType(WebHitTestResult.TYPE_SRC_ANCHOR_TYPE);								
+							} else if (getLastKnownHitType()== WebHitTestResult.TYPE_EDIT_TEXT_TYPE){
+								cType = WebHitTestResult.TYPE_EDIT_TEXT_TYPE;
+								SwifteeApplication.setCType(WebHitTestResult.TYPE_EDIT_TEXT_TYPE);
 							}	
 							
 							ret = true;
@@ -957,7 +924,7 @@ public class FloatingCursor extends FrameLayout implements
 							ret = true;
 							break;						
 						
-						case WebHitTestResult.SRC_ANCHOR_TYPE:
+						case WebHitTestResult.TYPE_SRC_ANCHOR_TYPE:
 							ret = false;
 							break;
 							
@@ -979,18 +946,17 @@ public class FloatingCursor extends FrameLayout implements
 					
 						case SwifteeApplication.TYPE_PADKITE_PANEL:
 							setHitPKIndex(SwifteeApplication.TABINDEX_NOTHING);
-							setLastKnownHitType(WebHitTestResult.SRC_ANCHOR_TYPE);
+							setLastKnownHitType(WebHitTestResult.TYPE_SRC_ANCHOR_TYPE);
 							setRowsHeightAndCount(SwifteeApplication.TABINDEX_CERO,	mP.arrayCERO, true);
 							ceroPKPanel(true);
 							ret = true;
 							break;						
 						
-						case WebHitTestResult.EDIT_TEXT_TYPE: 
+						case WebHitTestResult.TYPE_EDIT_TEXT_TYPE: 
 							setLastKnownHitType(resultType);
 							// HERE LOAD PASTE, RECENT ETC
 							sendEvent(MotionEvent.ACTION_DOWN, x, y, false);
-							sendEvent(MotionEvent.ACTION_UP, x, y, false);
-							focusNodeAt(x, y);
+							sendEvent(MotionEvent.ACTION_UP, x, y, false);							
 							ret = true;
 							break;						
 			
@@ -998,8 +964,7 @@ public class FloatingCursor extends FrameLayout implements
 							if (SwifteeApplication.getLandingShrinked()){								
 								setRowsHeightAndCount(SwifteeApplication.TABINDEX_CERO,	mP.arrayCERO, true);													
 								sendEvent(MotionEvent.ACTION_DOWN, x, y, false);
-								sendEvent(MotionEvent.ACTION_UP, x, y, false);
-								focusNodeAt(x, y);
+								sendEvent(MotionEvent.ACTION_UP, x, y, false);								
 								removeTouchPoint();				
 							} 							
 							ret = true;
@@ -1022,14 +987,14 @@ public class FloatingCursor extends FrameLayout implements
 						
 						case SwifteeApplication.TYPE_PADKITE_WINDOWS_MANAGER:							
 							setHitPKIndex(SwifteeApplication.TABINDEX_NOTHING);
-							setLastKnownHitType(WebHitTestResult.SRC_ANCHOR_TYPE);
+							setLastKnownHitType(WebHitTestResult.TYPE_SRC_ANCHOR_TYPE);
 							SwifteeApplication.setExpanded(true);	
-							setFocusNodeAtRect(rect);
+							//setFocusNodeAtRect(rect);
 							ceroPKSet(true);
 							ret = true;
 							break;						
 							
-						case WebHitTestResult.SRC_ANCHOR_TYPE:	
+						case WebHitTestResult.TYPE_SRC_ANCHOR_TYPE:	
 							handler.removeCallbacks(longTouchRunnable);
 							mLongTouchCheck = false;
 							/*setHitPKIndex(SwifteeApplication.TABINDEX_NOTHING);
@@ -1087,10 +1052,54 @@ public class FloatingCursor extends FrameLayout implements
 
 	}
 	
+	
+	public void proxyTouchHitTest(WebHitTestResult result){		
+			
+		//mWebHitTestResult = mWebView.getHitTestResultAt(x, y);			
+		
+		resultType = result.getType();					
+		
+		if (resultType != 0 && resultType != 1 && resultType != -1) {
+			
+			cType=resultType; 
+			rect = result.getRect();							
+			SwifteeApplication.setMasterRect(rect);					
+			identifier = result.getIdentifier();		
+			SwifteeApplication.setIdentifier(identifier);
+			mWebHitTestResultIdentifer = identifier;
+			
+			if (resultType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE
+					|| resultType == WebHitTestResult.TYPE_ANCHOR_TYPE
+					|| resultType == WebHitTestResult.TYPE_SRC_IMAGE_ANCHOR_TYPE) {
+				
+				selectedLink = result.getExtra();
+				selectedHref = result.getHref();
+			
+				if (selectedLink.equals("")) {
+					checkAnchorLinks(selectedHref);
+				} else {
+					checkAnchorLinks(selectedLink);
+				}
+			
+			} else if (resultType == WebHitTestResult.TYPE_EDIT_TEXT_TYPE) {
+				if (isLandingPage) {
+					cType = SwifteeApplication.TYPE_PADKITE_INPUT;									
+				}
+			}
+			
+			setLastKnownHitType(resultType);
+			
+			if (rect.left == 0) {
+				Log.v("fuck", "fuck");
+			}
+		}	
+	
+	}
+	
 	private void checkIsAnchorTab(int x, int y){
 		
 		if (!
-				(getLastKnownHitType()== WebHitTestResult.SRC_ANCHOR_TYPE
+				(getLastKnownHitType()== WebHitTestResult.TYPE_SRC_ANCHOR_TYPE
 				&& cType == SwifteeApplication.TYPE_PADKITE_TAB)
 				//|| 
 				//(getLastKnownHitType()== WebHitTestResult.EDIT_TEXT_TYPE 
@@ -1100,7 +1109,7 @@ public class FloatingCursor extends FrameLayout implements
 				SwifteeApplication.setCType(cType);
 				SwifteeApplication.setLastKnownHitType(getLastKnownHitType());		
 				
-				if (cType == WebHitTestResult.SRC_ANCHOR_TYPE){
+				if (cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE){
 					
 					if (lastIdentifier != identifier){
 						anX = x;
@@ -1282,15 +1291,15 @@ public class FloatingCursor extends FrameLayout implements
 		return mWebView;
 	}
 
-	public void setFocusNodeAt(int x, int y) {
+	/*public void setFocusNodeAt(int x, int y) {
 		mWebView.focusNodeAt(x, y);
-	}
+	}*/
 
-	public void setFocusNodeAtRect(Rect re) {
+	/*public void setFocusNodeAtRect(Rect re) {
 		int x = re.left + 10;
 		int y = re.top + 10;
 		mWebView.focusNodeAt(x, y);
-	}
+	}*/
 
 	public void touchDownUpAtMasterRect(Rect re) {
 		int x = re.left + 10;
@@ -1308,7 +1317,8 @@ public class FloatingCursor extends FrameLayout implements
 
 	public void setParent(BrowserActivity p, RingController rC,
 			TipController tC, PointerHolder pH, SuggestionController sC,
-			TextCursorHolder tH, ChatServer cH) {
+			TextCursorHolder tH) {
+		
 		mP = p;
 		fcMainMenu.setParent(mP);
 		fcSettingsMenu.setParent(mP);
@@ -1317,8 +1327,7 @@ public class FloatingCursor extends FrameLayout implements
 		tCtrl = tC;
 		pHold = pH;
 		sCtrl = sC;
-		tHold = tH;
-		chat = cH;
+		tHold = tH;		
 	}
 
 	/**
@@ -1621,34 +1630,27 @@ public class FloatingCursor extends FrameLayout implements
 			menuAnimation = new AlphaAnimation(1.0f, 0.0f);
 			menuAnimation.setDuration(250);
 			menuAnimation.setAnimationListener(new AnimationListener() {
-
 				public void onAnimationEnd(Animation animation) {
 					currentMenu.setVisibility(INVISIBLE);
 					currentMenu = fcMainMenu;
 					animationLock = false;
 					handler.removeCallbacks(runnable);
-
 					// runnableKiteAni.start();
 				}
-
-				public void onAnimationRepeat(Animation animation) {
-				}
-
-				public void onAnimationStart(Animation animation) {
-				}
-
+				public void onAnimationRepeat(Animation animation) {}
+				public void onAnimationStart(Animation animation) {}
 			});
+			
 			currentMenu.startAnimation(menuAnimation);
 			vibrator.vibrate(25);
 			// eventViewer.setText("");
-
 			// mP.setTopBarVisibility(INVISIBLE);
-
 			// Since menu is hidden we start the timer to park the PadKite.
 			handler.removeCallbacks(parkingRunnable);
 			handler.post(parkingRunnable);
 		}
 	}
+	
 
 	public boolean isAnimationLock() {
 		return animationLock;
@@ -1749,12 +1751,7 @@ public class FloatingCursor extends FrameLayout implements
 
 	private  AsyncTask touchInput;
 	private MotionEvent me;
-	
-	public void runTouchInput(int x, int y){
-		touchInput = new TouchInput();
-		touchInput.execute(x, y); 	
-	}
-	
+		
 	Instrumentation inst = new Instrumentation();
 	
 	public void sendEvent(int action, int X, int Y, boolean instrumentation) {
@@ -1902,7 +1899,9 @@ public class FloatingCursor extends FrameLayout implements
 
 			Log.v("cord", "fcX: " + fcX + " fcY: " + fcY);
 
-			mWebHitTestResult = mWebView.getHitTestResultAt(X, Y);			
+			//mWebHitTestResult = mWebView.getHitTestResultAt(X, Y);
+			
+			mWebView.loadUrl("javascript:hover('" + X + "','" +  Y + "','" +  WebHitTestResult.CALLBACK_MOVEHIT  + "');");
 
 			if (mP.isTabsActivated()
 					&& getHitPKIndex() == SwifteeApplication.TABINDEX_NOTHING) {
@@ -1933,260 +1932,273 @@ public class FloatingCursor extends FrameLayout implements
 
 					return;
 				}
-			}
-
-			resultType = mWebHitTestResult.getType();
-			if (resultType != 0 && resultType != 1 && resultType != -1) {
-				rect = mWebHitTestResult.getRect();
-				SwifteeApplication.setMasterRect(rect);
-				if (rect.left == 0) {
-					Log.v("fuck", "fuck");
-				}
-			} else {
-				
-				if (getLastKnownHitType() == SwifteeApplication.TYPE_PADKITE_PANEL){
-					String panelText_default = "PERSONALIZED PANEL";
-					String colorId_default = "-1";
-					loadPage("javascript:switchPanel('" + panelText_default + "', '" + colorId_default + "');");
-				}	
-				
-				//nothing
-				cType = resultType;
-				
-			}
+			}		
+			
+		}	
 
 			
-			setFingerTouch(false);
-			identifier = mWebHitTestResult.getIdentifier();
-			SwifteeApplication.setIdentifier(identifier);
-			selectedLink = mWebHitTestResult.getExtra();
-			selectedHref = mWebHitTestResult.getHref();
+	}; // End Of HitTestResutl
+	
+	
+	public void proxyMoveHitTest(WebHitTestResult result){
+		
+		resultType = result.getType();
+		if (resultType != 0 && resultType != 1 && resultType != -1) {
+			rect = result.getRect();
+			SwifteeApplication.setMasterRect(rect);
+			if (rect.left == 0) {
+				Log.v("fuck", "fuck");
+			}
+		} else {
+			
+			if (getLastKnownHitType() == SwifteeApplication.TYPE_PADKITE_PANEL){
+				String panelText_default = "PERSONALIZED PANEL";
+				String colorId_default = "-1";
+				loadPage("javascript:switchPanel('" + panelText_default + "', '" + colorId_default + "');");
+			}	
+			
+			//nothing
+			cType = resultType;
+			
+		}	
+		
+		setFingerTouch(false);
+		mWebHitTestResult = result;
+		identifier = result.getIdentifier();
+		SwifteeApplication.setIdentifier(identifier);
+		selectedLink = result.getExtra();
+		selectedHref = result.getHref();
 
-			// Link Tittle Message
-			final Message msg = mHandler
-					.obtainMessage(FOCUS_NODE_HREF, 0, 0, 0);
-			mWebView.requestFocusNodeHref(msg);
+		// Link Tittle Message
+		final Message msg = mHandler
+				.obtainMessage(FOCUS_NODE_HREF, 0, 0, 0);
+		mWebView.requestFocusNodeHref(msg);
 
-			int cursorImage = 0;
+		int cursorImage = 0;
 
-			// Single Finger: reset timers on change identifier.
-			if (SwifteeApplication.getFingerMode()) {
+		// Single Finger: reset timers on change identifier.
+		if (SwifteeApplication.getFingerMode()) {
+			resetTimersOnChangeId(identifier);
+		} else {
+			// Set color ring to permanent blue if multifinger.
+			//rCtrl.paintRingBlue();
+		}
+
+		switch (resultType) {
+
+		case WebHitTestResult.TYPE_PHONE_TYPE: {
+			cType = 2; // Phone
+			resultType = WebHitTestResult.TYPE_ANCHOR_TYPE;
+			applyImageResource(R.drawable.phone_cursor, "phone_cursor");
+			setLastKnownHitType(cType);
+			break;
+		}
+
+		case WebHitTestResult.TYPE_TEXT_TYPE: {
+			cType = 11; // Text
+			String imageName = (String) pointer.getTag();
+			if (imageName != "select_text_cursor") {
+				applyImageResource(R.drawable.text_cursor, "text_cursor");
+			}
+			// setPointerTextSize();
+			setLastKnownHitType(cType);
+			break;
+		}
+
+		case WebHitTestResult.TYPE_VIDEO_TYPE: {
+			cType = 10; // Video HTML5
+			resultType = WebHitTestResult.TYPE_ANCHOR_TYPE;
+			applyImageResource(R.drawable.video_cursor, "video_cursor");
+			setLastKnownHitType(cType);
+			break;
+		}
+
+		case WebHitTestResult.TYPE_SRC_ANCHOR_TYPE:
+		case WebHitTestResult.TYPE_ANCHOR_TYPE: {
+			cType = 7; // Text link
+			resultType = WebHitTestResult.TYPE_ANCHOR_TYPE;
+			applyImageResource(R.drawable.link_cursor, "link_cursor");
+			String tooltip = result.getToolTip();
+
+			// CHECK LINKS
+			/*
+			 * if (resultType ==WebHitTestResult.SRC_ANCHOR_TYPE){
+			 * checkAnchorLinks(selectedHref); } else {
+			 * checkAnchorLinks(selectedLink); }
+			 */
+
+			if (selectedLink.equals("")) {
+				checkAnchorLinks(selectedHref);
+			} else {
+				checkAnchorLinks(selectedLink);
+			}
+
+			if (tooltip.length() > 10) {
+				// eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
+			}
+			setLastKnownHitType(cType);				
+			
+			checkIsAnchorTab(fcX, fcY);				
+			
+			break;
+		}
+
+		case WebHitTestResult.TYPE_EDIT_TEXT_TYPE: {
+			cType = 9; // Input text
+			resultType = WebHitTestResult.TYPE_ANCHOR_TYPE;
+			applyImageResource(R.drawable.keyboard_cursor, "keyboard_cursor");
+			setLastKnownHitType(cType);
+			if (isLandingPage) {
+				cType = SwifteeApplication.TYPE_PADKITE_INPUT;
+			}
+			break;
+		}
+
+		case WebHitTestResult.TYPE_INPUT_TYPE: {
+			cType = 12; // Button
+			resultType = WebHitTestResult.TYPE_ANCHOR_TYPE;
+			applyImageResource(R.drawable.link_button_cursor, "link_button_cursor");
+			// cursorImage = R.drawable.link_button_cursor;
+			setLastKnownHitType(cType);
+			break;
+		}
+
+		case WebHitTestResult.TYPE_SELECT_TYPE: {
+			cType = 13; // ComboBox
+			resultType = WebHitTestResult.TYPE_ANCHOR_TYPE;
+			applyImageResource(R.drawable.link_combo_cursor,
+			"link_combo_cursor");
+			setLastKnownHitType(cType);
+			break;
+		}
+
+		case WebHitTestResult.TYPE_SRC_IMAGE_ANCHOR_TYPE: {
+			cType = 8; // Image link
+			resultType = WebHitTestResult.TYPE_ANCHOR_TYPE;
+			applyImageResource(R.drawable.link_image_cursor, "link_image_cursor");
+
+			if (selectedHref.contains("padkite.local.panel")) {
+				cType = SwifteeApplication.TYPE_PADKITE_PANEL;
+				applyImageResource(R.drawable.panel_cursor, "panel_cursor");
+				// cursorImage = R.drawable.panel_cursor;
+			}			
+			
+			setLastKnownHitType(cType);
+			break;
+		}
+
+		case WebHitTestResult.TYPE_IMAGE_ANCHOR_TYPE: {
+			cType = 6; // Image Link
+			resultType = WebHitTestResult.TYPE_ANCHOR_TYPE;
+			applyImageResource(R.drawable.link_cursor, "link_cursor");
+			// cursorImage = R.drawable.link_cursor;
+			// String tooltip = mWebHitTestResult.getToolTip();
+
+			if (selectedLink == "")
+				selectedLink = result.getExtra();
+			// eventViewer.setText(selectedLink);
+
+			int type = getLinkType(selectedLink);
+			if (type == 1) { /* Image */
+				cType = 5;
+				applyImageResource(R.drawable.image_cursor, "image_cursor");
+			} else if (type == 2) { /* Video */
+				cType = 10;
+				applyImageResource(R.drawable.video_cursor, "video_cursor");
+			}
+			setLastKnownHitType(cType);
+			break;
+		}
+
+		case WebHitTestResult.TYPE_IMAGE_TYPE: {
+			cType = 5; // Image
+			resultType = WebHitTestResult.TYPE_ANCHOR_TYPE;
+			applyImageResource(R.drawable.image_cursor, "image_cursor");
+			// HACK: Mobile YouTube images are not detected, fake it.
+			if (selectedLink.startsWith("http://i.ytimg.com/vi/")
+					|| isYouTube(selectedLink)) {
+				// We fake a link to the current URL
+				cType = 10;
+				resultType = WebHitTestResult.TYPE_ANCHOR_TYPE;
+				mWebHitTestResult.setType(resultType);
+				mWebHitTestResult.setHref(mWebView.getUrl());
+				applyImageResource(R.drawable.video_cursor, "video_cursor");
+				// cursorImage = R.drawable.video_cursor;
+			}
+			setLastKnownHitType(cType);
+			break;
+		}
+
+		case WebHitTestResult.TYPE_GEO_TYPE: {
+			cType = 3; // Address map
+			resultType = WebHitTestResult.TYPE_ANCHOR_TYPE;
+			applyImageResource(R.drawable.geo_cursor, "geo_cursor");
+			// cursorImage = R.drawable.geo_cursor;
+			setLastKnownHitType(cType);
+			break;
+		}
+
+		case WebHitTestResult.TYPE_EMAIL_TYPE: {
+			cType = 4; // Mail
+			resultType = WebHitTestResult.TYPE_ANCHOR_TYPE;
+			applyImageResource(R.drawable.geo_cursor, "geo_cursor");
+			// cursorImage = R.drawable.email_cursor;
+			setLastKnownHitType(cType);
+			break;
+		}
+
+		default:
+			// Avoid stopping.
+			resultType = -1;
+			if (getHitPKIndex() != SwifteeApplication.TABINDEX_NOTHING) {
 				resetTimersOnChangeId(identifier);
 			} else {
-				// Set color ring to permanent blue if multifinger.
-				rCtrl.paintRingBlue();
-			}
-
-			switch (resultType) {
-
-			case WebHitTestResult.PHONE_TYPE: {
-				cType = 2; // Phone
-				resultType = WebHitTestResult.ANCHOR_TYPE;
-				applyImageResource(R.drawable.phone_cursor, "phone_cursor");
-				setLastKnownHitType(cType);
-				break;
-			}
-
-			case WebHitTestResult.TEXT_TYPE: {
-				cType = 11; // Text
-				String imageName = (String) pointer.getTag();
-				if (imageName != "select_text_cursor") {
-					applyImageResource(R.drawable.text_cursor, "text_cursor");
-				}
-				// setPointerTextSize();
-				setLastKnownHitType(cType);
-				break;
-			}
-
-			case WebHitTestResult.VIDEO_TYPE: {
-				cType = 10; // Video HTML5
-				resultType = WebHitTestResult.ANCHOR_TYPE;
-				applyImageResource(R.drawable.video_cursor, "video_cursor");
-				setLastKnownHitType(cType);
-				break;
-			}
-
-			case WebHitTestResult.SRC_ANCHOR_TYPE:
-			case WebHitTestResult.ANCHOR_TYPE: {
-				cType = 7; // Text link
-				resultType = WebHitTestResult.ANCHOR_TYPE;
-				applyImageResource(R.drawable.link_cursor, "link_cursor");
-				String tooltip = mWebHitTestResult.getToolTip();
-
-				// CHECK LINKS
-				/*
-				 * if (resultType ==WebHitTestResult.SRC_ANCHOR_TYPE){
-				 * checkAnchorLinks(selectedHref); } else {
-				 * checkAnchorLinks(selectedLink); }
-				 */
-
-				if (selectedLink.equals("")) {
-					checkAnchorLinks(selectedHref);
-				} else {
-					checkAnchorLinks(selectedLink);
-				}
-
-				if (tooltip.length() > 10) {
-					// eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
-				}
-				setLastKnownHitType(cType);				
-				
-				checkIsAnchorTab(X, Y);
-				
-				
-				break;
-			}
-
-			case WebHitTestResult.EDIT_TEXT_TYPE: {
-				cType = 9; // Input text
-				resultType = WebHitTestResult.ANCHOR_TYPE;
-				applyImageResource(R.drawable.keyboard_cursor, "keyboard_cursor");
-				setLastKnownHitType(cType);
-				if (isLandingPage) {
-					cType = SwifteeApplication.TYPE_PADKITE_INPUT;
-				}
-				break;
-			}
-
-			case WebHitTestResult.INPUT_TYPE: {
-				cType = 12; // Button
-				resultType = WebHitTestResult.ANCHOR_TYPE;
-				applyImageResource(R.drawable.link_button_cursor, "link_button_cursor");
-				// cursorImage = R.drawable.link_button_cursor;
-				setLastKnownHitType(cType);
-				break;
-			}
-
-			case WebHitTestResult.SELECT_TYPE: {
-				cType = 13; // ComboBox
-				resultType = WebHitTestResult.ANCHOR_TYPE;
-				applyImageResource(R.drawable.link_combo_cursor,
-				"link_combo_cursor");
-				setLastKnownHitType(cType);
-				break;
-			}
-
-			case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE: {
-				cType = 8; // Image link
-				resultType = WebHitTestResult.ANCHOR_TYPE;
-				applyImageResource(R.drawable.link_image_cursor, "link_image_cursor");
-
-				if (selectedHref.contains("padkite.local.panel")) {
-					cType = SwifteeApplication.TYPE_PADKITE_PANEL;
-					applyImageResource(R.drawable.panel_cursor, "panel_cursor");
-					// cursorImage = R.drawable.panel_cursor;
-				}			
-				
-				setLastKnownHitType(cType);
-				break;
-			}
-
-			case WebHitTestResult.IMAGE_ANCHOR_TYPE: {
-				cType = 6; // Image Link
-				resultType = WebHitTestResult.ANCHOR_TYPE;
-				applyImageResource(R.drawable.link_cursor, "link_cursor");
-				// cursorImage = R.drawable.link_cursor;
-				// String tooltip = mWebHitTestResult.getToolTip();
-
-				if (selectedLink == "")
-					selectedLink = mWebHitTestResult.getExtra();
-				// eventViewer.setText(selectedLink);
-
-				int type = getLinkType(selectedLink);
-				if (type == 1) { /* Image */
-					cType = 5;
-					applyImageResource(R.drawable.image_cursor, "image_cursor");
-				} else if (type == 2) { /* Video */
-					cType = 10;
-					applyImageResource(R.drawable.video_cursor, "video_cursor");
-				}
-				setLastKnownHitType(cType);
-				break;
-			}
-
-			case WebHitTestResult.IMAGE_TYPE: {
-				cType = 5; // Image
-				resultType = WebHitTestResult.ANCHOR_TYPE;
-				applyImageResource(R.drawable.image_cursor, "image_cursor");
-				// HACK: Mobile YouTube images are not detected, fake it.
-				if (selectedLink.startsWith("http://i.ytimg.com/vi/")
-						|| isYouTube(selectedLink)) {
-					// We fake a link to the current URL
-					cType = 10;
-					resultType = WebHitTestResult.ANCHOR_TYPE;
-					mWebHitTestResult.setType(resultType);
-					mWebHitTestResult.setHref(mWebView.getUrl());
-					applyImageResource(R.drawable.video_cursor, "video_cursor");
-					// cursorImage = R.drawable.video_cursor;
-				}
-				setLastKnownHitType(cType);
-				break;
-			}
-
-			case WebHitTestResult.GEO_TYPE: {
-				cType = 3; // Address map
-				resultType = WebHitTestResult.ANCHOR_TYPE;
-				applyImageResource(R.drawable.geo_cursor, "geo_cursor");
-				// cursorImage = R.drawable.geo_cursor;
-				setLastKnownHitType(cType);
-				break;
-			}
-
-			case WebHitTestResult.EMAIL_TYPE: {
-				cType = 4; // Mail
-				resultType = WebHitTestResult.ANCHOR_TYPE;
-				applyImageResource(R.drawable.geo_cursor, "geo_cursor");
-				// cursorImage = R.drawable.email_cursor;
-				setLastKnownHitType(cType);
-				break;
-			}
-
-			default:
-				// Avoid stopping.
-				resultType = -1;
-				if (getHitPKIndex() != SwifteeApplication.TABINDEX_NOTHING) {
-					resetTimersOnChangeId(identifier);
-				} else {
-					setHitPKIndex(SwifteeApplication.TABINDEX_NOTHING);
-					if (!mP.isTipsActivated()
-							&& !mP.isSuggestionListActivated()) {
-							eraseDraws();
-					}
-				}
-				applyImageResource(R.drawable.no_target_cursor, "no_target_cursor");
-				// cursorImage = R.drawable.no_target_cursor;
-				break;
-			}
-
-			// Set single finger timers
-			setFingerTimers(resultType, identifier);
-
-			// Apply pointer after all.
-			// pointer.setImageResource(cursorImage);
-
-			// Was there a node change?
-			if (identifier != mWebHitTestResultIdentifer) {
-				if (resultType == WebHitTestResult.ANCHOR_TYPE) {
-					// if (mSoftKeyboardVisible == false) { //Removing,
-					// unnecesary Jose
-
-					// if ( remote==true &&
-					// SwifteeApplication.getSocketStatus()!=SwifteeApplication.CLIENT_MOUSE_DOWN
-					// )
-					mWebView.focusNodeAt(X, Y);
-					// }
-				} else if (mWebHitTestResultType == WebHitTestResult.ANCHOR_TYPE) {
-					sendEvent(MotionEvent.ACTION_CANCEL, X, Y, false);
-					// FIXME: Use proper API for that.
+				setHitPKIndex(SwifteeApplication.TABINDEX_NOTHING);
+				if (!mP.isTipsActivated()
+						&& !mP.isSuggestionListActivated()) {
+						eraseDraws();
 				}
 			}
-			mWebHitTestResultType = resultType;
-			mWebHitTestResultIdentifer = identifier;
+			applyImageResource(R.drawable.no_target_cursor, "no_target_cursor");
+			// cursorImage = R.drawable.no_target_cursor;
+			break;
 		}
+
+		// Set single finger timers
+		setFingerTimers(resultType, identifier);
+
+		// Apply pointer after all.
+		// pointer.setImageResource(cursorImage);
+
+		// Was there a node change?
+		if (identifier != mWebHitTestResultIdentifer) {
+			if (resultType == WebHitTestResult.TYPE_ANCHOR_TYPE) {
+				// if (mSoftKeyboardVisible == false) { //Removing,
+				// unnecesary Jose
+
+				// if ( remote==true &&
+				// SwifteeApplication.getSocketStatus()!=SwifteeApplication.CLIENT_MOUSE_DOWN
+				// )
+				//mWebView.focusNodeAt(X, Y);
+				
+				rCtrl.drawRing(identifier, SwifteeApplication.DRAW_RING, result.getRect(), COLOR.RING_OVER_COLOR);	
+				
+				// }
+			} else if (mWebHitTestResultType == WebHitTestResult.TYPE_ANCHOR_TYPE) {
+				sendEvent(MotionEvent.ACTION_CANCEL, fcX, fcY, false);
+				// FIXME: Use proper API for that.
+			}
+		}
+		mWebHitTestResultType = resultType;
+		mWebHitTestResultIdentifer = identifier;
 		
 		SwifteeApplication.setCType(cType);
 		fromFC = true;	
-	}; // End Of HitTestResutl
+	}
+		
+		
+	
+	
 
 	private void checkLinks(int identifier, int linkStatus) {
 
@@ -2203,7 +2215,7 @@ public class FloatingCursor extends FrameLayout implements
 
 	}
 
-	private void checkAnchorLinks(String selectedLink) {
+	public void checkAnchorLinks(String selectedLink) {
 
 		if (selectedLink.contains("padkite.local.windows")) {
 
@@ -2294,11 +2306,11 @@ public class FloatingCursor extends FrameLayout implements
 				}
 			}   
 			
-			cType =  WebHitTestResult.SRC_ANCHOR_TYPE;
+			cType =  WebHitTestResult.TYPE_SRC_ANCHOR_TYPE;
 		}
 	}
 
-	private void applyImageResource(int image, String imageName) {
+	public void applyImageResource(int image, String imageName) {
 		pointer.setImageResource(image);
 		pointer.setTag(imageName);
 	}
@@ -2389,13 +2401,13 @@ public class FloatingCursor extends FrameLayout implements
 
 				|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == SwifteeApplication.TYPE_PADKITE_INPUT)
 
-				|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == WebHitTestResult.EDIT_TEXT_TYPE)
+				|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == WebHitTestResult.TYPE_EDIT_TEXT_TYPE)
 				
-				|| (cType == SwifteeApplication.TYPE_PADKITE_BACKGROUND && getLastKnownHitType() == WebHitTestResult.EDIT_TEXT_TYPE)
+				|| (cType == SwifteeApplication.TYPE_PADKITE_BACKGROUND && getLastKnownHitType() == WebHitTestResult.TYPE_EDIT_TEXT_TYPE)
 
 		) {
 			
-			if (cType == SwifteeApplication.TYPE_PADKITE_BACKGROUND && getLastKnownHitType() == WebHitTestResult.EDIT_TEXT_TYPE){
+			if (cType == SwifteeApplication.TYPE_PADKITE_BACKGROUND && getLastKnownHitType() == WebHitTestResult.TYPE_EDIT_TEXT_TYPE){
 				cType = SwifteeApplication.TYPE_PADKITE_INPUT;
 			}
 
@@ -2413,31 +2425,31 @@ public class FloatingCursor extends FrameLayout implements
 
 				refreshSuggestions(hitPKIndex, mP.arraySuggestion,
 						SwifteeApplication.TABINDEX_CERO,
-						SwifteeApplication.PANTONE_192C_MAIN, expanded);
+						COLOR.PANTONE_192C_MAIN, expanded);
 				
 			} else if (hitPKIndex == SwifteeApplication.TABINDEX_FIRST) { // PASTE
 
 				refreshSuggestions(hitPKIndex, mP.arrayClipBoard,
 						SwifteeApplication.TABINDEX_FIRST,
-						SwifteeApplication.PANTONE_YellowC_MAIN, expanded);
+						COLOR.PANTONE_YellowC_MAIN, expanded);
 				
 			} else if (hitPKIndex == SwifteeApplication.TABINDEX_SECOND) { // RECENT
 
 				refreshSuggestions(hitPKIndex, mP.arrayRecent,
 						SwifteeApplication.TABINDEX_SECOND,
-						SwifteeApplication.PANTONE_246C_MAIN, expanded);
+						COLOR.PANTONE_246C_MAIN, expanded);
 				
 			} else if (hitPKIndex == SwifteeApplication.TABINDEX_THIRD) { // VOICE
 
 				refreshSuggestions(hitPKIndex, mP.getArrayVoice(),
 						SwifteeApplication.TABINDEX_THIRD,
-						SwifteeApplication.PANTONE_631C_MAIN, expanded);
+						COLOR.PANTONE_631C_MAIN, expanded);
 				
 			} else if (hitPKIndex == SwifteeApplication.TABINDEX_FOURTH) { // MORE
 
 				refreshSuggestions(hitPKIndex, mP.arrayMoreInput,
 							SwifteeApplication.TABINDEX_FOURTH,
-							SwifteeApplication.PANTONE_444C_MAIN, expanded);
+							COLOR.PANTONE_444C_MAIN, expanded);
 			}
 		}
 
@@ -2450,15 +2462,13 @@ public class FloatingCursor extends FrameLayout implements
 				
 				String panelText_0 = "NAVIGATE MOST VISITES SITES";
 				String colorId_0 = "0";
-				loadPage("javascript:switchPanel('" + panelText_0 + "', '" + colorId_0 + "');");
-				
-				setFocusNodeAtRect(rect);
+				loadPage("javascript:switchPanel('" + panelText_0 + "', '" + colorId_0 + "');");			
 				
 				refreshSuggestions(hitPKIndex, mP.arrayMostVisited,
 						SwifteeApplication.TABINDEX_CERO,
-						SwifteeApplication.PANTONE_375C_MAIN, expanded);
+						COLOR.PANTONE_375C_MAIN, expanded);
 				
-				rCtrl.setRingcolor(SwifteeApplication.RING_PANTONE_375C_MAIN);				
+				//rCtrl.setRingcolor(COLOR.RING_PANTONE_375C_MAIN);				
 							
 			}
 
@@ -2467,14 +2477,12 @@ public class FloatingCursor extends FrameLayout implements
 				String panelText_1 = "NAVIGATE BOOKMARKS";
 				String colorId_1 = "1";
 				loadPage("javascript:switchPanel('" + panelText_1 + "', '" + colorId_1 + "');");
-				
-				setFocusNodeAtRect(rect);
-				
+							
 				refreshSuggestions(hitPKIndex, mP.arrayBookmarks,
 						SwifteeApplication.TABINDEX_FIRST,
-						SwifteeApplication.PANTONE_130C_MAIN, expanded);			
+						COLOR.PANTONE_130C_MAIN, expanded);			
 				
-				rCtrl.setRingcolor(SwifteeApplication.RING_PANTONE_130C_MAIN);		
+				//rCtrl.setRingcolor(COLOR.RING_PANTONE_130C_MAIN);		
 				
 			}
 
@@ -2483,14 +2491,12 @@ public class FloatingCursor extends FrameLayout implements
 				String panelText_2 = "NAVIGATE BROWSING HISTORY";
 				String colorId_2 = "2";
 				loadPage("javascript:switchPanel('" + panelText_2 + "', '" + colorId_2 + "');");
-				
-				setFocusNodeAtRect(rect);
-				
+								
 				refreshSuggestions(hitPKIndex, mP.arrayHistory,
 						SwifteeApplication.TABINDEX_SECOND,
-						SwifteeApplication.PANTONE_2736C_MAIN, expanded);		
+						COLOR.PANTONE_2736C_MAIN, expanded);		
 				
-				rCtrl.setRingcolor(SwifteeApplication.RING_PANTONE_2736C_MAIN);
+				//rCtrl.setRingcolor(COLOR.RING_PANTONE_2736C_MAIN);
 				
 			}
 
@@ -2499,14 +2505,12 @@ public class FloatingCursor extends FrameLayout implements
 				String panelText_3 = "CHECK DOWNLOADED FILES";
 				String colorId_3 = "3";
 				loadPage("javascript:switchPanel('" + panelText_3 + "', '" + colorId_3 + "');");
-				
-				setFocusNodeAtRect(rect);
-				
+							
 				refreshSuggestions(hitPKIndex, mP.arrayDownload,
 						SwifteeApplication.TABINDEX_THIRD,
-						SwifteeApplication.PANTONE_ProcessBlueC_MAIN, expanded);				
+						COLOR.PANTONE_ProcessBlueC_MAIN, expanded);				
 				
-				rCtrl.setRingcolor(SwifteeApplication.RING_PANTONE_ProcessBlueC_MAIN);
+				//rCtrl.setRingcolor(COLOR.RING_PANTONE_ProcessBlueC_MAIN);
 				
 			}
 
@@ -2515,34 +2519,32 @@ public class FloatingCursor extends FrameLayout implements
 				String panelText_4 = "HELP RESOURCES";
 				String colorId_4 = "4";
 				loadPage("javascript:switchPanel('" + panelText_4 + "', '" + colorId_4 + "');");
-				
-				setFocusNodeAtRect(rect);
-				
+							
 				refreshSuggestions(hitPKIndex, mP.arrayHelp,
 						SwifteeApplication.TABINDEX_FOURTH,
-						SwifteeApplication.PANTONE_444C_MAIN, expanded);		
+						COLOR.PANTONE_444C_MAIN, expanded);		
 				
-				rCtrl.setRingcolor(SwifteeApplication.RING_PANTONE_444C_MAIN);
+				//rCtrl.setRingcolor(COLOR.RING_PANTONE_444C_MAIN);
 				
 			}		
 
 		/** ANCHOR **/
-		} else if ((cType == WebHitTestResult.SRC_ANCHOR_TYPE)
-				|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == WebHitTestResult.SRC_ANCHOR_TYPE)  
-				|| (getLastKnownHitType() == WebHitTestResult.SRC_ANCHOR_TYPE && cType == SwifteeApplication.TYPE_PADKITE_TAB)
-				|| (getLastKnownHitType() == SwifteeApplication.TYPE_PADKITE_TAB && cType == WebHitTestResult.SRC_ANCHOR_TYPE)) {
+		} else if ((cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE)
+				|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE)  
+				|| (getLastKnownHitType() == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE && cType == SwifteeApplication.TYPE_PADKITE_TAB)
+				|| (getLastKnownHitType() == SwifteeApplication.TYPE_PADKITE_TAB && cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE)) {
 
 			if (hitPKIndex == SwifteeApplication.TABINDEX_CERO) {
 
 				refreshSuggestions(hitPKIndex, mP.arrayOpen,
 						SwifteeApplication.TABINDEX_CERO,
-						SwifteeApplication.PANTONE_340C_MAIN, expanded);
+						COLOR.PANTONE_340C_MAIN, expanded);
 
 			} else if (hitPKIndex == SwifteeApplication.TABINDEX_FIRST) {
 
 				refreshSuggestions(hitPKIndex, mP.arrayMoreAnchor,
 						SwifteeApplication.TABINDEX_FIRST,
-						SwifteeApplication.PANTONE_444C_MAIN, expanded);
+						COLOR.PANTONE_444C_MAIN, expanded);
 
 			} else if (hitPKIndex == SwifteeApplication.TABINDEX_SECOND) {
 
@@ -2550,7 +2552,7 @@ public class FloatingCursor extends FrameLayout implements
 
 					refreshSuggestions(hitPKIndex, mP.arraySiteLinks,
 						SwifteeApplication.TABINDEX_SECOND,
-						SwifteeApplication.BLACK, expanded);
+						COLOR.BLACK, expanded);
 
 				} else {
 					sCtrl.drawNothing();
@@ -2562,12 +2564,12 @@ public class FloatingCursor extends FrameLayout implements
 
 				refreshSuggestions(hitPKIndex, mP.arrayExtraTab,
 							SwifteeApplication.TABINDEX_THIRD,
-							SwifteeApplication.PANTONE_YellowC_MAIN, expanded);
+							COLOR.PANTONE_YellowC_MAIN, expanded);
 
 			}
 
 		/** TEXT **/
-		} else if (cType == WebHitTestResult.TEXT_TYPE) {
+		} else if (cType == WebHitTestResult.TYPE_TEXT_TYPE) {
 
 			if (hitPKIndex == SwifteeApplication.TABINDEX_CERO) {
 
@@ -2605,19 +2607,19 @@ public class FloatingCursor extends FrameLayout implements
 
 				refreshSuggestions(hitPKIndex, mP.arrayOpenWindowsSet,
 					SwifteeApplication.TABINDEX_CERO,
-					SwifteeApplication.PANTONE_158C_MAIN, expanded);
+					COLOR.PANTONE_158C_MAIN, expanded);
 
 			} else if (hitPKIndex == SwifteeApplication.TABINDEX_FIRST) {
 
 				refreshSuggestions(hitPKIndex, mP.arrayWindowsSet,
 					SwifteeApplication.TABINDEX_FIRST,
-					SwifteeApplication.BLACK, expanded);
+					COLOR.BLACK, expanded);
 
 			} else if (hitPKIndex == SwifteeApplication.TABINDEX_SECOND) {
 
 				refreshSuggestions(hitPKIndex, mP.arrayMoreWindowsSet,
 					SwifteeApplication.TABINDEX_SECOND,
-					SwifteeApplication.PANTONE_444C_MAIN, expanded);
+					COLOR.PANTONE_444C_MAIN, expanded);
 			}
 		}
 		
@@ -2630,13 +2632,13 @@ public class FloatingCursor extends FrameLayout implements
 	
 				refreshSuggestions(hitPKIndex, mP.arrayServer,
 					SwifteeApplication.TABINDEX_CERO,
-					SwifteeApplication.PANTONE_246C_MAIN, expanded);
+					COLOR.PANTONE_246C_MAIN, expanded);
 	
 			} else if (hitPKIndex == SwifteeApplication.TABINDEX_FIRST) {
 	
 				refreshSuggestions(hitPKIndex, mP.arrayMoreServer,
 					SwifteeApplication.TABINDEX_FIRST,
-					SwifteeApplication.PANTONE_444C_MAIN, expanded);	
+					COLOR.PANTONE_444C_MAIN, expanded);	
 			}			
 		}	
 	}
@@ -2682,10 +2684,10 @@ public class FloatingCursor extends FrameLayout implements
 		int[] ringColors;
 
 		String[] tStart = { "OPEN", "MORE" };
-		int[][] tabColorsStart = { SwifteeApplication.PANTONE_340C_MAIN,
-				SwifteeApplication.PANTONE_444C_MAIN };
-		int[] ringColorsStart = { SwifteeApplication.RING_PANTONE_340C_MAIN,
-				SwifteeApplication.RING_PANTONE_444C_MAIN };
+		int[][] tabColorsStart = { COLOR.PANTONE_340C_MAIN,
+				COLOR.PANTONE_444C_MAIN };
+		int[] ringColorsStart = { COLOR.RING_PANTONE_340C_MAIN,
+				COLOR.RING_PANTONE_444C_MAIN };
 
 		titles = tStart;
 		tabColors = tabColorsStart;
@@ -2701,13 +2703,13 @@ public class FloatingCursor extends FrameLayout implements
 
 			String[] tLinks = { "OPEN", "MORE", "LINKS" };
 			
-			int[][] cLinks = { SwifteeApplication.PANTONE_340C_MAIN,
-					SwifteeApplication.PANTONE_444C_MAIN, 
-					SwifteeApplication.BLACK };
+			int[][] cLinks = { COLOR.PANTONE_340C_MAIN,
+					COLOR.PANTONE_444C_MAIN, 
+					COLOR.BLACK };
 			
-			int[] rLinks = { SwifteeApplication.RING_PANTONE_340C_MAIN,
-					SwifteeApplication.RING_PANTONE_444C_MAIN,
-					SwifteeApplication.PAINT_BLACK };
+			int[] rLinks = { COLOR.RING_PANTONE_340C_MAIN,
+					COLOR.RING_PANTONE_444C_MAIN,
+					COLOR.PAINT_BLACK };
 
 			titles = tLinks;
 			tabColors = cLinks;
@@ -2716,14 +2718,14 @@ public class FloatingCursor extends FrameLayout implements
 			if (extraTab) {
 
 				String[] tExtra = { "OPEN", "MORE", "LINKS", "EXTRA" };
-				int[][] cExtra = { SwifteeApplication.PANTONE_340C_MAIN,
-						SwifteeApplication.PANTONE_444C_MAIN, SwifteeApplication.BLACK,
-						SwifteeApplication.PANTONE_YellowC_MAIN };
+				int[][] cExtra = { COLOR.PANTONE_340C_MAIN,
+						COLOR.PANTONE_444C_MAIN, COLOR.BLACK,
+						COLOR.PANTONE_YellowC_MAIN };
 				
-				int[] rExtra = { SwifteeApplication.RING_PANTONE_340C_MAIN,
-						SwifteeApplication.RING_PANTONE_444C_MAIN,
-						SwifteeApplication.PAINT_BLACK,
-						SwifteeApplication.RING_PANTONE_YellowC_MAIN };
+				int[] rExtra = { COLOR.RING_PANTONE_340C_MAIN,
+						COLOR.RING_PANTONE_444C_MAIN,
+						COLOR.PAINT_BLACK,
+						COLOR.RING_PANTONE_YellowC_MAIN };
 
 				titles = tExtra;
 				tabColors = cExtra;
@@ -2737,13 +2739,13 @@ public class FloatingCursor extends FrameLayout implements
 		if (extraTab) {
 
 			String[] tExtra = { "OPEN", "MORE", "LINKS", "EXTRA" };
-			int[][] cExtra = { SwifteeApplication.PANTONE_340C_MAIN,
-					SwifteeApplication.BLUE, SwifteeApplication.BLUE,
-					SwifteeApplication.PANTONE_YellowC_MAIN };
-			int[] rExtra = { SwifteeApplication.RING_PANTONE_340C_MAIN,
-					SwifteeApplication.PAINT_BLUE,
-					SwifteeApplication.PAINT_BLACK,
-					SwifteeApplication.RING_PANTONE_YellowC_MAIN };
+			int[][] cExtra = { COLOR.PANTONE_340C_MAIN,
+					COLOR.BLUE, COLOR.BLUE,
+					COLOR.PANTONE_YellowC_MAIN };
+			int[] rExtra = { COLOR.RING_PANTONE_340C_MAIN,
+					COLOR.PAINT_BLUE,
+					COLOR.PAINT_BLACK,
+					COLOR.RING_PANTONE_YellowC_MAIN };
 
 			titles = tExtra;
 			tabColors = cExtra;
@@ -2772,13 +2774,13 @@ public class FloatingCursor extends FrameLayout implements
 
 		setRowsHeightAndCount(getHitPKIndex(), mP.arrayOpen, expanded);
 
-		Object[] param_TEXT = { SwifteeApplication.PANTONE_340C_MAIN, mP.arrayOpen, null,
+		Object[] param_TEXT = { COLOR.PANTONE_340C_MAIN, mP.arrayOpen, null,
 				false, getHitPKIndex() };
 		sCtrl.setDrawStyle(SwifteeApplication.TAB_SUGGESTIONS, param_TEXT,
 				identifier);
 
 		SwifteeApplication.setActiveRect(rect);	
-		SwifteeApplication.setActiveColor(SwifteeApplication.PANTONE_340C_MAIN);
+		SwifteeApplication.setActiveColor(COLOR.PANTONE_340C_MAIN);
 		
 	}
 
@@ -2909,13 +2911,23 @@ public class FloatingCursor extends FrameLayout implements
 		
 		 mP.clearArrays();
 		  
-		 temporaryClipboard = (String) ((ClipboardManager)
+		 /*temporaryClipboard = (String) ((ClipboardManager)
 		 mP.getSystemService(Context.CLIPBOARD_SERVICE)).getText();
 		 mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_PARAGRAPH);
 		 mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD); 
 		 mWebView.executeSelectionCommand(fcX, fcY, WebView.CLEAR_SELECTION);
-		 clipBoardTextHandler.postDelayed(clipBoardTextTask = new ClipBoardTask(), 500);		 
+		 clipBoardTextHandler.postDelayed(clipBoardTextTask = new ClipBoardTask(), 500);*/		 
 
+	}
+	
+	
+	public void refreshMenusRequest(){    	
+    	mWebView.loadUrl("javascript:hover('', '', '" +  WebHitTestResult.CALLBACK_MOVEHIT  + "');");
+    }
+	
+	public void refreshMenu(Rect re){		
+		rCtrl.refresh(re);
+    	sCtrl.refresh(re, null);	
 	}
 
 	private Handler clipBoardTextHandler = new Handler();
@@ -2939,7 +2951,7 @@ public class FloatingCursor extends FrameLayout implements
 
 				String[] t = { "PICK", "ALL" };
 
-				int[][] tC = { SwifteeApplication.BLACK, SwifteeApplication.GRAY };
+				int[][] tC = { COLOR.BLACK, COLOR.GRAY };
 
 				/*
 				 * SwifteeApplication.BLUE, SwifteeApplication.LIGTH_BLUE };
@@ -2952,7 +2964,7 @@ public class FloatingCursor extends FrameLayout implements
 
 				String[] t = { "PICK", "WORD", "ALL" };
 
-				int[][] tC = { SwifteeApplication.GRAY_DARK, SwifteeApplication.GRAY, SwifteeApplication.GRAY };
+				int[][] tC = { COLOR.GRAY_DARK, COLOR.GRAY, COLOR.GRAY };
 
 				/*
 				 * SwifteeApplication.BLUE, SwifteeApplication.TURQUOISE,
@@ -2966,10 +2978,10 @@ public class FloatingCursor extends FrameLayout implements
 
 				String[] t = { "PICK", "WORD", "LINE", "ALL" };
 
-				int[][] tC = { SwifteeApplication.GRAY_DARK, 
-						SwifteeApplication.GRAY, 
-						SwifteeApplication.GRAY,
-						SwifteeApplication.GRAY };
+				int[][] tC = { COLOR.GRAY_DARK, 
+						COLOR.GRAY, 
+						COLOR.GRAY,
+						COLOR.GRAY };
 
 				/*
 				 * SwifteeApplication.BLUE, SwifteeApplication.TURQUOISE,
@@ -2983,7 +2995,7 @@ public class FloatingCursor extends FrameLayout implements
 			Object[] paramEDIT_TEXT = { rect, titles, tabColors };
 			rCtrl.setDrawStyle(SwifteeApplication.DRAW_RING_AND_TAB,
 					paramEDIT_TEXT, identifier);
-			SwifteeApplication.setActiveColor(SwifteeApplication.BLUE);
+			SwifteeApplication.setActiveColor(COLOR.BLUE);
 
 			if (pointerTextFlag) {
 				// removeView(pointer);
@@ -3096,39 +3108,39 @@ public class FloatingCursor extends FrameLayout implements
 
 		SwifteeApplication.setExpanded(expanded);
 
-		rCtrl.setRingcolor(SwifteeApplication.RING_PANTONE_192C_MAIN);
+		//rCtrl.setRingcolor(COLOR.RING_PANTONE_192C_MAIN);
 
 		String[] titles = { "WRITE", "PASTE", "RECENT", "VOICE", "MORE" };
 		int[][] tabColors = { 
-				SwifteeApplication.PANTONE_192C_MAIN,
-				SwifteeApplication.PANTONE_YellowC_MAIN, 
-				SwifteeApplication.PANTONE_246C_MAIN,
-				SwifteeApplication.PANTONE_631C_MAIN, 
-				SwifteeApplication.PANTONE_444C_MAIN };
+				COLOR.PANTONE_192C_MAIN,
+				COLOR.PANTONE_YellowC_MAIN, 
+				COLOR.PANTONE_246C_MAIN,
+				COLOR.PANTONE_631C_MAIN, 
+				COLOR.PANTONE_444C_MAIN };
 		
-		int[] ringColors = { SwifteeApplication.RING_PANTONE_192C_MAIN,
-				SwifteeApplication.RING_PANTONE_YellowC_MAIN,
-				SwifteeApplication.RING_PANTONE_246C_MAIN,
-				SwifteeApplication.RING_PANTONE_631C_MAIN , 
-				SwifteeApplication.RING_PANTONE_444C_MAIN};
+		int[] ringColors = { COLOR.RING_PANTONE_192C_MAIN,
+				COLOR.RING_PANTONE_YellowC_MAIN,
+				COLOR.RING_PANTONE_246C_MAIN,
+				COLOR.RING_PANTONE_631C_MAIN , 
+				COLOR.RING_PANTONE_444C_MAIN};
 
 		Object[] paramEDIT_TEXT = { rect, titles, tabColors, ringColors };
 		rCtrl.setDrawStyle(SwifteeApplication.DRAW_TABS, paramEDIT_TEXT,
 				identifier);
 
 		String[] buttons = { "■", "IMAGES", "VIDEOS", "WIKI" };
-		Object[] param_TEXT = { SwifteeApplication.PANTONE_192C_MAIN, null, buttons, true,
+		Object[] param_TEXT = { COLOR.PANTONE_192C_MAIN, null, buttons, true,
 				getHitPKIndex() };
 		sCtrl.setDrawStyle(SwifteeApplication.TAB_SUGGESTIONS, param_TEXT,
 				identifier);
 
 		SwifteeApplication.setPKTabIndex(SwifteeApplication.TABINDEX_CERO);
-		SwifteeApplication.setActiveColor(SwifteeApplication.PANTONE_192C_MAIN);
+		SwifteeApplication.setActiveColor(COLOR.PANTONE_192C_MAIN);
 		SwifteeApplication.setActiveRect(rect);
 
 	}
 
-	public void ceroPKPanel(boolean expanded) {
+	public void ceroPKPanel(boolean expanded) {	
 		
 		rCtrl.clearData();
 
@@ -3137,25 +3149,25 @@ public class FloatingCursor extends FrameLayout implements
 		mP.loadHistoryIntoArray();
 		mP.loadDownloadIntoArray();
 
-		rCtrl.setRingcolor(SwifteeApplication.RING_PANTONE_192C_MAIN);
+		//rCtrl.setRingcolor(COLOR.RING_PANTONE_192C_MAIN);
 
 		String[] titles = { "MOST VISITED", "BOOKMARKS", "HISTORY",
 				"DOWNLOADS", "HELP" };
 
 		int[][] tabColors = { 
-				SwifteeApplication.PANTONE_375C_MAIN,				
-				SwifteeApplication.PANTONE_130C_MAIN, 
-				SwifteeApplication.PANTONE_2736C_MAIN,
-				SwifteeApplication.PANTONE_ProcessBlueC_MAIN, 
-				SwifteeApplication.PANTONE_444C_MAIN 
+				COLOR.PANTONE_375C_MAIN,				
+				COLOR.PANTONE_130C_MAIN, 
+				COLOR.PANTONE_2736C_MAIN,
+				COLOR.PANTONE_ProcessBlueC_MAIN, 
+				COLOR.PANTONE_444C_MAIN 
 		};
 		
 		int[] ringColors = { 
-				SwifteeApplication.RING_PANTONE_375C_MAIN,				
-				SwifteeApplication.RING_PANTONE_130C_MAIN,
-				SwifteeApplication.RING_PANTONE_2736C_MAIN,
-				SwifteeApplication.RING_PANTONE_ProcessBlueC_MAIN, 
-				SwifteeApplication.RING_PANTONE_444C_MAIN };
+				COLOR.RING_PANTONE_375C_MAIN,				
+				COLOR.RING_PANTONE_130C_MAIN,
+				COLOR.RING_PANTONE_2736C_MAIN,
+				COLOR.RING_PANTONE_ProcessBlueC_MAIN, 
+				COLOR.RING_PANTONE_444C_MAIN };
 
 		setRowsHeightAndCount(getHitPKIndex(), mP.arrayMostVisited, expanded);
 
@@ -3176,7 +3188,7 @@ public class FloatingCursor extends FrameLayout implements
 			hasButtons = true;
 		}
 
-		Object[] param_TEXT = { SwifteeApplication.PANTONE_375C_MAIN,
+		Object[] param_TEXT = { COLOR.PANTONE_375C_MAIN,
 				mP.arrayMostVisited, buttons, hasButtons, getHitPKIndex() };
 		sCtrl.setDrawStyle(SwifteeApplication.TAB_SUGGESTIONS, param_TEXT,
 				identifier);
@@ -3185,9 +3197,10 @@ public class FloatingCursor extends FrameLayout implements
 		String colorId_0 = "0";
 		loadPage("javascript:switchPanel('" + panelText_0 + "', '" + colorId_0 + "');");
 
-		SwifteeApplication.setActiveColor(SwifteeApplication.BLUE_PANEL);
+		SwifteeApplication.setActiveColor(COLOR.BLUE_PANEL);
 		SwifteeApplication.setActiveRect(rect);
 
+		
 	}
 
 	public void ceroPKSet(boolean expanded) {	
@@ -3196,16 +3209,15 @@ public class FloatingCursor extends FrameLayout implements
 		
 		mP.loadWindowsSetIntoArryaById(wmId);
 
-
-		rCtrl.setRingcolor(SwifteeApplication.RING_PANTONE_158C_MAIN);
+		//rCtrl.setRingcolor(COLOR.RING_PANTONE_158C_MAIN);
 
 		String[] titles = { "SET", "LINKS", "MORE" };
 
-		int[][] tabColors = { SwifteeApplication.PANTONE_158C_MAIN,
-				SwifteeApplication.BLACK, SwifteeApplication.PANTONE_444C_MAIN };
+		int[][] tabColors = { COLOR.PANTONE_158C_MAIN,
+				COLOR.BLACK, COLOR.PANTONE_444C_MAIN };
 		
-		int[] ringColors = { SwifteeApplication.RING_PANTONE_158C_MAIN,
-				SwifteeApplication.PAINT_BLACK, SwifteeApplication.RING_PANTONE_444C_MAIN };
+		int[] ringColors = { COLOR.RING_PANTONE_158C_MAIN,
+				COLOR.PAINT_BLACK, COLOR.RING_PANTONE_444C_MAIN };
 
 		SwifteeApplication.setExpanded(expanded);		
 		getExtendedRect(expanded);
@@ -3217,13 +3229,13 @@ public class FloatingCursor extends FrameLayout implements
 		int pkIn = getHitPKIndex();
 		setRowsHeightAndCount(pkIn, mP.arrayOpenWindowsSet, expanded);
 
-		Object[] param_TEXT = { SwifteeApplication.PANTONE_158C_MAIN,
+		Object[] param_TEXT = { COLOR.PANTONE_158C_MAIN,
 				mP.arrayOpenWindowsSet, null, false, getHitPKIndex() };
 		
 		sCtrl.setDrawStyle(SwifteeApplication.TAB_SUGGESTIONS, param_TEXT,
 				identifier);
 
-		SwifteeApplication.setActiveColor(SwifteeApplication.PANTONE_158C_MAIN);
+		SwifteeApplication.setActiveColor(COLOR.PANTONE_158C_MAIN);
 		SwifteeApplication.setActiveRect(rect);
 	}	
 	
@@ -3233,16 +3245,16 @@ public class FloatingCursor extends FrameLayout implements
 		
 		rCtrl.clearData();
 
-		rCtrl.setRingcolor(SwifteeApplication.RING_PANTONE_444C_MAIN);
+		//rCtrl.setRingcolor(COLOR.RING_PANTONE_444C_MAIN);
 
 		String[] titles = { "SERVER", "MORE" };
 
-		int[][] tabColors = { SwifteeApplication.PANTONE_246C_MAIN,				
-				SwifteeApplication.PANTONE_444C_MAIN };
+		int[][] tabColors = { COLOR.PANTONE_246C_MAIN,				
+				COLOR.PANTONE_444C_MAIN };
 		
 		
-		int[] ringColors = { SwifteeApplication.RING_PANTONE_246C_MAIN,
-				SwifteeApplication.RING_PANTONE_444C_MAIN };
+		int[] ringColors = { COLOR.RING_PANTONE_246C_MAIN,
+				COLOR.RING_PANTONE_444C_MAIN };
 
 		SwifteeApplication.setExpanded(expanded);
 
@@ -3251,12 +3263,12 @@ public class FloatingCursor extends FrameLayout implements
 
 		setRowsHeightAndCount(getHitPKIndex(), mP.arrayServer, expanded);
 
-		Object[] param_TEXT = { SwifteeApplication.PANTONE_246C_MAIN,
+		Object[] param_TEXT = { COLOR.PANTONE_246C_MAIN,
 				mP.arrayServer, null, false, getHitPKIndex() };
 		
 		sCtrl.setDrawStyle(SwifteeApplication.TAB_SUGGESTIONS, param_TEXT, identifier);
 
-		SwifteeApplication.setActiveColor(SwifteeApplication.PANTONE_246C_MAIN);
+		SwifteeApplication.setActiveColor(COLOR.PANTONE_246C_MAIN);
 		SwifteeApplication.setActiveRect(rect);	
 	}	
 	
@@ -3291,7 +3303,7 @@ public class FloatingCursor extends FrameLayout implements
 		}
 		Rect re = new Rect();	
 
-		if (cType == WebHitTestResult.SRC_ANCHOR_TYPE) {
+		if (cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE) {
 			
 			re = anchorRect;
 			
@@ -3387,7 +3399,7 @@ public class FloatingCursor extends FrameLayout implements
 		/** PADKITE INPUT **/
 		if ((cType == SwifteeApplication.TYPE_PADKITE_INPUT)
 				|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == SwifteeApplication.TYPE_PADKITE_INPUT)
-				|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == WebHitTestResult.EDIT_TEXT_TYPE)) {
+				|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == WebHitTestResult.TYPE_EDIT_TEXT_TYPE)) {
 
 			if (mP.arrayHasData(index)) {
 
@@ -3411,8 +3423,8 @@ public class FloatingCursor extends FrameLayout implements
 			/** PADKITE PANEL **/
 		} else if ((cType == SwifteeApplication.TYPE_PADKITE_PANEL)
 				|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == SwifteeApplication.TYPE_PADKITE_PANEL)
-				|| (cType == WebHitTestResult.SRC_ANCHOR_TYPE)
-				|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == WebHitTestResult.SRC_ANCHOR_TYPE)
+				|| (cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE)
+				|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE)
 				) {
 
 			if (mP.arrayHasData(index)) {
@@ -3463,7 +3475,7 @@ public class FloatingCursor extends FrameLayout implements
 			sCtrl.cleanRowsOver();
 		}
 		
-		if (cType == WebHitTestResult.EDIT_TEXT_TYPE) {
+		if (cType == WebHitTestResult.TYPE_EDIT_TEXT_TYPE) {
 			cType = SwifteeApplication.TYPE_PADKITE_BUTTON;
 		}
 	}
@@ -3479,7 +3491,7 @@ public class FloatingCursor extends FrameLayout implements
 	
 		if (!drawErased) {
 			SwifteeApplication.cleanAllRects(); // Put all tabs rects to 0;
-			rCtrl.ringToOriginalColor(); // Set gray again
+			//rCtrl.ringToOriginalColor(); // Set gray again
 			rCtrl.drawNothing(); // Erase draws Rings.
 			sCtrl.drawNothing(); // Erase draws Suggestions.
 			tCtrl.drawNothing(); // Erase tips.
@@ -3804,17 +3816,17 @@ public class FloatingCursor extends FrameLayout implements
 	 * **/
 	private void setCeroRingTab() {
 		switch (cType) {
-		case WebHitTestResult.TEXT_TYPE:
+		case WebHitTestResult.TYPE_TEXT_TYPE:
 			//ceroText();
 			break;
-		case WebHitTestResult.EDIT_TEXT_TYPE:
+		case WebHitTestResult.TYPE_EDIT_TEXT_TYPE:
 			ceroInput();
 		case SwifteeApplication.TYPE_PADKITE_INPUT:
 			ceroPkInput(false);
 			break;
-		case WebHitTestResult.GEO_TYPE:
+		case WebHitTestResult.TYPE_GEO_TYPE:
 			ceroMap();
-		case WebHitTestResult.EMAIL_TYPE:
+		case WebHitTestResult.TYPE_EMAIL_TYPE:
 			ceroMail();
 			break;
 		case SwifteeApplication.TYPE_PADKITE_WINDOWS_MANAGER:
@@ -3824,8 +3836,8 @@ public class FloatingCursor extends FrameLayout implements
 			ceroPKPanel(false);
 			break;
 
-		case WebHitTestResult.SRC_ANCHOR_TYPE:
-		case WebHitTestResult.ANCHOR_TYPE:
+		case WebHitTestResult.TYPE_SRC_ANCHOR_TYPE:
+		case WebHitTestResult.TYPE_ANCHOR_TYPE:
 			ceroAnchor(false, false);
 			break;
 			
@@ -3948,16 +3960,16 @@ public class FloatingCursor extends FrameLayout implements
 		switch (stage) {
 		case SwifteeApplication.PERSIST_CERO_STAGE:
 			switch (cType) {
-			case WebHitTestResult.TEXT_TYPE:
+			case WebHitTestResult.TYPE_TEXT_TYPE:
 				//ceroText();
 				break;
-			case WebHitTestResult.EDIT_TEXT_TYPE:
+			case WebHitTestResult.TYPE_EDIT_TEXT_TYPE:
 				ceroInput();
 				break;
-			case WebHitTestResult.GEO_TYPE:
+			case WebHitTestResult.TYPE_GEO_TYPE:
 				ceroMap();
 				break;
-			case WebHitTestResult.EMAIL_TYPE:
+			case WebHitTestResult.TYPE_EMAIL_TYPE:
 				ceroMail();
 				break;
 			default:
@@ -4078,21 +4090,21 @@ public class FloatingCursor extends FrameLayout implements
 	/* public interface */
 
 	public void removeSelection() {
-		mWebView.executeSelectionCommand(fcX, fcY, WebView.CLEAR_SELECTION);
+		//mWebView.executeSelectionCommand(fcX, fcY, WebView.CLEAR_SELECTION);
 	}
 
 	public void startSelectionCommand() {
 		startHitTest(fcX, fcY);
-		mWebView.executeSelectionCommand(fcX, fcY, WebView.START_SELECTION);
+		//mWebView.executeSelectionCommand(fcX, fcY, WebView.START_SELECTION);
 	}
 
 	public void executeSelectionCommand(int cmd) {
-		mWebView.executeSelectionCommand(fcX, fcY, cmd);
+		//mWebView.executeSelectionCommand(fcX, fcY, cmd);
 	}
 
 	public void stopSelectionCommand() {
-		mWebView.executeSelectionCommand(fcX, fcY, WebView.STOP_SELECTION);
-		mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
+		//mWebView.executeSelectionCommand(fcX, fcY, WebView.STOP_SELECTION);
+		//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 	}
 
 	public void onClick() {
@@ -4100,20 +4112,20 @@ public class FloatingCursor extends FrameLayout implements
 			return;
 
 		mLongTouchEnabled = false;
-		executeSelectionCommand(WebView.STOP_SELECTION);
+		//executeSelectionCommand(WebView.STOP_SELECTION);
 
-		if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE
-				|| mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE
-				|| mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
+		if (mWebHitTestResult.getType() == WebHitTestResult.TYPE_ANCHOR_TYPE
+				|| mWebHitTestResult.getType() == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE
+				|| mWebHitTestResult.getType() == WebHitTestResult.TYPE_SRC_IMAGE_ANCHOR_TYPE) {
 			// eventViewer.setText("Executing link ...");
 
 			sendEvent(MotionEvent.ACTION_DOWN, fcX, fcY, false);
 			sendEvent(MotionEvent.ACTION_UP, fcX, fcY, false);
 			startHitTest(fcX, fcY);
-		} else if (mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE
-				|| mWebHitTestResult.getType() == WebHitTestResult.UNKNOWN_TYPE
-				|| mWebHitTestResult.getType() == WebHitTestResult.INPUT_TYPE
-				|| mWebHitTestResult.getType() == WebHitTestResult.SELECT_TYPE
+		} else if (mWebHitTestResult.getType() == WebHitTestResult.TYPE_EDIT_TEXT_TYPE
+				|| mWebHitTestResult.getType() == WebHitTestResult.TYPE_UNKNOWN_TYPE
+				|| mWebHitTestResult.getType() == WebHitTestResult.TYPE_INPUT_TYPE
+				|| mWebHitTestResult.getType() == WebHitTestResult.TYPE_SELECT_TYPE
 				|| mWebHitTestResult.getType() == -1) {
 			// eventViewer.setText("Clicking ...");
 			cancelSelection();
@@ -4122,17 +4134,17 @@ public class FloatingCursor extends FrameLayout implements
 			sendEvent(MotionEvent.ACTION_UP, fcX, fcY, false);
 		} else {
 
-			if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE) {
+			if (mWebHitTestResult.getType() == WebHitTestResult.TYPE_IMAGE_TYPE) {
 
 				// eventViewer.setText("Selecting image ...");
 
-				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
-				mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
-			} else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE) {
+				//mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
+				//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
+			} else if (mWebHitTestResult.getType() == WebHitTestResult.TYPE_TEXT_TYPE) {
 				// eventViewer.setText("Selecting word ...");
 
-				mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD);
-				mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
+				//mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD);
+				//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 			}
 
 			startSelection(false);
@@ -4157,21 +4169,19 @@ public class FloatingCursor extends FrameLayout implements
 	public void onLongTouch() {
 		if (mWebHitTestResult == null)
 			return;
-		if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE) {
+		if (mWebHitTestResult.getType() == WebHitTestResult.TYPE_IMAGE_TYPE) {
 			// eventViewer.setText("Detected Long-Touch. Selecting image ...");
-			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
-			mWebView.executeSelectionCommand(fcX, fcY,
-					WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
+			//mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_OBJECT);
+			//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_HTML_FRAGMENT_TO_CLIPBOARD);
 			mLongTouchEnabled = true;
-		} else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE) {
+		} else if (mWebHitTestResult.getType() == WebHitTestResult.TYPE_TEXT_TYPE) {
 			// eventViewer.setText("Detected Long-Touch. Selecting word ...");
-			mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD);
-			mWebView.executeSelectionCommand(fcX, fcY,
-					WebView.COPY_TO_CLIPBOARD);
+			//mWebView.executeSelectionCommand(fcX, fcY, WebView.SELECT_WORD);
+			//mWebView.executeSelectionCommand(fcX, fcY,WebView.COPY_TO_CLIPBOARD);
 			mLongTouchEnabled = true;
-		} else if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE
-				|| mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE
-				|| mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
+		} else if (mWebHitTestResult.getType() == WebHitTestResult.TYPE_ANCHOR_TYPE
+				|| mWebHitTestResult.getType() == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE
+				|| mWebHitTestResult.getType() == WebHitTestResult.TYPE_SRC_IMAGE_ANCHOR_TYPE) {
 			// eventViewer.setText("Detected Long-Touch. Selecting link ...");
 			selectedLink = mWebHitTestResult.getExtra();
 			Point focusCenter = mWebHitTestResult.getPoint();
@@ -4181,8 +4191,7 @@ public class FloatingCursor extends FrameLayout implements
 			// Log.e("SELECT_LINK", "x: " + focusCenter.x + ", y: " +
 			// focusCenter.y + ", fcX: " + fcX + ", fcY: " + fcY);
 
-			mWebView.executeSelectionCommand(focusCenter.x, focusCenter.y,
-					WebView.SELECT_LINK);
+			//mWebView.executeSelectionCommand(focusCenter.x, focusCenter.y,WebView.SELECT_LINK);
 
 			// VER
 			((ClipboardManager) mP.getSystemService(Context.CLIPBOARD_SERVICE))
@@ -4192,7 +4201,7 @@ public class FloatingCursor extends FrameLayout implements
 			// mWebView.executeSelectionCommand(fcX, fcY,
 			// WebView.COPY_TO_CLIPBOARD);
 			mLongTouchEnabled = true;
-		} else if (mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE) {
+		} else if (mWebHitTestResult.getType() == WebHitTestResult.TYPE_EDIT_TEXT_TYPE) {
 			// eventViewer.setText("Detected Long-Touch. Pasting clipboard contents ...");
 			final String selection = (String) ((ClipboardManager) mP
 					.getSystemService(Context.CLIPBOARD_SERVICE)).getText();
@@ -4220,7 +4229,7 @@ public class FloatingCursor extends FrameLayout implements
 			return;
 		}
 
-		if (mWebHitTestResult.getType() == WebHitTestResult.EDIT_TEXT_TYPE) {
+		if (mWebHitTestResult.getType() == WebHitTestResult.TYPE_EDIT_TEXT_TYPE) {
 			cancelSelection();
 			disableGestures();
 			return;
@@ -4235,17 +4244,17 @@ public class FloatingCursor extends FrameLayout implements
 
 		boolean linkFlag = false;
 
-		if (mWebHitTestResult.getType() == WebHitTestResult.IMAGE_TYPE) {
+		if (mWebHitTestResult.getType() == WebHitTestResult.TYPE_IMAGE_TYPE) {
 			mP.setGestureType(SwifteeApplication.CURSOR_IMAGE_GESTURE);
 			linkFlag = true;
-		} else if (mWebHitTestResult.getType() == WebHitTestResult.VIDEO_TYPE) {
+		} else if (mWebHitTestResult.getType() == WebHitTestResult.TYPE_VIDEO_TYPE) {
 			mP.setGestureType(SwifteeApplication.CURSOR_VIDEO_GESTURE);
 			linkFlag = true;
-		} else if (mWebHitTestResult.getType() == WebHitTestResult.TEXT_TYPE) {
+		} else if (mWebHitTestResult.getType() == WebHitTestResult.TYPE_TEXT_TYPE) {
 			mP.setGestureType(SwifteeApplication.CURSOR_TEXT_GESTURE);
-		} else if (mWebHitTestResult.getType() == WebHitTestResult.ANCHOR_TYPE
-				|| mWebHitTestResult.getType() == WebHitTestResult.SRC_ANCHOR_TYPE
-				|| mWebHitTestResult.getType() == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
+		} else if (mWebHitTestResult.getType() == WebHitTestResult.TYPE_ANCHOR_TYPE
+				|| mWebHitTestResult.getType() == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE
+				|| mWebHitTestResult.getType() == WebHitTestResult.TYPE_SRC_IMAGE_ANCHOR_TYPE) {
 			int type = getLinkType(selectedLink);
 			if (type == 0)
 				mP.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);
@@ -4266,16 +4275,16 @@ public class FloatingCursor extends FrameLayout implements
 
 		switch (cType) {
 
-		case WebHitTestResult.EDIT_TEXT_TYPE:
+		case WebHitTestResult.TYPE_EDIT_TEXT_TYPE:
 			setFingerTimers(hitInputResult.getType(),
 			hitInputResult.getIdentifier());
-			cType = WebHitTestResult.EDIT_TEXT_TYPE;
+			cType = WebHitTestResult.TYPE_EDIT_TEXT_TYPE;
 			break;
 
-		case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
-		case WebHitTestResult.SRC_ANCHOR_TYPE:
+		case WebHitTestResult.TYPE_SRC_IMAGE_ANCHOR_TYPE:
+		case WebHitTestResult.TYPE_SRC_ANCHOR_TYPE:
 			cType = 7;
-			setLastKnownHitType(WebHitTestResult.SRC_ANCHOR_TYPE);
+			setLastKnownHitType(WebHitTestResult.TYPE_SRC_ANCHOR_TYPE);
 			SwifteeApplication.setCType(cType);
 			SwifteeApplication.setExpanded(true);
 			setHitPKIndex(SwifteeApplication.TABINDEX_NOTHING);
@@ -4386,7 +4395,7 @@ public class FloatingCursor extends FrameLayout implements
 		int pkIndex = SwifteeApplication.getPKIndex();
 		int tabNumber = SwifteeApplication.getPKTabIndex();
 
-		if (getLastKnownHitType() == WebHitTestResult.EDIT_TEXT_TYPE
+		if (getLastKnownHitType() == WebHitTestResult.TYPE_EDIT_TEXT_TYPE
 				&& isLandingPage) {
 			setLastKnownHitType(SwifteeApplication.TYPE_PADKITE_INPUT);
 		}
@@ -4397,7 +4406,7 @@ public class FloatingCursor extends FrameLayout implements
 		if ((resultType != 0 && resultType != 1 && resultType != -1)
 				&& !mP.isTabsActivated() ) {
 			
-			if (cType == WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE){				
+			if (cType == WebHitTestResult.TYPE_SRC_IMAGE_ANCHOR_TYPE){				
 				sendEvent(MotionEvent.ACTION_DOWN, _x, _y, false);
 				sendEvent(MotionEvent.ACTION_UP, _x, _y, false);
 			}
@@ -4410,7 +4419,7 @@ public class FloatingCursor extends FrameLayout implements
 
 			switch (cType) {
 
-			case WebHitTestResult.TEXT_TYPE:
+			case WebHitTestResult.TYPE_TEXT_TYPE:
 
 				cleanTextSelectionTimers();
 				applyImageResource(R.drawable.kite_cursor, "kite_cursor");
@@ -4431,10 +4440,10 @@ public class FloatingCursor extends FrameLayout implements
 
 				break;
 
-			case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
+			case WebHitTestResult.TYPE_SRC_IMAGE_ANCHOR_TYPE:
 				break;
 
-			case WebHitTestResult.EDIT_TEXT_TYPE:			
+			case WebHitTestResult.TYPE_EDIT_TEXT_TYPE:			
 				break;
 
 			case SwifteeApplication.TYPE_PADKITE_WINDOWS_MANAGER:
@@ -4504,21 +4513,7 @@ public class FloatingCursor extends FrameLayout implements
 					} 
 					
 					//sendEvent(MotionEvent.ACTION_DOWN, _x, _y, false);
-					//sendEvent(MotionEvent.ACTION_UP, _x, _y, false);
-					
-					
-					//ACA ESTAMOS PARADOS
-					
-					
-					
-					try {
-						chat.sendToAll("keyboardUp");
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					
+					//sendEvent(MotionEvent.ACTION_UP, _x, _y, false);		
 				
 				/*setRowsHeightAndCount(SwifteeApplication.TABINDEX_CERO, mP.arrayCERO, true);
 				Rect re = SwifteeApplication.getMasterRect();
@@ -4619,8 +4614,8 @@ public class FloatingCursor extends FrameLayout implements
 					
 					break;
 
-				case WebHitTestResult.SRC_ANCHOR_TYPE:
-				case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
+				case WebHitTestResult.TYPE_SRC_ANCHOR_TYPE:
+				case WebHitTestResult.TYPE_SRC_IMAGE_ANCHOR_TYPE:
 
 					int openRowIndex = rowIndex - 10;
 
@@ -4659,7 +4654,7 @@ public class FloatingCursor extends FrameLayout implements
 
 				break;
 
-			case WebHitTestResult.ANCHOR_TYPE:
+			case WebHitTestResult.TYPE_ANCHOR_TYPE:
 				/*
 				 * Vector actions = getActionText("Opening "); if
 				 * (actions.size()==1){ String[] t1 = { (String) actions.get(0)
@@ -4683,7 +4678,7 @@ public class FloatingCursor extends FrameLayout implements
 
 			switch (cType) {
 
-			case WebHitTestResult.TEXT_TYPE:
+			case WebHitTestResult.TYPE_TEXT_TYPE:
 
 				/*
 				 * mGesturesEnabled = true;
@@ -4697,13 +4692,13 @@ public class FloatingCursor extends FrameLayout implements
 
 				break;
 
-			case WebHitTestResult.SRC_IMAGE_ANCHOR_TYPE:
+			case WebHitTestResult.TYPE_SRC_IMAGE_ANCHOR_TYPE:
 				// eventViewer.setText("Opening image in link...");
-				mWebView.executeSelectionCommand(_x, _y, WebView.SELECT_OBJECT);
-				mWebView.executeSelectionCommand(_x, _y, WebView.COPY_TO_CLIPBOARD);
+				//mWebView.executeSelectionCommand(_x, _y, WebView.SELECT_OBJECT);
+				//mWebView.executeSelectionCommand(_x, _y, WebView.COPY_TO_CLIPBOARD);
 				break;
 
-			case WebHitTestResult.EDIT_TEXT_TYPE:
+			case WebHitTestResult.TYPE_EDIT_TEXT_TYPE:
 				pasteTextIntoInputText(fcX, fcY, null);
 				break;
 
@@ -4722,7 +4717,7 @@ public class FloatingCursor extends FrameLayout implements
 				
 				switch (last){
 				
-					case WebHitTestResult.SRC_ANCHOR_TYPE:			
+					case WebHitTestResult.TYPE_SRC_ANCHOR_TYPE:			
 						
 						((ClipboardManager) mP.getSystemService(Context.CLIPBOARD_SERVICE)).setText(linkTitle);
 						
@@ -4769,7 +4764,6 @@ public class FloatingCursor extends FrameLayout implements
 				}*/				
 
 			default:
-				focusNodeAt(fcX, fcY);
 				((ClipboardManager) mP.getSystemService(Context.CLIPBOARD_SERVICE)).setText(selectedLink);
 				mP.setSelection(selectedLink);
 
@@ -4813,9 +4807,8 @@ public class FloatingCursor extends FrameLayout implements
 					rCtrl.setTabToTop(SwifteeApplication.TABINDEX_CERO, SwifteeApplication.DRAW_INPUT_TABS);
 					rCtrl.refresh(re);
 					Object[] param = new Object[1];
-					param[0] = SwifteeApplication.PANTONE_246C_MAIN;
-					sCtrl.refresh(re, param);
-					setFocusNodeAtRect(re);
+					param[0] = COLOR.PANTONE_246C_MAIN;
+					sCtrl.refresh(re, param);					
 					touchDownUpAtMasterRect(re);
 					
 				}
@@ -4851,7 +4844,7 @@ public class FloatingCursor extends FrameLayout implements
 				//loadPage(url);
 				break;
 			
-			case WebHitTestResult.TEXT_TYPE:
+			case WebHitTestResult.TYPE_TEXT_TYPE:
 
 				/*
 				 * mGesturesEnabled = true;
@@ -4872,13 +4865,12 @@ public class FloatingCursor extends FrameLayout implements
 			 * fcY, WebView.COPY_TO_CLIPBOARD); break;
 			 */
 
-			case WebHitTestResult.EDIT_TEXT_TYPE:
+			case WebHitTestResult.TYPE_EDIT_TEXT_TYPE:
 				// eventViewer.setText("Opening voice recognition...");
 				mP.startVoiceRecognitionActivity(_x, _y);
 				break;
 
-			default:
-				focusNodeAt(fcX, fcY);
+			default:				
 				((ClipboardManager) mP.getSystemService(Context.CLIPBOARD_SERVICE)).setText(selectedLink);
 				mGesturesEnabled = true;
 				mP.setGestureType(SwifteeApplication.CURSOR_LINK_GESTURE);
@@ -4908,9 +4900,8 @@ public class FloatingCursor extends FrameLayout implements
 				Rect re = SwifteeApplication.getMasterRect();
 				rCtrl.refresh(re);
 				Object[] param = new Object[1];
-				param[0] = SwifteeApplication.PANTONE_246C_MAIN;
-				sCtrl.refresh(re, param);
-				setFocusNodeAtRect(re);
+				param[0] = COLOR.PANTONE_246C_MAIN;
+				sCtrl.refresh(re, param);				
 				touchDownUpAtMasterRect(re);
 				break;
 
@@ -4925,8 +4916,7 @@ public class FloatingCursor extends FrameLayout implements
 				setRowsHeightAndCount(SwifteeApplication.TABINDEX_FOURTH, mP.arrayFOURTH, true);
 				Rect re3 = SwifteeApplication.getMasterRect();
 				rCtrl.refresh(re3);
-				sCtrl.refresh(re3, null);
-				setFocusNodeAtRect(re3);
+				sCtrl.refresh(re3, null);				
 				touchDownUpAtMasterRect(re3);
 				break;
 
@@ -5153,12 +5143,12 @@ public class FloatingCursor extends FrameLayout implements
 		if (isLandingPage) {
 			cType = SwifteeApplication.TYPE_PADKITE_INPUT;
 		} else {
-			cType = WebHitTestResult.EDIT_TEXT_TYPE;
+			cType = WebHitTestResult.TYPE_EDIT_TEXT_TYPE;
 		}
 		Rect re4 = SwifteeApplication.getMasterRect();
 		SwifteeApplication.setCType(cType);
 
-		setLastKnownHitType(WebHitTestResult.EDIT_TEXT_TYPE);
+		setLastKnownHitType(WebHitTestResult.TYPE_EDIT_TEXT_TYPE);
 		SwifteeApplication.setLastKnownHitType(getLastKnownHitType());
 
 		SwifteeApplication.setPKTabIndex(SwifteeApplication.TABINDEX_CERO);
@@ -5166,8 +5156,7 @@ public class FloatingCursor extends FrameLayout implements
 		rCtrl.setTabToTop(SwifteeApplication.TABINDEX_CERO,
 				SwifteeApplication.DRAW_INPUT_TABS);
 		ceroPkInput(true);
-
-		setFocusNodeAtRect(re4);
+		
 		touchDownUpAtMasterRect(re4);
 
 	}
@@ -5212,7 +5201,7 @@ public class FloatingCursor extends FrameLayout implements
 		mP.setTipsActivated(true);		
 		Rect re = new Rect();	
 		
-		if (getLastKnownHitType()== WebHitTestResult.SRC_ANCHOR_TYPE){
+		if (getLastKnownHitType()== WebHitTestResult.TYPE_SRC_ANCHOR_TYPE){
 			
 			re = SwifteeApplication.getCompleteRect();		
 			int width = re.width();
@@ -5243,7 +5232,7 @@ public class FloatingCursor extends FrameLayout implements
 				SwifteeApplication.setTipMessageBigger(false);
 			}
 			
-		} else  if (getLastKnownHitType()== WebHitTestResult.EDIT_TEXT_TYPE){
+		} else  if (getLastKnownHitType()== WebHitTestResult.TYPE_EDIT_TEXT_TYPE){
 			re = SwifteeApplication.getMasterRect();
 			vertical = -1;
 		}
@@ -5400,9 +5389,9 @@ public class FloatingCursor extends FrameLayout implements
 
 					|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == SwifteeApplication.TYPE_PADKITE_PANEL)
 
-					|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == WebHitTestResult.EDIT_TEXT_TYPE)
+					|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == WebHitTestResult.TYPE_EDIT_TEXT_TYPE)
 					
-					|| (cType == SwifteeApplication.TYPE_PADKITE_BACKGROUND && getLastKnownHitType() == WebHitTestResult.EDIT_TEXT_TYPE)) 
+					|| (cType == SwifteeApplication.TYPE_PADKITE_BACKGROUND && getLastKnownHitType() == WebHitTestResult.TYPE_EDIT_TEXT_TYPE)) 
 				
 					
 			{
@@ -5445,7 +5434,7 @@ public class FloatingCursor extends FrameLayout implements
 			 * ANCHOR WINDOWS MANAGER
 			 **/
 
-			(cType == WebHitTestResult.SRC_ANCHOR_TYPE 
+			(cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE 
 					|| cType == SwifteeApplication.TYPE_PADKITE_WINDOWS_MANAGER
 					|| cType == SwifteeApplication.TYPE_PADKITE_SERVER)
 
@@ -5453,7 +5442,7 @@ public class FloatingCursor extends FrameLayout implements
 					
 					|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == SwifteeApplication.TYPE_PADKITE_SERVER)
 
-					|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == WebHitTestResult.SRC_ANCHOR_TYPE)) {
+					|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && getLastKnownHitType() == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE)) {
 
 				if (expanded) {
 
@@ -5510,7 +5499,7 @@ public class FloatingCursor extends FrameLayout implements
 			action = what + " Link";
 		}
 
-		if (mWebHitTestResult.getType() == WebHitTestResult.GEO_TYPE) {
+		if (mWebHitTestResult.getType() == WebHitTestResult.TYPE_GEO_TYPE) {
 
 			action = what + " Map";
 
@@ -5569,18 +5558,7 @@ public class FloatingCursor extends FrameLayout implements
 	public int getFcY() {
 		return fcY;
 	}
-
-	public void focusNodeAt(int X, int Y) {
-		mWebView.focusNodeAt(X, Y);
-	}
-
-	public Rect getRectAt(int X, int Y) {
-		Rect re = new Rect();
-		WebHitTestResult hit = mWebView.getHitTestResultAt(X, Y);
-		re = hit.getRect();
-		return re;
-	}
-
+	
 	/**
 	 * Finally paste the text into the Input Text with stored x,y.
 	 * **/
@@ -5617,8 +5595,8 @@ public class FloatingCursor extends FrameLayout implements
 				} else {
 					selection = fakeClipboard;
 				}
-				mWebView.focusNodeAt(_x_, _y_);
-				mWebView.pasteText(selection);
+				//mWebView.focusNodeAt(_x_, _y_);
+				//mWebView.pasteText(selection);
 				
 				String toPaste = null;
 				
@@ -5667,8 +5645,8 @@ public class FloatingCursor extends FrameLayout implements
 
 		enableGestures();
 
-		mWebView.executeSelectionCommand(fcX, fcY, WebView.STOP_SELECTION);
-		mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
+		//mWebView.executeSelectionCommand(fcX, fcY, WebView.STOP_SELECTION);
+		//mWebView.executeSelectionCommand(fcX, fcY, WebView.COPY_TO_CLIPBOARD);
 	}
 
 	protected void stopSelectionMovable() {
@@ -5694,8 +5672,9 @@ public class FloatingCursor extends FrameLayout implements
 				applyImageResource(R.drawable.text_cursor, "text_cursor");
 				// pointer.setImageResource(R.drawable.text_cursor);
 			}
-		} else
-			mWebView.executeSelectionCommand(fcX, fcY, WebView.EXTEND_SELECTION);
+		} 
+			//else
+			//mWebView.executeSelectionCommand(fcX, fcY, WebView.EXTEND_SELECTION);
 	}
 
 	protected void cancelSelection() {
@@ -5705,7 +5684,7 @@ public class FloatingCursor extends FrameLayout implements
 		mSelectionActive = false;
 		mSelectionStarted = false;
 
-		mWebView.executeSelectionCommand(fcX, fcY, WebView.CLEAR_SELECTION);
+		//mWebView.executeSelectionCommand(fcX, fcY, WebView.CLEAR_SELECTION);
 	}
 
 	private boolean mTouchPointValid = false;
@@ -5854,7 +5833,7 @@ public class FloatingCursor extends FrameLayout implements
 		}
 
 		// Set X,Y for JavaScript snippet.
-		if (cType == WebHitTestResult.TEXT_TYPE) {
+		if (cType == WebHitTestResult.TYPE_TEXT_TYPE) {
 			mWebView.loadUrl("javascript:getTextSize(" + event.getX() + ","
 					+ event.getY() + ")");
 		}
@@ -6664,15 +6643,15 @@ prevWebPage();
 	}
 
 	public void circularZoomIn() {
-		mWebView.zoom(fcX, fcY, 1.25f);
+		//mWebView.zoom(fcX, fcY, 1.25f);
 	}
 
 	public void circularZoomOut() {
-		mWebView.zoom(fcX, fcY, 0.8f);
+		//mWebView.zoom(fcX, fcY, 0.8f);
 	}
 
 	public void circularZoom(float zoomVal) {
-		mWebView.zoom(fcX, fcY, zoomVal);
+		//mWebView.zoom(fcX, fcY, zoomVal);
 	}
 
 	public void setEventText(String str) {
@@ -6771,7 +6750,7 @@ prevWebPage();
 			 * Check bug here while scrolling to the bottom.
 			 */
 
-			int WebViewWidth = mWebView.getContentWidth();
+			int WebViewWidth = mWebView.getWidth();
 			int FloatingCursorWidth = this.getWidth();
 
 			/**
@@ -7074,9 +7053,7 @@ return false;
 					new DialogInterface.OnClickListener() {
 						
 				public void onClick(DialogInterface dialog,	int which) {
-					mWebView.setListBoxChoices(
-					listView.getCheckedItemPositions(),
-					adapter.getCount(), false);
+					//mWebView.setListBoxChoices(listView.getCheckedItemPositions(),adapter.getCount(), false);
 			/*
 			 * mWebViewCore.sendMessage(
 			 * EventHub.LISTBOX_CHOICES,
@@ -7089,7 +7066,9 @@ return false;
 			new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,
 						int which) {
-					mWebView.setListBoxChoice(-2, true);
+					
+					//mWebView.setListBoxChoice(-2, true);
+					
 					/*
 					 * mWebViewCore.sendMessage(
 					 * EventHub.SINGLE_LISTBOX_CHOICE, -2, 0);
@@ -7119,7 +7098,9 @@ return false;
 									listView.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView parent, View v,
 						int position, long id) {
-					mWebView.setListBoxChoice((int) id, false);
+					
+					//mWebView.setListBoxChoice((int) id, false);
+					
 					/*
 					 * mWebViewCore.sendMessage(
 					 * EventHub.SINGLE_LISTBOX_CHOICE, (int)id, 0);
@@ -7139,7 +7120,7 @@ return false;
 				}
 				dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 					public void onCancel(DialogInterface dialog) {
-					mWebView.setListBoxChoice(-2, true);
+					//mWebView.setListBoxChoice(-2, true);
 				/*
 				 * mWebViewCore.sendMessage(
 				 * EventHub.SINGLE_LISTBOX_CHOICE, -2, 0);
@@ -7346,11 +7327,15 @@ return false;
 					
 					"var overElem, lines;\n" + 
 					
-					"function hover(posX, posY){ \n" +
-							   
-					"	window.pBridge.outPut('posX, posY: ' + posX + ' ' + posY);\n" +  		
+					"function hover(posX, posY, callback){ \n" +
 					
-					"	overElem = document.elementFromPoint(posX, posY);\n" + 	
+					"	if(callback!='" + WebHitTestResult.CALLBACK_MOVEHIT + "'){\n" +	
+							   
+					"		window.pBridge.outPut('posX, posY: ' + posX + ' ' + posY);\n" +  		
+					
+					"		overElem = document.elementFromPoint(posX, posY);\n" + 	
+					
+					"	};\n" +	
 						
 					"	pBridge.outPut('overElem.nodeName: ' + overElem.nodeName);\n" +  
 						
@@ -7368,6 +7353,8 @@ return false;
 								
 					"		pBridge.setHitTestRestultJavaScript(" +
 					
+					"			callback," +
+					
 					"			findPosX(overElem)," +
 					
 					"			findPosY(overElem)," +
@@ -7384,7 +7371,9 @@ return false;
 					
 					"			overElem.src," +
 					
-					"			overElem.innerHTML" +
+					"			overElem.innerHTML," +
+					
+					"			$(overElem.id).tagName" +			
 					
 					"		);\n" +						
 								
@@ -7621,7 +7610,7 @@ return false;
 			}
 
 			fcMainMenu.toggleCloseORRefresh(true);
-			mContentWidth = view.getContentWidth();
+			mContentWidth = view.getWidth();
 			mContentHeight = view.getContentHeight();
 
 			BitmapDrawable bd = new BitmapDrawable(getCircleBitmap(view));

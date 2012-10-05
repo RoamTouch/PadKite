@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
-import roamtouch.webkit.WebView;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;

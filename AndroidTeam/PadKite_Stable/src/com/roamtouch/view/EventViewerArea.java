@@ -1,6 +1,6 @@
 package com.roamtouch.view;
 
-import roamtouch.webkit.WebHitTestResult;
+import com.roamtouch.webhook.WebHitTestResult;
 import com.roamtouch.menu.WindowTabs;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;
@@ -150,13 +150,13 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 			timeToWait = TIME_TO_WAIT;
 			switch(type){
 
-			case WebHitTestResult.ANCHOR_TYPE:
+			case WebHitTestResult.TYPE_ANCHOR_TYPE:
 				tv1.setText(Html.fromHtml("<font color=\"white\">FloatingCursor over link |</font> <font color=\"black\">"+extra+"</font>"));
 				break;
-			case WebHitTestResult.VIDEO_TYPE:
+			case WebHitTestResult.TYPE_VIDEO_TYPE:
 				tv1.setText(Html.fromHtml("<font color=\"white\">FloatingCursor over video |</font> <font color=\"black\">"+extra+"</font>"));
 				break;
-			case WebHitTestResult.IMAGE_TYPE:
+			case WebHitTestResult.TYPE_IMAGE_TYPE:
 				Spanned s = Html.fromHtml("<font color=\"white\">Protocol:</font> <font color=\"black\">Markup Language</font><br>" +
 						"<font color=\"white\">Type:</font><font color=\"black\">Image JPEG</font><br>" +
 						"<font color=\"white\">Address:(URL):</font>    <font color=\"black\">http://www.images.com/1.jpeg</font><br>" +
@@ -164,7 +164,7 @@ public class EventViewerArea extends LinearLayout implements Runnable{
 				"<font color=\"white\">Dimensions:</font> <font color=\"black\">300 x 170 pixels</font>");
 				tv1.setText(s);
 				break;
-			case WebHitTestResult.TEXT_TYPE:
+			case WebHitTestResult.TYPE_TEXT_TYPE:
 				tv1.setText(Html.fromHtml("<font color=\"white\">FloatingCursor over text |</font> <font color=\"black\">"+extra+"</font>"));
 				break;
 			case -1:

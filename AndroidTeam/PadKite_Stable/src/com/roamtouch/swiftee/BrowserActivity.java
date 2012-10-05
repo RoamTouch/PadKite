@@ -61,6 +61,7 @@ import com.roamtouch.menu.WindowTabs;
 import com.roamtouch.swiftee.R;
 import com.roamtouch.utils.AsyncImageLoader.AsyncImageCallback;
 import com.roamtouch.utils.Base64;
+import com.roamtouch.utils.COLOR;
 import com.roamtouch.utils.GetDomainName;
 import com.roamtouch.utils.PaintTextUtils;
 import com.roamtouch.utils.ResizeArray;
@@ -140,7 +141,10 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.inputmethod.InputMethodManager;
-import roamtouch.webhoock.WebHitTestResult;
+
+import com.roamtouch.webhook.ProxyBridge;
+import com.roamtouch.webhook.WebHitTestResult;
+
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -206,9 +210,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	
 	private SwifteeApplication appState;
     private SharedPreferences sharedPreferences;
-    
-    private RemoteFlow remoteFC;
-    private ChatServer chat;
+   
     private TranslateAnimation ta;
     
     public final LandingPage lp = new LandingPage(this); //HERE ONLY PLACE TO INSTANSIATE LANDINGPAGE.
@@ -472,8 +474,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	    		} else if (floatingCursor.isExpandToFinger()){
 	    			
 	    			floatingCursor.eraseDraws();
-	    			floatingCursor.enableFC();
-	    			floatingCursor.setFocusNodeAt(0, 0);
+	    			floatingCursor.enableFC();	    			
 	    			clearViewsIdentifiers();
 	    			
 	    			/*if (isSuggestionListActivated()) {    			
@@ -547,15 +548,15 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     Runnable orientationRunnable = new Runnable() {
 	    public void run() {
 	    	Rect master;
-	    	if ( floatingCursor.getcType() == WebHitTestResult.SRC_ANCHOR_TYPE ) { 
+	    	if ( floatingCursor.getcType() == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE ) { 
 	    		master = SwifteeApplication.getMasterRect();
 	    	} else {
 	    		master = SwifteeApplication.getOriginalAnchorRect();
 	    	}	    	
 		    if (master!=null){
-		    	Rect updatedRect = floatingCursor.getRectAt(master.left+10, master.top+10);
-		    	rCtrl.refresh(updatedRect);
-		    	sCtrl.refresh(updatedRect, null);		    	
+		    	
+		    	floatingCursor.refreshMenusRequest();    	
+		    	
 		    	//int[] screenSize = getDeviceWidthHeight();
 		    	//Log.v("screenSize", "screenSize: " + screenSize[0] + " " + screenSize[1]);
 		    }
@@ -854,7 +855,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		floatingCursor = (FloatingCursor)findViewById(R.id.floatingCursor);	
 		floatingCursor.setWebView(webView,true);
 		floatingCursor.setEventViewerArea(eventViewer);
-		floatingCursor.setParent(this, rCtrl, tCtrl, pHold, sCtrl, tHold, chat);    	
+		floatingCursor.setParent(this, rCtrl, tCtrl, pHold, sCtrl, tHold);    	
 		
 		//Set proper parents to access from RingController.
  		rCtrl.setParent(this, floatingCursor, webView); 
@@ -1058,31 +1059,11 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
         catch (IOException e)
         {
               
-        }*/    
-        
-        startServer();
+        }*/      
+     
         
     }  
-    
-    private void startServer(){    	
-    	remoteFC = new RemoteFlow();
-		remoteFC.setParent(this, floatingCursor);
-		chat = new ChatServer(8887, remoteFC, this, floatingCursor);
-		webView.loadUrl("javascript:startServer()");
-		arrayServer[0][0] = "STOP SERVER";
-    }
-    
-    private void stopServer(){
-    	try {
-			chat.stop();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-    	webView.loadUrl("javascript:stopServer()");
-    	arrayServer[0][0] = "START SERVER";
-    }
-    
+        
     private String getIp(){
     	WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
     	WifiInfo wifiInfo = wifiManager.getConnectionInfo();
@@ -1214,8 +1195,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 								
 						int lastKnownWebHitType = floatingCursor.getlastKnownHitType();
 		
-						if  ( ( cType == WebHitTestResult.SRC_ANCHOR_TYPE 
-							|| lastKnownWebHitType ==  WebHitTestResult.SRC_ANCHOR_TYPE )
+						if  ( ( cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE 
+							|| lastKnownWebHitType ==  WebHitTestResult.TYPE_SRC_ANCHOR_TYPE )
 							&& (identifier == (Integer) arg[0])
 							){ 
 							
@@ -1312,13 +1293,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     		boolean expanded = SwifteeApplication.getExpanded();   
     		SwifteeApplication.setActiveTabIndex(SwifteeApplication.TABINDEX_SECOND);
     		floatingCursor.switchTabIndex(SwifteeApplication.TABINDEX_SECOND);
-    		floatingCursor.ceroAnchor(expanded, true);
-    		runOnUiThread(new Runnable() {		        	
-		       	public void run() {        		
-		        	rCtrl.setRingcolor(SwifteeApplication.PAINT_BLACK);
-		           }
-		        });    		
-    		floatingCursor.refreshSuggestions(SwifteeApplication.TABINDEX_SECOND, arraySiteLinks, SwifteeApplication.TABINDEX_SECOND, SwifteeApplication.BLACK, expanded);
+    		floatingCursor.ceroAnchor(expanded, true);   		
+    		floatingCursor.refreshSuggestions(SwifteeApplication.TABINDEX_SECOND, arraySiteLinks, SwifteeApplication.TABINDEX_SECOND, COLOR.BLACK, expanded);
     		rCtrl.setTabToTop(SwifteeApplication.TABINDEX_SECOND, SwifteeApplication.DRAW_INPUT_TABS);		
     	}    	
     		
@@ -2434,7 +2410,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
     private void reloadCeroAfterSuggestion(){ 	
     	floatingCursor.setRowsHeightAndCount(SwifteeApplication.TABINDEX_NOTHING, arrayCERO, true);
 		String[] buttons = {"■", "IMAGES", "VIDEOS", "WIKI", "▼", "▲" };		
-		Object[] param_TEXT = { SwifteeApplication.PANTONE_192C_MAIN, arrayCERO, buttons, true, floatingCursor.getHitPKIndex()};
+		Object[] param_TEXT = { COLOR.PANTONE_192C_MAIN, arrayCERO, buttons, true, floatingCursor.getHitPKIndex()};
 		int randomIdentifier = generator.nextInt();
 		sCtrl.setDrawStyle(SwifteeApplication.TAB_SUGGESTIONS, param_TEXT, randomIdentifier); 
 		injectSuggestionArray(arrayCERO);
@@ -3584,7 +3560,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			return inputY;
 		}
 		
-		public int setInputY(int i) {
+		public void setInputY(int i) {
 			inputY = i;
 		}
 
@@ -3593,7 +3569,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			return inputX;
 		}
 		
-		public int setInputX(int i) {
+		public void setInputX(int i) {
 			inputX = i;
 		}
 
@@ -3615,7 +3591,10 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 			}		
 		} 
 		 
-		
+		public void runTouchInput(int x, int y){
+			touchInput = new TouchInput();
+			touchInput.execute(x, y); 	
+		}
 		
 		private int wmId;
 		private String wmTitle;

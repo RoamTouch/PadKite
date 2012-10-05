@@ -4,6 +4,7 @@ import java.util.Hashtable;
 
 import com.roamtouch.swiftee.R;
 import com.roamtouch.swiftee.SwifteeApplication;
+import com.roamtouch.utils.COLOR;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -71,29 +72,29 @@ public class FloatingCursorView extends View {
         //bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.outer_circle);        
         innerCircle = new FloatingCursorInnerView(context);
         
-        colorTable.put(1, SwifteeApplication.CIRCLE_PANTONE_801C);
-        colorTable.put(2, SwifteeApplication.CIRCLE_PANTONE_802C);
-        colorTable.put(3, SwifteeApplication.CIRCLE_PANTONE_803C);
-        colorTable.put(4, SwifteeApplication.CIRCLE_PANTONE_804C);
-        colorTable.put(5, SwifteeApplication.CIRCLE_PANTONE_805C);
-        colorTable.put(6, SwifteeApplication.CIRCLE_PANTONE_806C);
-        colorTable.put(7, SwifteeApplication.CIRCLE_PANTONE_807C);
-        colorTable.put(8, SwifteeApplication.CIRCLE_PANTONE_808C);
-        colorTable.put(9, SwifteeApplication.CIRCLE_PANTONE_809C);
-        colorTable.put(10, SwifteeApplication.CIRCLE_PANTONE_810C);     
-        colorTable.put(11, SwifteeApplication.CIRCLE_PANTONE_811C);
+        colorTable.put(1, COLOR.CIRCLE_PANTONE_801C);
+        colorTable.put(2, COLOR.CIRCLE_PANTONE_802C);
+        colorTable.put(3, COLOR.CIRCLE_PANTONE_803C);
+        colorTable.put(4, COLOR.CIRCLE_PANTONE_804C);
+        colorTable.put(5, COLOR.CIRCLE_PANTONE_805C);
+        colorTable.put(6, COLOR.CIRCLE_PANTONE_806C);
+        colorTable.put(7, COLOR.CIRCLE_PANTONE_807C);
+        colorTable.put(8, COLOR.CIRCLE_PANTONE_808C);
+        colorTable.put(9, COLOR.CIRCLE_PANTONE_809C);
+        colorTable.put(10, COLOR.CIRCLE_PANTONE_810C);     
+        colorTable.put(11, COLOR.CIRCLE_PANTONE_811C);
         
-        colorTableBorder.put(1, SwifteeApplication.CIRCLE_PANTONE_173C);
-        colorTableBorder.put(2, SwifteeApplication.CIRCLE_PANTONE_362C);
-        colorTableBorder.put(3, SwifteeApplication.CIRCLE_PANTONE_456C);
-        colorTableBorder.put(4, SwifteeApplication.CIRCLE_PANTONE_154C);
-        colorTableBorder.put(5, SwifteeApplication.CIRCLE_PANTONE_429C);
-        colorTableBorder.put(6, SwifteeApplication.CIRCLE_PANTONE_235C);
-        colorTableBorder.put(7, SwifteeApplication.CIRCLE_PANTONE_2425C);
-        colorTableBorder.put(8, SwifteeApplication.CIRCLE_PANTONE_343C);
-        colorTableBorder.put(9, SwifteeApplication.CIRCLE_PANTONE_392C);
-        colorTableBorder.put(10, SwifteeApplication.CIRCLE_PANTONE_1535C);
-        colorTableBorder.put(11, SwifteeApplication.CIRCLE_PANTONE_7526C);     
+        colorTableBorder.put(1, COLOR.CIRCLE_PANTONE_173C);
+        colorTableBorder.put(2, COLOR.CIRCLE_PANTONE_362C);
+        colorTableBorder.put(3, COLOR.CIRCLE_PANTONE_456C);
+        colorTableBorder.put(4, COLOR.CIRCLE_PANTONE_154C);
+        colorTableBorder.put(5, COLOR.CIRCLE_PANTONE_429C);
+        colorTableBorder.put(6, COLOR.CIRCLE_PANTONE_235C);
+        colorTableBorder.put(7, COLOR.CIRCLE_PANTONE_2425C);
+        colorTableBorder.put(8, COLOR.CIRCLE_PANTONE_343C);
+        colorTableBorder.put(9, COLOR.CIRCLE_PANTONE_392C);
+        colorTableBorder.put(10, COLOR.CIRCLE_PANTONE_1535C);
+        colorTableBorder.put(11, COLOR.CIRCLE_PANTONE_7526C);     
     
         
     }

@@ -2,7 +2,7 @@ package com.roamtouch.visuals;
 
 import java.util.Vector;
 
-import roamtouch.webkit.WebHitTestResult;
+import com.roamtouch.webhook.WebHitTestResult;
 
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.SwifteeApplication;
@@ -371,7 +371,7 @@ public class Tabs extends Path{
 		
 		int cType = SwifteeApplication.getCType();
 		
-		if (cType == WebHitTestResult.SRC_ANCHOR_TYPE){			
+		if (cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE){			
 		
 			if ( orient == SwifteeApplication.TIP_CONTENT_ORIENT_UP ){	
 				
@@ -2024,10 +2024,10 @@ public class Tabs extends Path{
 
 			int cType = SwifteeApplication.getCType();
 			
-			if (cType == WebHitTestResult.TEXT_TYPE){ 
+			if (cType == WebHitTestResult.TYPE_TEXT_TYPE){ 
 				re.top = Y;
 				re.bottom = Y + height;
-			} else if (cType == WebHitTestResult.TEXT_TYPE){
+			} else if (cType == WebHitTestResult.TYPE_TEXT_TYPE){
 				re.top = Y;		
 				Rect rA = SwifteeApplication.getAnchorRect();			
 				re.bottom = rA.bottom;					

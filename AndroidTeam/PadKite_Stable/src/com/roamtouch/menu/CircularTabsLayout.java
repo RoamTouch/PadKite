@@ -3,7 +3,7 @@ package com.roamtouch.menu;
 import java.io.ByteArrayOutputStream;
 import java.util.Vector;
 
-import roamtouch.webkit.WebView;
+import android.webkit.WebView;
 
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;

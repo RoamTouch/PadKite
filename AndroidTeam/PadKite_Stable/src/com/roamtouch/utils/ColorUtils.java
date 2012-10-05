@@ -2,8 +2,6 @@ package com.roamtouch.utils;
 
 import java.util.Hashtable;
 
-import com.roamtouch.swiftee.SwifteeApplication;
-
 public class ColorUtils {
 	
 	public static int[] L1_Color(int[] colors){		
@@ -13,86 +11,86 @@ public class ColorUtils {
     	/**INPUT**/
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-    		  SwifteeApplication.PANTONE_192C_MAIN[0] 
-    	    + SwifteeApplication.PANTONE_192C_MAIN[1] 
-    	    + SwifteeApplication.PANTONE_192C_MAIN[2])){    		
-    		colorArray = (int[]) SwifteeApplication.PANTONE_189C_L1;
+    		  COLOR.PANTONE_192C_MAIN[0] 
+    	    + COLOR.PANTONE_192C_MAIN[1] 
+    	    + COLOR.PANTONE_192C_MAIN[2])){    		
+    		colorArray = (int[]) COLOR.PANTONE_189C_L1;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_YellowC_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_YellowC_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_YellowC_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_100C_L1;
+      		  COLOR.PANTONE_YellowC_MAIN[0] 
+      	    + COLOR.PANTONE_YellowC_MAIN[1] 
+      	    + COLOR.PANTONE_YellowC_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_100C_L1;
       	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_246C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_246C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_246C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_243C_L1;
+        		  COLOR.PANTONE_246C_MAIN[0] 
+        	    + COLOR.PANTONE_246C_MAIN[1] 
+        	    + COLOR.PANTONE_246C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_243C_L1;
         } 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_631C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_631C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_631C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_628C_L1;
+      		  COLOR.PANTONE_631C_MAIN[0] 
+      	    + COLOR.PANTONE_631C_MAIN[1] 
+      	    + COLOR.PANTONE_631C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_628C_L1;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_444C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_444C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_444C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_441C_L1;
+        		  COLOR.PANTONE_444C_MAIN[0] 
+        	    + COLOR.PANTONE_444C_MAIN[1] 
+        	    + COLOR.PANTONE_444C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_441C_L1;
       	}   	
     	
     	/**PANEL**/    	
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_375C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_375C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_375C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_372C_L1;
+      		  COLOR.PANTONE_375C_MAIN[0] 
+      	    + COLOR.PANTONE_375C_MAIN[1] 
+      	    + COLOR.PANTONE_375C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_372C_L1;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_130C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_130C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_130C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_127C_L1;
+        		  COLOR.PANTONE_130C_MAIN[0] 
+        	    + COLOR.PANTONE_130C_MAIN[1] 
+        	    + COLOR.PANTONE_130C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_127C_L1;
       	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_2736C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_2736C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_2736C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_2706C_L1;
+      		  COLOR.PANTONE_2736C_MAIN[0] 
+      	    + COLOR.PANTONE_2736C_MAIN[1] 
+      	    + COLOR.PANTONE_2736C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_2706C_L1;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_ProcessBlueC_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_ProcessBlueC_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_ProcessBlueC_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_304C_L1;
+        		  COLOR.PANTONE_ProcessBlueC_MAIN[0] 
+        	    + COLOR.PANTONE_ProcessBlueC_MAIN[1] 
+        	    + COLOR.PANTONE_ProcessBlueC_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_304C_L1;
       	} 
     	
     	/**COMMON**/
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_444C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_444C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_444C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_441C_L1;
+      		  COLOR.PANTONE_444C_MAIN[0] 
+      	    + COLOR.PANTONE_444C_MAIN[1] 
+      	    + COLOR.PANTONE_444C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_441C_L1;
     	} 
     	
     	/**ANCHOR**/
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_340C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_340C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_340C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_337C_L1;
+        		  COLOR.PANTONE_340C_MAIN[0] 
+        	    + COLOR.PANTONE_340C_MAIN[1] 
+        	    + COLOR.PANTONE_340C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_337C_L1;
       	} 
     	
 		return colorArray;		
@@ -104,79 +102,79 @@ public class ColorUtils {
     	/**INPUT**/
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-    		  SwifteeApplication.PANTONE_192C_MAIN[0] 
-    	    + SwifteeApplication.PANTONE_192C_MAIN[1] 
-    	    + SwifteeApplication.PANTONE_192C_MAIN[2])){    		
-    		colorArray = (int[]) SwifteeApplication.PANTONE_190C_L2;
+    		  COLOR.PANTONE_192C_MAIN[0] 
+    	    + COLOR.PANTONE_192C_MAIN[1] 
+    	    + COLOR.PANTONE_192C_MAIN[2])){    		
+    		colorArray = (int[]) COLOR.PANTONE_190C_L2;
     	}
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_YellowC_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_YellowC_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_YellowC_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_101C_L2;
+        		  COLOR.PANTONE_YellowC_MAIN[0] 
+        	    + COLOR.PANTONE_YellowC_MAIN[1] 
+        	    + COLOR.PANTONE_YellowC_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_101C_L2;
         } 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_246C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_246C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_246C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_244C_L2;
+      		  COLOR.PANTONE_246C_MAIN[0] 
+      	    + COLOR.PANTONE_246C_MAIN[1] 
+      	    + COLOR.PANTONE_246C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_244C_L2;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_631C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_631C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_631C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_628C_L1;
+        		  COLOR.PANTONE_631C_MAIN[0] 
+        	    + COLOR.PANTONE_631C_MAIN[1] 
+        	    + COLOR.PANTONE_631C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_628C_L1;
       	} 
     	
     	/**PANEL**/    	
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_375C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_375C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_375C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_373C_L2;
+      		  COLOR.PANTONE_375C_MAIN[0] 
+      	    + COLOR.PANTONE_375C_MAIN[1] 
+      	    + COLOR.PANTONE_375C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_373C_L2;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_130C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_130C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_130C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_128C_L2;
+      		  COLOR.PANTONE_130C_MAIN[0] 
+      	    + COLOR.PANTONE_130C_MAIN[1] 
+      	    + COLOR.PANTONE_130C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_128C_L2;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_2736C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_2736C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_2736C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_2716C_L2;
+        		  COLOR.PANTONE_2736C_MAIN[0] 
+        	    + COLOR.PANTONE_2736C_MAIN[1] 
+        	    + COLOR.PANTONE_2736C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_2716C_L2;
       	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_ProcessBlueC_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_ProcessBlueC_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_ProcessBlueC_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_305C_L2;
+      		  COLOR.PANTONE_ProcessBlueC_MAIN[0] 
+      	    + COLOR.PANTONE_ProcessBlueC_MAIN[1] 
+      	    + COLOR.PANTONE_ProcessBlueC_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_305C_L2;
     	} 
     	
     	/**COMMON**/ 	    	
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_444C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_444C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_444C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_442C_L2;
+      		  COLOR.PANTONE_444C_MAIN[0] 
+      	    + COLOR.PANTONE_444C_MAIN[1] 
+      	    + COLOR.PANTONE_444C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_442C_L2;
     	} 
     	
     	/**ANCHOR**/ 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_340C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_340C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_340C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_338C_L2;
+        		  COLOR.PANTONE_340C_MAIN[0] 
+        	    + COLOR.PANTONE_340C_MAIN[1] 
+        	    + COLOR.PANTONE_340C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_338C_L2;
       	} 
     	
 		return colorArray;		
@@ -188,79 +186,79 @@ public class ColorUtils {
     	/**INPUT**/
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-    		  SwifteeApplication.PANTONE_192C_MAIN[0] 
-    	    + SwifteeApplication.PANTONE_192C_MAIN[1] 
-    	    + SwifteeApplication.PANTONE_192C_MAIN[2])){    		
-    		colorArray = (int[]) SwifteeApplication.PANTONE_191C_L3;
+    		  COLOR.PANTONE_192C_MAIN[0] 
+    	    + COLOR.PANTONE_192C_MAIN[1] 
+    	    + COLOR.PANTONE_192C_MAIN[2])){    		
+    		colorArray = (int[]) COLOR.PANTONE_191C_L3;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_YellowC_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_YellowC_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_YellowC_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_102C_L3;
+      		  COLOR.PANTONE_YellowC_MAIN[0] 
+      	    + COLOR.PANTONE_YellowC_MAIN[1] 
+      	    + COLOR.PANTONE_YellowC_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_102C_L3;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_246C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_246C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_246C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_245C_L3;
+      		  COLOR.PANTONE_246C_MAIN[0] 
+      	    + COLOR.PANTONE_246C_MAIN[1] 
+      	    + COLOR.PANTONE_246C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_245C_L3;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_631C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_631C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_631C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_630C_L3;
+        		  COLOR.PANTONE_631C_MAIN[0] 
+        	    + COLOR.PANTONE_631C_MAIN[1] 
+        	    + COLOR.PANTONE_631C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_630C_L3;
       	} 
     	
     	/**PANEL**/    	
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_375C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_375C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_375C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_375C_L3;
+      		  COLOR.PANTONE_375C_MAIN[0] 
+      	    + COLOR.PANTONE_375C_MAIN[1] 
+      	    + COLOR.PANTONE_375C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_375C_L3;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_130C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_130C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_130C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_129C_L3;
+      		  COLOR.PANTONE_130C_MAIN[0] 
+      	    + COLOR.PANTONE_130C_MAIN[1] 
+      	    + COLOR.PANTONE_130C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_129C_L3;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_2736C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_2736C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_2736C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_2726C_L3;
+        		  COLOR.PANTONE_2736C_MAIN[0] 
+        	    + COLOR.PANTONE_2736C_MAIN[1] 
+        	    + COLOR.PANTONE_2736C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_2726C_L3;
       	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_ProcessBlueC_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_ProcessBlueC_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_ProcessBlueC_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_306C_L3;
+      		  COLOR.PANTONE_ProcessBlueC_MAIN[0] 
+      	    + COLOR.PANTONE_ProcessBlueC_MAIN[1] 
+      	    + COLOR.PANTONE_ProcessBlueC_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_306C_L3;
     	} 
     	
     	/**COMMON**/
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_444C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_444C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_444C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_443C_L3;
+      		  COLOR.PANTONE_444C_MAIN[0] 
+      	    + COLOR.PANTONE_444C_MAIN[1] 
+      	    + COLOR.PANTONE_444C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_443C_L3;
     	} 
     	
     	/**ANCHOR**/ 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_340C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_340C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_340C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_339C_L3;
+        		  COLOR.PANTONE_340C_MAIN[0] 
+        	    + COLOR.PANTONE_340C_MAIN[1] 
+        	    + COLOR.PANTONE_340C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_339C_L3;
       	} 
     	
 		return colorArray;		
@@ -273,80 +271,80 @@ public class ColorUtils {
 		/**INPUT**/
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-    		  SwifteeApplication.PANTONE_192C_MAIN[0] 
-    	    + SwifteeApplication.PANTONE_192C_MAIN[1] 
-    	    + SwifteeApplication.PANTONE_192C_MAIN[2])){    		
-    		colorArray = (int[]) SwifteeApplication.PANTONE_193C_D3;
+    		  COLOR.PANTONE_192C_MAIN[0] 
+    	    + COLOR.PANTONE_192C_MAIN[1] 
+    	    + COLOR.PANTONE_192C_MAIN[2])){    		
+    		colorArray = (int[]) COLOR.PANTONE_193C_D3;
     	
     	}   	
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_YellowC_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_YellowC_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_YellowC_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_103C_D3;
+        		  COLOR.PANTONE_YellowC_MAIN[0] 
+        	    + COLOR.PANTONE_YellowC_MAIN[1] 
+        	    + COLOR.PANTONE_YellowC_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_103C_D3;
       	}
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_246C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_246C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_246C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_247C_D3;
+      		  COLOR.PANTONE_246C_MAIN[0] 
+      	    + COLOR.PANTONE_246C_MAIN[1] 
+      	    + COLOR.PANTONE_246C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_247C_D3;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_631C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_631C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_631C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_632C_D3;
+        		  COLOR.PANTONE_631C_MAIN[0] 
+        	    + COLOR.PANTONE_631C_MAIN[1] 
+        	    + COLOR.PANTONE_631C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_632C_D3;
       	} 
     	
     	/**PANEL**/    	
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_375C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_375C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_375C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_376C_D3;
+      		  COLOR.PANTONE_375C_MAIN[0] 
+      	    + COLOR.PANTONE_375C_MAIN[1] 
+      	    + COLOR.PANTONE_375C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_376C_D3;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_130C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_130C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_130C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_131C_D3;
+      		  COLOR.PANTONE_130C_MAIN[0] 
+      	    + COLOR.PANTONE_130C_MAIN[1] 
+      	    + COLOR.PANTONE_130C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_131C_D3;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_2736C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_2736C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_2736C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_2746C_D3;
+        		  COLOR.PANTONE_2736C_MAIN[0] 
+        	    + COLOR.PANTONE_2736C_MAIN[1] 
+        	    + COLOR.PANTONE_2736C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_2746C_D3;
       	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_ProcessBlueC_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_ProcessBlueC_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_ProcessBlueC_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_307C_D3;
+      		  COLOR.PANTONE_ProcessBlueC_MAIN[0] 
+      	    + COLOR.PANTONE_ProcessBlueC_MAIN[1] 
+      	    + COLOR.PANTONE_ProcessBlueC_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_307C_D3;
     	} 
     	
     	/**COMMON**/
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_444C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_444C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_444C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_445C_D3;
+      		  COLOR.PANTONE_444C_MAIN[0] 
+      	    + COLOR.PANTONE_444C_MAIN[1] 
+      	    + COLOR.PANTONE_444C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_445C_D3;
     	}    
     	
     	/**ANCHOR**/ 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_340C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_340C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_340C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_341C_D3;
+        		  COLOR.PANTONE_340C_MAIN[0] 
+        	    + COLOR.PANTONE_340C_MAIN[1] 
+        	    + COLOR.PANTONE_340C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_341C_D3;
       	} 
     	
 		return colorArray;		
@@ -359,79 +357,79 @@ public class ColorUtils {
     	/**INPUT**/
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-    		  SwifteeApplication.PANTONE_192C_MAIN[0] 
-    	    + SwifteeApplication.PANTONE_192C_MAIN[1] 
-    	    + SwifteeApplication.PANTONE_192C_MAIN[2])){    		
-    		colorArray = (int[]) SwifteeApplication.PANTONE_194C_D2;
+    		  COLOR.PANTONE_192C_MAIN[0] 
+    	    + COLOR.PANTONE_192C_MAIN[1] 
+    	    + COLOR.PANTONE_192C_MAIN[2])){    		
+    		colorArray = (int[]) COLOR.PANTONE_194C_D2;
     	}
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_YellowC_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_YellowC_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_YellowC_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_104C_D2;
+        		  COLOR.PANTONE_YellowC_MAIN[0] 
+        	    + COLOR.PANTONE_YellowC_MAIN[1] 
+        	    + COLOR.PANTONE_YellowC_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_104C_D2;
       	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_246C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_246C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_246C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_248C_D2;
+      		  COLOR.PANTONE_246C_MAIN[0] 
+      	    + COLOR.PANTONE_246C_MAIN[1] 
+      	    + COLOR.PANTONE_246C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_248C_D2;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_631C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_631C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_631C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_633C_D2;
+        		  COLOR.PANTONE_631C_MAIN[0] 
+        	    + COLOR.PANTONE_631C_MAIN[1] 
+        	    + COLOR.PANTONE_631C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_633C_D2;
       	} 
     	
     	/**PANEL**/    	
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_375C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_375C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_375C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_377C_D2;
+      		  COLOR.PANTONE_375C_MAIN[0] 
+      	    + COLOR.PANTONE_375C_MAIN[1] 
+      	    + COLOR.PANTONE_375C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_377C_D2;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_130C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_130C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_130C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_132C_D2;
+      		  COLOR.PANTONE_130C_MAIN[0] 
+      	    + COLOR.PANTONE_130C_MAIN[1] 
+      	    + COLOR.PANTONE_130C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_132C_D2;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_2736C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_2736C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_2736C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_2756C_D2;
+        		  COLOR.PANTONE_2736C_MAIN[0] 
+        	    + COLOR.PANTONE_2736C_MAIN[1] 
+        	    + COLOR.PANTONE_2736C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_2756C_D2;
       	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_ProcessBlueC_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_ProcessBlueC_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_ProcessBlueC_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_308C_D2;
+      		  COLOR.PANTONE_ProcessBlueC_MAIN[0] 
+      	    + COLOR.PANTONE_ProcessBlueC_MAIN[1] 
+      	    + COLOR.PANTONE_ProcessBlueC_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_308C_D2;
     	} 
     	
     	/**COMMON**/
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_444C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_444C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_444C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_446C_D2;
+      		  COLOR.PANTONE_444C_MAIN[0] 
+      	    + COLOR.PANTONE_444C_MAIN[1] 
+      	    + COLOR.PANTONE_444C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_446C_D2;
     	} 
     	
     	/**ANCHOR**/ 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_340C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_340C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_340C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_342C_D2;
+        		  COLOR.PANTONE_340C_MAIN[0] 
+        	    + COLOR.PANTONE_340C_MAIN[1] 
+        	    + COLOR.PANTONE_340C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_342C_D2;
       	} 
     	
 		return colorArray;		
@@ -442,79 +440,79 @@ public class ColorUtils {
     	int[] colorArray = new int[3];    	
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-    		  SwifteeApplication.PANTONE_192C_MAIN[0] 
-    	    + SwifteeApplication.PANTONE_192C_MAIN[1] 
-    	    + SwifteeApplication.PANTONE_192C_MAIN[2])){    		
-    		colorArray = (int[]) SwifteeApplication.PANTONE_195C_D1;
+    		  COLOR.PANTONE_192C_MAIN[0] 
+    	    + COLOR.PANTONE_192C_MAIN[1] 
+    	    + COLOR.PANTONE_192C_MAIN[2])){    		
+    		colorArray = (int[]) COLOR.PANTONE_195C_D1;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_YellowC_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_YellowC_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_YellowC_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_105C_D1;
+      		  COLOR.PANTONE_YellowC_MAIN[0] 
+      	    + COLOR.PANTONE_YellowC_MAIN[1] 
+      	    + COLOR.PANTONE_YellowC_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_105C_D1;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_246C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_246C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_246C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_249C_D1;
+      		  COLOR.PANTONE_246C_MAIN[0] 
+      	    + COLOR.PANTONE_246C_MAIN[1] 
+      	    + COLOR.PANTONE_246C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_249C_D1;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_631C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_631C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_631C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_634C_D1;
+        		  COLOR.PANTONE_631C_MAIN[0] 
+        	    + COLOR.PANTONE_631C_MAIN[1] 
+        	    + COLOR.PANTONE_631C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_634C_D1;
       	} 
     	
     	/**PANEL**/    	
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_375C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_375C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_375C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_378C_D1;
+      		  COLOR.PANTONE_375C_MAIN[0] 
+      	    + COLOR.PANTONE_375C_MAIN[1] 
+      	    + COLOR.PANTONE_375C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_378C_D1;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_130C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_130C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_130C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_133C_D1;
+      		  COLOR.PANTONE_130C_MAIN[0] 
+      	    + COLOR.PANTONE_130C_MAIN[1] 
+      	    + COLOR.PANTONE_130C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_133C_D1;
     	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_2736C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_2736C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_2736C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_2766C_D1;
+        		  COLOR.PANTONE_2736C_MAIN[0] 
+        	    + COLOR.PANTONE_2736C_MAIN[1] 
+        	    + COLOR.PANTONE_2736C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_2766C_D1;
       	} 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_ProcessBlueC_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_ProcessBlueC_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_ProcessBlueC_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_309C_D1;
+      		  COLOR.PANTONE_ProcessBlueC_MAIN[0] 
+      	    + COLOR.PANTONE_ProcessBlueC_MAIN[1] 
+      	    + COLOR.PANTONE_ProcessBlueC_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_309C_D1;
     	} 
     	
     	/**COMMON**/
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-      		  SwifteeApplication.PANTONE_444C_MAIN[0] 
-      	    + SwifteeApplication.PANTONE_444C_MAIN[1] 
-      	    + SwifteeApplication.PANTONE_444C_MAIN[2])){    		
-      		colorArray = (int[]) SwifteeApplication.PANTONE_447C_D1;
+      		  COLOR.PANTONE_444C_MAIN[0] 
+      	    + COLOR.PANTONE_444C_MAIN[1] 
+      	    + COLOR.PANTONE_444C_MAIN[2])){    		
+      		colorArray = (int[]) COLOR.PANTONE_447C_D1;
     	} 
     	
     	/**ANCHOR**/ 
     	
     	if ( (colors[0]+colors[1]+colors[2]) == (
-        		  SwifteeApplication.PANTONE_340C_MAIN[0] 
-        	    + SwifteeApplication.PANTONE_340C_MAIN[1] 
-        	    + SwifteeApplication.PANTONE_340C_MAIN[2])){    		
-        		colorArray = (int[]) SwifteeApplication.PANTONE_343C_D1;
+        		  COLOR.PANTONE_340C_MAIN[0] 
+        	    + COLOR.PANTONE_340C_MAIN[1] 
+        	    + COLOR.PANTONE_340C_MAIN[2])){    		
+        		colorArray = (int[]) COLOR.PANTONE_343C_D1;
       	} 
     	
 		return colorArray;		
@@ -526,47 +524,47 @@ public class ColorUtils {
     	
     	int[] colorArray = new int[3];
     	
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.VIOLET[0] + SwifteeApplication.VIOLET[1] + SwifteeApplication.VIOLET[2])){
-    		colorArray = (int[]) SwifteeApplication.VIOLET_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.VIOLET[0] + COLOR.VIOLET[1] + COLOR.VIOLET[2])){
+    		colorArray = (int[]) COLOR.VIOLET_DARK;
     	}
     	
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.ORANGE[0] + SwifteeApplication.ORANGE[1] + SwifteeApplication.ORANGE[2])){
-    		colorArray = (int[]) SwifteeApplication.ORANGE_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.ORANGE[0] + COLOR.ORANGE[1] + COLOR.ORANGE[2])){
+    		colorArray = (int[]) COLOR.ORANGE_DARK;
     	}
     	
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.LIGTH_BLUE[0] + SwifteeApplication.LIGTH_BLUE[1] + SwifteeApplication.LIGTH_BLUE[2])){
-    		colorArray = (int[]) SwifteeApplication.LIGTH_BLUE_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.LIGTH_BLUE[0] + COLOR.LIGTH_BLUE[1] + COLOR.LIGTH_BLUE[2])){
+    		colorArray = (int[]) COLOR.LIGTH_BLUE_DARK;
     	}
     	
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.RED[0] + SwifteeApplication.RED[1] + SwifteeApplication.RED[2])){
-    		colorArray = (int[]) SwifteeApplication.RED_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.RED[0] + COLOR.RED[1] + COLOR.RED[2])){
+    		colorArray = (int[]) COLOR.RED_DARK;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.YELLOW[0] + SwifteeApplication.YELLOW[1] + SwifteeApplication.YELLOW[2])){
-    		colorArray = (int[]) SwifteeApplication.YELLOW_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.YELLOW[0] + COLOR.YELLOW[1] + COLOR.YELLOW[2])){
+    		colorArray = (int[]) COLOR.YELLOW_DARK;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.GREEN[0] + SwifteeApplication.GREEN[1] + SwifteeApplication.GREEN[2])){
-    		colorArray = (int[]) SwifteeApplication.GREEN_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.GREEN[0] + COLOR.GREEN[1] + COLOR.GREEN[2])){
+    		colorArray = (int[]) COLOR.GREEN_DARK;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.BLUE[0] + SwifteeApplication.BLUE[1] + SwifteeApplication.BLUE[2])){
-    		colorArray = (int[]) SwifteeApplication.BLUE_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.BLUE[0] + COLOR.BLUE[1] + COLOR.BLUE[2])){
+    		colorArray = (int[]) COLOR.BLUE_DARK;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.BLACK[0] + SwifteeApplication.BLACK[1] + SwifteeApplication.BLACK[2])){
-    		colorArray = (int[]) SwifteeApplication.BLACK_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.BLACK[0] + COLOR.BLACK[1] + COLOR.BLACK[2])){
+    		colorArray = (int[]) COLOR.BLACK_DARK;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.RED_MAP[0] + SwifteeApplication.RED_MAP[1] + SwifteeApplication.RED_MAP[2])){
-    		colorArray = (int[]) SwifteeApplication.RED_MAP_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.RED_MAP[0] + COLOR.RED_MAP[1] + COLOR.RED_MAP[2])){
+    		colorArray = (int[]) COLOR.RED_MAP_DARK;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.TURQUOISE[0] + SwifteeApplication.TURQUOISE[1] + SwifteeApplication.TURQUOISE[2])){
-    		colorArray = (int[]) SwifteeApplication.TURQUOISE_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.TURQUOISE[0] + COLOR.TURQUOISE[1] + COLOR.TURQUOISE[2])){
+    		colorArray = (int[]) COLOR.TURQUOISE_DARK;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.GRAY[0] + SwifteeApplication.GRAY[1] + SwifteeApplication.GRAY[2])){
-    		colorArray = (int[]) SwifteeApplication.GRAY_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.GRAY[0] + COLOR.GRAY[1] + COLOR.GRAY[2])){
+    		colorArray = (int[]) COLOR.GRAY_DARK;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.FUXIA[0] + SwifteeApplication.FUXIA[1] + SwifteeApplication.FUXIA[2])){
-    		colorArray = (int[]) SwifteeApplication.FUXIA_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.FUXIA[0] + COLOR.FUXIA[1] + COLOR.FUXIA[2])){
+    		colorArray = (int[]) COLOR.FUXIA_DARK;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.APPLE[0] + SwifteeApplication.APPLE[1] + SwifteeApplication.APPLE[2])){
-    		colorArray = (int[]) SwifteeApplication.APPLE_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.APPLE[0] + COLOR.APPLE[1] + COLOR.APPLE[2])){
+    		colorArray = (int[]) COLOR.APPLE_DARK;
     	} 
 		return colorArray;
     }
@@ -576,47 +574,47 @@ public class ColorUtils {
     	
     	int[] colorArray = new int[3];
     	
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.VIOLET[0] + SwifteeApplication.VIOLET[1] + SwifteeApplication.VIOLET[2])){
-    		colorArray = (int[]) SwifteeApplication.VIOLET_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.VIOLET[0] + COLOR.VIOLET[1] + COLOR.VIOLET[2])){
+    		colorArray = (int[]) COLOR.VIOLET_LIGHT;
     	}
     	
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.ORANGE[0] + SwifteeApplication.ORANGE[1] + SwifteeApplication.ORANGE[2])){
-    		colorArray = (int[]) SwifteeApplication.ORANGE_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.ORANGE[0] + COLOR.ORANGE[1] + COLOR.ORANGE[2])){
+    		colorArray = (int[]) COLOR.ORANGE_LIGHT;
     	}
     	
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.LIGTH_BLUE[0] + SwifteeApplication.LIGTH_BLUE[1] + SwifteeApplication.LIGTH_BLUE[2])){
-    		colorArray = (int[]) SwifteeApplication.LIGTH_BLUE_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.LIGTH_BLUE[0] + COLOR.LIGTH_BLUE[1] + COLOR.LIGTH_BLUE[2])){
+    		colorArray = (int[]) COLOR.LIGTH_BLUE_LIGHT;
     	}
     	
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.RED[0] + SwifteeApplication.RED[1] + SwifteeApplication.RED[2])){
-    		colorArray = (int[]) SwifteeApplication.RED_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.RED[0] + COLOR.RED[1] + COLOR.RED[2])){
+    		colorArray = (int[]) COLOR.RED_LIGHT;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.YELLOW[0] + SwifteeApplication.YELLOW[1] + SwifteeApplication.YELLOW[2])){
-    		colorArray = (int[]) SwifteeApplication.YELLOW_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.YELLOW[0] + COLOR.YELLOW[1] + COLOR.YELLOW[2])){
+    		colorArray = (int[]) COLOR.YELLOW_LIGHT;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.GREEN[0] + SwifteeApplication.GREEN[1] + SwifteeApplication.GREEN[2])){
-    		colorArray = (int[]) SwifteeApplication.GREEN_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.GREEN[0] + COLOR.GREEN[1] + COLOR.GREEN[2])){
+    		colorArray = (int[]) COLOR.GREEN_LIGHT;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.BLUE[0] + SwifteeApplication.BLUE[1] + SwifteeApplication.BLUE[2])){
-    		colorArray = (int[]) SwifteeApplication.BLUE_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.BLUE[0] + COLOR.BLUE[1] + COLOR.BLUE[2])){
+    		colorArray = (int[]) COLOR.BLUE_LIGHT;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.BLACK[0] + SwifteeApplication.BLACK[1] + SwifteeApplication.BLACK[2])){
-    		colorArray = (int[]) SwifteeApplication.BLACK_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.BLACK[0] + COLOR.BLACK[1] + COLOR.BLACK[2])){
+    		colorArray = (int[]) COLOR.BLACK_LIGHT;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.RED_MAP[0] + SwifteeApplication.RED_MAP[1] + SwifteeApplication.RED_MAP[2])){
-    		colorArray = (int[]) SwifteeApplication.RED_MAP_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.RED_MAP[0] + COLOR.RED_MAP[1] + COLOR.RED_MAP[2])){
+    		colorArray = (int[]) COLOR.RED_MAP_LIGHT;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.TURQUOISE[0] + SwifteeApplication.TURQUOISE[1] + SwifteeApplication.TURQUOISE[2])){
-    		colorArray = (int[]) SwifteeApplication.TURQUOISE_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.TURQUOISE[0] + COLOR.TURQUOISE[1] + COLOR.TURQUOISE[2])){
+    		colorArray = (int[]) COLOR.TURQUOISE_LIGHT;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.GRAY[0] + SwifteeApplication.GRAY[1] + SwifteeApplication.GRAY[2])){
-    		colorArray = (int[]) SwifteeApplication.LIGHT_GRAY_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.GRAY[0] + COLOR.GRAY[1] + COLOR.GRAY[2])){
+    		colorArray = (int[]) COLOR.LIGHT_GRAY_LIGHT;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.FUXIA[0] + SwifteeApplication.FUXIA[1] + SwifteeApplication.FUXIA[2])){
-    		colorArray = (int[]) SwifteeApplication.FUXIA_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.FUXIA[0] + COLOR.FUXIA[1] + COLOR.FUXIA[2])){
+    		colorArray = (int[]) COLOR.FUXIA_LIGHT;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.APPLE[0] + SwifteeApplication.APPLE[1] + SwifteeApplication.APPLE[2])){
-    		colorArray = (int[]) SwifteeApplication.APPLE_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.APPLE[0] + COLOR.APPLE[1] + COLOR.APPLE[2])){
+    		colorArray = (int[]) COLOR.APPLE_LIGHT;
     	}
 		return colorArray;
     }
@@ -626,47 +624,47 @@ public class ColorUtils {
     	
     	int[] colorArray = new int[3];
     	
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.VIOLET[0] + SwifteeApplication.VIOLET[1] + SwifteeApplication.VIOLET[2])){
-    		colorArray = (int[]) SwifteeApplication.VIOLET_VERY_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.VIOLET[0] + COLOR.VIOLET[1] + COLOR.VIOLET[2])){
+    		colorArray = (int[]) COLOR.VIOLET_VERY_LIGHT;
     	}
     	
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.ORANGE[0] + SwifteeApplication.ORANGE[1] + SwifteeApplication.ORANGE[2])){
-    		colorArray = (int[]) SwifteeApplication.ORANGE_VERY_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.ORANGE[0] + COLOR.ORANGE[1] + COLOR.ORANGE[2])){
+    		colorArray = (int[]) COLOR.ORANGE_VERY_LIGHT;
     	}
     	
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.LIGTH_BLUE[0] + SwifteeApplication.LIGTH_BLUE[1] + SwifteeApplication.LIGTH_BLUE[2])){
-    		colorArray = (int[]) SwifteeApplication.LIGTH_BLUE_VERY_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.LIGTH_BLUE[0] + COLOR.LIGTH_BLUE[1] + COLOR.LIGTH_BLUE[2])){
+    		colorArray = (int[]) COLOR.LIGTH_BLUE_VERY_LIGHT;
     	}
     	
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.RED[0] + SwifteeApplication.RED[1] + SwifteeApplication.RED[2])){
-    		colorArray = (int[]) SwifteeApplication.RED_VERY_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.RED[0] + COLOR.RED[1] + COLOR.RED[2])){
+    		colorArray = (int[]) COLOR.RED_VERY_LIGHT;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.YELLOW[0] + SwifteeApplication.YELLOW[1] + SwifteeApplication.YELLOW[2])){
-    		colorArray = (int[]) SwifteeApplication.YELLOW_VERY_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.YELLOW[0] + COLOR.YELLOW[1] + COLOR.YELLOW[2])){
+    		colorArray = (int[]) COLOR.YELLOW_VERY_LIGHT;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.GREEN[0] + SwifteeApplication.GREEN[1] + SwifteeApplication.GREEN[2])){
-    		colorArray = (int[]) SwifteeApplication.GREEN_VERY_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.GREEN[0] + COLOR.GREEN[1] + COLOR.GREEN[2])){
+    		colorArray = (int[]) COLOR.GREEN_VERY_LIGHT;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.BLUE[0] + SwifteeApplication.BLUE[1] + SwifteeApplication.BLUE[2])){
-    		colorArray = (int[]) SwifteeApplication.BLUE_VERY_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.BLUE[0] + COLOR.BLUE[1] + COLOR.BLUE[2])){
+    		colorArray = (int[]) COLOR.BLUE_VERY_LIGHT;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.BLACK[0] + SwifteeApplication.BLACK[1] + SwifteeApplication.BLACK[2])){
-    		colorArray = (int[]) SwifteeApplication.BLACK_VERY_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.BLACK[0] + COLOR.BLACK[1] + COLOR.BLACK[2])){
+    		colorArray = (int[]) COLOR.BLACK_VERY_LIGHT;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.RED_MAP[0] + SwifteeApplication.RED_MAP[1] + SwifteeApplication.RED_MAP[2])){
-    		colorArray = (int[]) SwifteeApplication.RED_MAP_VERY_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.RED_MAP[0] + COLOR.RED_MAP[1] + COLOR.RED_MAP[2])){
+    		colorArray = (int[]) COLOR.RED_MAP_VERY_LIGHT;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.TURQUOISE[0] + SwifteeApplication.TURQUOISE[1] + SwifteeApplication.TURQUOISE[2])){
-    		colorArray = (int[]) SwifteeApplication.TURQUOISE_VERY_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.TURQUOISE[0] + COLOR.TURQUOISE[1] + COLOR.TURQUOISE[2])){
+    		colorArray = (int[]) COLOR.TURQUOISE_VERY_LIGHT;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.GRAY[0] + SwifteeApplication.GRAY[1] + SwifteeApplication.GRAY[2])){
-    		colorArray = (int[]) SwifteeApplication.LIGHT_GRAY_VERY_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.GRAY[0] + COLOR.GRAY[1] + COLOR.GRAY[2])){
+    		colorArray = (int[]) COLOR.LIGHT_GRAY_VERY_LIGHT;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.FUXIA[0] + SwifteeApplication.FUXIA[1] + SwifteeApplication.FUXIA[2])){
-    		colorArray = (int[]) SwifteeApplication.FUXIA_VERY_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.FUXIA[0] + COLOR.FUXIA[1] + COLOR.FUXIA[2])){
+    		colorArray = (int[]) COLOR.FUXIA_VERY_LIGHT;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.APPLE[0] + SwifteeApplication.APPLE[1] + SwifteeApplication.APPLE[2])){
-    		colorArray = (int[]) SwifteeApplication.APPLE_VERY_LIGHT;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.APPLE[0] + COLOR.APPLE[1] + COLOR.APPLE[2])){
+    		colorArray = (int[]) COLOR.APPLE_VERY_LIGHT;
     	}
 		return colorArray;
     }
@@ -675,71 +673,71 @@ public class ColorUtils {
     	
     	int[] colorArray = new int[3];
     	
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.VIOLET[0] + SwifteeApplication.VIOLET[1] + SwifteeApplication.VIOLET[2])){
-    		colorArray = (int[]) SwifteeApplication.VIOLET_VERY_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.VIOLET[0] + COLOR.VIOLET[1] + COLOR.VIOLET[2])){
+    		colorArray = (int[]) COLOR.VIOLET_VERY_DARK;
     	}
     	
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.ORANGE[0] + SwifteeApplication.ORANGE[1] + SwifteeApplication.ORANGE[2])){
-    		colorArray = (int[]) SwifteeApplication.ORANGE_VERY_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.ORANGE[0] + COLOR.ORANGE[1] + COLOR.ORANGE[2])){
+    		colorArray = (int[]) COLOR.ORANGE_VERY_DARK;
     	}
     	
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.LIGTH_BLUE[0] + SwifteeApplication.LIGTH_BLUE[1] + SwifteeApplication.LIGTH_BLUE[2])){
-    		colorArray = (int[]) SwifteeApplication.LIGTH_BLUE_VERY_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.LIGTH_BLUE[0] + COLOR.LIGTH_BLUE[1] + COLOR.LIGTH_BLUE[2])){
+    		colorArray = (int[]) COLOR.LIGTH_BLUE_VERY_DARK;
     	}
     	
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.RED[0] + SwifteeApplication.RED[1] + SwifteeApplication.RED[2])){
-    		colorArray = (int[]) SwifteeApplication.RED_VERY_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.RED[0] + COLOR.RED[1] + COLOR.RED[2])){
+    		colorArray = (int[]) COLOR.RED_VERY_DARK;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.YELLOW[0] + SwifteeApplication.YELLOW[1] + SwifteeApplication.YELLOW[2])){
-    		colorArray = (int[]) SwifteeApplication.YELLOW_VERY_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.YELLOW[0] + COLOR.YELLOW[1] + COLOR.YELLOW[2])){
+    		colorArray = (int[]) COLOR.YELLOW_VERY_DARK;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.GREEN[0] + SwifteeApplication.GREEN[1] + SwifteeApplication.GREEN[2])){
-    		colorArray = (int[]) SwifteeApplication.GREEN_VERY_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.GREEN[0] + COLOR.GREEN[1] + COLOR.GREEN[2])){
+    		colorArray = (int[]) COLOR.GREEN_VERY_DARK;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.BLUE[0] + SwifteeApplication.BLUE[1] + SwifteeApplication.BLUE[2])){
-    		colorArray = (int[]) SwifteeApplication.BLUE_VERY_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.BLUE[0] + COLOR.BLUE[1] + COLOR.BLUE[2])){
+    		colorArray = (int[]) COLOR.BLUE_VERY_DARK;
     	}
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.BLACK[0] + SwifteeApplication.BLACK[1] + SwifteeApplication.BLACK[2])){
-    		colorArray = (int[]) SwifteeApplication.BLACK_VERY_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.BLACK[0] + COLOR.BLACK[1] + COLOR.BLACK[2])){
+    		colorArray = (int[]) COLOR.BLACK_VERY_DARK;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.RED_MAP[0] + SwifteeApplication.RED_MAP[1] + SwifteeApplication.RED_MAP[2])){
-    		colorArray = (int[]) SwifteeApplication.RED_MAP_VERY_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.RED_MAP[0] + COLOR.RED_MAP[1] + COLOR.RED_MAP[2])){
+    		colorArray = (int[]) COLOR.RED_MAP_VERY_DARK;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.TURQUOISE[0] + SwifteeApplication.TURQUOISE[1] + SwifteeApplication.TURQUOISE[2])){
-    		colorArray = (int[]) SwifteeApplication.TURQUOISE_VERY_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.TURQUOISE[0] + COLOR.TURQUOISE[1] + COLOR.TURQUOISE[2])){
+    		colorArray = (int[]) COLOR.TURQUOISE_VERY_DARK;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.GRAY[0] + SwifteeApplication.GRAY[1] + SwifteeApplication.GRAY[2])){
-    		colorArray = (int[]) SwifteeApplication.LIGHT_GRAY_VERY_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.GRAY[0] + COLOR.GRAY[1] + COLOR.GRAY[2])){
+    		colorArray = (int[]) COLOR.LIGHT_GRAY_VERY_DARK;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.FUXIA[0] + SwifteeApplication.FUXIA[1] + SwifteeApplication.FUXIA[2])){
-    		colorArray = (int[]) SwifteeApplication.FUXIA_VERY_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.FUXIA[0] + COLOR.FUXIA[1] + COLOR.FUXIA[2])){
+    		colorArray = (int[]) COLOR.FUXIA_VERY_DARK;
     	} 
-    	if ( (colors[0]+colors[1]+colors[2]) == (SwifteeApplication.APPLE[0] + SwifteeApplication.APPLE[1] + SwifteeApplication.APPLE[2])){
-    		colorArray = (int[]) SwifteeApplication.APPLE_VERY_DARK;
+    	if ( (colors[0]+colors[1]+colors[2]) == (COLOR.APPLE[0] + COLOR.APPLE[1] + COLOR.APPLE[2])){
+    		colorArray = (int[]) COLOR.APPLE_VERY_DARK;
     	} 
 		return colorArray;
     }
 	
 	public static Hashtable<Integer, int[]> setSpinnerColors(Hashtable<Integer, int[]> colorSpinnerDots){	
 		
-		colorSpinnerDots.put(0, SwifteeApplication.CIRCLE_PANTONE_801C);
-		colorSpinnerDots.put(1, SwifteeApplication.CIRCLE_PANTONE_802C);
-		colorSpinnerDots.put(2, SwifteeApplication.CIRCLE_PANTONE_803C);
-		colorSpinnerDots.put(3, SwifteeApplication.CIRCLE_PANTONE_804C);
-		colorSpinnerDots.put(4, SwifteeApplication.CIRCLE_PANTONE_805C);
-		colorSpinnerDots.put(5, SwifteeApplication.CIRCLE_PANTONE_806C);
-		colorSpinnerDots.put(6, SwifteeApplication.CIRCLE_PANTONE_807C);
-		colorSpinnerDots.put(7, SwifteeApplication.CIRCLE_PANTONE_808C);
-		colorSpinnerDots.put(8, SwifteeApplication.CIRCLE_PANTONE_809C);
-	    colorSpinnerDots.put(9, SwifteeApplication.CIRCLE_PANTONE_810C);     
-	    colorSpinnerDots.put(10, SwifteeApplication.CIRCLE_PANTONE_811C);
-	    colorSpinnerDots.put(11, SwifteeApplication.CIRCLE_PANTONE_812C);
-	    colorSpinnerDots.put(12, SwifteeApplication.CIRCLE_PANTONE_813C);
-	    colorSpinnerDots.put(13, SwifteeApplication.CIRCLE_PANTONE_814C);  
-	    colorSpinnerDots.put(14, SwifteeApplication.CIRCLE_PANTONE_801C);
-	    colorSpinnerDots.put(15, SwifteeApplication.CIRCLE_PANTONE_802C);
-	    colorSpinnerDots.put(16, SwifteeApplication.CIRCLE_PANTONE_803C);
-	    colorSpinnerDots.put(17, SwifteeApplication.CIRCLE_PANTONE_804C);
+		colorSpinnerDots.put(0, COLOR.CIRCLE_PANTONE_801C);
+		colorSpinnerDots.put(1, COLOR.CIRCLE_PANTONE_802C);
+		colorSpinnerDots.put(2, COLOR.CIRCLE_PANTONE_803C);
+		colorSpinnerDots.put(3, COLOR.CIRCLE_PANTONE_804C);
+		colorSpinnerDots.put(4, COLOR.CIRCLE_PANTONE_805C);
+		colorSpinnerDots.put(5, COLOR.CIRCLE_PANTONE_806C);
+		colorSpinnerDots.put(6, COLOR.CIRCLE_PANTONE_807C);
+		colorSpinnerDots.put(7, COLOR.CIRCLE_PANTONE_808C);
+		colorSpinnerDots.put(8, COLOR.CIRCLE_PANTONE_809C);
+	    colorSpinnerDots.put(9, COLOR.CIRCLE_PANTONE_810C);     
+	    colorSpinnerDots.put(10, COLOR.CIRCLE_PANTONE_811C);
+	    colorSpinnerDots.put(11, COLOR.CIRCLE_PANTONE_812C);
+	    colorSpinnerDots.put(12, COLOR.CIRCLE_PANTONE_813C);
+	    colorSpinnerDots.put(13, COLOR.CIRCLE_PANTONE_814C);  
+	    colorSpinnerDots.put(14, COLOR.CIRCLE_PANTONE_801C);
+	    colorSpinnerDots.put(15, COLOR.CIRCLE_PANTONE_802C);
+	    colorSpinnerDots.put(16, COLOR.CIRCLE_PANTONE_803C);
+	    colorSpinnerDots.put(17, COLOR.CIRCLE_PANTONE_804C);
 		
 		return colorSpinnerDots;
 		
@@ -749,11 +747,11 @@ public class ColorUtils {
 
 
 //INUPUT		
-/*SwifteeApplication.PANTONE_192C_MAIN,
-SwifteeApplication.PANTONE_YellowC_MAIN, 
-SwifteeApplication.PANTONE_246C_MAIN,
-SwifteeApplication.PANTONE_631C_MAIN, 
-SwifteeApplication.PANTONE_444C_MAIN };*/
+/*COLOR.PANTONE_192C_MAIN,
+COLOR.PANTONE_YellowC_MAIN, 
+COLOR.PANTONE_246C_MAIN,
+COLOR.PANTONE_631C_MAIN, 
+COLOR.PANTONE_444C_MAIN };*/
 
 /*public static int[] PANTONE_189C_L1			= {248, 164, 187};
 public static int[] PANTONE_190C_L2			= {248, 121, 155};
@@ -799,10 +797,10 @@ public static int[] PANTONE_446C_D2				= {62, 69, 69};
 public static int[] PANTONE_447C_D1				= {52, 55, 53};*/
 
 /*		
-SwifteeApplication.PANTONE_375C_MAIN,				
-SwifteeApplication.PANTONE_130C_MAIN, 
-SwifteeApplication.PANTONE_2736C_MAIN,
-SwifteeApplication.PANTONE_ProcessBlueC_MAIN, */
+COLOR.PANTONE_375C_MAIN,				
+COLOR.PANTONE_130C_MAIN, 
+COLOR.PANTONE_2736C_MAIN,
+COLOR.PANTONE_ProcessBlueC_MAIN, */
 
 /*// 375C		
 public static int[] PANTONE_372C_L1			= {215, 235, 156};

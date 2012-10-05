@@ -2,8 +2,9 @@
 
 import java.util.Vector;
 
-import roamtouch.webkit.WebHitTestResult;
-import roamtouch.webkit.WebView;
+import com.roamtouch.webhook.WebHitTestResult;
+
+import android.webkit.WebView;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -287,10 +288,10 @@ public class SuggestionController extends FrameLayout {
 	 			sV.setData(null);
 	 		}	
         	
-        	if ( cType == WebHitTestResult.SRC_ANCHOR_TYPE 
+        	if ( cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE 
         			|| cType == SwifteeApplication.TYPE_PADKITE_WINDOWS_MANAGER 
       	    		|| cType == SwifteeApplication.TYPE_PADKITE_SERVER 
-      	    		|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && lastKnownWebHitType == WebHitTestResult.SRC_ANCHOR_TYPE)
+      	    		|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && lastKnownWebHitType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE)
       	    	){
 	        	
         		masterRectWidth = re.right - re.left; 
@@ -425,10 +426,10 @@ public class SuggestionController extends FrameLayout {
       	    	
       	    } else*/ 
       	    	
-      	    if ( cType == WebHitTestResult.SRC_ANCHOR_TYPE
+      	    if ( cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE
       	    		|| cType == SwifteeApplication.TYPE_PADKITE_WINDOWS_MANAGER 
       	    		|| cType == SwifteeApplication.TYPE_PADKITE_SERVER 
-      	    		|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && lastKnownWebHitType == WebHitTestResult.SRC_ANCHOR_TYPE)){      	    	
+      	    		|| (cType == SwifteeApplication.TYPE_PADKITE_TAB && lastKnownWebHitType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE)){      	    	
       	    	
       	    	x -= (edge/3) + 1;      	    
       	    	cords[0] = x;      	    	
@@ -447,7 +448,7 @@ public class SuggestionController extends FrameLayout {
 				if ( (cType == SwifteeApplication.TYPE_PADKITE_INPUT)
 		      	    	|| (cType == SwifteeApplication.TYPE_PADKITE_PANEL)
 		      	    	|| ((cType == SwifteeApplication.TYPE_PADKITE_TAB) 
-						&& (lastKnownWebHitType == WebHitTestResult.EDIT_TEXT_TYPE)) ) {
+						&& (lastKnownWebHitType == WebHitTestResult.TYPE_EDIT_TEXT_TYPE)) ) {
 					
 					variableHeight = H + (
 	    	   				SwifteeApplication.getSuggestionRowHeight()
@@ -498,7 +499,7 @@ public class SuggestionController extends FrameLayout {
    			
    			//else 
    			
-   			if ( cType == WebHitTestResult.SRC_ANCHOR_TYPE
+   			if ( cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE
    					|| cType == SwifteeApplication.TYPE_PADKITE_WINDOWS_MANAGER 
    					|| cType == SwifteeApplication.TYPE_PADKITE_SERVER ){
    				

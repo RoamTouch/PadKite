@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
-import roamtouch.webkit.WebHitTestResult;
+import com.roamtouch.webhook.WebHitTestResult;
 
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.swiftee.BrowserActivity;
@@ -68,6 +68,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.roamtouch.swiftee.SwifteeApplication;
+import com.roamtouch.utils.COLOR;
 import com.roamtouch.utils.ColorUtils;
 import com.roamtouch.utils.PaintTextUtils;
 import com.roamtouch.utils.StringUtils;
@@ -786,7 +787,7 @@ public class SuggestionView extends View implements Runnable {
 			 * WINDOWS MANAGER
 			 * SERVER 
 			 * **/   			
-			if ( cType == WebHitTestResult.SRC_ANCHOR_TYPE // ){
+			if ( cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE // ){
 					|| cType == SwifteeApplication.TYPE_PADKITE_WINDOWS_MANAGER 
 					|| cType == SwifteeApplication.TYPE_PADKITE_SERVER ){   				
 				   				
@@ -825,7 +826,7 @@ public class SuggestionView extends View implements Runnable {
 	    				back_1.bottom 	=  top + variableHeight - edge;
 	    			}
 					
-				} else if ( cType == WebHitTestResult.SRC_ANCHOR_TYPE 
+				} else if ( cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE 
 						|| cType == SwifteeApplication.TYPE_PADKITE_WINDOWS_MANAGER
 						|| cType == SwifteeApplication.TYPE_PADKITE_SERVER){   	
 					
@@ -953,9 +954,9 @@ public class SuggestionView extends View implements Runnable {
 			      	  	}
 		    	   		
 		    	   		if ( (cType == SwifteeApplication.TYPE_PADKITE_INPUT)
-		    	   			|| (cType == WebHitTestResult.SRC_ANCHOR_TYPE)	
+		    	   			|| (cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE)	
 		        			|| ((cType == SwifteeApplication.TYPE_PADKITE_TAB) 
-		        			&& (lastKnownWebHitType == WebHitTestResult.EDIT_TEXT_TYPE))
+		        			&& (lastKnownWebHitType == WebHitTestResult.TYPE_EDIT_TEXT_TYPE))
 		        			){ 
 		    	   			
 		    	   			if (expanded){
@@ -974,7 +975,7 @@ public class SuggestionView extends View implements Runnable {
 		    	   				
 		    	   			} else {		    	   				
 		    	   				
-		    	   				if (cType == WebHitTestResult.SRC_ANCHOR_TYPE){		    	   					
+		    	   				if (cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE){		    	   					
 		    	   					yHeight -= edge;
 		    	   					varYButton -= (edge/2);
 		    	   				} else {
@@ -1079,7 +1080,7 @@ public class SuggestionView extends View implements Runnable {
 		    						} else {
 		    							
 		    							fillColor 	= ColorUtils.D2_Color(butColor);
-		    							strokeColor = SwifteeApplication.WHITE;
+		    							strokeColor = COLOR.WHITE;
 		    									
 		    						}			    		    		
 			    					
@@ -1257,7 +1258,7 @@ public class SuggestionView extends View implements Runnable {
         			re.top = rect.bottom;
         			yRow = rect.bottom + 3; */
         			
-    	   		if ( cType == WebHitTestResult.SRC_ANCHOR_TYPE //){
+    	   		if ( cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE //){
     	   			||	cType ==  SwifteeApplication.TYPE_PADKITE_WINDOWS_MANAGER 
     	   			||	cType ==  SwifteeApplication.TYPE_PADKITE_SERVER ){
     	   			
@@ -1407,9 +1408,9 @@ public class SuggestionView extends View implements Runnable {
         			int textSize = SwifteeApplication.getSuggestionRowTextSize();
         			
         			if ( k+10 == rowOver ){
-        				rRowLine = paintRow(false, SwifteeApplication.WHITE);	        				
+        				rRowLine = paintRow(false, COLOR.WHITE);	        				
         				rRow = paintRow(true, ColorUtils.D2_Color(tabColor));
-        				tPaint = paintText(textSize, SwifteeApplication.WHITE);
+        				tPaint = paintText(textSize, COLOR.WHITE);
         			} else {
         				//rRowLine = paintRow(true, ColorUtils.checkDarkColor(tabColor));		        				
         				/*if (StringUtils.isOdd(k)){
@@ -1417,8 +1418,8 @@ public class SuggestionView extends View implements Runnable {
         				} else {
         					rRow = paintRow(true, SwifteeApplication.WHITE);		        					
         				}*/		        				
-        				rRow = paintRow(true, SwifteeApplication.WHITE);
-        				tPaint = paintText(textSize, SwifteeApplication.GRAY);
+        				rRow = paintRow(true, COLOR.WHITE);
+        				tPaint = paintText(textSize, COLOR.GRAY);
         			}		  	 
         			
         			canvasRows.drawPath(row[0], rRowLine);   			        	    		
@@ -1453,7 +1454,7 @@ public class SuggestionView extends View implements Runnable {
         	    		
         	    		if (isNullOrBlank(line_two_abs)){
         	    			
-        	    			Paint sPaint = paintText(30, SwifteeApplication.GRAY);
+        	    			Paint sPaint = paintText(30, COLOR.GRAY);
         	    			 	    			
         	    			String line_one_title =  (String) objectList[k][1];	
         	    			
@@ -1470,12 +1471,12 @@ public class SuggestionView extends View implements Runnable {
         	    			
         	    		} else {
         	    			
-        	    			Paint sPaint = paintText(25, SwifteeApplication.GRAY);
+        	    			Paint sPaint = paintText(25, COLOR.GRAY);
         	    			
         	    			String line_one_title =  (String) objectList[k][1];	    			
         	    			canvasRows.drawText(line_one_title, leftText, textYPos-(edge+(edge/3)), sPaint);
         	    			
-        	    			Paint aPaint = paintText(15, SwifteeApplication.BLACK);        	    			 
+        	    			Paint aPaint = paintText(15, COLOR.BLACK);        	    			 
         	    			
         	    			if (!isNullOrBlank(line_two_abs)){
         	    				
@@ -1496,7 +1497,7 @@ public class SuggestionView extends View implements Runnable {
         	    		
         	    		String text = text = (String) objectList[k][1];
         	    		
-        	    		Paint vPaint = paintText(20, SwifteeApplication.GRAY);
+        	    		Paint vPaint = paintText(20, COLOR.GRAY);
         	    		
         	    		int videoTextSize = (int) tPaint.measureText(text);
         	    		int module = reRowArray[k].height()-(edge/2);
@@ -1526,10 +1527,10 @@ public class SuggestionView extends View implements Runnable {
         	    			String likes = extraLikes[0];  
         	    		
 	        	    		int leftFrom = reRowArray[k].left + module + edge;		        	    		
-	        	    		Paint extraPaint = paintText(15, SwifteeApplication.BLACK);
+	        	    		Paint extraPaint = paintText(15, COLOR.BLACK);
 	        	    		canvasRows.drawText(likes, leftText, textYPos-edge, extraPaint);
 	        	    		
-	        	    		Paint paintLikes = paintText(17, SwifteeApplication.BLACK);
+	        	    		Paint paintLikes = paintText(17, COLOR.BLACK);
 	        	    		String by = "by " + extraLikes[1];
 	        	    		canvasRows.drawText(by, leftText, textYPos, paintLikes);
         	    		}

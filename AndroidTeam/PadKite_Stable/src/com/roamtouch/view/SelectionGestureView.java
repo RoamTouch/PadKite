@@ -2,7 +2,7 @@ package com.roamtouch.view;
 
 import org.metalev.multitouch.controller.MultiTouchController.PointInfo;
 
-import roamtouch.webkit.WebView;
+import android.webkit.WebView;
 
 import com.roamtouch.floatingcursor.FloatingCursor;
 
@@ -268,16 +268,16 @@ public class SelectionGestureView extends FrameLayout {
 		switch (mSelectionDirection)
 		{
 			case SEL_DIR_LEFT:
-				mFloatingCursor.executeSelectionCommand(WebView.EXTEND_SELECTION_LEFT);
+				//mFloatingCursor.executeSelectionCommand(WebView.EXTEND_SELECTION_LEFT);
 				break;
 			case SEL_DIR_RIGHT:
-				mFloatingCursor.executeSelectionCommand(WebView.EXTEND_SELECTION_RIGHT);
+				//mFloatingCursor.executeSelectionCommand(WebView.EXTEND_SELECTION_RIGHT);
 				break;
 			case SEL_DIR_DOWN:
-				mFloatingCursor.executeSelectionCommand(WebView.EXTEND_SELECTION_DOWN);
+				//mFloatingCursor.executeSelectionCommand(WebView.EXTEND_SELECTION_DOWN);
 				break;
 			case SEL_DIR_UP:
-				mFloatingCursor.executeSelectionCommand(WebView.EXTEND_SELECTION_UP);
+				//mFloatingCursor.executeSelectionCommand(WebView.EXTEND_SELECTION_UP);
 				break;
 		}
 	}
@@ -430,7 +430,7 @@ public class SelectionGestureView extends FrameLayout {
 				switch (selectionType)
 				{
 					case Paragraph:
-						mFloatingCursor.executeSelectionCommand(WebView.SELECT_PARAGRAPH);
+						//mFloatingCursor.executeSelectionCommand(WebView.SELECT_PARAGRAPH);
 						break;
 					case TextAutomatic:
 						updateAutoSelection(X, Y);

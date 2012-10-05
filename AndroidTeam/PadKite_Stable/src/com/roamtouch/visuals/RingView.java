@@ -4,7 +4,7 @@ import java.util.Hashtable;
 import java.util.Random;
 import java.util.Vector;
 
-import roamtouch.webkit.WebHitTestResult;
+import com.roamtouch.webhook.WebHitTestResult;
 
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.floatingcursor.FloatingCursor;
@@ -284,7 +284,7 @@ public class RingView extends View {
 	   	}	   	
 		
 
-		if (cType == WebHitTestResult.SRC_ANCHOR_TYPE) {
+		if (cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE) {
 			c.drawBitmap(bitmapSpinner, matrix, null);
 		}
 
@@ -363,7 +363,7 @@ public class RingView extends View {
 
 			//int tabHeight = SwifteeApplication.getTabHeight();
 			
-			if (cType == WebHitTestResult.SRC_ANCHOR_TYPE
+			if (cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE
 					|| cType == SwifteeApplication.TYPE_PADKITE_WINDOWS_MANAGER
 					|| cType == SwifteeApplication.TYPE_PADKITE_SERVER) {
 
@@ -377,7 +377,7 @@ public class RingView extends View {
 				xTabPos -= 1;
 			}
 
-			else if (cType == WebHitTestResult.TEXT_TYPE) {
+			else if (cType == WebHitTestResult.TYPE_TEXT_TYPE) {
 
 				params[0] = SwifteeApplication.TAB_TEXT;
 				params[1] = SwifteeApplication.TEXT_TAB_ORIENT_UP;
@@ -506,7 +506,7 @@ public class RingView extends View {
 		/**SPINNER 
 		 * BACKGROUND**/
 		
-		if (cType == WebHitTestResult.SRC_ANCHOR_TYPE
+		if (cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE
 			|| cType == SwifteeApplication.TYPE_PADKITE_WINDOWS_MANAGER ) {
 
 			Rect master = SwifteeApplication.getActiveRect();
@@ -532,7 +532,7 @@ public class RingView extends View {
 					
 					spBottom.right = (edge * SwifteeApplication.PADKITE_EXPANDED) + (edge/3) + 3;
 					
-					if (cType == WebHitTestResult.SRC_ANCHOR_TYPE 
+					if (cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE 
 							&& SwifteeApplication.getTabsAmountOf()>2
 							&& expanded) {
 						
@@ -648,7 +648,7 @@ public class RingView extends View {
 			bitmapSpinner = Bitmap.createBitmap(width, height,Bitmap.Config.ARGB_8888);
 			canvasSpinner = new Canvas(bitmapSpinner);
 
-			if (cType == WebHitTestResult.SRC_ANCHOR_TYPE) {
+			if (cType == WebHitTestResult.TYPE_SRC_ANCHOR_TYPE) {
 			
 				int linkStatus = mP.siteIdentifierLoaded(identifier);
 	
