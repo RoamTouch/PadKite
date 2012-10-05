@@ -55,10 +55,10 @@ import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import roamtouch.webkit.WebChromeClient;
-import roamtouch.webkit.WebHitTestResult;
-import roamtouch.webkit.WebView;
-import roamtouch.webkit.WebViewClient;
+import android.webkit.WebChromeClient;
+import com.roamtouch.webhoock.WebHitTestResult;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -83,7 +83,6 @@ import com.roamtouch.visuals.SuggestionController;
 import com.roamtouch.visuals.TextCursorHolder;
 import com.roamtouch.visuals.TipController;
 import com.roamtouch.visuals.SuggestionView.ArrowDownTask;
-import com.roamtouch.websocket.ChatServer;
 import com.roamtouch.database.DBConnector;
 import com.roamtouch.menu.CircularLayout;
 import com.roamtouch.menu.CircularTabsLayout;
@@ -227,8 +226,6 @@ public class FloatingCursor extends FrameLayout implements
 	public String currentPage;
 	public boolean isLandingPage;	
 	
-	private ChatServer chat;
-
 	public boolean isLandingPage() {
 		return isLandingPage;
 	}
@@ -826,6 +823,7 @@ public class FloatingCursor extends FrameLayout implements
 						}					
 						
 						mWebHitTestResult = mWebView.getHitTestResultAt(x, y);
+						
 						resultType = mWebHitTestResult.getType();					
 						
 						if (resultType != 0 && resultType != 1 && resultType != -1) {
@@ -1480,6 +1478,10 @@ public class FloatingCursor extends FrameLayout implements
 		invalidate();
 	}
 	
+	public void invalidateWebView(){
+		mWebView.invalidate();
+	}
+	
 	public void invalidateAll(){
 		mWebView.invalidate();	
 		sCtrl.invalidate();
@@ -1747,6 +1749,11 @@ public class FloatingCursor extends FrameLayout implements
 
 	private  AsyncTask touchInput;
 	private MotionEvent me;
+	
+	public void runTouchInput(int x, int y){
+		touchInput = new TouchInput();
+		touchInput.execute(x, y); 	
+	}
 	
 	Instrumentation inst = new Instrumentation();
 	
@@ -7334,6 +7341,229 @@ return false;
 
 		@Override
 		public void onPageFinished(WebView view, String url) {
+			
+			String hover = "javascript:" +
+					
+					"var overElem, lines;\n" + 
+					
+					"function hover(posX, posY){ \n" +
+							   
+					"	window.pBridge.outPut('posX, posY: ' + posX + ' ' + posY);\n" +  		
+					
+					"	overElem = document.elementFromPoint(posX, posY);\n" + 	
+						
+					"	pBridge.outPut('overElem.nodeName: ' + overElem.nodeName);\n" +  
+						
+					"	if ( overElem.nodeName=='A' || overElem.nodeName=='IMG' || overElem.nodeName=='P' ) {\n" +						   	
+				
+					"		var id = overElem.getAttribute('data-identifier');\n" +		
+							
+					"		pBridge.outPut('id: ' + id);\n" +   
+						
+					"		if ( id===undefined || id==='' || id===null ){\n" +
+					
+					"			overElem.setAttribute('data-identifier', randomFromTo(500,5000));\n" +
+					
+					"		}\n" +							
+								
+					"		pBridge.setHitTestRestultJavaScript(" +
+					
+					"			findPosX(overElem)," +
+					
+					"			findPosY(overElem)," +
+					
+					"			overElem.offsetWidth," +
+					
+					"			overElem.offsetHeight," +
+					
+					"			overElem.nodeName," +
+					
+					"			overElem.getAttribute('data-identifier')," +
+					
+					"			overElem.href," +
+					
+					"			overElem.src," +
+					
+					"			overElem.innerHTML" +
+					
+					"		);\n" +						
+								
+					"	}\n" +
+					
+					"		else {\n" +
+					
+					"			pBridge.setCursorToNormal();\n" +
+					
+					"		}\n" +
+					
+					"}\n" +
+					
+					"function getTextByLineNumber(lineNumber){\n" +
+						"return lines[lineNumber];\n" +
+					"}\n" +
+						
+
+					"function randomFromTo(from, to){\n" +
+				       "return Math.floor(Math.random() * (to - from + 1) + from);\n" +
+				    "}\n" + 
+				  
+				 	/**ABSOLUTE POSITION OF ELEMENTS**/
+					"function findPosX(obj){\n" + 
+						"var curleft = 0;\n" + 
+						"if(obj.offsetParent)\n" +
+							"while(1)\n" + 
+							"{\n" +
+							  "curleft += obj.offsetLeft;\n" +
+							  "if(!obj.offsetParent)\n" +
+								"break;\n" +
+							  "obj = obj.offsetParent;\n" +
+							"}\n" +
+						"else if(obj.x)\n"+
+							"curleft += obj.x;\n" +
+						"return curleft;\n" +
+					"}\n" +
+
+					"function findPosY(obj){\n"+
+				    "var curtop = 0;\n" +
+				    "if(obj.offsetParent)\n" +
+				        "while(1){\n" +
+				          "curtop += obj.offsetTop;\n" +
+				          "if(!obj.offsetParent)\n" +
+				            "break;\n" +
+				          "obj = obj.offsetParent;\n" +
+				        "}\n" +
+				    "else if(obj.y)\n" +
+				        "curtop += obj.y;\n" +
+				    "return curtop;\n" +
+				  "}\n" + 
+				    
+				  	"	function selectText() {\n" +
+				  
+				  	"	var selection = window.getSelection();\n" + 
+				  		
+					"	var range = document.createRange();\n" +
+					    
+					"	range.selectNodeContents(overElem);\n" +
+					    
+					"	selection.removeAllRanges();\n" + 
+					    
+					"	selection.addRange(range);\n"+			
+					    
+				  	"}\n" +   
+
+			
+				 	"function setTextHighlightLines(){\n" +	
+				 					
+					"	var identifier = overElem.getAttribute('data-identifier');\n" + 
+						
+					"	var originalInner = overElem.innerHTML;\n" + 
+						
+					"	var array = overElem.innerHTML.split(\" \");\n" + 
+						
+					"	var length = array.length;\n" + 
+						
+					"	var newInner = \"\";\n" +
+						
+					"	var idOr;\n" + 						
+						
+					"	for (i=0; i<length; i++){\n" +
+						
+					"		idOr = identifier + \"\" + i;\n" + 
+							
+					"		newInner += \"<span id='\" + idOr + \"'>\"+array[i]+\"</span> \";\n"+
+							
+					"	}\n" +
+					
+					"	overElem.innerHTML = newInner;\n" +
+						
+					"	var sampleY = identifier+\"0\";\n" +
+						
+					"	var sample = document.getElementById(sampleY);\n" +
+						
+					"	var initY = getYOffset(sample);\n" +  
+						
+					"	var idF;\n" +		
+						
+					"	var lines = \"\";\n" +
+						
+					"	var line;\n" +
+						
+					"	var top=0;\n" + 
+						
+					"	var lineNumber=0;\n" +
+						
+					"	var y=0;\n" +
+						
+					"	var highlighted = \"\";\n" + 
+						
+					"	var sPIds = [];\n" +
+						
+					"	pBridge.outPut('hightlight: llega_ length ' + length);\n" +
+						
+					"	for (j=0; j<length; j++){\n"+
+						
+					"		idF = identifier + \"\" + j;\n" +					
+					"		var f = document.getElementById(idF);\n" + 	
+					
+					"		idS = identifier + \"\" + (j+1);\n" +
+					"		var n = document.getElementById(idS);\n" +
+					"		yN = getYOffset(n);\n" +			
+							
+					"		lines += array[j] + \" \";\n" +
+							
+					//"		pBridge.outPut('hightlight: -----------------------------------' );\n" +
+					//" 		pBridge.outPut('hightlight: lines: ' + lines  );\n" +	
+					//"		pBridge.outPut('hightlight: yN: ' + yN  + ' initY: ' + initY + ' array: ' +  array[j] + ' idF: ' +idF);\n" +
+							
+					"		if ((yN>initY) || (j==(length-1) && yN<=initY)){\n" +							 
+								
+					"			var idSp = \"row_\" + lineNumber + \"_\" + identifier;\n" +								
+								
+					"			var spanned = \"<span id='\" + idSp +  \"'>\" + lines  + \"</span>\";\n" +			
+								
+					"			sPIds.push(\" + spanned \");\n" +
+																							
+					"			highlighted += spanned;\n" +
+								
+					"			pBridge.outPut('hightlight: ' + highlighted);\n" +
+								
+					"			lines = \"\";\n" +
+								
+					"			initY = yN;\n" +
+								
+					"			lineNumber++;\n" +
+					
+					"		pBridge.outPut('hightlight: ::::::::::::::::::::::::::::::::::::::::::::::::::::' );\n" +
+								
+					"		}\n" +		
+							
+					"	}\n" +
+						
+					"	pBridge.setTextHightlightIds(sPIds);\n" +
+						
+					"	overElem.innerHTML = highlighted;\n" +
+						
+					"}\n\n" +
+					
+					"function getYOffset(el) {\n" +    
+						"var _y = 0;\n" + 
+						"while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {\n" +			
+							"_y += el.offsetTop - el.scrollTop;\n" +		
+							"el = el.offsetParent;\n" + 
+						"}\n" + 
+						"return _y;\n" +	
+					"}\n\n" +
+						
+					"function setLineStyleById(id, color){\n" +
+						"var sP = document.getElementById(id);\n" +
+						"pBridge.outPut('hightlight: ' + id + ' ' + sP);\n" +  
+						"sP.setAttribute(\"style\",\"width: 500px; background-color: \" + color + \";\");\n" +					
+					"}\n\n";
+			
+	
+			
+			view.loadUrl(hover);
+			
 
 			if (loading) {
 

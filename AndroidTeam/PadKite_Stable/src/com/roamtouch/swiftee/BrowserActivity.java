@@ -76,8 +76,6 @@ import com.roamtouch.visuals.SuggestionController;
 import com.roamtouch.visuals.TextCursorHolder;
 import com.roamtouch.visuals.TipController;
 import com.roamtouch.view.TutorArea;
-import com.roamtouch.websocket.ChatServer;
-import com.roamtouch.websocket.RemoteFlow;
 import com.roamtouch.menu.WindowTabs;
 
 import com.roamtouch.utils.SDInfoReceiver;
@@ -142,10 +140,10 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.inputmethod.InputMethodManager;
-import roamtouch.webkit.WebHitTestResult;
-import roamtouch.webkit.WebSettings;
-import roamtouch.webkit.WebView;
-import roamtouch.webkit.WebViewClient;
+import roamtouch.webhoock.WebHitTestResult;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -862,6 +860,9 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
  		rCtrl.setParent(this, floatingCursor, webView); 
  		sCtrl.setParent(this, floatingCursor, webView); 		
  		tCtrl.setParent(this, floatingCursor, webView);	
+ 		
+ 		// JavaScript ProxyBridge Parent
+ 		pBridge.setParent(this, floatingCursor, rCtrl);
  		
  		ScreenLocation sLoc = new ScreenLocation();
  		sLoc.setParent(this, floatingCursor);
@@ -3581,191 +3582,21 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		int inputX;
 		public int getInputY() {
 			return inputY;
-		}		
+		}
+		
+		public int setInputY(int i) {
+			inputY = i;
+		}
 
 		int inputY;
 		public int getInputX() {
 			return inputX;
 		}
-	 
-		/**
-		 * JScript Bridge 
-		 * On onPageFinished at FloatingCursor a Java script snippet is loaded. 
-		 * Also on FloatingCursor set the snippet cords mWebView.loadUrl("javascript:whereInWorld("+event.getX()+","+event.getY()+")");		
-		 */
-		public class ProxyBridge extends Activity {
-												
-			public ProxyBridge() {
-				// TODO Auto-generated constructor stub
-			}
-			
-			@Override
-			protected void onCreate(Bundle savedInstanceState) {
-				super.onCreate(savedInstanceState);
-			}
-			
-			public void currentSearch(String currentSearch){
-				floatingCursor.setCurrentSearch(currentSearch);
-			}	
-			
-			private String phrase = "";			
-			Handler proxyHandler = new Handler();
-			String[] inputTextArray = new String[3];
-			
-			public void getKeyboardInput(String[] inputTextArray){			
-				
-				//Javascript Char Codes 
-				//http://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes
-				
-				SwifteeApplication.setPadKiteInputSpinnerStatus(SwifteeApplication.SUGGESTION_DATA_CALLED);
-				
-				this.inputTextArray = inputTextArray;
-				proxyHandler.removeCallbacks(proxyRunnable);
-				proxyHandler.postDelayed(proxyRunnable, 1000);			
-				
-			}
-			
-			Runnable proxyRunnable = new Runnable() {
-				
-			    public void run() {			    	
-			    	
-			    	String keyNum 		= inputTextArray[0];		
-					String letter 		= inputTextArray[1];				
-					String phrase 		= inputTextArray[2]+letter;
-					
-					if (phrase.equals("")){
-						phrase = letter; 
-					}
-			    	
-			    	if ( keyNum.equals("13") ) {
-			    		
-						try{
-							if (phrase.equals("\r")){
-								floatingCursor.setEmptyInput(true);
-								inputBoxText = "";
-							}
-						} catch (Exception e){
-							Log.v("e", ""+e);
-						}
-						
-					}  else {
-						
-						inputBoxText = phrase;					
-						
-						floatingCursor.setEmptyInput(false);
-						
-						if(!floatingCursor.isPasteTextIntoInputText()){					
-							
-							if (keyNum.equals("32")){
-								phrase.substring(0, phrase.length() - 1);
-							}	
-							
-							launchSuggestionSearch(inputBoxText);
-							//proxyHandler.postDelayed(proxyRunnable, 3000);
-							
-						} else {
-							
-							floatingCursor.setPasteTextIntoInputText(false);
-							
-						}
-					}    	
-			    	
-			    	proxyHandler.removeCallbacks(proxyRunnable);
-			    }
-			};		
-			
-			Runnable inputRunnable = new Runnable() {
-				
-			    public void run() {			    	
-			    	proxyHandler.postDelayed(proxyRunnable, 3000);			    	
-			    	proxyHandler.removeCallbacks(proxyRunnable);
-			    }
-			};	
-			
-			public void getText(String text){
-				SwifteeApplication.setInputText(text);			
-			};	
-			
-			public void moveHitFontHeight(String tSize_1, String tSize_2){
-				int size = 0;
-				if (!tSize_1.equals("")){
-					String[] splSize = tSize_1.split("px");
-					String sizeStr = splSize[0];
-					size = Integer.parseInt(sizeStr);					
-				} else if (!tSize_2.equals("")){
-					size = Integer.parseInt(tSize_2);
-				}
-				SwifteeApplication.setHitTestFontSize(size);
-			}		
-			
-			public void passedData(String[] passed){
-				Log.v("passed", "" + passed[0] + " " + passed[1] + " " + passed[2] );		
-			};
-			
-			int logoX;
-			int logoY; 
-			int logoWidth; 
-			int logoHeight;	
-			
-			int imputFeft;
-			int inputTop;
-			int screenWidth;
-			int screenHeight;	
-			
-			public void getJavascriptVariables(String[] inputArray){	
-				
-				imputFeft = Integer.parseInt(inputArray[0]);
-				inputTop = Integer.parseInt(inputArray[1]);
-				screenWidth = Integer.parseInt(inputArray[2]);
-				screenHeight = Integer.parseInt(inputArray[3]);										
-				SwifteeApplication.setLandingInputTop(inputTop);				
-				
-			}				
-			
-			public void fCContVisibility(String status){
-				boolean is = false;
-				if (status.equals("hidden")){
-					is=true;
-				} else if (status.equals("visible")){ 
-					is=false;
-				}
-				SwifteeApplication.setLandingShrinked(is);
-			}
-			
-			int inX;
-			int inY;
-			
-			
-			public void inputTouch(String inputXPos, String inputYPos){
-					
-				inX = Integer.parseInt(inputXPos) + logoX + logoWidth;
-				inputX = inX;
-				inY = Integer.parseInt(inputYPos) + 20;
-				inputY = inY;
-				
-				runOnUiThread(new Runnable() {		        	
-		        	public void run() {        	
-		        		floatingCursor.loadPage("javascript:setInputFocus()");	
-		        		webView.invalidate();
-		        		floatingCursor.invalidateAll();	        		
-		        		touchInput = new TouchInput();
-		        		touchInput.execute(inX, inY); 		        		
-		            }
-		        });				
-				
-					
-			}	
-			
-			public void what(String[] my){
-				Log.v("my",""+my[0]+" "+my[1]+" "+my[2]+" "+my[3]+" "+my[4]);				
-			}
-			
-			public void flat(String f){
-				String flat = f;		
-				Log.v("flat", ""+f);
-			}
-			
-		}		
+		
+		public int setInputX(int i) {
+			inputX = i;
+		}
+
 		
 		 public AsyncTask touchInput = new TouchInput();   
 		    

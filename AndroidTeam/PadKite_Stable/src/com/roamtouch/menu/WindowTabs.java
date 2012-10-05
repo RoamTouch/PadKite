@@ -5,7 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.Vector;
 
-import roamtouch.webkit.WebView;
+import android.webkit.WebView;
 import com.roamtouch.floatingcursor.FloatingCursor;
 import com.roamtouch.swiftee.BrowserActivity;
 import com.roamtouch.swiftee.R;

@@ -1,6 +1,6 @@
 package com.roamtouch.menu;
 
-import roamtouch.webkit.WebView;
+import android.webkit.WebView;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;

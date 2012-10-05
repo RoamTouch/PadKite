@@ -26,7 +26,7 @@ import android.util.Log;
 import org.acra.*;
 import org.acra.annotation.*;
 
-import roamtouch.webkit.WebHitTestResult;
+import com.roamtouch.webhoock.WebHitTestResult;
 
 @ReportsCrashes(formKey = "dFZDbUZHbnVGamZqdDJQQUlZX2tzc1E6MQ") 
 
@@ -100,6 +100,11 @@ public class SwifteeApplication extends Application{
 	public static int getSingleFingerSteps() {return single_finger_steps; }
     public static void setSingleFingerSteps(int sfs) { single_finger_steps = sfs; }    
 	
+    
+  //HitTest innerHTML
+    private static String innerHTML;   
+	public static String getInnerHTML() {return innerHTML; }
+    public static void setInnerHTML(String iH) { innerHTML = iH; }
     
     /**ORIENTATION**/
     public static final int ORIENTATION_LANDSCAPE					= 3001;
