@@ -1,0 +1,509 @@
+//******************************************************************************** 
+//**	Copyright (c) 2011, Roaming Keyboards LLC doing business as RoamTouch®	**	       
+//**	All rights reserved.													**
+//********************************************************************************
+package com.roamtouch.landingpage;
+
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Environment;
+import android.util.Log;
+
+
+import com.google.gson.Gson;
+import com.roamtouch.database.DBConnector;
+import com.roamtouch.swiftee.BrowserActivity;
+import com.roamtouch.swiftee.SwifteeApplication;
+import com.roamtouch.utils.Base64;
+
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+
+
+public class LandingPage {
+
+	private static  String landing = "";
+	public static ArrayList<String> popSites = new ArrayList<String>();
+	public static ArrayList<String> history = new ArrayList<String>();
+	public static ArrayList<String> windows_set = new ArrayList<String>();
+		
+	SimpleDateFormat formatter = new SimpleDateFormat("EEE, MMM d, yyyy h:mm a");
+	
+	private static BrowserActivity mParent = null;	
+	
+	private SwifteeApplication appState;
+	
+	DBConnector database;
+	
+	public LandingPage(BrowserActivity parent) 	{		
+		mParent = parent;	
+		database = appState.getDatabase();
+	}
+	
+	public String generateLandingPageString() {	
+		
+		String padkite = "PadKite is the first multitouch mobile mouse that allows " +
+				"you to quickly identify the content below your finger and fast operate " +
+				"with gestures to perform actions. Drag the circle to start operating. Have fun!.";
+		
+		String mailBoby = "Hi,\n\n" +
+				"My feedback is\n\n" +
+				"Regards,\n Customer";
+		
+		String uid = "sdfsadfds"; 
+		String panelDesc = "PERSONALIZED PANEL";
+					
+		int id = 1;
+		
+		/*String tabData = "?tabName=EXTRAS" 
+				+"&title0=Public%20Relations"
+				+"&url0=www.publicrelations.com"
+				+"&title1=Legal%20Information"
+				+"&url1=www.legalinformation.com"
+				+"&title2=Website%20Feedback"
+				+"&url2=www.websitefeedback.com";*/	
+		
+		String panelImagePath = BrowserActivity.IMAGES_ASSETS_PATH+"/personalized.png";
+		
+		landing += "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n"
+			+"<html>\n"
+			+"<head>\n"
+			+"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n"
+			+"<title>Landing Page</title>\n"
+			
+			/**SCRIPT**/		
+			+"<script type=\"text/javascript\">\n"
+			+"window.addEventListener (\"load\", function () {\n"
+			+" 	var input = document.getElementById(\"pkinput\");\n"            
+			+"	pBridge.getLandingInputTop(input.offsetTop, input.offsetHeight);\n"	
+            +"}, false);\n"			
+			+"document.addEventListener(\"backbutton\", backKeyDown, true);\n" 
+			+"var type;\n"				
+			+"function load(){\n"
+			+"	var theUrl = document.forms[\"urlform\"].elements[\"box\"].value;\n"
+			+"	pBridge.currentSearch(theUrl);\n"			
+			+"	document.forms['urlform'].elements['box'].value=\"\";\n"
+			+"	type=\"\";\n"
+			+"	theUrl=\"\";\n"
+			+"	return true;\n"
+			+"}\n"		
+			+"function sendType(t){\n"
+			+"	type = t;\n"
+			+"	document.forms['urlform'].elements['box'].focus();\n"
+			+"}\n"
+			+"function handleKeyPress(event){\n"
+			+"	var char;\n"
+		    +"	char = String.fromCharCode(event.keyCode);\n"
+		    +"	var url = document.forms[\"urlform\"].elements[\"box\"].value;\n"	
+			+"	pBridge.getKeyboardInput(url, char, event.keyCode);\n"		    
+			+"}\n"
+			+"function clearInput(){\n"
+			+"	document.forms[\"urlform\"].elements[\"box\"].value='';\n"
+			+"}\n"
+			+"function getInputText(){\n"
+			+"	var text = document.forms[\"urlform\"].elements[\"box\"].value;\n"
+			+"	pBridge.getText(text);\n"
+			+"}\n"			
+			+"function backKeyDown(){\n" 
+			+"	pBridge.backButtonPressed();\n"
+			+"}\n"				
+			+"var switchInputImage = function(img) {\n"
+			+" 	var pI = document.getElementById(\"panelimage\");\n"
+		    +"  pI.setAttribute(\"src\", img);\n"
+		    +"	pBridge.passedImage(img);\n"
+			+"}\n"
+		    +"</script>\n"
+			
+		    /**STYLES**/	
+			+"<STYLE type=\"text/css\">\n" 
+			+".pk_input{\n" 
+			+"	position:absolute;\n" 
+			+"	top:45px;\n" 			
+			+"	width:90%;\n"			
+			+"	left:5%;\n"
+			+"	right:5%;\n"
+			+"	height:30px;\n" 
+			+"	font-size:20px;\n"
+			+"}\n"			
+			
+			+".pk_panel{\n" 
+			+"	position:absolute;\n" 
+			+"	top:200px;\n" 		
+			+"	width:90%;\n" 
+			+"	height:30px;\n" 
+			+"	left:5%;\n"
+			+"	right:5%;\n"
+			+"}\n"
+			
+			+".pk_windows_set{\n" 
+			+"	position:absolute;\n" 
+			+"	top:240px;\n" 		
+			+"	width:90%;\n"		 
+			+"}\n"
+			
+			+".pk_popular_sites{\n" 
+			+"	position:absolute;\n" 
+			+"	top:280px;\n" 		
+			+"	width:100%;\n"		 
+			+"}\n"
+			+".pk_feedback_address{\n" 
+			+"	position:absolute;\n" 
+			+"	top:400px;\n" 		
+			+"	width:100%;\n"		 
+			+"}\n"			
+			+"</style>\n"		
+			+"</head>\n"
+			
+			/**BODY**/
+			+"<body>\n"
+			
+			//PK Input					
+			+"	<form id=\"urlform\" action=\"#\" onsubmit=\"return load()\">\n"				
+			+"		<input id=\"pkinput\" class=\"pk_input\" name=\"box\" type=\"text\" align=\"center\" onkeypress=\"handleKeyPress(event)\"></input>\n"						
+			+"	</form>\n"			
+			
+			//PK Panel			 
+			+"	<a href=\"padkite.local.panel#"+uid+"\" align=\"center\">\n" 
+			+"		<img class=\"pk_panel\" id=\"panelimage\" src=\""+panelImagePath+"\">\n" 
+			+"	</a>\n"		
+			
+			//PK Windowns Set
+			+"<div class=\"pk_windows_set\" align=\"center\">" 
+			+"	<h5>Windows Sets</h5>\n"
+			+"	<br><tr>" +
+			"		<td><h5>My Windows Sets</h5>";
+					String myWindowsSets = generateDefaultWindowsSets(1);	
+					landing += myWindowsSets + "</td><td>";
+					String defaultWindowsSets = generateDefaultWindowsSets(0);	
+					landing += defaultWindowsSets + 
+					"</td><tr>"				
+			+"  </tr>"
+			+"</div>\n"		
+			
+			//PK Popular Sites
+			//+"<div class=\"pk_popular_sites\"><h6>Popular Sites are the ones that are visited pretty much throught the </h6>\n";						
+			//	String popularString = generatePopularSitesString();			
+			//	landing += popularString		
+			//+"</div>"
+			
+			//PK Feedback Address
+			+"<div class=\"pk_feedback_address\">" 
+			+"	<table>"
+			+"		<p align=\"center\"><A HREF=\"mailto:feedback@roamtouch.com?&subject=PadKite Feddback\">Send feedback</A></p>\n"
+			+"		<p align=\"center\">" 
+			+"			<font size=\"1\">423 Broadway #522 Millbrae, California 94030-1905</font>\n"
+			+"			<font size=\"1\" align=\"center\">Copyright © 2010 by RoamTouch™ All rights reserved.</font>" 
+			+"		</p>\n"			
+			+"	</table>"
+			+"</div>\n"	
+			
+			/**END BODY**/
+			+"</body>\n"			
+			+"</html>\n";			
+			
+		return landing;
+	}	
+	
+	public String getLandingString(){
+		return landing;
+	}
+	
+	public void setLandingString(String lp){
+		landing = lp;
+	}	
+	
+	public String generatePopularSitesString(){	
+		String popularSites = "";
+		int popSize = popSites.size();
+		int block = popSize/3;	
+		boolean block1=true, block2=true, block3=true;
+		if (popSize>0){
+			popularSites += "<div><table><tr align=\"center\"><font size=2>";		
+			for (int j = 0; j < popSize ; j++) {
+				String pop = popSites.get(j);		    	
+		    	StringTokenizer pTok = new StringTokenizer(pop, "|");
+		    	String pPage = pTok.nextToken();
+		    	String pUrl = pTok.nextToken();		
+				if (j<block){
+					if (block1){
+						popularSites += "<td>";
+						block1=false;
+					}					
+					popularSites += "<a href=\""+pUrl+"\">"+pPage+"</a><br>";
+					if (j==(block-1)){
+						popularSites += "</td>";
+					}
+				}
+				if ( j<(block*2) && j>block){
+					if (block2){
+						popularSites += "<td>";
+						block2=false;
+					}					
+					popularSites += "<a href=\""+pUrl+"\">"+pPage+"</a><br>";
+					if (j==((block*2)-1)){
+						popularSites += "</td>";
+					}
+				}
+				if (j<popSize && j>(block*2)){
+					if (block3){
+						popularSites += "<td>";
+						block3=false;
+					}					
+					popularSites += "<a href=\""+pUrl+"\">"+pPage+"</a><br>";
+					if (j==(popSize-1)){
+						popularSites += "</td>";
+					}
+				}
+			}
+			popularSites += "</font></tr></table></div>";
+		}		
+		return popularSites;
+	}
+	
+	public String generateDefaultWindowsSets(int defa){		
+		String windowsSets = "";		
+		Cursor wsC = database.getWindowsSets(defa);	
+		if (wsC!=null){			
+			int count = wsC.getCount();
+			wsC.moveToPosition(0);    	
+	    	int num = 0;	    	    	
+			while (!wsC.isAfterLast() && num < count){			
+	 			String id = wsC.getString(0);
+	 			String name = wsC.getString(1);		 			
+	 			windowsSets += "<a href=\"padkite.local.windows#"+id+"\">"+name+"</a><br>";	 			
+	 			wsC.moveToNext();	 							
+			}			
+			wsC.close();	    		   	
+    	}    
+		return windowsSets;	
+	}
+	
+	/*public String generateWindowsSets(){	
+		String windowsSets = "";		
+		Cursor wsC = database.getWindowsSets();	
+		if (wsC!=null){			
+			int count = wsC.getCount();
+			wsC.moveToPosition(0);    	
+	    	int num = 0;	    	    	
+			while (!wsC.isAfterLast() && num < count){			
+	 			String id = wsC.getString(0);
+	 			String name = wsC.getString(1);		 			
+	 			windowsSets += "<a href=\"padkite.local.windows#"+id+"\">"+name+"</a><br>";	 			
+	 			wsC.moveToNext();	 							
+			}			
+			wsC.close();	    		   	
+    	}    
+		return windowsSets;
+	}*/
+	
+	private static boolean isNullOrBlank(String s){
+	  return (s==null || s.trim().equals("") || s.trim().equals("null"));
+	}
+	
+	public boolean loadRemoteData(int resource, String search){    	
+    	String url = null;    	
+    	if (resource == 1 || resource == 2 || resource == 3){
+    		url = "http://roamtouch.com/padkite/app/json/"+search;    		
+    	} //else {
+    		//url = SwifteeApplication.getTwitterSearch()+search;
+    	//}   		
+    	Log.v("URL", url);
+        InputStream source = retrieveStream(url);        
+        Vector wV = new Vector();
+        boolean managerCheck = false;
+        if(source == null) {
+        	return false;
+        }
+        Gson gsonName = new Gson();      
+        Reader nameReader = new InputStreamReader(source);   
+        if (nameReader==null){
+        	return false;
+        }
+        NameResponse responseName = gsonName.fromJson(nameReader, NameResponse.class);         
+        List<Result> resultsName = responseName.results;         
+        //if (responseName.results.size()<6 && resource == 3){ return false; }   
+        int k = 0;
+        for (Result result : resultsName) {
+        	switch (resource) {
+	        	case 1:
+	        		String sett = null;
+	        		sett = result.r_setting;
+	        		String data = null;
+	        		data = result.r_data;      	  
+	        		setSettings(sett, data);	            	
+	        		break;
+	        	case 2: 
+	        		String pPage = null;
+	        		pPage = result.p_Page;
+	        		String pUrl = null;
+	        		pUrl = result.p_Url;      
+	        		String pTooltip = null;
+	        		pTooltip = result.p_Tooltip;
+	        		String all = pPage+"|"+pUrl+"|"+pTooltip;
+	            	//Log.v("ENTRA", "all: "+all);
+	            	popSites.add(all);
+	        		break;
+	        	case 3:
+	        		String wSet = result.w_Set;        	
+	        		String wTitle = result.w_Title;
+	        		String wUrl = result.w_Url;
+	        		String wBitmap = result.w_Bitmap;
+	        		Object[] wData = new Object[4];
+	        		wData[0] = wSet;
+	        		wData[1] = wTitle;
+	        		wData[2] = wUrl;
+	        		wData[3] = wBitmap;
+	        		wV.add(wData);
+	        		managerCheck = true;
+	        		break;        		
+	        }        	
+        } 
+        if (managerCheck){
+        	
+		    for (int i=0; i<wV.size(); i++){
+		    	
+				Object[] data = (Object[])wV.get(i);
+				String setName = (String) data[0];    
+				int checkWindowsSet = database.existWindowsSetByName(setName);				
+				String sTitle = (String) data[1];
+				String sUrl = (String) data[2];
+				String sBitmap = (String) data[3];    
+				int setId = 0;
+				if (checkWindowsSet==0) {
+					setId = database.insertWindowSet(setName, 0);					
+				} else {
+					setId = checkWindowsSet;
+				}
+				boolean exist = database.getWindowsManagerListByIdAndTitle(setId, sTitle);
+				if (!exist){
+					Cursor c = database.insertTabs(setId, sTitle, sUrl, sBitmap);
+					/*if (c!=null){			
+						int count = c.getCount();
+						c.moveToPosition(0);
+						int num = 0;			
+						while (!c.isAfterLast() && num < count){			
+							String id = c.getString(0);
+							String title = c.getString(1);
+							String ur = c.getString(2);
+							num++;						
+							c.moveToNext();		
+						}		
+						c.close();
+					}*/
+				}
+			}
+        }
+        return true;
+    }
+	
+	public boolean remoteConnections(){		
+		boolean as = false;
+		boolean pop = false;		
+		boolean ws = false;
+		
+		as = loadRemoteData(1, "urlAssets.json");		
+		//if (as){ pop = loadRemoteData(2, "popularSites.json"); }
+		if (pop){ ws = loadRemoteData(3, "windowSets.json"); }
+		
+		//if (pop){ tw = loadRemoteData(3, SwifteeApplication.twitter_key); }
+		
+		if(ws)return ws;
+		else return false;
+	}   
+    
+    private static void setSettings(String sett, String data){
+    	if (sett.equals("message") && !data.equals("")){ 
+    		//DIALOG HERE
+    	}    	
+    	if (sett.equals("twitter_search")){    	
+    		SwifteeApplication.setTwitterSearch(data);
+    	} else if (sett.equals("twitter_key")) {
+    		SwifteeApplication.setTwitterKey(data);   	
+    	} else if (sett.equals("google_search")) {
+    		SwifteeApplication.setGoogleSearch(data);    
+    		SwifteeApplication.setActiveSearch(SwifteeApplication.WEB_SEARCH);
+    	} else if (sett.equals("google_image")) {
+    		SwifteeApplication.setImageSearch(data);
+    	} else if (sett.equals("youyube_search")) {
+    		SwifteeApplication.setYouTubeSearch(data);
+    	} else if (sett.equals("google_suggestion")) {
+    		SwifteeApplication.setGoogleSuggestion(data);
+    	} else if (sett.equals("wiki_suggestion")) {   		
+    		String lang = Locale.getDefault().getLanguage();		
+    		data = "http://" + lang + data;   		    		
+    		SwifteeApplication.setWikipediaSuggestion(data);
+    	} else if (sett.equals("youtube_suggestion")) {   		
+    		SwifteeApplication.setYouTubeSuggestion(data);
+    	} else if (sett.equals("youtube_watch")) {   		
+    		SwifteeApplication.setYouTubeWatch(data);
+    	} else if (sett.equals("wiki_search")) {   		
+    		SwifteeApplication.setWikiSearch(data);
+    	}
+    }
+    
+    private InputStream retrieveStream(String url) {  
+		  HttpParams params = new BasicHttpParams();
+	      HttpConnectionParams.setConnectionTimeout(params, 10 * 1000);
+	      HttpConnectionParams.setSoTimeout(params, 10 * 1000);
+	      HttpConnectionParams.setSocketBufferSize(params, 8192);
+	      DefaultHttpClient client = new DefaultHttpClient(params);     	   
+        HttpGet getRequest = new HttpGet(url);         
+        try {           
+           HttpResponse getResponse = client.execute(getRequest);
+           final int statusCode = getResponse.getStatusLine().getStatusCode();           
+           if (statusCode != HttpStatus.SC_OK) { 
+              //Log.w(getClass().getSimpleName(), "Error " + statusCode + " for URL " + url); 
+              return null;
+           }
+           HttpEntity getResponseEntity = getResponse.getEntity();
+           return getResponseEntity.getContent();           
+        } 
+        catch (IOException e) {
+           getRequest.abort();
+           //Log.w(getClass().getSimpleName(), "Error for URL " + url, e);
+        }        
+        return null;       
+    };	
+       
+    public static boolean fileExists(Context context, String f) {
+        String[] filenames = context.fileList();
+        for (String name : filenames) {
+          if (name.equals(f)) {
+            return true;
+          }
+        }
+        return false;
+    };  
+    
+    public static void setHistory(ArrayList<String> hist){ 
+    	history = hist;
+    }
+    
+   
+  
+}; //End of LandingPage Class
+
+
