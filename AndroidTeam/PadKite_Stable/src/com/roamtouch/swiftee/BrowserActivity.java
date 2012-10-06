@@ -23,7 +23,7 @@ import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.acra.ErrorReporter;
+//import org.acra.ErrorReporter;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -894,9 +894,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		mTutor.setVisibility(View.INVISIBLE);	
 			
 		//This is a dummy user entry...neeed to remove after
-		appState.getDatabase().registerUser("dummy", "dummy", "dummy@example.com");		
-		
-		appState.getDatabase().checkCreatedTables();
+		//appState.getDatabase().registerUser("dummy", "dummy", "dummy@example.com");		
+		//appState.getDatabase().checkCreatedTables();
 		
 		//OJO CON ESTO
 		appState.getDatabase().deleteAllBookmarks();

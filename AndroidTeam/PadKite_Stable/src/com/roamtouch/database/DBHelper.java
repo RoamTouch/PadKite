@@ -1,11 +1,13 @@
 package com.roamtouch.database;
 
 import com.roamtouch.swiftee.BrowserActivity;
+import com.roamtouch.swiftee.SwifteeHelper;
 
 import android.content.Context;  
 import android.database.Cursor;  
 import android.database.sqlite.SQLiteDatabase;  
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Handler;
 import android.util.Log;
 
   
@@ -13,18 +15,22 @@ public class DBHelper extends SQLiteOpenHelper {
   
     // Define the version and database file name  
     private static final String DB_NAME = "padkiteDB.db";  
-    private static final int DB_VERSION = 1;  
+    private static final int DB_VERSION = 5; 
+    
+    DBConnector dbConnector;
     
     private SQLiteDatabase db;  
-  
+    
+    Handler mHandler = new Handler();
+    
     // Constructor to simplify Business logic access to the repository   
-    public DBHelper(Context context) {  
+    public DBHelper(Context context, DBConnector db) {  
   
         super(context, DB_NAME, null, DB_VERSION);  
                 // Android will look for the database defined by DB_NAME  
                 // And if not found will invoke your onCreate method  
         //this.db = this.getWritableDatabase();  
-  
+        dbConnector = db;
     }  
   
     @Override  
@@ -36,9 +42,9 @@ public class DBHelper extends SQLiteOpenHelper {
         // This schema creates a very simple user table, in order  
         // Store user login credentials  
     	
-    	
+    	dbConnector.checkCreatedTables(db);
     
-    	//Log.v("ENTRA", "ver");
+     	
        /* db.execSQL(String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT, %s TEXT)",  
                         UserTable.NAME, UserTable.COL_ID,  
                         UserTable.COL_USERNAME, UserTable.COL_PASSWORD));*/
@@ -60,5 +66,17 @@ public class DBHelper extends SQLiteOpenHelper {
     	// Later when you change the DB_VERSION   
         // This code will be invoked to bring your database  
         // Upto the correct specification  
+    	 
+    	mHandler.postDelayed(new Runnable(){
+    		 
+         	public void run(){
+         		
+         		dbConnector.checkCreatedTables(null);	
+         		
+         	}
+         }, 500);    	 
+    	
+    	
+    	
     }  
 }

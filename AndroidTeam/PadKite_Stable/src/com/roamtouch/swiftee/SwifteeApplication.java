@@ -23,12 +23,12 @@ import android.os.Environment;
 import android.util.Log;
 //import android.os.Environment;
 
-import org.acra.*;
-import org.acra.annotation.*;
+//import org.acra.*;
+//import org.acra.annotation.*;
 
 import com.roamtouch.webhook.WebHitTestResult;
 
-@ReportsCrashes(formKey = "dFZDbUZHbnVGamZqdDJQQUlZX2tzc1E6MQ") 
+//@ReportsCrashes(formKey = "dFZDbUZHbnVGamZqdDJQQUlZX2tzc1E6MQ") 
 
 public class SwifteeApplication extends Application{
 	
@@ -670,7 +670,7 @@ public class SwifteeApplication extends Application{
     
 	@Override
 	public void onCreate(){
-		ACRA.init(this);
+		//ACRA.init(this);
 		super.onCreate(); 
 		database = new DBConnector(this);
 		database.open();
@@ -732,7 +732,7 @@ public class SwifteeApplication extends Application{
 		super.onTerminate();
 		database.close();
 	}
-	public static DBConnector getDatabase(){
+	public DBConnector getDatabase(){
 		return database;
 	}
 	public GestureLibrary getGestureLibrary(int gestureType){

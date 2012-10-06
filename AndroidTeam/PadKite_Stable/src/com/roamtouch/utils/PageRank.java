@@ -3,7 +3,7 @@ package com.roamtouch.utils;
 import java.net.URL;  
 import java.net.URLConnection;  
 
-import org.acra.ErrorReporter;
+//import org.acra.ErrorReporter;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

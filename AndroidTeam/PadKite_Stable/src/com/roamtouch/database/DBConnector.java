@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
+import android.text.ClipboardManager;
 import android.util.Log;
 import com.roamtouch.database.DBHelper;
 
@@ -68,7 +69,10 @@ public class DBConnector {
 		
 		private static final String DATABASE_CREATE9 = "create table clipboard (" +
 				"_id integer primary key autoincrement, "+		
-				"desc text not null );";
+				"desc text not null, " +
+				"timestamp text not null );";
+		
+		private static final String DATABASE_INSERT_COLUMN = "ALTER TABLE clipboard ADD COLUMN timestamp;";
 			
 		private static final String DATABASE_CREATE10 = "create table recent_inputs (" +
 				"_id integer primary key autoincrement, "+		
@@ -93,6 +97,12 @@ public class DBConnector {
 				"title text not null ,"+
 				"url text not null );";
 		
+		private static final String DATABASE_CREATE14 = "create table my_videos (" +
+				"_id integer primary key autoincrement, "+						
+				"title text not null,"+
+				"videoId text not null,"+
+				"url text not null );";
+		
 		private static final String DATABASE_NAME = "padkiteDB";
 		private static final int DATABASE_VERSION = 1;
 
@@ -102,32 +112,35 @@ public class DBConnector {
 			this.mContext = ctx;
 		}
 		
-		public void checkCreatedTables(){
+		public void checkCreatedTables(SQLiteDatabase db){
+			
+			if (db==null)	
+				db = mDatabase;
 			
 			boolean up = checkTableExist("user_profiles");
 			if (!up)
-				mDatabase.execSQL(DATABASE_CREATE1);
+				db.execSQL(DATABASE_CREATE1);
 			
 			boolean bo = checkTableExist("bookmarks");
 			if (!bo)
-				mDatabase.execSQL(DATABASE_CREATE2);
+				db.execSQL(DATABASE_CREATE2);
 			
 			boolean ph = checkTableExist("padkite_history");
 			if (!ph)
-				mDatabase.execSQL(DATABASE_CREATE3);
+				db.execSQL(DATABASE_CREATE3);
 			
 			boolean plp = checkTableExist("padkite_landing_page");
 			if (!plp)
-				mDatabase.execSQL(DATABASE_CREATE4);
+				db.execSQL(DATABASE_CREATE4);
 			
 			boolean wm = checkTableExist("windows_manager");
 			if (!wm)
-				mDatabase.execSQL(DATABASE_CREATE5);
+				db.execSQL(DATABASE_CREATE5);
 			
 			boolean ws = checkTableExist("window_set");
 			if (!ws){
 				try {
-					mDatabase.execSQL(DATABASE_CREATE6);
+					db.execSQL(DATABASE_CREATE6);
 				} catch(Exception e){
 						e.printStackTrace();
 				}
@@ -135,37 +148,45 @@ public class DBConnector {
 			
 			boolean pn = checkTableExist("padkite_notes");
 			if (!pn)
-				mDatabase.execSQL(DATABASE_CREATE7);
+				db.execSQL(DATABASE_CREATE7);
 			
 			boolean su = checkTableExist("suggestions");
 			if (!su)
-				mDatabase.execSQL(DATABASE_CREATE8);
+				db.execSQL(DATABASE_CREATE8);
 			
 			boolean cb = checkTableExist("clipboard");
 			if (!cb)
-				mDatabase.execSQL(DATABASE_CREATE9);
+				db.execSQL(DATABASE_CREATE9);
+			
+			//mDatabase.execSQL(DATABASE_INSERT_COLUMN);
+			
+			insertClipBoard("hola");
 			
 			boolean ri = checkTableExist("recent_inputs");
 			if (!ri)
-				mDatabase.execSQL(DATABASE_CREATE10);
+				db.execSQL(DATABASE_CREATE10);
 			
 			boolean vo = checkTableExist("voice");
 			if (!vo)
-				mDatabase.execSQL(DATABASE_CREATE11);
+				db.execSQL(DATABASE_CREATE11);
 			
 			boolean mv = checkTableExist("most_visited");
 			if (!mv)
-				mDatabase.execSQL(DATABASE_CREATE12);					
+				db.execSQL(DATABASE_CREATE12);					
 			
 			
 			boolean sl = checkTableExist("site_links");
 			if (!sl)
-				mDatabase.execSQL(DATABASE_CREATE13);	
+				db.execSQL(DATABASE_CREATE13);	
+			
+			boolean mV = checkTableExist("my_videos");
+			if (!mV)
+				db.execSQL(DATABASE_CREATE14);	
 			
 		}	
 		
 		public DBConnector open() {
-			mDbHelper = new DBHelper(mContext);
+			mDbHelper = new DBHelper(mContext, this);
 			mDatabase = mDbHelper.getWritableDatabase();
 			return this;
 		}
@@ -548,6 +569,42 @@ public class DBConnector {
 			
     	}
 		
+		public int existVideo(String videoId){
+			
+			int id=-1;
+			
+			try	{
+				Cursor c = mDatabase.rawQuery("SELECT _id FROM my_videos WHERE videoId='" + videoId + "'", null);
+				if(c!=null){
+					if (c.moveToFirst()){
+						id = c.getInt(0);
+					}
+					c.close();					
+					return id;
+				}
+				
+			} catch(Exception e) {
+				e.printStackTrace();
+			}		
+			
+			return id;
+		}	
+	
+		public int insertVideo(String title, String videoId, String url){		
+			
+			int id=0;
+			
+			try {
+				mDatabase.execSQL("INSERT INTO my_videos(title, videoId, url) VALUES('"+title+"','"+videoId+"','"+url+"');"); 
+			} catch(Exception e) {
+				e.printStackTrace();
+			}	
+			
+			return id;
+			
+    	}
+		
+		
 		public int existWindowsSetByName(String name){
 			
 			int id=-1;
@@ -577,6 +634,34 @@ public class DBConnector {
 			try
 			{
 				c = mDatabase.rawQuery("SELECT _id, desc FROM window_set WHERE type='"+type+"'", null);
+				if(c!=null){					
+					if(c.getCount()>0){
+						int ver = c.getCount();
+						return c;
+					} else {
+						return null;
+					}
+				} else {
+					return null;
+				}
+			
+			} catch(Exception e) {
+				Log.v("error", "e: "+e);
+				e.printStackTrace();
+				return null;
+			}
+			
+			//finally { if (c != null) {
+			//	c.close();
+			//}    			
+		}
+		
+		public Cursor getMyVideos(){
+			
+			Cursor c = null;
+			try
+			{				
+				c = mDatabase.rawQuery("SELECT * FROM my_videos", null); 
 				if(c!=null){					
 					if(c.getCount()>0){
 						int ver = c.getCount();
@@ -771,7 +856,8 @@ public class DBConnector {
 		public Cursor getClipBoard(){	
 			try
 			{
-				Cursor c = mDatabase.rawQuery("SELECT desc FROM clipboard ORDER BY timestamp ASC LIMIT 20", null);
+				//Cursor c = mDatabase.rawQuery("SELECT desc FROM clipboard ORDER BY timestamp ASC LIMIT 20", null);
+				Cursor c = mDatabase.rawQuery("SELECT desc FROM clipboard", null);
 				if(c!=null)
 					if(c.getCount()>0)
 						return c;
@@ -779,15 +865,16 @@ public class DBConnector {
 				return null;
 			
 			} catch(Exception e) {
+				Log.v("error",""+e);
 				e.printStackTrace();
 				return null;
 			}						
     	}
 		
-		public boolean existClipBoard(String clip){	
+		public boolean existClipBoard(String clipboard){	
 			try
 			{
-				Cursor c = mDatabase.rawQuery("SELECT desc FROM clipboard WHERE desc='"+clip+"'", null);
+				Cursor c = mDatabase.rawQuery("SELECT desc FROM clipboard WHERE desc='"+clipboard+"'", null);
 				if(c!=null)
 					if(c.getCount()>0)
 						return true;
@@ -800,11 +887,11 @@ public class DBConnector {
 			}						
     	}
 		
-		public void insertClipBoard(String clip){
+		public void insertClipBoard(String clipboard){
 			
 			String timestamp = System.currentTimeMillis()+"";
 			try {
-				mDatabase.execSQL("INSERT INTO clipboard(desc, timestamp) VALUES('"+clip+"','"+timestamp+"')");
+				mDatabase.execSQL("INSERT INTO clipboard(desc, timestamp) VALUES('"+clipboard+"','"+timestamp+"')");
 			
 			} catch(Exception e) {
 				e.printStackTrace();
@@ -870,6 +957,7 @@ public class DBConnector {
 				e.printStackTrace();
 			}			
     	}
+
 		
 		/*public void customCall(){
 			
