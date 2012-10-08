@@ -1901,10 +1901,7 @@ public class FloatingCursor extends FrameLayout implements
 
 			//mWebHitTestResult = mWebView.getHitTestResultAt(X, Y);
 			
-			mWebView.loadUrl("javascript:hover('" + X + "','" +  Y + "','" +  WebHitTestResult.CALLBACK_MOVEHIT  + "');");
-
-			if (mP.isTabsActivated()
-					&& getHitPKIndex() == SwifteeApplication.TABINDEX_NOTHING) {
+			if (mP.isTabsActivated() && getHitPKIndex() == SwifteeApplication.TABINDEX_NOTHING) {
 
 				setHitPKIndex(getHitPKResult(X, Y));
 				
@@ -1932,7 +1929,13 @@ public class FloatingCursor extends FrameLayout implements
 
 					return;
 				}
-			}		
+			}	
+			
+			else {
+				
+				mWebView.loadUrl("javascript:hover('" + X + "','" +  Y + "','" +  WebHitTestResult.CALLBACK_MOVEHIT  + "');");
+				
+			}
 			
 		}	
 
@@ -1943,12 +1946,17 @@ public class FloatingCursor extends FrameLayout implements
 	public void proxyMoveHitTest(WebHitTestResult result){
 		
 		resultType = result.getType();
+		
 		if (resultType != 0 && resultType != 1 && resultType != -1) {
+			
 			rect = result.getRect();
+			
 			SwifteeApplication.setMasterRect(rect);
+			
 			if (rect.left == 0) {
 				Log.v("fuck", "fuck");
 			}
+			
 		} else {
 			
 			if (getLastKnownHitType() == SwifteeApplication.TYPE_PADKITE_PANEL){
@@ -2018,7 +2026,7 @@ public class FloatingCursor extends FrameLayout implements
 			cType = 7; // Text link
 			resultType = WebHitTestResult.TYPE_ANCHOR_TYPE;
 			applyImageResource(R.drawable.link_cursor, "link_cursor");
-			String tooltip = result.getToolTip();
+			//String tooltip = result.getToolTip();
 
 			// CHECK LINKS
 			/*
@@ -2033,9 +2041,10 @@ public class FloatingCursor extends FrameLayout implements
 				checkAnchorLinks(selectedLink);
 			}
 
-			if (tooltip.length() > 10) {
+			//if (tooltip.length() > 10) {
 				// eventViewer.splitText(WebHitTestResult.ANCHOR_TYPE,tooltip);
-			}
+			//}
+			
 			setLastKnownHitType(cType);				
 			
 			checkIsAnchorTab(fcX, fcY);				
@@ -2300,10 +2309,12 @@ public class FloatingCursor extends FrameLayout implements
 			int linkState = mP.siteIdentifierLoaded(identifier);
 			
 			if (linkState == SwifteeApplication.LINK_DATA_NOT_CALLED) {
+				
 				// LOAD LINK DATA
-				if (remote==false){
-					mP.getLinksFromPage(identifier, selectedLink);
-				}
+				//if (remote==false){
+				//	mP.getLinksFromPage(identifier, selectedLink);
+				//}
+				
 			}   
 			
 			cType =  WebHitTestResult.TYPE_SRC_ANCHOR_TYPE;
@@ -7323,17 +7334,33 @@ return false;
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			
-			String hover = "javascript:" +
+			String hover = "javascript:\n" +
 					
 					"var overElem, lines;\n" + 
 					
-					"function hover(posX, posY, callback){ \n" +
+					"function hover(posX, posY, callback){\n" + 
 					
-					"	if(callback!='" + WebHitTestResult.CALLBACK_MOVEHIT + "'){\n" +	
-							   
-					"		window.pBridge.outPut('posX, posY: ' + posX + ' ' + posY);\n" +  		
+					"	pBridge.outPut(' callback : ' + callback);\n" + 
+					
+					"	var callNumber = parseInt('" + WebHitTestResult.CALLBACK_MOVEHIT + "');\n" +				 
+					
+					"	if(callback==callNumber){\n" +	
+						   
+					//"		alert('posX, posY: ' + posX + ' ' + posY);\n" +  		
 					
 					"		overElem = document.elementFromPoint(posX, posY);\n" + 	
+					
+					//"		alert('overElem: ' + overElem);\n" +  		
+					
+					"		if (overElem===null){\n" +
+					
+					"			var callToString = callback.toString();\n" +
+					
+					"			pBridge.setnothingHitTestResultJavaScript(callToString);\n" +
+					
+					"			return;\n" +
+					
+					"		};\n" +
 					
 					"	};\n" +	
 						
@@ -7373,7 +7400,7 @@ return false;
 					
 					"			overElem.innerHTML," +
 					
-					"			$(overElem.id).tagName" +			
+					"			overElem.tagName" +			
 					
 					"		);\n" +						
 								
@@ -7381,7 +7408,9 @@ return false;
 					
 					"		else {\n" +
 					
-					"			pBridge.setCursorToNormal();\n" +
+					"			var callToString = callback.toString();\n" +
+	
+					"			pBridge.setnothingHitTestResultJavaScript(callToString);\n" +
 					
 					"		}\n" +
 					

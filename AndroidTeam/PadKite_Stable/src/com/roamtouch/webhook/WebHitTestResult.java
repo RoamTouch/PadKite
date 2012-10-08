@@ -26,6 +26,7 @@ public class WebHitTestResult {
 
     static final String LOGTAG = "webview";   
        
+    public static final int TYPE_NO_TYPE	             	= -1;
     public static final int TYPE_UNKNOWN_TYPE              	= 0;
     public static final int TYPE_ANCHOR_TYPE              	= 1;
    	public static final int TYPE_EMAIL_TYPE          		= 4;
@@ -67,8 +68,9 @@ public class WebHitTestResult {
 	private int mIdentifier;
     private WebVideoInfo mVideoInfo = null;
     private Point mPoint;
-    private int callBack;
-
+    private int mCallBack;
+    private String mNodeName;
+	
 	WebHitTestResult() {
         mType = TYPE_UNKNOWN_TYPE;
         mIdentifier = 0;
@@ -166,11 +168,20 @@ public class WebHitTestResult {
 	}
 	
 	public int getCallBack() {
-		return callBack;
+		return mCallBack;
 	}
 
 	public void setCallBack(int callBack) {
-		this.callBack = callBack;
+		this.mCallBack = callBack;
 	}
+	
+	public String getNodeName() {
+		return mNodeName;
+	}
+
+	public void setNodeName(String nodeName) {
+		this.mNodeName = nodeName;
+	}
+
 }
 

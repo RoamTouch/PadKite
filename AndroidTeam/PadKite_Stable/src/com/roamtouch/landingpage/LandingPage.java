@@ -58,9 +58,9 @@ public class LandingPage {
 	
 	DBConnector database;
 	
-	public LandingPage(BrowserActivity parent) 	{		
+	public LandingPage(BrowserActivity parent, DBConnector dB) 	{		
 		mParent = parent;	
-		database = appState.getDatabase();
+		database = dB;
 	}
 	
 	public String generateLandingPageString() {	
@@ -111,7 +111,8 @@ public class LandingPage {
 			+"</head>\n"			
 			
 			/**BODY**/
-			+"<body onload=\"bodyLoaded()\">\n"
+			//+"<body onload=\"bodyLoaded()\">\n"
+			+"<body>\n"
 			
 			//Main Container
 			+"<div id=\"container\">\n"
@@ -407,7 +408,7 @@ public class LandingPage {
 				boolean exist = database.getWindowsManagerListByIdAndTitle(setId, sTitle);
 				if (!exist){
 					Cursor c = database.insertTabs(setId, sTitle, sUrl, sBitmap);
-					/*if (c!=null){			
+					if (c!=null){			
 						int count = c.getCount();
 						c.moveToPosition(0);
 						int num = 0;			
@@ -419,7 +420,7 @@ public class LandingPage {
 							c.moveToNext();		
 						}		
 						c.close();
-					}*/
+					}
 				}
 			}
         }
@@ -427,15 +428,22 @@ public class LandingPage {
     }
 	
 	public boolean remoteConnections(){		
+		
 		boolean as = false;
 		boolean pop = false;		
 		boolean ws = false;
 		
-		as = loadRemoteData(1, "urlAssets.json");		
-		if (as){ pop = loadRemoteData(2, "popularSites.json"); }
-		if (pop){ ws = loadRemoteData(3, "windowSets.json"); }
+		try{
+			as = loadRemoteData(1, "urlAssets.json");		
+			if (as){ pop = loadRemoteData(2, "popularSites.json"); }
+			if (pop){ ws = loadRemoteData(3, "windowSets.json"); }
 		
-		//if (pop){ tw = loadRemoteData(3, SwifteeApplication.twitter_key); }
+			//if (pop){ tw = loadRemoteData(3, SwifteeApplication.twitter_key); }
+			
+		} catch(Exception e){
+			Log.v("e", "error: " + e);
+			
+		}
 		
 		if(ws)return ws;
 		else return false;

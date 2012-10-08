@@ -160,7 +160,7 @@ public class DBConnector {
 			
 			//mDatabase.execSQL(DATABASE_INSERT_COLUMN);
 			
-			insertClipBoard("hola");
+			//insertClipBoard("hola");
 			
 			boolean ri = checkTableExist("recent_inputs");
 			if (!ri)
@@ -197,8 +197,10 @@ public class DBConnector {
 		
 		public boolean checkTableExist(String tableName){
 			
+			Cursor c = null;
+			
 			try{
-				Cursor c = mDatabase.rawQuery("SELECT COUNT() FROM sqlite_master WHERE type='table' AND name ='"+tableName+"';", null);
+				c = mDatabase.rawQuery("SELECT COUNT() FROM sqlite_master WHERE type='table' AND name ='"+tableName+"';", null);
 				if(c!=null){
 					c.moveToFirst();
 					int count = c.getInt(0);
@@ -217,6 +219,11 @@ public class DBConnector {
 				e.printStackTrace();
 				return false;
 			}
+			
+			finally { if (c != null) {
+					c.close();
+				}  
+			}	
 						
 		}
 		
@@ -232,8 +239,10 @@ public class DBConnector {
     	}
 		
 		public boolean checkUserRegistered(){
+			
+			Cursor c = null;
 			try{
-				Cursor c = mDatabase.rawQuery("SELECT count(*) FROM user_profiles", null);
+				c = mDatabase.rawQuery("SELECT count(*) FROM user_profiles", null);
 				if(c!=null){
 					c.moveToFirst();
 					int count = c.getInt(0);
@@ -246,6 +255,11 @@ public class DBConnector {
 				e.printStackTrace();
 				return false;
 			}
+			finally { if (c != null) {
+				c.close();
+			}  
+		}	
+    
 		}
 		
 		public void deleteAllBookmarks() {
@@ -334,9 +348,10 @@ public class DBConnector {
 			}
 		}
 		
-		public String getBookmark(String name){
+		public String getBookmark(String name){			
+			Cursor c = null;
 			try{
-				Cursor c = mDatabase.rawQuery("SELECT url FROM bookmarks WHERE name='"+name+"'", null);
+				c = mDatabase.rawQuery("SELECT url FROM bookmarks WHERE name='"+name+"'", null);
 				if(c!=null){
 					if (c.moveToFirst())
 					{
@@ -353,6 +368,10 @@ public class DBConnector {
 //				System.out.println("-------------exception "+  e  +" while getting bookmarks ------------");
 				e.printStackTrace();
 				return null;
+			}
+			finally { if (c != null) {
+				c.close();
+				} 
 			}
 		}
 		
@@ -376,6 +395,10 @@ public class DBConnector {
 				e.printStackTrace();
 				return null;
 			}	
+			finally { if (c != null) {
+				c.close();
+				} 
+			}
 			
 		}
 		
@@ -401,7 +424,11 @@ public class DBConnector {
 			} catch(Exception e) {
 				e.printStackTrace();
 				return null;
-			}	
+			}
+			finally { if (c != null) {
+				c.close();
+				} 
+			}
 			
 		}
 		
@@ -423,9 +450,10 @@ public class DBConnector {
 		}
 		
 		public Cursor getFromHistory(int type){
+			Cursor c=null;
 			try
 			{
-				Cursor c = mDatabase.rawQuery("SELECT * FROM padkite_history WHERE type="+type, null);
+				c = mDatabase.rawQuery("SELECT * FROM padkite_history WHERE type="+type, null);
 				if(c!=null)
 					if(c.getCount()>0)
 						return c;
@@ -437,12 +465,18 @@ public class DBConnector {
 				e.printStackTrace();
 				return null;
 			}
+			finally { if (c != null) {
+				c.close();
+				} 
+			}
+			
 		}
 		
 		public Cursor getFromHistoryIntoArray(int type){
+			Cursor c=null;
 			try
 			{
-				Cursor c = mDatabase.rawQuery("SELECT * FROM padkite_history WHERE type="+type+" ORDER BY timestamp ASC LIMIT 10", null);
+				c = mDatabase.rawQuery("SELECT * FROM padkite_history WHERE type="+type+" ORDER BY timestamp ASC LIMIT 10", null);
 				if(c!=null)
 					if(c.getCount()>0)
 						return c;
@@ -455,13 +489,18 @@ public class DBConnector {
 				e.printStackTrace();
 				return null;
 			}
+			finally { if (c != null) {
+				c.close();
+				} 
+			}
 		}
 		
 		public int countFromHistory(String title){
 			int amount = 0;
+			Cursor c = null;
 			try
 			{
-				Cursor c = mDatabase.rawQuery("SELECT COUNT(title) FROM padkite_history WHERE title='"+title+"' AND type=1", null);			
+				c = mDatabase.rawQuery("SELECT COUNT(title) FROM padkite_history WHERE title='"+title+"' AND type=1", null);			
 				if(c!=null){
 					if(c.getCount()>0){
 						String n = c.getString(0);
@@ -475,6 +514,10 @@ public class DBConnector {
 			{
 				e.printStackTrace();
 				return amount;
+			}
+			finally { if (c != null) {
+				c.close();
+				} 
 			}
 		}
 		
@@ -512,6 +555,10 @@ public class DBConnector {
 				e.printStackTrace();
 				return null;
 			}	
+			finally { if (c != null) {
+				c.close();
+				} 
+			}
 			
 		}
 		
@@ -552,18 +599,24 @@ public class DBConnector {
 				e.printStackTrace();
 			}				
 			
-			
+			Cursor c=null;
 			try	{
-				Cursor c = mDatabase.rawQuery("SELECT _id FROM window_set WHERE desc='"+name+"' AND type='"+type+"'", null);
+				c = mDatabase.rawQuery("SELECT _id FROM window_set WHERE desc='"+name+"' AND type='"+type+"'", null);
 				if(c!=null){
 					c.moveToFirst();
 					id = c.getInt(0);
 					c.close();
 				}
 				
-			} catch(Exception e) {
+			} 
+			catch(Exception e) {
 				e.printStackTrace();
-			}		
+			}	
+			finally { if (c != null) {
+				c.close();
+				} 
+			}
+			
 			
 			return id;
 			
@@ -572,9 +625,9 @@ public class DBConnector {
 		public int existVideo(String videoId){
 			
 			int id=-1;
-			
+			Cursor c=null;
 			try	{
-				Cursor c = mDatabase.rawQuery("SELECT _id FROM my_videos WHERE videoId='" + videoId + "'", null);
+				c = mDatabase.rawQuery("SELECT _id FROM my_videos WHERE videoId='" + videoId + "'", null);
 				if(c!=null){
 					if (c.moveToFirst()){
 						id = c.getInt(0);
@@ -586,6 +639,10 @@ public class DBConnector {
 			} catch(Exception e) {
 				e.printStackTrace();
 			}		
+			finally { if (c != null) {
+				c.close();
+				} 
+			}
 			
 			return id;
 		}	
@@ -608,9 +665,9 @@ public class DBConnector {
 		public int existWindowsSetByName(String name){
 			
 			int id=-1;
-			
+			Cursor c=null;
 			try	{
-				Cursor c = mDatabase.rawQuery("SELECT _id FROM window_set WHERE desc='"+name+"'", null);
+				c = mDatabase.rawQuery("SELECT _id FROM window_set WHERE desc='"+name+"'", null);
 				if(c!=null){
 					if (c.moveToFirst()){
 						id = c.getInt(0);
@@ -622,6 +679,10 @@ public class DBConnector {
 			} catch(Exception e) {
 				e.printStackTrace();
 			}		
+			finally { if (c != null) {
+				c.close();
+				} 
+			}
 			
 			return id;
 		}		
@@ -651,9 +712,12 @@ public class DBConnector {
 				return null;
 			}
 			
+			//Took outt finally, was closing down second
 			//finally { if (c != null) {
 			//	c.close();
-			//}    			
+			//	} 
+			//}			
+					
 		}
 		
 		public Cursor getMyVideos(){
@@ -679,9 +743,10 @@ public class DBConnector {
 				return null;
 			}
 			
-			//finally { if (c != null) {
-			//	c.close();
-			//}    			
+			finally { if (c != null) {
+					c.close();
+				}  
+			}
 		}	
 		
 		
@@ -704,9 +769,10 @@ public class DBConnector {
 		
 		
 		public Cursor getWindowsManagerListById(int id){
+			Cursor c=null;
 			try
 			{
-				Cursor c = mDatabase.rawQuery("SELECT title,url,bitmap FROM windows_manager WHERE _idWm='"+id+"'", null); // WHERE type="+type, null);
+				c = mDatabase.rawQuery("SELECT title,url,bitmap FROM windows_manager WHERE _idWm='"+id+"'", null); // WHERE type="+type, null);
 				if(c!=null){					
 					if(c.getCount()>0){
 						int ver = c.getCount();
@@ -724,14 +790,18 @@ public class DBConnector {
 				Log.v("dale", "error: "+e);
 				//e.printStackTrace();
 				return null;
-			}			
+			}	
+			
+			finally { if (c != null) {
+				c.close();
+				} 
+			}
 		}		
 		
 		public boolean getWindowsManagerListByIdAndTitle(int id, String title){
-
-			try {
-				
-				Cursor c = mDatabase.rawQuery("SELECT title,url,bitmap FROM windows_manager WHERE _idWm='"+id+"' AND title='"+title+"'", null); // WHERE type="+type, null);
+			Cursor c=null;
+			try {				
+				c = mDatabase.rawQuery("SELECT title,url,bitmap FROM windows_manager WHERE _idWm='"+id+"' AND title='"+title+"'", null); // WHERE type="+type, null);
 				if(c!=null){					
 					if(c.getCount()>0){						
 						return true;
@@ -740,13 +810,17 @@ public class DBConnector {
 					}
 				} else {
 					return false;
-				}
-			
+				}			
 			} catch(Exception e) {
 				Log.v("dale", "error: "+e);
 				//e.printStackTrace();
 				return false;
-			}			
+			}	
+			finally { if (c != null) {
+				c.close();
+				} 
+			}
+			
 		}	
 		
 		public int clearAllTabs(){			
@@ -818,9 +892,10 @@ public class DBConnector {
 		}
 		
 		public Cursor getSuggestion(String like){	
+			Cursor c=null;
 			try
 			{
-				Cursor c = mDatabase.rawQuery("SELECT desc FROM suggestions WHERE desc like '"+like+"' ORDER BY desc ASC LIMIT 10", null); 
+				c = mDatabase.rawQuery("SELECT desc FROM suggestions WHERE desc like '"+like+"' ORDER BY desc ASC LIMIT 10", null); 
 				if(c!=null){
 					if(c.getCount()>0){
 						return c;
@@ -835,7 +910,11 @@ public class DBConnector {
 			} catch(Exception e) {
 				e.printStackTrace();
 				return null;
-			}						
+			}
+			finally { if (c != null) {
+				c.close();
+				} 
+			}
     	}
 		
 		public void insertSuggestion(String suggestion){
@@ -854,10 +933,11 @@ public class DBConnector {
 		}
 		
 		public Cursor getClipBoard(){	
+			Cursor c=null;
 			try
 			{
 				//Cursor c = mDatabase.rawQuery("SELECT desc FROM clipboard ORDER BY timestamp ASC LIMIT 20", null);
-				Cursor c = mDatabase.rawQuery("SELECT desc FROM clipboard", null);
+				c = mDatabase.rawQuery("SELECT desc FROM clipboard", null);
 				if(c!=null)
 					if(c.getCount()>0)
 						return c;
@@ -868,13 +948,18 @@ public class DBConnector {
 				Log.v("error",""+e);
 				e.printStackTrace();
 				return null;
-			}						
+			}
+			finally { if (c != null) {
+				c.close();
+				} 
+			}
     	}
 		
 		public boolean existClipBoard(String clipboard){	
+			Cursor c=null;
 			try
 			{
-				Cursor c = mDatabase.rawQuery("SELECT desc FROM clipboard WHERE desc='"+clipboard+"'", null);
+				c = mDatabase.rawQuery("SELECT desc FROM clipboard WHERE desc='"+clipboard+"'", null);
 				if(c!=null)
 					if(c.getCount()>0)
 						return true;
@@ -884,7 +969,11 @@ public class DBConnector {
 			} catch(Exception e) {
 				e.printStackTrace();
 				return false;
-			}						
+			}
+			finally { if (c != null) {
+				c.close();
+				} 
+			}
     	}
 		
 		public void insertClipBoard(String clipboard){
@@ -903,9 +992,10 @@ public class DBConnector {
 		}
 		
 		public Cursor getRecent(){	
+			Cursor c=null;
 			try
 			{
-				Cursor c = mDatabase.rawQuery("SELECT desc FROM recent_inputs ORDER BY timestamp ASC LIMIT 20", null); // WHERE type="+type, null);
+				c = mDatabase.rawQuery("SELECT desc FROM recent_inputs ORDER BY timestamp ASC LIMIT 20", null); // WHERE type="+type, null);
 				if(c!=null)
 					if(c.getCount()>0)
 						return c;
@@ -915,7 +1005,11 @@ public class DBConnector {
 			} catch(Exception e) {
 				e.printStackTrace();
 				return null;
-			}						
+			}			
+			finally { if (c != null) {
+				c.close();
+				} 
+			}
     	}
 		
 		public void insertRecent(String recent){
@@ -931,9 +1025,10 @@ public class DBConnector {
     	}
 		
 		public Cursor getVoice(){	
+			Cursor c=null;
 			try
 			{
-				Cursor c = mDatabase.rawQuery("SELECT desc FROM voice ORDER BY timestamp ASC LIMIT 20", null);
+				c = mDatabase.rawQuery("SELECT desc FROM voice ORDER BY timestamp ASC LIMIT 20", null);
 				if(c!=null)
 					if(c.getCount()>0)
 						return c;
@@ -943,7 +1038,12 @@ public class DBConnector {
 			} catch(Exception e) {
 				e.printStackTrace();
 				return null;
-			}						
+			}	
+			finally { if (c != null) {
+				c.close();
+				} 
+			}
+			
     	}
 		
 		public void insertVoice(String voice){

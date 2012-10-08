@@ -15,7 +15,7 @@ public class DBHelper extends SQLiteOpenHelper {
   
     // Define the version and database file name  
     private static final String DB_NAME = "padkiteDB.db";  
-    private static final int DB_VERSION = 5; 
+    private static final int DB_VERSION = 7; 
     
     DBConnector dbConnector;
     

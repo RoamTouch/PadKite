@@ -50,6 +50,10 @@ public class ProxyBridge extends Activity {
 		fC.setCurrentSearch(currentSearch);
 	}	
 	
+	public void outPut(String outPut){
+		Log.v("outPut",""+outPut);				
+	}
+	
 	private String phrase = "";			
 	Handler proxyHandler = new Handler();
 	String[] inputTextArray = new String[3];
@@ -202,8 +206,7 @@ public class ProxyBridge extends Activity {
 	public void flat(String f){
 		String flat = f;		
 		Log.v("flat", ""+f);
-	}
-	
+	}	
 	
 	private Rect rectResult;
 	private String callback;
@@ -212,12 +215,11 @@ public class ProxyBridge extends Activity {
 	private String href;
 	private String src;	
 	private String innerHTML;
-	private String tagName;
-	
+	private String tagName;	
 	
 	/**
 	 * HitTestResutl Javascript
-	 **/			
+	 **/
 	public void setHitTestRestultJavaScript( 
 			String _callBack,
 			String x, String y, 
@@ -230,7 +232,7 @@ public class ProxyBridge extends Activity {
 			String _tagName
 			) { 				
 		
-		Log.v("node",""
+		Log.v("node","::::::::::::: "
 				+ "callback: " +_callBack	
 				+ " x: " +x
 				+ " y: " +y 
@@ -262,55 +264,66 @@ public class ProxyBridge extends Activity {
 		if (!_src.equals("undefined"))
 			src = _src;
 		
-		rectResult = new Rect();
+		Rect rectResult = new Rect();
 		rectResult.left = Integer.parseInt(x) - 5;
 		rectResult.top = Integer.parseInt(y) - 5;
 		rectResult.right = rectResult.left + Integer.parseInt(width) + 10;
 		rectResult.bottom = rectResult.top + Integer.parseInt(height) + 10;
 		
 		//HIT TEST
-		wHitResult= new WebHitTestResult();
-		wHitResult.setCallBack(Integer.parseInt(callback));
+		WebHitTestResult wHitResult= new WebHitTestResult();
+		wHitResult.setCallBack(Integer.parseInt(_callBack));
 		wHitResult.setRect(rectResult);		
-		wHitResult.setIdentifier(Integer.parseInt(identifier));
+		wHitResult.setIdentifier(Integer.parseInt(_id));
+		wHitResult.setExtra(_href);
+		wHitResult.setNodeName(_nodeName);
 		
 		SwifteeApplication.setMasterRect(rectResult);
 		
-		runOnUiThread(new Runnable() {		        	
+		filterResult(wHitResult);
+		
+	}
+	
+	public void filterResult(final WebHitTestResult result){
+		
+
+		mP.runOnUiThread(new Runnable() {		        	
         	
-			public void run() {  
+			public void run() {
 				
-        		if (nodeName.equals("A")){
+				String nName =  result.getNodeName();
+				
+        		if (nName.equals("A")){
         			
-        			wHitResult.setType(wHitResult.TYPE_SRC_ANCHOR_TYPE);
+        			result.setType(wHitResult.TYPE_SRC_ANCHOR_TYPE);
         			
-        			fC.proxyMoveHitTest(wHitResult);       			       			
+        			fC.proxyMoveHitTest(result);       			       			
 					
-				} else if (nodeName.equals("IMG")){
+				} else if (nName.equals("IMG")){
 					
 					if (src.equals("")){								
 						
-						wHitResult.setType(wHitResult.TYPE_IMAGE_ANCHOR_TYPE);
+						result.setType(wHitResult.TYPE_IMAGE_ANCHOR_TYPE);
 						
-						setHitTestCallBack(wHitResult);
+						setHitTestCallBack(result);
 						
 						//fC.applyImageResource(R.drawable.link_image_cursor, "link_image_cursor");			
 						
 					} else {
 						
-						wHitResult.setType(wHitResult.TYPE_IMAGE_ANCHOR_TYPE);		
+						result.setType(wHitResult.TYPE_IMAGE_ANCHOR_TYPE);		
 						
-						setHitTestCallBack(wHitResult);
+						setHitTestCallBack(result);
 	
 						//fC.applyImageResource(R.drawable.link_image_cursor, "link_image_cursor");
 						
 					}				
 					
-				} else if (nodeName.equals("P")){
+				} else if (nName.equals("P")){
 					
-					wHitResult.setType(wHitResult.TYPE_TEXT_TYPE);			
+					result.setType(wHitResult.TYPE_TEXT_TYPE);			
 					
-					setHitTestCallBack(wHitResult);
+					setHitTestCallBack(result);
 					
 					//fC.applyImageResource(R.drawable.text_cursor, "text_cursor");		
 					
@@ -318,31 +331,52 @@ public class ProxyBridge extends Activity {
 				}          		
         		
             }
-        });					
+        });	
 		
 	}
 	
-	
-	public void setHitTestCallBack(WebHitTestResult result){		
-				
-		switch (result.getCallBack()){
+	/**
+	 * Returns -1 if there is no element. 
+	 */
+	public void setnothingHitTestResultJavaScript(String _callBack){			
 		
-			case WebHitTestResult.CALLBACK_MOVEHIT:
-				fC.proxyMoveHitTest(wHitResult);
-				break;
-				
-			case WebHitTestResult.CALLBACK_SINGLE_TOUCH:
-				fC.proxyTouchHitTest(wHitResult);
-				break;
-				
-			case WebHitTestResult.CALLBACK_REFRESH_MENU:
-				fC.refreshMenu(result.getRect());
-				break;
-				
-		}		
+		Log.v("node","NOTHING" + "callback: " +_callBack);
 		
-		
+		//HIT TEST NOTHING
+		WebHitTestResult result= new WebHitTestResult();
+		result.setCallBack(Integer.parseInt(_callBack));			
+		result.setType(wHitResult.TYPE_NO_TYPE);				
+		setHitTestCallBack(result);
+				
 	}
+	
+	
+	
+	public void setHitTestCallBack(final WebHitTestResult result){	
+		
+		mP.runOnUiThread(new Runnable() {		        	
+        	
+			public void run() {  			
+			
+				switch (result.getCallBack()){
+				
+					case WebHitTestResult.CALLBACK_MOVEHIT:
+						fC.proxyMoveHitTest(result);
+						break;
+						
+					case WebHitTestResult.CALLBACK_SINGLE_TOUCH:
+						fC.proxyTouchHitTest(result);
+						break;
+						
+					case WebHitTestResult.CALLBACK_REFRESH_MENU:
+						fC.refreshMenu(result.getRect());
+						break;
+						
+				}		
+			
+			  }
+        });			
+	}	
 	
 	
 	/**
@@ -378,11 +412,7 @@ public class ProxyBridge extends Activity {
 		
 		//SwifteeApplication.setPanelRect(rectResult);				
 		
-	}
-	
-
-	
-	
+	}	
 	
 	
 	

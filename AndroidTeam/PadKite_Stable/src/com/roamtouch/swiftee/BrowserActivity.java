@@ -213,7 +213,7 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
    
     private TranslateAnimation ta;
     
-    public final LandingPage lp = new LandingPage(this); //HERE ONLY PLACE TO INSTANSIATE LANDINGPAGE.
+    public LandingPage lp; //HERE ONLY PLACE TO INSTANSIATE LANDINGPAGE.
     
     private String landingPath = "file:////" + BrowserActivity.WEB_ASSETS_PATH + "/loadPage.html";
           
@@ -725,8 +725,15 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	        //        Secure.ANDROID_ID); 
         } 	
       
+        /**DATABASE**/
+        DBConnector database = appState.getDatabase();
+        //database.clearAllTabs();        
+        //appState.getDatabase().deleteAllClipBoards();       
+        
+        
         /** LANDING PAGE **/		
 		String landingString = null;
+		lp = new LandingPage(this, database);
 		boolean re = lp.remoteConnections();		
 		landingString = lp.generateLandingPageString();
 		
@@ -904,13 +911,14 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 		//ERASE SITE LINKS CACHE.
 		appState.getDatabase().deleteSiteLinks();	
 		
-		String clipboard = (String) ((ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).getText();
-		if (!clipboard.equals("")){
-			boolean exist = appState.getDatabase().existClipBoard(clipboard); 
-			if (!exist){		
-				appState.getDatabase().insertClipBoard(clipboard);
-			}
-		}
+		//LOAD EXISTING CLIPBOARD INTO DATABASE 
+		//String clipboard = (String) ((ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).getText();
+		//if (!clipboard.equals("")){
+		//	boolean exist = appState.getDatabase().existClipBoard(clipboard); 
+		//	if (!exist){		
+		//		appState.getDatabase().insertClipBoard(clipboard);
+		//	}
+		//}
 		
 		//appState.getDatabase().deleteWindowSetAndList();
 		
@@ -948,12 +956,8 @@ public class BrowserActivity extends Activity implements OnGesturePerformedListe
 	   }*/        
         
         //Store screen size variables
-        getDeviceWidthHeight();
-        
-        /**DATABASE**/
-        //DBConnector database = appState.getDatabase();
-        //database.clearAllTabs();        
-        //appState.getDatabase().deleteAllClipBoards();       
+        getDeviceWidthHeight();       
+      
         
         /**INPUT**/
         
